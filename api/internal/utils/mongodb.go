@@ -20,9 +20,15 @@ func init() {
 	mongoUser := os.Getenv("MONGO_USER")
 	mongoPassword := os.Getenv("MONGO_PASSWORD")
 	MongoDBName = os.Getenv("MONGO_DB")
+	authSource := os.Getenv("MONGO_AUTH_SOURCE")
+
 	mongoURI = fmt.Sprintf("mongodb://%s:%s@%s/%s", mongoUser, mongoPassword, mongoURL, MongoDBName)
+	if authSource != "" {
+		mongoURI = mongoURI + fmt.Sprintf("?authSource=%s", authSource)
+	}
 }
 
 func GetMongoClient() (*mongo.Client, error) {
+	fmt.Println(mongoURI)
 	return mongo.Connect(context.TODO(), options.Client().ApplyURI(mongoURI))
 }

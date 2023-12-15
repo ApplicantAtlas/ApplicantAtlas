@@ -4,7 +4,10 @@ import (
 	"api/internal/models"
 	"api/internal/utils"
 	"context"
+	"log"
 	"net/http"
+	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
@@ -15,29 +18,62 @@ func RegisterRoutes(r *gin.RouterGroup) {
 	r.POST("/login", loginHandler)
 	r.POST("/register", registerHandler)
 }
+
 func loginHandler(c *gin.Context) {
 	// Handle login (to be implemented)
 	c.JSON(200, gin.H{"message": "Login functionality not yet implemented"})
 }
 
+type registerRequest struct {
+	Email       string `json:"email" validate:"required,email"`
+	Password    string `json:"password" validate:"required,securepwd"`
+	FirstName   string `json:"firstName" validate:"required"`
+	LastName    string `json:"lastName" validate:"required"`
+	SchoolEmail string `json:"schoolEmail" validate:"omitempty,email"`
+	Birthday    string `json:"birthday" validate:"required,dateformat=01/02/2006"`
+}
+
 func registerHandler(c *gin.Context) {
-	var newUser models.User
-	if err := c.BindJSON(&newUser); err != nil {
+	var req registerRequest
+	if err := c.BindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	// TODO: Input validation (to be implemented)
+	// Validate request
+	if errors := utils.ValidateStruct(utils.Validator, req); len(errors) > 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": strings.Join(errors, "\n")})
+		return
+	}
+
 	// TODO: check if password is strong enough (to be implemented)
+
 	// TODO: check if email is already registered (to be implemented)
 
 	// Hash the password
-	hash, err := bcrypt.GenerateFromPassword([]byte(newUser.PasswordHash), bcrypt.DefaultCost)
+	hash, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
 		return
 	}
-	newUser.PasswordHash = string(hash)
+
+	// Transform the Birthday string to time.Time
+	parsedBirthday, err := time.Parse("01/02/2006", req.Birthday)
+	if err != nil {
+		// Handle parsing error
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid date format"})
+		return
+	}
+
+	// Create a new user
+	newUser := models.User{
+		FirstName:    req.FirstName,
+		LastName:     req.LastName,
+		Email:        req.Email,
+		SchoolEmail:  req.SchoolEmail,
+		Birthday:     parsedBirthday,
+		PasswordHash: string(hash),
+	}
 
 	// Insert the new user into the database
 	client, err := utils.GetMongoClient()
@@ -52,6 +88,7 @@ func registerHandler(c *gin.Context) {
 	collection := mongodb.Collection("users")
 	_, err = collection.InsertOne(context.Background(), newUser)
 	if err != nil {
+		log.Fatal(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to register user"})
 		return
 	}

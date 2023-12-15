@@ -21,10 +21,11 @@ services:
       - "8080:8080"
     environment:
       - GIN_MODE=release
-      - MONGO_URL=mongodb://mongo:27017
+      - MONGO_URL=mongo:27017
       - MONGO_USER=admin
       - MONGO_PASSWORD=admin
       - MONGO_DB=app
+      - MONGO_AUTH_SOURCE=admin
     depends_on:
       - mongo
 
