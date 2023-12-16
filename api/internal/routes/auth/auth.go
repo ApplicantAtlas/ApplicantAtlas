@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"api/internal/middlewares"
 	"api/internal/models"
 	"api/internal/utils"
 	"context"
@@ -18,11 +19,52 @@ import (
 func RegisterRoutes(r *gin.RouterGroup) {
 	r.POST("/login", loginHandler)
 	r.POST("/register", registerHandler)
+
+	r.DELETE("/delete", middlewares.JWTAuthMiddleware(), deleteHandler)
+}
+
+type loginRequest struct {
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required"`
 }
 
 func loginHandler(c *gin.Context) {
-	// Handle login (to be implemented)
-	c.JSON(200, gin.H{"message": "Login functionality not yet implemented"})
+	var req loginRequest
+	if err := c.BindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Find user by email
+	client, err := utils.GetMongoClient()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database connection error"})
+		return
+	}
+	mongodb := client.Database(utils.MongoDBName)
+	collection := mongodb.Collection("users")
+
+	var user models.User
+	err = collection.FindOne(context.Background(), bson.M{"email": req.Email}).Decode(&user)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid credentials"})
+		return
+	}
+
+	// Check password
+	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(req.Password)); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid credentials"})
+		return
+	}
+
+	// Generate JWT token
+	token, err := utils.GenerateJWT(user)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"token": token})
 }
 
 type registerRequest struct {
@@ -100,5 +142,39 @@ func registerHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "User registered successfully"})
+	c.JSON(http.StatusOK, gin.H{"message": "User registered successfully, please login"})
+}
+
+// Delete self from database
+func deleteHandler(c *gin.Context) {
+	// Retrieve user info from the context
+	user, exists := c.Get("user")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+
+	// Cast to models.User (assuming the user info is stored as a models.User)
+	authenticatedUser, ok := user.(*models.User)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+		return
+	}
+
+	// Delete user from database
+	client, err := utils.GetMongoClient()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database connection error"})
+		return
+	}
+
+	mongodb := client.Database(utils.MongoDBName)
+	collection := mongodb.Collection("users")
+	_, err = collection.DeleteOne(context.Background(), bson.M{"email": authenticatedUser.Email})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete user"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Account deleted successfully"})
 }
