@@ -1,4 +1,4 @@
-package utils
+package mongodb
 
 import (
 	"context"
@@ -28,6 +28,6 @@ func init() {
 	}
 }
 
-func GetMongoClient() (*mongo.Client, error) {
+func getMongoClient() (*mongo.Client, error) {
 	return mongo.Connect(context.TODO(), options.Client().ApplyURI(mongoURI))
 }

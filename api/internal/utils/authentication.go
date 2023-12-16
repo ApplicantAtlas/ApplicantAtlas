@@ -28,7 +28,7 @@ func init() {
 }
 
 // GenerateJWT generates a JWT token for the given user
-func GenerateJWT(user models.User) (string, error) {
+func GenerateJWT(user *models.User) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"email":     user.Email,
 		"firstName": user.FirstName,

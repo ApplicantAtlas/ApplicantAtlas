@@ -17,11 +17,9 @@ func TestGenerateJWT(t *testing.T) {
 		LastName:  "Doe",
 	}
 
-	token, err := GenerateJWT(user)
+	token, err := GenerateJWT(&user)
 	assert.Nil(t, err)
 	assert.NotEmpty(t, token)
-
-	// Further checks can be added to inspect the token structure
 }
 
 func TestVerifyJWT(t *testing.T) {
@@ -32,7 +30,7 @@ func TestVerifyJWT(t *testing.T) {
 	}
 
 	// Generate a valid token
-	validToken, _ := GenerateJWT(user)
+	validToken, _ := GenerateJWT(&user)
 
 	// Generate an expired token
 	expiredToken := generateExpiredJWT(user)
