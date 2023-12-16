@@ -15,7 +15,7 @@ func listEventsHandler(c *gin.Context) {
 
 	// return dummy json
 	c.JSON(200, gin.H{
-		"message": "pong",
+		"message": "ping",
 	})
 }
 
