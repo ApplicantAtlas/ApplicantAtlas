@@ -30,7 +30,7 @@ func TestAuthHandlers(t *testing.T) {
 		LastName:     "Doe",
 		Email:        "john@example.com",
 		PasswordHash: "",
-		Birthday:     time.Now(),
+		Birthday:     time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC),
 	}
 
 	// Test Registration
