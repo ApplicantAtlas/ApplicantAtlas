@@ -5,10 +5,12 @@ import (
 	"crypto/rand"
 	"errors"
 	"log"
+	"net/http"
 	"os"
 	"strings"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -60,6 +62,23 @@ func VerifyJWT(tokenString string) (*models.User, error) {
 	} else {
 		return nil, errors.New("invalid token")
 	}
+}
+
+// GetUserFromContext retrieves the authenticated user from the Gin context
+func GetUserFromContext(c *gin.Context) (*models.User, bool) {
+	user, exists := c.Get("user")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return nil, false
+	}
+
+	authenticatedUser, ok := user.(*models.User)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+		return nil, false
+	}
+
+	return authenticatedUser, true
 }
 
 // generateRandomSecret generates a random secret key of the given length

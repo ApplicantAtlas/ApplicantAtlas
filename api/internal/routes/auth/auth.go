@@ -147,17 +147,9 @@ func registerHandler(c *gin.Context) {
 
 // Delete self from database
 func deleteHandler(c *gin.Context) {
-	// Retrieve user info from the context
-	user, exists := c.Get("user")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
-		return
-	}
-
-	// Cast to models.User (assuming the user info is stored as a models.User)
-	authenticatedUser, ok := user.(*models.User)
+	authenticatedUser, ok := utils.GetUserFromContext(c)
 	if !ok {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+		// Gin response is already handled in GetUserFromContext
 		return
 	}
 

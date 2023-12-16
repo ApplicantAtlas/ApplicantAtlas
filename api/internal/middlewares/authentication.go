@@ -13,10 +13,9 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenString := c.GetHeader("Authorization")
 
-		// Optional: Skip middleware if no token is provided
-		// TODO: We might want to just return 401 here instead
+		// Return 401 if no token is provided
 		if tokenString == "" {
-			c.Next()
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Authorization token required"})
 			return
 		}
 
