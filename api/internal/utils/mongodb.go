@@ -29,6 +29,5 @@ func init() {
 }
 
 func GetMongoClient() (*mongo.Client, error) {
-	fmt.Println(mongoURI)
 	return mongo.Connect(context.TODO(), options.Client().ApplyURI(mongoURI))
 }

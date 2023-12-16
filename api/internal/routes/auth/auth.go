@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -46,10 +47,6 @@ func registerHandler(c *gin.Context) {
 		return
 	}
 
-	// TODO: check if password is strong enough (to be implemented)
-
-	// TODO: check if email is already registered (to be implemented)
-
 	// Hash the password
 	hash, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
@@ -60,7 +57,7 @@ func registerHandler(c *gin.Context) {
 	// Transform the Birthday string to time.Time
 	parsedBirthday, err := time.Parse("01/02/2006", req.Birthday)
 	if err != nil {
-		// Handle parsing error
+		// This should never happen because the dateformat validator should catch this
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid date format"})
 		return
 	}
@@ -86,6 +83,16 @@ func registerHandler(c *gin.Context) {
 	defer client.Disconnect(context.Background())
 
 	collection := mongodb.Collection("users")
+
+	// Check if email is already registered
+	var existingUser models.User
+	err = collection.FindOne(context.Background(), bson.M{"email": req.Email}).Decode(&existingUser)
+	if err == nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "An account with that email already exists"})
+		return
+	}
+
+	// Insert the new user
 	_, err = collection.InsertOne(context.Background(), newUser)
 	if err != nil {
 		log.Fatal(err)

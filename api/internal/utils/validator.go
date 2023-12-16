@@ -77,7 +77,12 @@ func TranslateValidationError(fe validator.FieldError) string {
 	case "dateformat":
 		return fmt.Sprintf("%s is not in the correct format. Expected format: %s", fe.Field(), fe.Param())
 	case "securepwd":
-		return strings.Join(securePasswordMessages(fe.Field()), "\n")
+		val, ok := fe.Value().(string)
+		if !ok {
+			return fmt.Sprintf("%s is not valid", fe.Field())
+		}
+
+		return strings.Join(securePasswordMessages(val), "\n")
 	default:
 		return fmt.Sprintf("%s is not valid", fe.Field())
 	}
