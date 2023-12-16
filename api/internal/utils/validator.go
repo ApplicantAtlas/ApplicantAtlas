@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -21,6 +22,37 @@ func init() {
 func registerCustomValidations(v *validator.Validate) {
 	v.RegisterValidation("dateformat", dateFormatValidation)
 	v.RegisterValidation("securepwd", securePasswordValidation)
+	v.RegisterValidation("minage", minAgeValidation)
+}
+
+// minAgeValidation is a custom validation function for minimum age.
+func minAgeValidation(fl validator.FieldLevel) bool {
+	params := strings.Split(fl.Param(), ";")
+	if len(params) != 2 {
+		fmt.Println("Invalid number of parameters for minage validator")
+		return false
+	}
+
+	minAge, err := strconv.Atoi(params[0])
+	if err != nil {
+		fmt.Printf("Invalid minage parameter: %v\n", err)
+		return false
+	}
+
+	dateFormat := params[1]
+	dateStr := fl.Field().String()
+	birthDate, err := time.Parse(dateFormat, dateStr)
+	if err != nil {
+		return false // Invalid date format
+	}
+
+	currentTime := time.Now()
+	age := currentTime.Year() - birthDate.Year()
+	if currentTime.Month() < birthDate.Month() || (currentTime.Month() == birthDate.Month() && currentTime.Day() < birthDate.Day()) {
+		age--
+	}
+
+	return age >= minAge
 }
 
 // dateFormatValidation is a custom validation function for date format.
@@ -83,6 +115,11 @@ func TranslateValidationError(fe validator.FieldError) string {
 		}
 
 		return strings.Join(securePasswordMessages(val), "\n")
+	case "minage":
+		params := strings.Split(fe.Param(), ";")
+		agePart := params[0] // Get the age part (first part of the parameter)
+		return fmt.Sprintf("You must be at least %s years old to create an account", agePart)
+
 	default:
 		return fmt.Sprintf("%s is not valid", fe.Field())
 	}

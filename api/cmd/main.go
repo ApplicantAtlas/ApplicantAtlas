@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -15,11 +16,28 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	ginadapter "github.com/awslabs/aws-lambda-go-api-proxy/gin"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	r := gin.Default()
+	corsConfig := cors.DefaultConfig()
+
+	corsAllowedOrigins := os.Getenv("CORS_ALLOW_ORIGINS")
+	// Split the origins into a slice, assuming they are comma-separated
+	allowedOrigins := strings.Split(corsAllowedOrigins, ",")
+
+	// If no origins are specified, error out
+	if len(allowedOrigins) == 0 {
+		log.Fatal("CORS: No allowed origins specified, please specify with CORS_ALLOW_ORIGINS environment variable")
+	}
+
+	corsConfig.AllowOrigins = allowedOrigins
+	corsConfig.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}
+	corsConfig.AllowHeaders = []string{"Origin", "Content-Type", "Accept"}
+	corsConfig.AllowCredentials = true
+	r.Use(cors.New(corsConfig))
 
 	mongoService, cleanup, err := mongodb.NewService()
 	if err != nil {

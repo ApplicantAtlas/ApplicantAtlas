@@ -11,7 +11,7 @@ import (
 type TestStruct struct {
 	Email       string `validate:"required,email"`
 	Password    string `validate:"required,securepwd"`
-	DateOfBirth string `validate:"required,dateformat=01/02/2006"`
+	DateOfBirth string `validate:"required,dateformat=01/02/2006,minage=13;01/02/2006"`
 }
 
 func TestValidateStruct(t *testing.T) {
@@ -26,7 +26,7 @@ func TestValidateStruct(t *testing.T) {
 			input: TestStruct{
 				Email:       "test@example.com",
 				Password:    "ValidPass123!",
-				DateOfBirth: time.Now().Format("01/02/2006"),
+				DateOfBirth: "01/01/2000",
 			},
 			expected: nil,
 		},
@@ -35,7 +35,7 @@ func TestValidateStruct(t *testing.T) {
 			input: TestStruct{
 				Email:       "invalidemail",
 				Password:    "ValidPass123!",
-				DateOfBirth: time.Now().Format("01/02/2006"),
+				DateOfBirth: "01/01/2000",
 			},
 			expected: []string{"Invalid email format"},
 		},
@@ -44,7 +44,7 @@ func TestValidateStruct(t *testing.T) {
 			input: TestStruct{
 				Email:       "test@example.com",
 				Password:    "weak",
-				DateOfBirth: time.Now().Format("01/02/2006"),
+				DateOfBirth: "01/01/2000",
 			},
 			expected: []string{"Password must be at least 12 characters long\nPassword must contain at least one uppercase letter\nPassword must contain at least one number\nPassword must contain at least one of the following special characters: !@#$%^&*"},
 		},
@@ -56,6 +56,15 @@ func TestValidateStruct(t *testing.T) {
 				DateOfBirth: "2020-01-01",
 			},
 			expected: []string{"DateOfBirth is not in the correct format. Expected format: 01/02/2006"},
+		},
+		{
+			name: "Underage",
+			input: TestStruct{
+				Email:       "test@example.com",
+				Password:    "ValidPass123!",
+				DateOfBirth: time.Now().AddDate(-10, 0, 0).Format("01/02/2006"),
+			},
+			expected: []string{"You must be at least 13 years old to create an account"},
 		},
 	}
 

@@ -39,7 +39,7 @@ func loginUser(mongoService mongodb.MongoService) gin.HandlerFunc {
 		if err != nil {
 			if err == mongo.ErrNoDocuments {
 				// User not found
-				c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid credentials"})
+				c.JSON(http.StatusBadRequest, gin.H{"error": "Email and password do not match"})
 				return
 			}
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to login"})
@@ -48,7 +48,7 @@ func loginUser(mongoService mongodb.MongoService) gin.HandlerFunc {
 
 		// Check password
 		if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(req.Password)); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid credentials"})
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Email and password do not match"})
 			return
 		}
 
@@ -69,7 +69,7 @@ type registerRequest struct {
 	FirstName   string `json:"firstName" validate:"required"`
 	LastName    string `json:"lastName" validate:"required"`
 	SchoolEmail string `json:"schoolEmail" validate:"omitempty,email"`
-	Birthday    string `json:"birthday" validate:"required,dateformat=01/02/2006"`
+	Birthday    string `json:"birthday" validate:"required,dateformat=01/02/2006,minage=13;01/02/2006"`
 }
 
 func registerUser(mongoService mongodb.MongoService) gin.HandlerFunc {
