@@ -21,7 +21,6 @@ api.interceptors.request.use(
   }
 );
 
-
 // Response interceptor for API calls
 api.interceptors.response.use(
   response => response,
