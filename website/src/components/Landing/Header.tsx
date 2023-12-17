@@ -5,101 +5,149 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <header className="bg-white shadow-md">
-      <nav className="container mx-auto px-6 py-4 flex justify-between items-center">
-        <Link href="/">
-          <span className="font-bold text-2xl lg:text-4xl">ApplicantAtlas</span>
-        </Link>
-        <div className="block lg:hidden">
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="text-gray-700 focus:outline-none h-6 w-6"
-          >
-            {isMenuOpen ? (
-              <svg
-                viewBox="0 0 365.696 365.696"
-                xmlns="http://www.w3.org/2000/svg"
-                id="fi_1828774"
-              >
-                <path d="m243.1875 182.859375 113.132812-113.132813c12.5-12.5 12.5-32.765624 0-45.246093l-15.082031-15.082031c-12.503906-12.503907-32.769531-12.503907-45.25 0l-113.128906 113.128906-113.132813-113.152344c-12.5-12.5-32.765624-12.5-45.246093 0l-15.105469 15.082031c-12.5 12.503907-12.5 32.769531 0 45.25l113.152344 113.152344-113.128906 113.128906c-12.503907 12.503907-12.503907 32.769531 0 45.25l15.082031 15.082031c12.5 12.5 32.765625 12.5 45.246093 0l113.132813-113.132812 113.128906 113.132812c12.503907 12.5 32.769531 12.5 45.25 0l15.082031-15.082031c12.5-12.503906 12.5-32.769531 0-45.25zm0 0"></path>
-              </svg>
-            ) : (
-              <svg
-                enable-background="new 0 0 32 32"
-                viewBox="0 0 32 32"
-                xmlns="http://www.w3.org/2000/svg"
-                id="fi_6015685"
-              >
-                <g id="Layer_1" fill="rgb(0,0,0)">
-                  <path d="m29 8h-26c-1.1045 0-2-.8955-2-2s.8955-2 2-2h26c1.1045 0 2 .8955 2 2s-.8955 2-2 2z"></path>
-                  <path d="m29 28h-26c-1.1045 0-2-.8955-2-2s.8955-2 2-2h26c1.1045 0 2 .8955 2 2s-.8955 2-2 2z"></path>
-                  <path d="m29 18h-26c-1.1045 0-2-.8955-2-2s.8955-2 2-2h26c1.1045 0 2 .8955 2 2s-.8955 2-2 2z"></path>
-                </g>
-              </svg>
-            )}
-          </button>
-        </div>
-        <div className="hidden lg:block">
-          <ul className="inline-flex">
-            <li>
-              <Link href="#features">
-                <span className="px-4 font-bold">Features</span>
-              </Link>
-            </li>
-            <li>
-              <Link href="#pricing">
-                <span className="px-4 font-bold">Pricing</span>
-              </Link>
-            </li>
-            <li>
-              <Link href="#about">
-                <span className="px-4 font-bold">About</span>
-              </Link>
-            </li>
-            <li>
-              <Link href="#contact">
-                <span className="px-4 font-bold">Contact</span>
-              </Link>
-            </li>
-          </ul>
-        </div>
-      </nav>
+    <>
+      {/* Overlay */}
+      {isMenuOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden"
+          onClick={() => setIsMenuOpen(false)}
+        ></div>
+      )}
+
+      {/* Sidebar Menu */}
       <div
-        className={`${
-          isMenuOpen ? "block" : "hidden"
-        } lg:hidden bg-white shadow-md px-12`}
+        className={`fixed inset-y-0 left-0 transform ${
+          isMenuOpen ? "translate-x-0" : "-translate-x-full"
+        } w-64 z-30 transition duration-300 ease-in-out bg-white shadow-md lg:hidden`}
       >
-        <ul>
+        <div
+          className="flex items-center justify-between p-6"
+          onClick={() => setIsMenuOpen(false)}
+        >
+          <Link href="/">
+            <span className="font-bold text-2xl lg:text-4xl">
+              ApplicantAtlas
+            </span>
+          </Link>
+        </div>
+        <ul className="space-y-6 p-6">
           <li>
-            <Link href="#features">
-              <span className="block px-6 py-2 font-bold text-gray-700 hover:bg-gray-100">
+            <Link href="#features" onClick={() => setIsMenuOpen(false)}>
+              <span className="block py-2 font-bold text-gray-700">
                 Features
               </span>
             </Link>
           </li>
           <li>
-            <Link href="#pricing">
-              <span className="block px-6 py-2 font-bold text-gray-700 hover:bg-gray-100">
+            <Link href="#pricing" onClick={() => setIsMenuOpen(false)}>
+              <span className="block py-2 font-bold text-gray-700">
                 Pricing
               </span>
             </Link>
           </li>
           <li>
-            <Link href="#about">
-              <span className="block px-6 py-2 font-bold text-gray-700 hover:bg-gray-100">
-                About
-              </span>
+            <Link href="#about" onClick={() => setIsMenuOpen(false)}>
+              <span className="block py-2 font-bold text-gray-700">About</span>
             </Link>
           </li>
           <li>
-            <Link href="#contact">
-              <span className="block px-6 py-2 font-bold text-gray-700 hover:bg-gray-100">
+            <Link href="#contact" onClick={() => setIsMenuOpen(false)}>
+              <span className="block py-2 font-bold text-gray-700">
                 Contact
               </span>
             </Link>
           </li>
         </ul>
+
+        <div className="absolute bottom-0 w-full p-6">
+          <Link href="/register">
+            <button className="btn btn-primary w-full">Get Started</button>
+          </Link>
+        </div>
       </div>
-    </header>
+
+      <header className="bg-white shadow-md">
+        <nav className="container mx-auto px-6 py-4 flex justify-between items-center">
+          <Link href="/">
+            <span className="font-bold text-2xl lg:text-4xl">
+              ApplicantAtlas
+            </span>
+          </Link>
+
+          {/* Mobile Menu Toggle Button */}
+          <div className="block lg:hidden">
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="text-gray-700 focus:outline-none h-8 w-8"
+            >
+              {isMenuOpen ? <CloseIcon /> : <MenuIcon />}
+            </button>
+          </div>
+
+          {/* Desktop Menu */}
+          <div className="hidden lg:block">
+            <ul className="inline-flex">
+              <li>
+                <Link href="#features">
+                  <span className="px-4 font-bold">Features</span>
+                </Link>
+              </li>
+              <li>
+                <Link href="#pricing">
+                  <span className="px-4 font-bold">Pricing</span>
+                </Link>
+              </li>
+              <li>
+                <Link href="#about">
+                  <span className="px-4 font-bold">About</span>
+                </Link>
+              </li>
+              <li>
+                <Link href="#contact">
+                  <span className="px-4 font-bold">Contact</span>
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </header>
+    </>
+  );
+}
+
+function MenuIcon() {
+  // SVG code for menu icon
+  return (
+    <svg
+      enable-background="new 0 0 32 32"
+      viewBox="0 0 32 32"
+      xmlns="http://www.w3.org/2000/svg"
+      id="fi_6015685"
+    >
+      <g id="Layer_1" fill="rgb(0,0,0)">
+        <path d="m29 8h-26c-1.1045 0-2-.8955-2-2s.8955-2 2-2h26c1.1045 0 2 .8955 2 2s-.8955 2-2 2z"></path>
+        <path d="m29 28h-26c-1.1045 0-2-.8955-2-2s.8955-2 2-2h26c1.1045 0 2 .8955 2 2s-.8955 2-2 2z"></path>
+        <path d="m29 18h-26c-1.1045 0-2-.8955-2-2s.8955-2 2-2h26c1.1045 0 2 .8955 2 2s-.8955 2-2 2z"></path>
+      </g>
+    </svg>
+  );
+}
+
+function CloseIcon() {
+  // SVG code for close icon
+  return (
+    <svg
+      id="fi_2976286"
+      enable-background="new 0 0 320.591 320.591"
+      viewBox="0 0 320.591 320.591"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <g>
+        <g id="close_1_">
+          <path d="m30.391 318.583c-7.86.457-15.59-2.156-21.56-7.288-11.774-11.844-11.774-30.973 0-42.817l257.812-257.813c12.246-11.459 31.462-10.822 42.921 1.424 10.362 11.074 10.966 28.095 1.414 39.875l-259.331 259.331c-5.893 5.058-13.499 7.666-21.256 7.288z"></path>
+          <path d="m287.9 318.583c-7.966-.034-15.601-3.196-21.257-8.806l-257.813-257.814c-10.908-12.738-9.425-31.908 3.313-42.817 11.369-9.736 28.136-9.736 39.504 0l259.331 257.813c12.243 11.462 12.876 30.679 1.414 42.922-.456.487-.927.958-1.414 1.414-6.35 5.522-14.707 8.161-23.078 7.288z"></path>
+        </g>
+      </g>
+    </svg>
   );
 }
