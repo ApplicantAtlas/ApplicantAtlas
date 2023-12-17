@@ -1,3 +1,4 @@
+import Link from "next/link";
 export default function Hero() {
   return (
     <header className="flex flex-wrap items-center justify-between px-20 py-20 bg-gray-100">
@@ -10,9 +11,11 @@ export default function Hero() {
           events and applicant tracking.
         </p>
         <div className="flex space-x-4">
+          <Link href = "/register">
           <button className="btn btn-primary py-2 px-4 rounded-md shadow-lg">
             Get Started
           </button>
+          </Link>
           <button className="btn btn-outline btn-secondary py-2 px-4 rounded-md shadow-lg">
             Learn More
           </button>
