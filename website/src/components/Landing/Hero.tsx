@@ -1,6 +1,6 @@
 export default function Hero() {
   return (
-    <header className="flex flex-wrap items-center justify-between px-10 py-20 bg-gray-100">
+    <header className="flex flex-wrap items-center justify-between px-20 py-20 bg-gray-100">
       <div className="w-full lg:w-1/2">
         <h1 className="text-5xl font-bold leading-tight mb-4">
           Transform your Hackathon experience with ApplicantAtlas
@@ -18,10 +18,10 @@ export default function Hero() {
           </button>
         </div>
       </div>
-      <div className="w-full lg:w-1/2 lg:flex lg:justify-end mt-8 lg:mt-0">
+      <div className="w-full lg:w-1/2 lg:flex lg:justify-end mt-8 px-2 lg:mt-0">
         <img
-          src="https://via.placeholder.com/400x400"
-          alt="Placeholder"
+          src="/tower.jpg"
+          alt="Hero Tower"
           className="rounded-lg shadow-lg object-cover object-center w-full h-auto max-w-sm lg:max-w-md"
         />
       </div>

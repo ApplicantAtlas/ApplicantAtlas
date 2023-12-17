@@ -10,7 +10,7 @@ export default function Component() {
       <main className="flex-1">
         <Hero />
 
-        <section id="features" className="pt-12 md:pt-24 lg:pt-32">
+        <section id="features" className="py-12 md:py-24 lg:p-32">
           <div className="text-center">
             <h2 className="text-3xl font-bold">Features</h2>
             <p className="py-6">Everything you need to manage your event</p>
@@ -45,7 +45,7 @@ export default function Component() {
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* Free Plan */}
-              <div className="card bg-base-100 shadow-xl">
+              <div className="card bg-gray-100 shadow-xl hover:bg-base-500 hover:shadow-2xl transform hover:scale-105 transition duration-300">
                 <div className="card-body">
                   <h3 className="card-title">Free Plan</h3>
                   <p>
@@ -59,12 +59,12 @@ export default function Component() {
               </div>
 
               {/* Pro Plan */}
-              <div className="card bg-base-100 shadow-xl">
+              <div className="card bg-gray-100 shadow-xl hover:bg-base-500 hover:shadow-2xl transform hover:scale-105 transition duration-300">
                 <div className="card-body">
                   <h3 className="card-title">Pro Plan</h3>
                   <p>
                     Enhanced features and support for growing events.
-                    $29.99/month.
+                    $14.99/month.
                   </p>
                   <div className="card-actions justify-end">
                     <button className="btn btn-primary">Choose Plan</button>
@@ -73,7 +73,7 @@ export default function Component() {
               </div>
 
               {/* Enterprise Plan */}
-              <div className="card bg-base-100 shadow-xl">
+              <div className="card bg-gray-100 shadow-xl hover:bg-base-500 hover:shadow-2xl transform hover:scale-105 transition duration-300">
                 <div className="card-body">
                   <h3 className="card-title">Enterprise Plan</h3>
                   <p>
