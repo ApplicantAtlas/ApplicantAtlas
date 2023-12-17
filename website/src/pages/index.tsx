@@ -45,7 +45,7 @@ export default function Component() {
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* Free Plan */}
-              <div className="card bg-gray-100 shadow-xl hover:bg-base-500 hover:shadow-2xl transform hover:scale-105 transition duration-300">
+              <div className="card bg-base-100 shadow-xl hover:bg-base-500 hover:shadow-2xl transform hover:scale-105 transition duration-300">
                 <div className="card-body">
                   <h3 className="card-title">Free Plan</h3>
                   <p>
@@ -59,7 +59,7 @@ export default function Component() {
               </div>
 
               {/* Pro Plan */}
-              <div className="card bg-gray-100 shadow-xl hover:bg-base-500 hover:shadow-2xl transform hover:scale-105 transition duration-300">
+              <div className="card bg-base-100 shadow-xl hover:bg-base-500 hover:shadow-2xl transform hover:scale-105 transition duration-300">
                 <div className="card-body">
                   <h3 className="card-title">Pro Plan</h3>
                   <p>
@@ -73,7 +73,7 @@ export default function Component() {
               </div>
 
               {/* Enterprise Plan */}
-              <div className="card bg-gray-100 shadow-xl hover:bg-base-500 hover:shadow-2xl transform hover:scale-105 transition duration-300">
+              <div className="card bg-base-100 shadow-xl hover:bg-base-500 hover:shadow-2xl transform hover:scale-105 transition duration-300">
                 <div className="card-body">
                   <h3 className="card-title">Enterprise Plan</h3>
                   <p>
