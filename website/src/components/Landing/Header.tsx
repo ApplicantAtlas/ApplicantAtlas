@@ -59,9 +59,11 @@ export default function Header() {
           </li>
         </ul>
 
-        <div className="absolute bottom-0 w-full p-6">
+        <div className="absolute bottom-0 w-full p-6 flex justify-center">
           <Link href="/register">
-            <button className="btn btn-primary w-full">Get Started</button>
+            <button className="bg-primary rounded-lg py-2 hover:scale-105">
+              <span className="px-4 font-bold text-white text-lg">Get Started</span>
+            </button>
           </Link>
         </div>
       </div>
@@ -86,25 +88,42 @@ export default function Header() {
 
           {/* Desktop Menu */}
           <div className="hidden lg:block">
-            <ul className="inline-flex">
-              <li>
+            <ul className="inline-flex items-center">
+              <li className="mx-3">
                 <Link href="#features">
-                  <span className="px-4 font-bold">Features</span>
+                  <span className="font-bold text-gray-700 hover:text-gray-900">
+                    Features
+                  </span>
                 </Link>
               </li>
-              <li>
+              <li className="mx-3">
                 <Link href="#pricing">
-                  <span className="px-4 font-bold">Pricing</span>
+                  <span className="font-bold text-gray-700 hover:text-gray-900">
+                    Pricing
+                  </span>
                 </Link>
               </li>
-              <li>
+              <li className="mx-3">
                 <Link href="#about">
-                  <span className="px-4 font-bold">About</span>
+                  <span className="font-bold text-gray-700 hover:text-gray-900">
+                    About
+                  </span>
                 </Link>
               </li>
-              <li>
+              <li className="mx-3">
                 <Link href="#contact">
-                  <span className="px-4 font-bold">Contact</span>
+                  <span className="font-bold text-gray-700 hover:text-gray-900">
+                    Contact
+                  </span>
+                </Link>
+              </li>
+              <li className="mx-1.5">
+                <Link href="/register">
+                  <button className="bg-primary rounded-lg py-2 hover:scale-105">
+                    <span className="px-3 font-bold text-white">
+                      Get Started
+                    </span>
+                  </button>
                 </Link>
               </li>
             </ul>
