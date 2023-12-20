@@ -9,7 +9,7 @@ import (
 // Event represents event in database
 type Event struct {
 	ID            primitive.ObjectID   `bson:"_id,omitempty"`
-	EventName     string               `bson:"EventName" json:"EventName"`
+	EventName     string               `bson:"eventName" json:"eventName"`
 	OrganizerID   []primitive.ObjectID `bson:"organizerID" json:"organizerID"`
 	EventTime     time.Time            `bson:"eventTime" json:"eventTime"`
 	EventLocation string               `bson:"eventLocation" json:"eventLocation"`
