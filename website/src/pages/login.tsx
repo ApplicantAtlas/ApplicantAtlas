@@ -21,7 +21,6 @@ const LoginPage = () => {
     e.preventDefault();
     AuthService.login({ email, password } as User).then((_) => {
       eventEmitter.emit('success', 'Successfully logged in!');
-      //generate session token here? idk
       router.push('/');
     }).catch((err) => {
       eventEmitter.emit('apiError', err.response.data.error);
