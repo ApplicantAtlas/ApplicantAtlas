@@ -23,7 +23,7 @@ export default function Hero() {
       </div>
       <div className="w-full lg:w-1/2 lg:flex lg:justify-end mt-8 px-2 lg:mt-0">
         <img
-          src="/tower.jpg"
+          src="/assets/tower.jpg"
           alt="Hero Tower"
           className="rounded-lg shadow-lg object-cover object-center w-full h-auto max-w-sm lg:max-w-md"
         />
