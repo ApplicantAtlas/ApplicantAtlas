@@ -21,7 +21,7 @@ const LoginPage = () => {
     e.preventDefault();
     AuthService.login({ email, password } as User).then((_) => {
       eventEmitter.emit('success', 'Successfully logged in!');
-      router.push('/');
+      router.push('/services');
     }).catch((err) => {
       eventEmitter.emit('apiError', err.response.data.error);
     });

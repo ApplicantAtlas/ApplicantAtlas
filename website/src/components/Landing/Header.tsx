@@ -138,7 +138,7 @@ function MenuIcon() {
   // SVG code for menu icon
   return (
     <svg
-      enable-background="new 0 0 32 32"
+      enableBackground="new 0 0 32 32"
       viewBox="0 0 32 32"
       xmlns="http://www.w3.org/2000/svg"
       id="fi_6015685"
@@ -157,7 +157,7 @@ function CloseIcon() {
   return (
     <svg
       id="fi_2976286"
-      enable-background="new 0 0 320.591 320.591"
+      enableBackground="new 0 0 320.591 320.591"
       viewBox="0 0 320.591 320.591"
       xmlns="http://www.w3.org/2000/svg"
     >
