@@ -3,7 +3,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import type { Metadata } from 'next'
 import AuthService from '@/services/AuthService';
-import { User } from '../types/User';
+import { User } from '../types/models/User';
 import { eventEmitter } from '@/events/EventEmitter';
 import { useRouter } from 'next/router';
 // TODO: Add metadata

@@ -1,7 +1,7 @@
 // AuthService.ts
 import { AxiosResponse } from "axios";
 import api from "./AxiosInterceptor";
-import { User } from "@/types/User";
+import { User } from "@/types/models/User";
 import {jwtDecode} from 'jwt-decode';
 
 const register = async (u: User): Promise<AxiosResponse> => {
