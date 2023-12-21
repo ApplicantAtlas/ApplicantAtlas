@@ -12,7 +12,7 @@ export default function Component() {
 
         <section id="features" className="pt-12 md:pt-24 lg:pt-32">
           <div className="text-center">
-            <h2 className="text-3xl font-bold">Featureefadiojiowesfjidws</h2>
+            <h2 className="text-3xl font-bold">Features</h2>
             <p className="py-6">Everything you need to manage your event</p>
           </div>
           
