@@ -5,7 +5,7 @@ import type { Metadata } from 'next'
 import AuthService from '@/services/AuthService';
 import { User } from '../types/User';
 import { eventEmitter } from '@/events/EventEmitter';
-
+import { useRouter } from 'next/router';
 // TODO: Add metadata
 export const metadata: Metadata = {
   title: 'ApplicantAtlas',
@@ -13,6 +13,7 @@ export const metadata: Metadata = {
 }
 
 const LoginPage = () => {
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -20,6 +21,7 @@ const LoginPage = () => {
     e.preventDefault();
     AuthService.login({ email, password } as User).then((_) => {
       eventEmitter.emit('success', 'Successfully logged in!');
+      router.push('/user/dashboard');
     }).catch((err) => {
       eventEmitter.emit('apiError', err.response.data.error);
     });
