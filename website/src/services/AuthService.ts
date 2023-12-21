@@ -32,7 +32,7 @@ const deleteUser = async (): Promise<AxiosResponse> => {
 };
 
 const isAuth = (): boolean => {
-  return Boolean(localStorage.getItem('user'));
+  return Boolean(localStorage.getItem('token'));
 };
 
 export default {

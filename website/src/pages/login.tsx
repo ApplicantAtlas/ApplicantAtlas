@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import type { Metadata } from 'next'
@@ -16,6 +16,12 @@ const LoginPage = () => {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  useEffect(() => {
+    if (AuthService.isAuth()) {
+      router.push('/user/dashboard');
+    }
+  })
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

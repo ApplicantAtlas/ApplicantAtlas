@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import AuthService from '@/services/AuthService';
@@ -14,6 +14,12 @@ const RegistrationPage = () => {
   const [schoolEmail, setSchoolEmail] = useState('');
   const [birthday, setBirthday] = useState('');
   const [password, setPassword] = useState('');
+
+  useEffect(() => {
+    if (AuthService.isAuth()) {
+      router.push('/user/dashboard');
+    }
+  })
 
   const formatDate = (dateString: string): string => {
     console.log(dateString)

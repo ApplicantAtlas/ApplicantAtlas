@@ -3,6 +3,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import type { Metadata } from 'next'
 import Header from '@/components/Landing/Header';
+import withAuth from '@/middleware/WithAuth';
 
 const Dashboard: React.FC = () => {
     return (
@@ -30,4 +31,4 @@ const Dashboard: React.FC = () => {
     );
 };
 
-export default Dashboard;
+export default  withAuth(Dashboard);
