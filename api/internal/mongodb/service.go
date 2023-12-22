@@ -20,7 +20,7 @@ type MongoService interface {
 	DeleteUserByEmail(ctx context.Context, email string) (*mongo.DeleteResult, error)
 	CreateEvent(ctx context.Context, event models.Event) (*mongo.InsertOneResult, error)
 	UpdateEventMetadata(ctx *gin.Context, eventID primitive.ObjectID, metadata models.EventMetadata) (*mongo.UpdateResult, error)
-	ListEventsMetadata(ctx context.Context, filter bson.M) ([]models.EventMetadata, error)
+	ListEventsMetadata(ctx context.Context, filter bson.M) ([]models.Event, error)
 }
 
 // Service implements MongoService with a mongo.Client.
@@ -116,9 +116,14 @@ func (s *Service) UpdateEventMetadata(ctx *gin.Context, eventID primitive.Object
 	return s.Database.Collection("events").UpdateOne(ctx, bson.M{"_id": eventID}, update)
 }
 
+type EventMetadataWithID struct {
+	ID       primitive.ObjectID `json:"id"`
+	Metadata models.EventMetadata
+}
+
 // ListEventsMetadata retrieves events based on a filter
-func (s *Service) ListEventsMetadata(ctx context.Context, filter bson.M) ([]models.EventMetadata, error) {
-	var events []models.EventMetadata
+func (s *Service) ListEventsMetadata(ctx context.Context, filter bson.M) ([]models.Event, error) {
+	var events []models.Event
 
 	cursor, err := s.Database.Collection("events").Find(ctx, filter)
 	if err != nil {
@@ -131,7 +136,12 @@ func (s *Service) ListEventsMetadata(ctx context.Context, filter bson.M) ([]mode
 		if err := cursor.Decode(&event); err != nil {
 			return nil, err
 		}
-		events = append(events, event.Metadata)
+
+		// We re-create the event here because we don't want to return the organizer IDs or hidden fields
+		events = append(events, models.Event{
+			ID:       event.ID,
+			Metadata: event.Metadata,
+		})
 	}
 
 	if err := cursor.Err(); err != nil {
@@ -140,7 +150,7 @@ func (s *Service) ListEventsMetadata(ctx context.Context, filter bson.M) ([]mode
 
 	// If events is null then return an empty slice instead
 	if events == nil {
-		return []models.EventMetadata{}, nil
+		return []models.Event{}, nil
 	}
 
 	return events, nil

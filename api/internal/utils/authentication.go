@@ -12,6 +12,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 var jwtSecret []byte
@@ -30,6 +31,7 @@ func init() {
 // GenerateJWT generates a JWT token for the given user
 func GenerateJWT(user *models.User) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"id":        user.ID.Hex(),
 		"email":     user.Email,
 		"firstName": user.FirstName,
 		"lastName":  user.LastName,
@@ -54,7 +56,12 @@ func VerifyJWT(tokenString string) (*models.User, error) {
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		userID, err := hexToObjectID(claims["id"].(string))
+		if err != nil {
+			return nil, err
+		}
 		return &models.User{
+			ID:        userID,
 			Email:     claims["email"].(string),
 			FirstName: claims["firstName"].(string),
 			LastName:  claims["lastName"].(string),
@@ -89,4 +96,13 @@ func generateRandomSecret(length int) []byte {
 		log.Fatalf("Failed to generate random JWT secret: %v", err)
 	}
 	return b
+}
+
+// hexToObjectID converts a hex string to a primitive.ObjectID
+func hexToObjectID(hexStr string) (primitive.ObjectID, error) {
+	objID, err := primitive.ObjectIDFromHex(hexStr)
+	if err != nil {
+		return primitive.NilObjectID, err
+	}
+	return objID, nil
 }

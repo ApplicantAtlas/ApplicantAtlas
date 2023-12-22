@@ -70,6 +70,6 @@ func (m *MockMongoService) UpdateEventMetadata(ctx *gin.Context, eventID primiti
 	return nil, nil
 }
 
-func (m *MockMongoService) ListEventsMetadata(ctx context.Context, filter bson.M) ([]models.EventMetadata, error) {
+func (m *MockMongoService) ListEventsMetadata(ctx context.Context, filter bson.M) ([]models.Event, error) {
 	return nil, nil
 }

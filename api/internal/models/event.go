@@ -6,7 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// TODO: I think I can probably add "validate" tags to these structs to consolidate the validation logic
+// TODO: Add "validate" tags to these structs
 
 // Event represents an event in the database
 type Event struct {
@@ -23,13 +23,13 @@ type EventMetadata struct {
 	EventLat float64 `bson:"lat,omitempty" json:"lat,omitempty"` // TODO: Derive this from address
 	EventLon float64 `bson:"lon,omitempty" json:"lon,omitempty"` // TODO: Derive this from address
 
-	StartTime time.Time `bson:"startTime,omitempty" json:"startTime,omitempty"`
-	EndTime   time.Time `bson:"endTime,omitempty" json:"endTime,omitempty"`
-	Timezone  string    `bson:"timezone,omitempty" json:"timezone,omitempty"`
+	StartTime time.Time `bson:"startTime,omitempty" json:"startTime,omitempty"`                   // RFC3339
+	EndTime   time.Time `bson:"endTime,omitempty" json:"endTime,omitempty"`                       // RFC3339
+	Timezone  string    `bson:"timezone,omitempty" json:"timezone,omitempty" validate:"timezone"` //  IANA Time Zone
 
-	Visibility       bool     `bson:"visibility,omitempty" json:"visibility,omitempty"`
+	Visibility       bool     `bson:"visibility,omitempty" json:"visibility,omitempty" validate:"requireExistsIf=true;Address;ContactEmail;Description"`
 	Website          string   `bson:"website,omitempty" json:"website,omitempty"`
-	Description      string   `bson:"description,omitempty" json:"description,omitempty"`
+	Description      string   `bson:"description,omitempty" json:"description,omitempty" validate:"max=500"`
 	SocialMediaLinks []string `bson:"socialMediaLinks,omitempty" json:"socialMediaLinks,omitempty"`
 	EventTags        []string `bson:"eventTags,omitempty" json:"eventTags,omitempty"`
 	ContactEmail     string   `bson:"contactEmail,omitempty" json:"contactEmail,omitempty"`

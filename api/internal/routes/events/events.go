@@ -15,8 +15,8 @@ import (
 // RegisterRoutes sets up the routes for event management
 func RegisterRoutes(r *gin.RouterGroup, mongoService mongodb.MongoService) {
 	r.GET("/", listEventsHandler(mongoService))
-	r.POST("/", createEventHandler(mongoService), middlewares.JWTAuthMiddleware())
-	r.PUT("/:event_id", updateEventHandler(mongoService), middlewares.JWTAuthMiddleware())
+	r.POST("/", middlewares.JWTAuthMiddleware(), createEventHandler(mongoService))
+	r.PUT("/:event_id", middlewares.JWTAuthMiddleware(), updateEventHandler(mongoService))
 }
 
 func listEventsHandler(mongoService mongodb.MongoService) gin.HandlerFunc {
@@ -76,6 +76,8 @@ func createEventHandler(mongoService mongodb.MongoService) gin.HandlerFunc {
 
 		// Insert the new event into the database
 		mongoService.CreateEvent(c, event)
+
+		c.JSON(http.StatusOK, gin.H{"message": "Event created successfully"})
 	}
 }
 
