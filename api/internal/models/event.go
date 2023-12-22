@@ -17,7 +17,7 @@ type Event struct {
 
 // EventMetadata represents the user defined metadata for an event
 type EventMetadata struct {
-	Name string `bson:"name" json:"name"` // this is the only required field
+	Name string `bson:"name" json:"name" validate:"required,max=30"` // this is the only required field
 
 	Address  Address `bson:"address,omitempty" json:"address,omitempty"`
 	EventLat float64 `bson:"lat,omitempty" json:"lat,omitempty"` // TODO: Derive this from address

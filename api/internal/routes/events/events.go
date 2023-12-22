@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -17,6 +18,7 @@ func RegisterRoutes(r *gin.RouterGroup, mongoService mongodb.MongoService) {
 	r.GET("/", listEventsHandler(mongoService))
 	r.POST("/", middlewares.JWTAuthMiddleware(), createEventHandler(mongoService))
 	r.PUT("/:event_id", middlewares.JWTAuthMiddleware(), updateEventHandler(mongoService))
+	r.GET("/my-events", middlewares.JWTAuthMiddleware(), listMyEventsHandler(mongoService))
 }
 
 func listEventsHandler(mongoService mongodb.MongoService) gin.HandlerFunc {
@@ -118,5 +120,29 @@ func updateEventHandler(mongoService mongodb.MongoService) gin.HandlerFunc {
 		}
 
 		c.JSON(http.StatusOK, gin.H{"message": "Event updated successfully"})
+	}
+}
+
+func listMyEventsHandler(mongoService mongodb.MongoService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		authenticatedUser, ok := utils.GetUserFromContext(c)
+		if !ok {
+			return
+		}
+
+		// Ensure user id exists
+		if authenticatedUser.ID == primitive.NilObjectID {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "User ID not found"})
+			return
+		}
+
+		// List all events where the user is an organizer
+		events, err := mongoService.ListEventsMetadata(c, bson.M{"organizerIDs": authenticatedUser.ID})
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to list events"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"events": events})
 	}
 }

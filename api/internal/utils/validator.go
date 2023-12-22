@@ -167,6 +167,8 @@ func TranslateValidationError(fe validator.FieldError) string {
 		fieldsToCheck := params[1:]
 
 		return fmt.Sprintf("You must provide %s if %s is %s", strings.Join(fieldsToCheck, ", "), fe.Field(), boolStr)
+	case "max":
+		return fmt.Sprintf("%s must be at most %s characters long", fe.Field(), fe.Param())
 	default:
 		return fmt.Sprintf("%s is not valid", fe.Field())
 	}
