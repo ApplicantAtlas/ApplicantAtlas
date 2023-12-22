@@ -19,6 +19,7 @@ type MongoService interface {
 	InsertUser(ctx context.Context, user models.User) (*mongo.InsertOneResult, error)
 	DeleteUserByEmail(ctx context.Context, email string) (*mongo.DeleteResult, error)
 	CreateEvent(ctx context.Context, event models.Event) (*mongo.InsertOneResult, error)
+	DeleteEvent(ctx *gin.Context, eventID primitive.ObjectID) (*mongo.DeleteResult, error)
 	UpdateEventMetadata(ctx *gin.Context, eventID primitive.ObjectID, metadata models.EventMetadata) (*mongo.UpdateResult, error)
 	ListEventsMetadata(ctx context.Context, filter bson.M) ([]models.Event, error)
 }
@@ -154,4 +155,34 @@ func (s *Service) ListEventsMetadata(ctx context.Context, filter bson.M) ([]mode
 	}
 
 	return events, nil
+}
+
+// DeleteEvent deletes an event by its ID
+func (s *Service) DeleteEvent(ctx *gin.Context, eventID primitive.ObjectID) (*mongo.DeleteResult, error) {
+	authenticatedUser, ok := utils.GetUserFromContext(ctx)
+	if !ok {
+		return nil, ErrUserNotAuthenticated
+	}
+
+	// Lookup the event
+	var event models.Event
+	err := s.Database.Collection("events").FindOne(ctx, bson.M{"_id": eventID}).Decode(&event)
+	if err != nil {
+		return nil, err
+	}
+
+	// Ensure the user is an organizer
+	isOrganizer := false
+	for _, organizerID := range event.OrganizerIDs {
+		if organizerID == authenticatedUser.ID {
+			isOrganizer = true
+			break
+		}
+	}
+	if !isOrganizer {
+		return nil, ErrUserNotAuthorized
+	}
+
+	// Delete the event
+	return s.Database.Collection("events").DeleteOne(ctx, bson.M{"_id": eventID})
 }

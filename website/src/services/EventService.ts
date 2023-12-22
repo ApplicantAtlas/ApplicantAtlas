@@ -5,11 +5,6 @@ type ListEventsResponse = {
     events: EventModel[];
 };
 
-type CreateEventResponse = {
-    message: string;
-    id: string;
-};
-
 type UpdateEventResponse = {
     message: string;
 };
@@ -23,14 +18,22 @@ export const listEvents = async (): Promise<AxiosResponse<ListEventsResponse>> =
     return api.get<ListEventsResponse>(`/events`);
 };
 
-
 type CreateEventRequest = {
     name: string;
+};
+
+type CreateEventResponse = {
+    message: string;
+    id: string;
 };
 
 export const createEvent = async (requestData: CreateEventRequest): Promise<AxiosResponse<CreateEventResponse>> => {
     return api.post<CreateEventResponse>(`/events`, requestData);
 };
+
+export const deleteEvent = async (eventId: string): Promise<AxiosResponse> => {
+    return api.delete(`/events/${eventId}`);
+}
 
 type UpdateEventMetadataRequest = {
     metadata: EventMetadata;

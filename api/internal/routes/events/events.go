@@ -15,9 +15,10 @@ import (
 
 // RegisterRoutes sets up the routes for event management
 func RegisterRoutes(r *gin.RouterGroup, mongoService mongodb.MongoService) {
-	r.GET("/", listEventsHandler(mongoService))
-	r.POST("/", middlewares.JWTAuthMiddleware(), createEventHandler(mongoService))
+	r.GET("", listEventsHandler(mongoService))
+	r.POST("", middlewares.JWTAuthMiddleware(), createEventHandler(mongoService))
 	r.PUT("/:event_id", middlewares.JWTAuthMiddleware(), updateEventHandler(mongoService))
+	r.DELETE("/:event_id", middlewares.JWTAuthMiddleware(), deleteEventHandler(mongoService))
 	r.GET("/my-events", middlewares.JWTAuthMiddleware(), listMyEventsHandler(mongoService))
 }
 
@@ -148,5 +149,30 @@ func listMyEventsHandler(mongoService mongodb.MongoService) gin.HandlerFunc {
 		}
 
 		c.JSON(http.StatusOK, gin.H{"events": events})
+	}
+}
+
+func deleteEventHandler(mongoService mongodb.MongoService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		eventID := c.Param("event_id")
+
+		// Convert eventID to ObjectID
+		objID, err := primitive.ObjectIDFromHex(eventID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid event ID"})
+			return
+		}
+
+		_, err = mongoService.DeleteEvent(c, objID)
+		if err != nil {
+			if err == mongodb.ErrUserNotAuthenticated {
+				c.JSON(http.StatusUnauthorized, gin.H{"error": "User not an organizer of this event"})
+				return
+			}
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete event"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"message": "Event deleted successfully"})
 	}
 }

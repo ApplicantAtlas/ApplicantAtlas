@@ -48,6 +48,11 @@ func main() {
 	// Setup routes
 	routes.SetupRoutes(r, mongoService)
 
+	// Handle 404s
+	r.NoRoute(func(c *gin.Context) {
+		c.JSON(http.StatusNotFound, gin.H{"error": "API route not found"})
+	})
+
 	// Check if running in AWS Lambda or not
 	if runningInAWSLambda() {
 		// Create a Lambda server with the Gin router
