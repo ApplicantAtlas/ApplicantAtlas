@@ -22,7 +22,6 @@ const RegistrationPage = () => {
   })
 
   const formatDate = (dateString: string): string => {
-    console.log(dateString)
     const [year, month, day] = dateString.split('-');
     return `${month}/${day}/${year}`;
   };
