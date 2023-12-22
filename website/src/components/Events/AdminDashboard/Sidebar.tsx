@@ -8,7 +8,6 @@ interface SidebarProps {
 }
 
 interface SidebarLink {
-    href: string;
     title: string;
     sectionName: string;
 }
@@ -17,11 +16,12 @@ const Sidebar: React.FC<SidebarProps> = ({ eventDetails, activeSection, setActiv
     let eventId = eventDetails?.ID;
 
     const links: SidebarLink[] = [
-        { href: `/events/${eventId}/admin`, title: 'Dashboard', sectionName: 'dashboard' },
-        { href: `/events/${eventId}/admin/rsvps`, title: 'RSVP', sectionName: 'rsvps' },
-        { href: `/events/${eventId}/admin/applications`, title: 'Applications', sectionName: 'applications' },
-        { href: `/events/${eventId}/admin/announcements`, title: 'Announcements', sectionName: 'announcements' },
-        { href: `/events/${eventId}/admin/settings`, title: 'Settings', sectionName: 'settings' },
+        { title: 'Dashboard', sectionName: 'dashboard' },
+        { title: 'Event Details', sectionName: 'event-details'},
+        { title: 'Applications', sectionName: 'applications' },
+        { title: 'RSVP', sectionName: 'rsvps' },
+        { title: 'Announcements', sectionName: 'announcements' },
+        { title: 'Settings', sectionName: 'settings' },
     ];
 
     const handleLinkClick = (sectionName: string) => {
@@ -34,10 +34,8 @@ const Sidebar: React.FC<SidebarProps> = ({ eventDetails, activeSection, setActiv
                 <h2 className="text-lg font-bold">{eventDetails?.metadata.name}</h2>
                 <ul className="menu menu-compact flex flex-col p-0">
                     {links.map(link => (
-                        <li key={link.href} className={`${activeSection === link.sectionName ? 'bg-primary text-primary-content rounded transition-colors duration-300' : ''}`}>
-                           
+                        <li key={link.sectionName} className={`${activeSection === link.sectionName ? 'bg-primary text-primary-content rounded transition-colors duration-300' : ''}`}>
                                 <span onClick={() => handleLinkClick(link.sectionName)}>{link.title}</span>
-                            
                         </li>
                     ))}
                 </ul>

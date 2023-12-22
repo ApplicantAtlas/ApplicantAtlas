@@ -3,11 +3,11 @@ import { deleteEvent } from "@/services/EventService";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 
-interface DashboardProps {
+interface SettingsProps {
   eventDetails: EventModel | null;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ eventDetails }) => {
+const Settings: React.FC<SettingsProps> = ({ eventDetails }) => {
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const { showToast } = useToast()
     const router = useRouter();
@@ -54,4 +54,4 @@ const Dashboard: React.FC<DashboardProps> = ({ eventDetails }) => {
     );
 };
 
-export default Dashboard;
+export default Settings;

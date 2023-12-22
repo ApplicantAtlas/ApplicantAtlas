@@ -1,10 +1,10 @@
 import React from "react";
 
-interface DashboardProps {
+interface ApplicationsProps {
   eventDetails: EventModel | null;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ eventDetails }) => {
+const Applications: React.FC<ApplicationsProps> = ({ eventDetails }) => {
   return (
     <div>
       <h1>Applications</h1>
@@ -14,4 +14,4 @@ const Dashboard: React.FC<DashboardProps> = ({ eventDetails }) => {
   );
 };
 
-export default Dashboard;
+export default Applications;

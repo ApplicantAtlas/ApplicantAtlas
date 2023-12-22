@@ -1,17 +1,17 @@
 import React from "react";
 
-interface RSVPSProps {
+interface EventDetailsProps {
   eventDetails: EventModel | null;
 }
 
-const RSVPS: React.FC<RSVPSProps> = ({ eventDetails }) => {
+const EventDetails: React.FC<EventDetailsProps> = ({ eventDetails }) => {
   return (
     <div>
-      <h1>RSVPs</h1>
+      <h1>Event Details</h1>
       <h1>Name: {eventDetails?.metadata.name}</h1>
       <p>Description: {eventDetails?.metadata.description}</p>
     </div>
   );
 };
 
-export default RSVPS;
+export default EventDetails;

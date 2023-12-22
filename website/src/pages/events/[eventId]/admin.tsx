@@ -5,6 +5,7 @@ import Announcements from '@/components/Events/AdminDashboard/Tabs/Announcements
 import Applications from '@/components/Events/AdminDashboard/Tabs/Applications';
 import RSVPs from '@/components/Events/AdminDashboard/Tabs/RSVPs';
 import Settings from '@/components/Events/AdminDashboard/Tabs/Settings';
+import EventDetails from '@/components/Events/AdminDashboard/Tabs/EventDetails';
 
 const AdminDashboard: React.FC = () => {
     const [activeSection, setActiveSection] = useState('dashboard');
@@ -19,6 +20,7 @@ const AdminDashboard: React.FC = () => {
                         {activeSection === 'applications' && <Applications eventDetails={eventDetails} />}
                         {activeSection === 'rsvps' && <RSVPs eventDetails={eventDetails} />}
                         {activeSection === 'settings' && <Settings eventDetails={eventDetails} />}
+                        {activeSection === 'event-details' && <EventDetails eventDetails={eventDetails} />}
                     </>
                 );
             }}
