@@ -77,9 +77,13 @@ func createEventHandler(mongoService mongodb.MongoService) gin.HandlerFunc {
 		}
 
 		// Insert the new event into the database
-		mongoService.CreateEvent(c, event)
+		rec, err := mongoService.CreateEvent(c, event)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create event"})
+			return
+		}
 
-		c.JSON(http.StatusOK, gin.H{"message": "Event created successfully"})
+		c.JSON(http.StatusOK, gin.H{"message": "Event created successfully", "id": rec.InsertedID})
 	}
 }
 
