@@ -20,6 +20,7 @@ type MongoService interface {
 	DeleteUserByEmail(ctx context.Context, email string) (*mongo.DeleteResult, error)
 	CreateEvent(ctx context.Context, event models.Event) (*mongo.InsertOneResult, error)
 	DeleteEvent(ctx *gin.Context, eventID primitive.ObjectID) (*mongo.DeleteResult, error)
+	GetEvent(ctx *gin.Context, eventID primitive.ObjectID) (*models.Event, error)
 	UpdateEventMetadata(ctx *gin.Context, eventID primitive.ObjectID, metadata models.EventMetadata) (*mongo.UpdateResult, error)
 	ListEventsMetadata(ctx context.Context, filter bson.M) ([]models.Event, error)
 }
@@ -88,7 +89,7 @@ func (s *Service) CreateEvent(ctx context.Context, event models.Event) (*mongo.I
 
 // Update an event by its ID but only if the user is an organizer
 func (s *Service) UpdateEventMetadata(ctx *gin.Context, eventID primitive.ObjectID, metadata models.EventMetadata) (*mongo.UpdateResult, error) {
-	authenticatedUser, ok := utils.GetUserFromContext(ctx)
+	authenticatedUser, ok := utils.GetUserFromContext(ctx, true)
 	if !ok {
 		return nil, ErrUserNotAuthenticated
 	}
@@ -159,7 +160,7 @@ func (s *Service) ListEventsMetadata(ctx context.Context, filter bson.M) ([]mode
 
 // DeleteEvent deletes an event by its ID
 func (s *Service) DeleteEvent(ctx *gin.Context, eventID primitive.ObjectID) (*mongo.DeleteResult, error) {
-	authenticatedUser, ok := utils.GetUserFromContext(ctx)
+	authenticatedUser, ok := utils.GetUserFromContext(ctx, true)
 	if !ok {
 		return nil, ErrUserNotAuthenticated
 	}
@@ -185,4 +186,42 @@ func (s *Service) DeleteEvent(ctx *gin.Context, eventID primitive.ObjectID) (*mo
 
 	// Delete the event
 	return s.Database.Collection("events").DeleteOne(ctx, bson.M{"_id": eventID})
+}
+
+// GetEvent retrieves an event by its ID
+// Returns metadata if the user is not an organizer (through ListEventsMetadata)
+// Returns the full event if the user is an organizer
+func (s *Service) GetEvent(ctx *gin.Context, eventID primitive.ObjectID) (*models.Event, error) {
+	authenticatedUser, isAuthenticated := utils.GetUserFromContext(ctx, false)
+	if authenticatedUser == nil || authenticatedUser.ID == primitive.NilObjectID {
+		isAuthenticated = false
+	}
+
+	// Lookup the event
+	var event models.Event
+	err := s.Database.Collection("events").FindOne(ctx, bson.M{"_id": eventID}).Decode(&event)
+	if err != nil {
+		return nil, err
+	}
+
+	// Ensure the user is an organizer
+	isOrganizer := false
+	if isAuthenticated {
+		for _, organizerID := range event.OrganizerIDs {
+			if organizerID == authenticatedUser.ID {
+				isOrganizer = true
+				break
+			}
+		}
+	}
+
+	// If the user is not an organizer then return the metadata
+	if !isOrganizer {
+		return &models.Event{
+			ID:       event.ID,
+			Metadata: event.Metadata,
+		}, nil
+	}
+
+	return &event, nil
 }

@@ -127,7 +127,7 @@ func registerUser(mongoService mongodb.MongoService) gin.HandlerFunc {
 // TODO: We should base this on the user's id instead of email
 func deleteUser(mongoService mongodb.MongoService) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		authenticatedUser, ok := utils.GetUserFromContext(c)
+		authenticatedUser, ok := utils.GetUserFromContext(c, true)
 		if !ok {
 			return // Error is handled in GetUserFromContext
 		}

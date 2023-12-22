@@ -6,7 +6,6 @@ import withAuth from "@/middleware/WithAuth";
 import {
   listMyEvents,
   createEvent,
-  deleteEvent,
 } from "@/services/EventService";
 import LoadingSpinner from "@/components/Loading/LoadingSpinner";
 import { ToastType, useToast } from "@/components/Toast/ToastContext";
@@ -46,19 +45,6 @@ const Dashboard: React.FC = () => {
           ToastType.Success
         );
         router.push(`/events/${r.data.id}/admin`);
-      })
-      .catch(() => {})
-      .finally(() => {
-        setIsLoading(false);
-      });
-  };
-
-  const handleDeleteEvent = async (eventId: string) => {
-    setIsLoading(true);
-    deleteEvent(eventId)
-      .then(() => {
-        showToast("Event deleted successfully", ToastType.Success);
-        fetchEvents();
       })
       .catch(() => {})
       .finally(() => {
@@ -136,13 +122,6 @@ const Dashboard: React.FC = () => {
                       Edit Event
                     </span>
                   </Link>
-                  <button
-                    onClick={() => handleDeleteEvent(event.ID)}
-                    className="btn btn-outline btn-error ml-2"
-                  >
-                    {/* TODO: Remove and move to event admin page, this is just for testing */}
-                    Delete Event
-                  </button>
                 </div>
               </div>
             </div>

@@ -36,6 +36,7 @@ type EventMetadata struct {
 }
 
 // Address represents a physical address
+// TODO: Add validation
 type Address struct {
 	Street     string `bson:"street,omitempty" json:"street,omitempty"`
 	City       string `bson:"city,omitempty" json:"city,omitempty"`

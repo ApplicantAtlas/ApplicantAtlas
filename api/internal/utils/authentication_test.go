@@ -100,7 +100,7 @@ func TestGetUserFromContext(t *testing.T) {
 	// Simulate setting the user in the context
 	c.Set("user", &user)
 
-	retrievedUser, exists := GetUserFromContext(c)
+	retrievedUser, exists := GetUserFromContext(c, true)
 	assert.True(t, exists)
 	assert.Equal(t, user.Email, retrievedUser.Email)
 }

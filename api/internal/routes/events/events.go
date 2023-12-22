@@ -19,6 +19,7 @@ func RegisterRoutes(r *gin.RouterGroup, mongoService mongodb.MongoService) {
 	r.POST("", middlewares.JWTAuthMiddleware(), createEventHandler(mongoService))
 	r.PUT("/:event_id", middlewares.JWTAuthMiddleware(), updateEventHandler(mongoService))
 	r.DELETE("/:event_id", middlewares.JWTAuthMiddleware(), deleteEventHandler(mongoService))
+	r.GET("/:event_id", getEventHandler(mongoService))
 	r.GET("/my-events", middlewares.JWTAuthMiddleware(), listMyEventsHandler(mongoService))
 }
 
@@ -59,7 +60,7 @@ func createEventHandler(mongoService mongodb.MongoService) gin.HandlerFunc {
 			return
 		}
 
-		authenticatedUser, ok := utils.GetUserFromContext(c)
+		authenticatedUser, ok := utils.GetUserFromContext(c, true)
 		if !ok {
 			return
 		}
@@ -130,7 +131,7 @@ func updateEventHandler(mongoService mongodb.MongoService) gin.HandlerFunc {
 
 func listMyEventsHandler(mongoService mongodb.MongoService) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		authenticatedUser, ok := utils.GetUserFromContext(c)
+		authenticatedUser, ok := utils.GetUserFromContext(c, true)
 		if !ok {
 			return
 		}
@@ -174,5 +175,26 @@ func deleteEventHandler(mongoService mongodb.MongoService) gin.HandlerFunc {
 		}
 
 		c.JSON(http.StatusOK, gin.H{"message": "Event deleted successfully"})
+	}
+}
+
+func getEventHandler(mongoService mongodb.MongoService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		eventID := c.Param("event_id")
+
+		// Convert eventID to ObjectID
+		objID, err := primitive.ObjectIDFromHex(eventID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid event ID"})
+			return
+		}
+
+		event, err := mongoService.GetEvent(c, objID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get event"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"event": event})
 	}
 }

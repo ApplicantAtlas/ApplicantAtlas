@@ -77,3 +77,7 @@ func (m *MockMongoService) ListEventsMetadata(ctx context.Context, filter bson.M
 func (m *MockMongoService) DeleteEvent(ctx *gin.Context, eventID primitive.ObjectID) (*mongo.DeleteResult, error) {
 	return nil, nil
 }
+
+func (m *MockMongoService) GetEvent(ctx *gin.Context, eventID primitive.ObjectID) (*models.Event, error) {
+	return nil, nil
+}

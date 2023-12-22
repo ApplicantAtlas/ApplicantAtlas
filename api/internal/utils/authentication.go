@@ -72,16 +72,35 @@ func VerifyJWT(tokenString string) (*models.User, error) {
 }
 
 // GetUserFromContext retrieves the authenticated user from the Gin context
-func GetUserFromContext(c *gin.Context) (*models.User, bool) {
+func GetUserFromContext(c *gin.Context, writeResponse bool) (*models.User, bool) {
+	var user interface{}
 	user, exists := c.Get("user")
 	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
-		return nil, false
+		// Lets also try to pull from the Authorization header, this condition hits for when a function is optionally authenticated
+		authHeader := c.GetHeader("Authorization")
+		if authHeader == "" {
+			if writeResponse {
+				c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+			}
+			return nil, false
+		}
+
+		// Verify the JWT token
+		var err error
+		user, err = VerifyJWT(authHeader)
+		if err != nil {
+			if writeResponse {
+				c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+			}
+			return nil, false
+		}
 	}
 
 	authenticatedUser, ok := user.(*models.User)
 	if !ok {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+		if writeResponse {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+		}
 		return nil, false
 	}
 

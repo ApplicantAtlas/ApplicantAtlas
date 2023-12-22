@@ -46,3 +46,8 @@ export const updateEvent = async (eventId: string, requestData: UpdateEventMetad
 export const listMyEvents = async (): Promise<AxiosResponse<ListMyEventsResponse>> => {
     return api.get<ListMyEventsResponse>(`/events/my-events`);
 };
+
+
+export const getEvent = async (eventId: string): Promise<AxiosResponse<{event: EventModel}>> => {
+    return api.get<{event: EventModel}>(`/events/${eventId}`);
+}
