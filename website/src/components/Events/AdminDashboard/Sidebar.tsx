@@ -1,30 +1,31 @@
 import Link from 'next/link';
-import React from 'react';
-import { useRouter } from 'next/router';
+import React, { memo } from 'react';
 
 interface SidebarProps {
     eventDetails?: EventModel | null;
+    activeSection: string;
+    setActiveSection: (section: string) => void;
 }
 
 interface SidebarLink {
     href: string;
     title: string;
+    sectionName: string;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ eventDetails }) => {
-    const router = useRouter();
+const Sidebar: React.FC<SidebarProps> = ({ eventDetails, activeSection, setActiveSection }) => {
     let eventId = eventDetails?.ID;
 
     const links: SidebarLink[] = [
-        { href: `/events/${eventId}/admin`, title: 'Dashboard' },
-        { href: `/events/${eventId}/admin/rsvps`, title: 'RSVP' },
-        { href: `/events/${eventId}/admin/applications`, title: 'Applications' },
-        { href: `/events/${eventId}/admin/announcements`, title: 'Announcements' },
-        { href: `/events/${eventId}/admin/settings`, title: 'Settings' },
+        { href: `/events/${eventId}/admin`, title: 'Dashboard', sectionName: 'dashboard' },
+        { href: `/events/${eventId}/admin/rsvps`, title: 'RSVP', sectionName: 'rsvps' },
+        { href: `/events/${eventId}/admin/applications`, title: 'Applications', sectionName: 'applications' },
+        { href: `/events/${eventId}/admin/announcements`, title: 'Announcements', sectionName: 'announcements' },
+        { href: `/events/${eventId}/admin/settings`, title: 'Settings', sectionName: 'settings' },
     ];
 
-    const isActive = (path: string) => {
-        return router.asPath === path;
+    const handleLinkClick = (sectionName: string) => {
+        setActiveSection(sectionName);
     };
 
     return (
@@ -33,8 +34,10 @@ const Sidebar: React.FC<SidebarProps> = ({ eventDetails }) => {
                 <h2 className="text-lg font-bold">{eventDetails?.metadata.name}</h2>
                 <ul className="menu menu-compact flex flex-col p-0">
                     {links.map(link => (
-                        <li key={link.href} className={`${isActive(link.href) ? 'bg-primary text-primary-content rounded' : ''}`}>
-                            <Link href={link.href}><span>{link.title}</span></Link>
+                        <li key={link.href} className={`${activeSection === link.sectionName ? 'bg-primary text-primary-content rounded transition-colors duration-300' : ''}`}>
+                           
+                                <span onClick={() => handleLinkClick(link.sectionName)}>{link.title}</span>
+                            
                         </li>
                     ))}
                 </ul>
@@ -43,4 +46,4 @@ const Sidebar: React.FC<SidebarProps> = ({ eventDetails }) => {
     );
 };
 
-export default Sidebar;
+export default memo(Sidebar);

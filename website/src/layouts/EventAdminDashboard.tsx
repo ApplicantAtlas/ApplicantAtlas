@@ -5,18 +5,19 @@ import Sidebar from "@/components/Events/AdminDashboard/Sidebar";
 import Footer from "@/components/Events/AdminDashboard/Footer";
 import { EventProvider, useEventContext } from "@/contexts/EventContext";
 import LoadingSpinner from "@/components/Loading/LoadingSpinner";
-import Header from "@/components/Landing/Header";
 
 const EventAdminDashboard: React.FC<{
   children: (eventDetails: any) => React.ReactNode;
-}> = ({ children }) => {
+  activeSection: string;
+  setActiveSection: (section: string) => void;
+}> = ({ children, activeSection, setActiveSection }) => {
   const router = useRouter();
   const eventId = router.query.eventId as string;
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-100 text-gray-900">
       <EventProvider eventId={eventId}>
-        <ContentWithLoading>{children}</ContentWithLoading>
+        <ContentWithLoading activeSection={activeSection} setActiveSection={setActiveSection}>{children}</ContentWithLoading>
       </EventProvider>
     </div>
   );
@@ -24,7 +25,9 @@ const EventAdminDashboard: React.FC<{
 
 const ContentWithLoading: React.FC<{
   children: (eventDetails: any) => React.ReactNode;
-}> = ({ children }) => {
+  activeSection: string;
+  setActiveSection: (section: string) => void;
+}> = ({ children, activeSection, setActiveSection }) => {
   const { eventDetails, isLoading } = useEventContext();
 
   // TODO: we can probably cache with TanQuery in the provider or layout here.
@@ -32,7 +35,7 @@ const ContentWithLoading: React.FC<{
   return (
     <>
       <div className="flex flex-1 min-h-screen">
-        <Sidebar eventDetails={eventDetails} />
+        <Sidebar eventDetails={eventDetails} activeSection={activeSection} setActiveSection={setActiveSection}  />
         <main className="flex-grow p-4">
           {isLoading ? <LoadingSpinner /> : children(eventDetails)}
         </main>
