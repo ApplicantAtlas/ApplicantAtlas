@@ -3,10 +3,13 @@ package mongodb
 
 import (
 	"api/internal/models"
+	"api/internal/utils"
 	"context"
 	"log"
 
+	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -15,6 +18,11 @@ type MongoService interface {
 	FindUserByEmail(ctx context.Context, email string) (*models.User, error)
 	InsertUser(ctx context.Context, user models.User) (*mongo.InsertOneResult, error)
 	DeleteUserByEmail(ctx context.Context, email string) (*mongo.DeleteResult, error)
+	CreateEvent(ctx context.Context, event models.Event) (*mongo.InsertOneResult, error)
+	DeleteEvent(ctx *gin.Context, eventID primitive.ObjectID) (*mongo.DeleteResult, error)
+	GetEvent(ctx *gin.Context, eventID primitive.ObjectID) (*models.Event, error)
+	UpdateEventMetadata(ctx *gin.Context, eventID primitive.ObjectID, metadata models.EventMetadata) (*mongo.UpdateResult, error)
+	ListEventsMetadata(ctx context.Context, filter bson.M) ([]models.Event, error)
 }
 
 // Service implements MongoService with a mongo.Client.
@@ -65,4 +73,155 @@ func (s *Service) InsertUser(ctx context.Context, user models.User) (*mongo.Inse
 // DeleteUserByEmail deletes a user by their email.
 func (s *Service) DeleteUserByEmail(ctx context.Context, email string) (*mongo.DeleteResult, error) {
 	return s.Database.Collection("users").DeleteOne(ctx, bson.M{"email": email})
+}
+
+// Create a new event
+func (s *Service) CreateEvent(ctx context.Context, event models.Event) (*mongo.InsertOneResult, error) {
+	// First make sure the name exists
+	if event.Metadata.Name == "" {
+		return nil, ErrEventNameRequired
+	}
+
+	// Ensure the event is not visible when first created
+	event.Metadata.Visibility = false
+	return s.Database.Collection("events").InsertOne(ctx, event)
+}
+
+// Update an event by its ID but only if the user is an organizer
+func (s *Service) UpdateEventMetadata(ctx *gin.Context, eventID primitive.ObjectID, metadata models.EventMetadata) (*mongo.UpdateResult, error) {
+	authenticatedUser, ok := utils.GetUserFromContext(ctx, true)
+	if !ok {
+		return nil, ErrUserNotAuthenticated
+	}
+
+	// Lookup the event
+	var event models.Event
+	err := s.Database.Collection("events").FindOne(ctx, bson.M{"_id": eventID}).Decode(&event)
+	if err != nil {
+		return nil, err
+	}
+
+	// Ensure the user is an organizer
+	isOrganizer := false
+	for _, organizerID := range event.OrganizerIDs {
+		if organizerID == authenticatedUser.ID {
+			isOrganizer = true
+			break
+		}
+	}
+	if !isOrganizer {
+		return nil, ErrUserNotAuthorized
+	}
+
+	// Update the event metadata in the database
+	update := bson.M{"$set": bson.M{"metadata": metadata}}
+	return s.Database.Collection("events").UpdateOne(ctx, bson.M{"_id": eventID}, update)
+}
+
+type EventMetadataWithID struct {
+	ID       primitive.ObjectID `json:"id"`
+	Metadata models.EventMetadata
+}
+
+// ListEventsMetadata retrieves events based on a filter
+func (s *Service) ListEventsMetadata(ctx context.Context, filter bson.M) ([]models.Event, error) {
+	var events []models.Event
+
+	cursor, err := s.Database.Collection("events").Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx) {
+		var event models.Event
+		if err := cursor.Decode(&event); err != nil {
+			return nil, err
+		}
+
+		// We re-create the event here because we don't want to return the organizer IDs or hidden fields
+		events = append(events, models.Event{
+			ID:       event.ID,
+			Metadata: event.Metadata,
+		})
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	// If events is null then return an empty slice instead
+	if events == nil {
+		return []models.Event{}, nil
+	}
+
+	return events, nil
+}
+
+// DeleteEvent deletes an event by its ID
+func (s *Service) DeleteEvent(ctx *gin.Context, eventID primitive.ObjectID) (*mongo.DeleteResult, error) {
+	authenticatedUser, ok := utils.GetUserFromContext(ctx, true)
+	if !ok {
+		return nil, ErrUserNotAuthenticated
+	}
+
+	// Lookup the event
+	var event models.Event
+	err := s.Database.Collection("events").FindOne(ctx, bson.M{"_id": eventID}).Decode(&event)
+	if err != nil {
+		return nil, err
+	}
+
+	// Ensure the user is an organizer
+	isOrganizer := false
+	for _, organizerID := range event.OrganizerIDs {
+		if organizerID == authenticatedUser.ID {
+			isOrganizer = true
+			break
+		}
+	}
+	if !isOrganizer {
+		return nil, ErrUserNotAuthorized
+	}
+
+	// Delete the event
+	return s.Database.Collection("events").DeleteOne(ctx, bson.M{"_id": eventID})
+}
+
+// GetEvent retrieves an event by its ID
+// Returns metadata if the user is not an organizer (through ListEventsMetadata)
+// Returns the full event if the user is an organizer
+func (s *Service) GetEvent(ctx *gin.Context, eventID primitive.ObjectID) (*models.Event, error) {
+	authenticatedUser, isAuthenticated := utils.GetUserFromContext(ctx, false)
+	if authenticatedUser == nil || authenticatedUser.ID == primitive.NilObjectID {
+		isAuthenticated = false
+	}
+
+	// Lookup the event
+	var event models.Event
+	err := s.Database.Collection("events").FindOne(ctx, bson.M{"_id": eventID}).Decode(&event)
+	if err != nil {
+		return nil, err
+	}
+
+	// Ensure the user is an organizer
+	isOrganizer := false
+	if isAuthenticated {
+		for _, organizerID := range event.OrganizerIDs {
+			if organizerID == authenticatedUser.ID {
+				isOrganizer = true
+				break
+			}
+		}
+	}
+
+	// If the user is not an organizer then return the metadata
+	if !isOrganizer {
+		return &models.Event{
+			ID:       event.ID,
+			Metadata: event.Metadata,
+		}, nil
+	}
+
+	return &event, nil
 }

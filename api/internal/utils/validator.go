@@ -2,6 +2,8 @@ package utils
 
 import (
 	"fmt"
+	"log"
+	"reflect"
 	"regexp"
 	"strconv"
 	"strings"
@@ -23,19 +25,21 @@ func registerCustomValidations(v *validator.Validate) {
 	v.RegisterValidation("dateformat", dateFormatValidation)
 	v.RegisterValidation("securepwd", securePasswordValidation)
 	v.RegisterValidation("minage", minAgeValidation)
+	v.RegisterValidation("timezone", timezoneValidation)
+	v.RegisterValidation("requireExistsIf", requireExistsIf)
 }
 
 // minAgeValidation is a custom validation function for minimum age.
 func minAgeValidation(fl validator.FieldLevel) bool {
 	params := strings.Split(fl.Param(), ";")
 	if len(params) != 2 {
-		fmt.Println("Invalid number of parameters for minage validator")
+		log.Fatal("Invalid number of parameters for minage validator")
 		return false
 	}
 
 	minAge, err := strconv.Atoi(params[0])
 	if err != nil {
-		fmt.Printf("Invalid minage parameter: %v\n", err)
+		log.Fatalf("Invalid minage parameter: %v\n", err)
 		return false
 	}
 
@@ -97,6 +101,44 @@ func securePasswordValidation(fl validator.FieldLevel) bool {
 	return len(securePasswordMessages(fl.Field().String())) == 0
 }
 
+func timezoneValidation(fl validator.FieldLevel) bool {
+	zone := fl.Field().String()
+	_, err := time.LoadLocation(zone)
+	return err == nil
+}
+
+// We expect the folling format for the parameter:
+// requireExistsIf=true[Address, Email, Description, ... other cols I want]
+func requireExistsIf(fl validator.FieldLevel) bool {
+	params := strings.Split(fl.Param(), ";")
+	if len(params) < 2 {
+		return false // Incorrect parameter format
+	}
+
+	boolStr := params[0]
+	fieldsToCheck := params[1:]
+	parent := fl.Parent() // Get the parent struct
+
+	if (boolStr == "true") != fl.Field().Bool() {
+		return true
+	}
+
+	// Check the required fields
+	for _, fieldName := range fieldsToCheck {
+		fieldName = strings.TrimSpace(fieldName)
+		field := parent.FieldByName(fieldName)
+		if !field.IsValid() || isZeroOfUnderlyingType(field.Interface()) {
+			return false
+		}
+	}
+
+	return true
+}
+
+func isZeroOfUnderlyingType(x interface{}) bool {
+	return reflect.DeepEqual(x, reflect.Zero(reflect.TypeOf(x)).Interface())
+}
+
 // TranslateValidationError translates a validator.FieldError into a user-friendly message.
 func TranslateValidationError(fe validator.FieldError) string {
 	switch fe.Tag() {
@@ -119,7 +161,14 @@ func TranslateValidationError(fe validator.FieldError) string {
 		params := strings.Split(fe.Param(), ";")
 		agePart := params[0] // Get the age part (first part of the parameter)
 		return fmt.Sprintf("You must be at least %s years old to create an account", agePart)
+	case "requireExistsIf":
+		params := strings.Split(fe.Param(), ";")
+		boolStr := params[0]
+		fieldsToCheck := params[1:]
 
+		return fmt.Sprintf("You must provide %s if %s is %s", strings.Join(fieldsToCheck, ", "), fe.Field(), boolStr)
+	case "max":
+		return fmt.Sprintf("%s must be at most %s characters long", fe.Field(), fe.Param())
 	default:
 		return fmt.Sprintf("%s is not valid", fe.Field())
 	}

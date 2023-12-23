@@ -5,7 +5,6 @@ import (
 	"api/internal/models"
 	"api/internal/mongodb"
 	"api/internal/utils"
-	"context"
 	"net/http"
 	"strings"
 	"time"
@@ -35,7 +34,7 @@ func loginUser(mongoService mongodb.MongoService) gin.HandlerFunc {
 			return
 		}
 
-		user, err := mongoService.FindUserByEmail(context.Background(), req.Email)
+		user, err := mongoService.FindUserByEmail(c, req.Email)
 		if err != nil {
 			if err == mongo.ErrNoDocuments {
 				// User not found
@@ -112,7 +111,7 @@ func registerUser(mongoService mongodb.MongoService) gin.HandlerFunc {
 		}
 
 		// Insert the new user into the database
-		_, err = mongoService.InsertUser(context.Background(), newUser)
+		_, err = mongoService.InsertUser(c, newUser)
 		if err != nil {
 			if err == mongodb.ErrUserAlreadyExists {
 				c.JSON(http.StatusBadRequest, gin.H{"error": "An account with that email already exists"})
@@ -125,14 +124,15 @@ func registerUser(mongoService mongodb.MongoService) gin.HandlerFunc {
 	}
 }
 
+// TODO: We should base this on the user's id instead of email
 func deleteUser(mongoService mongodb.MongoService) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		authenticatedUser, ok := utils.GetUserFromContext(c)
+		authenticatedUser, ok := utils.GetUserFromContext(c, true)
 		if !ok {
 			return // Error is handled in GetUserFromContext
 		}
 
-		_, err := mongoService.DeleteUserByEmail(context.Background(), authenticatedUser.Email)
+		_, err := mongoService.DeleteUserByEmail(c, authenticatedUser.Email)
 		if err != nil {
 			if err == mongo.ErrNoDocuments {
 				c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})

@@ -11,8 +11,11 @@ const api = axios.create({
 api.interceptors.request.use(
   config => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const tok = localStorage.getItem('token');
     if (user && user.token) {
       config.headers['Authorization'] = `Bearer ${user.token}`;
+    } else if (tok) {
+      config.headers['Authorization'] = `Bearer ${tok}`;
     }
     return config;
   },
@@ -27,7 +30,7 @@ api.interceptors.response.use(
   error => {
     if (error.response && error.response.data && error.response.data.error) {
       // Emit a custom event with the error message
-      eventEmitter.emit('apiError', error.response.data.msg);
+      eventEmitter.emit('apiError', error.response.data.error);
     } 
     if (error.response && error.response.status == 401) {
       window.location.href = '/logout'; // Redirect to logout if not already on login page 

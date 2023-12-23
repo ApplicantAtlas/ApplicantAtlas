@@ -14,6 +14,5 @@ func SetupRoutes(r *gin.Engine, mongoService mongodb.MongoService) {
 	auth.RegisterRoutes(authGroup, mongoService)
 
 	eventGroup := r.Group("/events")
-	events.RegisterRoutes(eventGroup)
-
+	events.RegisterRoutes(eventGroup, mongoService)
 }

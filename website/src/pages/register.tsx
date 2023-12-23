@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import AuthService from '@/services/AuthService';
-import { User } from '../types/User';
+import { User } from '../types/models/User';
 import { eventEmitter } from '@/events/EventEmitter';
 import { useRouter } from 'next/router';
 
@@ -22,7 +22,6 @@ const RegistrationPage = () => {
   })
 
   const formatDate = (dateString: string): string => {
-    console.log(dateString)
     const [year, month, day] = dateString.split('-');
     return `${month}/${day}/${year}`;
   };

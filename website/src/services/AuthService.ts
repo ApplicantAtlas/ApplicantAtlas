@@ -1,24 +1,28 @@
 // AuthService.ts
 import { AxiosResponse } from "axios";
 import api from "./AxiosInterceptor";
-import { User } from "@/types/User";
+import { User } from "@/types/models/User";
 import {jwtDecode} from 'jwt-decode';
 
 const register = async (u: User): Promise<AxiosResponse> => {
   return api.post(`/auth/register`, u);
 };
 
-const login = async (u: User): Promise<User> => {
-  const response = await api.post<{
-    token: string;
-  }>(`/auth/login`, u);
-  const tok = response.data.token;
-  localStorage.setItem('token', tok);
+const login = (u: User): Promise<User> => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const response = await api.post<{ token: string }>(`/auth/login`, u);
+      const tok = response.data.token;
+      localStorage.setItem('token', tok);
 
-  const decoded: User = jwtDecode<User>(tok); 
-  localStorage.setItem('user', JSON.stringify(decoded));
+      const decoded: User = jwtDecode<User>(tok);
+      localStorage.setItem('user', JSON.stringify(decoded));
 
-  return decoded;
+      resolve(decoded);
+    } catch (error) {
+      reject(error);
+    }
+  });
 };
 
 const logout = (): void => {
