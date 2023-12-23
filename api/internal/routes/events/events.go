@@ -50,7 +50,7 @@ type createEventRequest struct {
 func createEventHandler(mongoService mongodb.MongoService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req createEventRequest
-		if err := c.BindJSON(&req); err != nil {
+		if err := utils.BindJSON(c, &req); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
@@ -97,7 +97,7 @@ func updateEventHandler(mongoService mongodb.MongoService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		eventID := c.Param("event_id")
 		var req updateEventMetadataRequest
-		if err := c.BindJSON(&req); err != nil {
+		if err := utils.BindJSON(c, &req); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
