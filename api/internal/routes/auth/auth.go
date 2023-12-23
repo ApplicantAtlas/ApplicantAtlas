@@ -29,7 +29,7 @@ type loginRequest struct {
 func loginUser(mongoService mongodb.MongoService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req loginRequest
-		if err := c.BindJSON(&req); err != nil {
+		if err := utils.BindJSON(c, &req); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
@@ -74,7 +74,7 @@ type registerRequest struct {
 func registerUser(mongoService mongodb.MongoService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req registerRequest
-		if err := c.BindJSON(&req); err != nil {
+		if err := utils.BindJSON(c, &req); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
