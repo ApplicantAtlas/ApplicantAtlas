@@ -30,7 +30,7 @@ api.interceptors.response.use(
   error => {
     if (error.response && error.response.data && error.response.data.error) {
       // Emit a custom event with the error message
-      eventEmitter.emit('apiError', error.response.data.msg);
+      eventEmitter.emit('apiError', error.response.data.error);
     } 
     if (error.response && error.response.status == 401) {
       window.location.href = '/logout'; // Redirect to logout if not already on login page 

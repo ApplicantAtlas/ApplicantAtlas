@@ -36,7 +36,7 @@ const ContentWithLoading: React.FC<{
     <>
       <div className="flex flex-1 min-h-screen">
         <Sidebar eventDetails={eventDetails} activeSection={activeSection} setActiveSection={setActiveSection}  />
-        <main className="flex-grow p-4">
+        <main className="w-full flex-grow p-4">
           {isLoading ? <LoadingSpinner /> : children(eventDetails)}
         </main>
       </div>

@@ -13,8 +13,6 @@ interface SidebarLink {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ eventDetails, activeSection, setActiveSection }) => {
-    let eventId = eventDetails?.ID;
-
     const links: SidebarLink[] = [
         { title: 'Dashboard', sectionName: 'dashboard' },
         { title: 'Event Details', sectionName: 'event-details'},
