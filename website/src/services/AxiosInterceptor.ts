@@ -28,6 +28,9 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   response => response,
   error => {
+    if (!error.response) {
+      eventEmitter.emit('apiError', 'Could not connect to server. Please try again later.');
+    }
     if (error.response && error.response.data && error.response.data.error) {
       // Emit a custom event with the error message
       eventEmitter.emit('apiError', error.response.data.error);

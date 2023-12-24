@@ -51,7 +51,9 @@ const LoginPage = () => {
         router.push('/user/dashboard');
       })
       .catch((err) => {
-        eventEmitter.emit('apiError', err.response.data.error);
+        if (err.response) {
+          eventEmitter.emit('apiError', err.response.data.error);
+        }
       });
   };
 

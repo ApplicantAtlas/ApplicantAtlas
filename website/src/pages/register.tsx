@@ -1,59 +1,59 @@
-import React, { useEffect } from 'react';
-import Head from 'next/head';
-import Link from 'next/link';
-import AuthService from '@/services/AuthService';
-import { User } from '@/types/models/User';
-import { eventEmitter } from '@/events/EventEmitter';
-import { useRouter } from 'next/router';
-import FormBuilder from '@/components/FormBuilder/FormBuilder';
-import { FormStructure } from '@/types/models/FormBuilder';
+import React, { useEffect } from "react";
+import Head from "next/head";
+import Link from "next/link";
+import AuthService from "@/services/AuthService";
+import { User } from "@/types/models/User";
+import { eventEmitter } from "@/events/EventEmitter";
+import { useRouter } from "next/router";
+import FormBuilder from "@/components/FormBuilder/FormBuilder";
+import { FormStructure } from "@/types/models/FormBuilder";
 
 const RegistrationPage = () => {
   const router = useRouter();
 
   useEffect(() => {
     if (AuthService.isAuth()) {
-      router.push('/user/dashboard');
+      router.push("/user/dashboard");
     }
   }, [router]);
 
   const registrationFormStructure: FormStructure = {
     attrs: [
       {
-        question: 'First Name',
-        type: 'text',
-        key: 'firstName',
+        question: "First Name",
+        type: "text",
+        key: "firstName",
         required: true,
       },
       {
-        question: 'Last Name',
-        type: 'text',
-        key: 'lastName',
+        question: "Last Name",
+        type: "text",
+        key: "lastName",
         required: true,
       },
       {
-        question: 'Email',
-        type: 'text',
-        key: 'email',
+        question: "Email",
+        type: "text",
+        key: "email",
         additionalValidation: { isEmail: true },
         required: true,
       },
       {
-        question: 'School Email (Optional)',
-        type: 'text',
-        key: 'schoolEmail',
+        question: "School Email (Optional)",
+        type: "text",
+        key: "schoolEmail",
         additionalValidation: { isEduEmail: true },
       },
       {
-        question: 'Birthday',
-        type: 'date',
-        key: 'birthday',
+        question: "Birthday",
+        type: "date",
+        key: "birthday",
         required: true,
       },
       {
-        question: 'Password',
-        type: 'text',
-        key: 'password',
+        question: "Password",
+        type: "text",
+        key: "password",
         additionalValidation: { isPassword: true },
         required: true,
       },
@@ -63,16 +63,18 @@ const RegistrationPage = () => {
   const handleSubmit = (formData: Record<string, any>) => {
     const formattedData = {
       ...formData,
-      birthday: formData.birthday ? formatDate(formData.birthday) : '',
+      birthday: formData.birthday ? formatDate(formData.birthday) : "",
     };
 
     AuthService.register(formattedData as User)
       .then(() => {
-        eventEmitter.emit('success', 'Successfully registered, please log in!');
-        router.push('/login');
+        eventEmitter.emit("success", "Successfully registered, please log in!");
+        router.push("/login");
       })
       .catch((err) => {
-        eventEmitter.emit('apiError', err.response.data.error);
+        if (err.response) {
+          eventEmitter.emit("apiError", err.response.data.error);
+        }
       });
   };
 
@@ -92,7 +94,11 @@ const RegistrationPage = () => {
       </Head>
 
       <div className="w-full max-w-md">
-        <FormBuilder formStructure={registrationFormStructure} submissionFunction={handleSubmit} buttonText='Register' />
+        <FormBuilder
+          formStructure={registrationFormStructure}
+          submissionFunction={handleSubmit}
+          buttonText="Register"
+        />
         <Link href="/login">
           <div className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800 cursor-pointer">
             Already have an account? Sign In
