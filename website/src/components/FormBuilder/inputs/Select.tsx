@@ -68,6 +68,7 @@ const Select: React.FC<SelectProps> = ({
         onChange={handleChange}
         className="react-select-container"
         classNamePrefix="react-select"
+        required={field.required}
       />
     </div>
   );

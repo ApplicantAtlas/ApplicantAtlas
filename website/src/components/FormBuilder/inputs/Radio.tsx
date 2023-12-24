@@ -39,6 +39,7 @@ const Radio: React.FC<RadioProps> = ({ field, onChange }) => {
               checked={selectedOption === option}
               className="radio radio-bordered"
               onChange={handleInputChange}
+              required={field.required}
             />
           </label>
         ))}
