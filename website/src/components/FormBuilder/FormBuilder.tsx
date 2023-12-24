@@ -193,7 +193,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
       {formStructure.attrs.map((field, index) => (
         <div key={index}>{renderFormField(field)}</div>
       ))}
-      <button type="submit" className="btn">
+      <button type="submit" className="btn mt-4">
         {buttonText}
       </button>
     </form>
