@@ -34,6 +34,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
         checked={checked}
         className="checkbox checkbox-bordered"
         onChange={handleInputChange}
+        required={field.required}
       />
     </div>
   );

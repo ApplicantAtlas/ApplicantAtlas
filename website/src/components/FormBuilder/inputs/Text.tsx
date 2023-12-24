@@ -49,6 +49,7 @@ const Text: React.FC<TextInputProps> = ({ field, onChange, defaultValue }) => {
         placeholder={field.description || ""}
         className={`input input-bordered ${error ? "input-error" : ""}`}
         onChange={handleInputChange}
+        required={field.required}
       />
       {error && <p className="error-message">{error}</p>}
     </div>

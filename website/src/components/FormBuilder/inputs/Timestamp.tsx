@@ -66,6 +66,7 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
         value={value}
         className="input input-bordered"
         onChange={handleInputChange}
+        required={field.required}
       />
     </div>
   );

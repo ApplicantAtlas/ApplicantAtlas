@@ -65,6 +65,7 @@ const Telephone: React.FC<TelephoneInputProps> = ({
           className={`input input-bordered ${isValid ? "" : "border-red-500"}`}
           onChange={handleCountryCodeChange}
           style={{ width: "100px" }}
+          required={field.required}
         />
         <input
           id={field.key}
@@ -73,6 +74,8 @@ const Telephone: React.FC<TelephoneInputProps> = ({
           placeholder="Phone Number"
           className={`input input-bordered ${isValid ? "" : "border-red-500"}`}
           onChange={handlePhoneNumberChange}
+          pattern={"[0-9]{10}"}
+          required={field.required}
         />
       </div>
       {!isValid && (
