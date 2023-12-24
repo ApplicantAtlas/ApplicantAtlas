@@ -1,3 +1,5 @@
+import { Address } from "./Event";
+
 export type FieldValidation = {
   min?: number;
   max?: number;

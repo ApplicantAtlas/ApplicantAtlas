@@ -38,9 +38,9 @@ type EventMetadata struct {
 // Address represents a physical address
 // TODO: Add validation
 type Address struct {
-	Street  string `bson:"street,omitempty" json:"street,omitempty"`
-	City    string `bson:"city,omitempty" json:"city,omitempty"`
-	Region  string `bson:"region,omitempty" json:"region,omitempty"`
-	ZipCode string `bson:"zipCode,omitempty" json:"zipCode,omitempty"`
-	Country string `bson:"country,omitempty" json:"country,omitempty"`
+	StreetAddress string `bson:"streetAddress,omitempty" json:"streetAddress,omitempty"`
+	City          string `bson:"city,omitempty" json:"city,omitempty"`
+	Region        string `bson:"region,omitempty" json:"region,omitempty"`
+	ZipCode       string `bson:"zipCode,omitempty" json:"zipCode,omitempty"`
+	Country       string `bson:"country,omitempty" json:"country,omitempty"`
 }

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FormField, FieldValue } from "@/types/models/FormBuilder";
+import moment from 'moment';
 
 type TimestampInputProps = {
   field: FormField;
@@ -33,23 +34,30 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
     return new Date(Date.UTC(year, month - 1, day, hours, minutes));
   };
 
-  // Initialize state with formatted timestamp string or empty string
+  const isValidDefaultValue = (defaultValue: Date | undefined): defaultValue is Date => {
+    return defaultValue instanceof Date && 
+           !isNaN(defaultValue.getTime()) &&
+           moment(defaultValue).isValid() &&
+           moment(defaultValue).year() > 1000; // Check if the year is realistic
+  };
+
   const [value, setValue] = useState<string>(
-    defaultValue ? formatTimestampToUTC(defaultValue) : ""
+    isValidDefaultValue(defaultValue) ? formatTimestampToUTC(defaultValue) : ""
   );
 
   useEffect(() => {
-    if (defaultValue) {
+    if (isValidDefaultValue(defaultValue)) {
       const formattedTimestamp = formatTimestampToUTC(defaultValue);
       setValue(formattedTimestamp);
-      onChange(field.key, defaultValue);
+    } else {
+      setValue(''); // Reset value if defaultValue is not valid
     }
   }, [defaultValue]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     setValue(newValue);
-    if (newValue) {
+    if (newValue && moment(newValue, "YYYY-MM-DDTHH:mm", true).isValid()) {
       const timestampValue = parseTimestampStringToUTC(newValue);
       onChange(field.key, timestampValue);
     }

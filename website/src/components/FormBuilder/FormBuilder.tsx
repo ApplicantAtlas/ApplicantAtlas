@@ -7,9 +7,16 @@ import Radio from "./inputs/Radio";
 import Telephone from "./inputs/Telephone";
 import TimestampInput from "./inputs/Timestamp";
 import AddressInput from "./inputs/Address";
-import { FormStructure, FieldValue } from "@/types/models/FormBuilder";
+import moment from 'moment';
+
+import {
+  FormStructure,
+  FieldValue,
+  FormField,
+} from "@/types/models/FormBuilder";
 import TextArea from "./inputs/TextArea";
 import dynamic from "next/dynamic";
+import { Address, isAddress } from "@/types/models/Event";
 
 const SelectDynamic = dynamic(() => import("./inputs/Select"), {
   ssr: false,
@@ -32,11 +39,13 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   const [formData, setFormData] = useState<Record<string, any>>({});
 
   const handleInputChange = (key: string, value: FieldValue) => {
-    setFormData({ ...formData, [key]: value });
+    console.log("handleInputChange", key, value);
+    setFormData((formData) => ({ ...formData, [key]: value }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("handleSubmit", formData);
     submissionFunction(formData);
   };
 
@@ -170,16 +179,10 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
           />
         );
       case "address":
-        const handleAddressChange = (key: string, value: FieldValue) => {
-          const address: Address = (formData[field.key] as Address) ?? {};
-          address[key] = value as string;
-          handleInputChange(field.key, address);
-        };
-
         return (
           <AddressInput
             field={field}
-            onChange={handleAddressChange}
+            onChange={handleInputChange}
             defaultValue={field.defaultValue as Address}
           />
         );
