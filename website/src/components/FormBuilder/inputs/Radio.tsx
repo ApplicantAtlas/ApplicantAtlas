@@ -13,13 +13,13 @@ const Radio: React.FC<RadioProps> = ({ field, onChange }) => {
 
   useEffect(() => {
     if (field.defaultOptions?.length !== undefined && field.defaultOptions.length > 0) {
-      onChange(field.question, field.defaultOptions[0]);
+      onChange(field.key, field.defaultOptions[0]);
     }
   }, [field.defaultOptions]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedOption(e.target.value);
-    onChange(field.question, e.target.value);
+    onChange(field.key, e.target.value);
   };
 
   return (

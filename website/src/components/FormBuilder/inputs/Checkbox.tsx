@@ -15,12 +15,12 @@ const Checkbox: React.FC<CheckboxProps> = ({
   const [checked, setChecked] = useState<boolean>(defaultValue || false);
 
   useEffect(() => {
-    onChange(field.question, defaultValue || false);
+    onChange(field.key, defaultValue || false);
   }, [defaultValue]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setChecked(e.target.checked);
-    onChange(field.question, e.target.checked);
+    onChange(field.key, e.target.checked);
   };
 
   return (

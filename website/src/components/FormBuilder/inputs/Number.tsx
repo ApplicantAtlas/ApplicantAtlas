@@ -12,14 +12,14 @@ const Number: React.FC<NumberProps> = ({ field, onChange, defaultValue }) => {
 
   useEffect(() => {
     if (defaultValue !== undefined) {
-      onChange(field.question, defaultValue);
+      onChange(field.key, defaultValue);
     }
   }, [defaultValue]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = parseInt(e.target.value);
     setValue(value);
-    onChange(field.question, value);
+    onChange(field.key, value);
   };
 
   return (

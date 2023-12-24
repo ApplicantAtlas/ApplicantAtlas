@@ -42,7 +42,7 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
     if (defaultValue) {
       const formattedTimestamp = formatTimestampToUTC(defaultValue);
       setValue(formattedTimestamp);
-      onChange(field.question, defaultValue);
+      onChange(field.key, defaultValue);
     }
   }, [defaultValue]);
 
@@ -51,7 +51,7 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
     setValue(newValue);
     if (newValue) {
       const timestampValue = parseTimestampStringToUTC(newValue);
-      onChange(field.question, timestampValue);
+      onChange(field.key, timestampValue);
     }
   };
 

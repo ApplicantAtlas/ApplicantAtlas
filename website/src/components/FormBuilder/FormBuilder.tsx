@@ -6,11 +6,12 @@ import Checkbox from "./inputs/Checkbox";
 import Radio from "./inputs/Radio";
 import Telephone from "./inputs/Telephone";
 import TimestampInput from "./inputs/Timestamp";
+import AddressInput from "./inputs/Address";
 import { FormStructure, FieldValue } from "@/types/models/FormBuilder";
 import TextArea from "./inputs/TextArea";
-import dynamic from 'next/dynamic';
+import dynamic from "next/dynamic";
 
-const SelectDynamic = dynamic(() => import('./inputs/Select'), {
+const SelectDynamic = dynamic(() => import("./inputs/Select"), {
   ssr: false,
 });
 
@@ -100,12 +101,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
           />
         );
       case "radio":
-        return (
-          <Radio
-            field={field}
-            onChange={handleInputChange}
-          />
-        );
+        return <Radio field={field} onChange={handleInputChange} />;
       case "select":
         return (
           <SelectDynamic
@@ -120,6 +116,24 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
             field={field}
             onChange={handleInputChange}
             isMultiSelect={true}
+          />
+        );
+      case "customselect":
+        return (
+          <SelectDynamic
+            field={field}
+            onChange={handleInputChange}
+            isMultiSelect={false}
+            allowArbitraryInput={true}
+          />
+        );
+      case "custommultiselect":
+        return (
+          <SelectDynamic
+            field={field}
+            onChange={handleInputChange}
+            isMultiSelect={true}
+            allowArbitraryInput={true}
           />
         );
       case "telephone":
@@ -148,6 +162,20 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
             field={field}
             onChange={handleInputChange}
             defaultValue={defaultTimestamp}
+          />
+        );
+      case "address":
+        const handleAddressChange = (key: string, value: FieldValue) => {
+          const address: Address = (formData[field.key] as Address) ?? {};
+          address[key] = value as string;
+          handleInputChange(field.key, address);
+        };
+
+        return (
+          <AddressInput
+            field={field}
+            onChange={handleAddressChange}
+            defaultValue={field.defaultValue as Address}
           />
         );
       default:

@@ -13,7 +13,7 @@ const Text: React.FC<TextInputProps> = ({ field, onChange, defaultValue }) => {
 
   useEffect(() => {
     if (defaultValue) {
-      onChange(field.question, defaultValue);
+      onChange(field.key, defaultValue);
     }
   }, [defaultValue]);
 
@@ -32,7 +32,7 @@ const Text: React.FC<TextInputProps> = ({ field, onChange, defaultValue }) => {
       setError("Invalid EDU email address");
     } else {
       setError(null);
-      onChange(field.question, inputValue);
+      onChange(field.key, inputValue);
     }
     
   };

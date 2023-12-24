@@ -6,17 +6,20 @@ const Test: React.FC = () => {
   const formStructure: FormStructure = {
     attrs: [
       { 
+        key: "startTime",
         question: "When does your event start?",
         type: "timestamp",
         description: "Please enter the start time of your event",
       },
       {
+        key: "telephone",
         question: "What's your telephone?",
         type: "telephone",
         description: "Please enter your telephone",
 
       },
       {
+        key: "email",
         question: "What's your email?",
         type: "text",
         description: "Please enter your email",
@@ -25,8 +28,9 @@ const Test: React.FC = () => {
         },
       },
       {
+        key: "birthday",
         question: "When is your birthday",
-        type: "multiselect",
+        type: "customselect",
         description: "Please enter your birthday",
         options: [
           "January",
@@ -42,6 +46,19 @@ const Test: React.FC = () => {
         ],
         defaultOptions: ["October", "November"],
       },
+      {
+        key: "address",
+        question: "What's your address?",
+        type: "address",
+        description: "Please enter your address",
+        defaultValue: {
+          street: "2 E Main St",
+          city: "Madison",
+          country: "United States",
+          region: "Wisconsin",
+          zipCode: "53703",
+        }
+      }
     ],
   };
 

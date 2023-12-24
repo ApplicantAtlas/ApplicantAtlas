@@ -48,10 +48,10 @@ const Telephone: React.FC<TelephoneInputProps> = ({
 
     if (code && number && phoneRegex.test(number)) {
       setIsValid(true);
-      onChange(field.question, `${code} ${number}`);
+      onChange(field.key, `${code} ${number}`);
     } else {
       setIsValid(false);
-      onChange(field.question, "");
+      onChange(field.key, "");
     }
   };
 

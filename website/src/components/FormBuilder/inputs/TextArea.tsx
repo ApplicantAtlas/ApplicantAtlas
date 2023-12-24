@@ -12,14 +12,14 @@ const TextArea: React.FC<TextAreaProps> = ({ field, onChange, defaultValue }) =>
 
   useEffect(() => {
     if (defaultValue) {
-      onChange(field.question, defaultValue);
+      onChange(field.key, defaultValue);
     }
   }, [defaultValue]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e.target.value;
     setValue(newValue);
-    onChange(field.question, newValue);
+    onChange(field.key, newValue);
   };
 
   return (

@@ -34,7 +34,7 @@ const DateInput: React.FC<DateInputProps> = ({ field, onChange, defaultValue }) 
     if (defaultValue) {
       const formattedDate = formatDateToUTC(defaultValue);
       setValue(formattedDate);
-      onChange(field.question, defaultValue);
+      onChange(field.key, defaultValue);
     }
   }, [defaultValue]);
 
@@ -43,7 +43,7 @@ const DateInput: React.FC<DateInputProps> = ({ field, onChange, defaultValue }) 
     setValue(newValue);
     if (newValue) {
       const dateValue = parseDateStringToUTC(newValue);
-      onChange(field.question, dateValue);
+      onChange(field.key, dateValue);
     }
   };
 

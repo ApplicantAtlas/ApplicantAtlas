@@ -12,7 +12,8 @@ export type FieldValue =
   | string[]
   | number[]
   | boolean[]
-  | Date;
+  | Date
+  | Address;
 
 export type FormField = {
   question: string;
@@ -25,10 +26,14 @@ export type FormField = {
     | "textarea"
     | "select"
     | "multiselect"
+    | "customselect"
+    | "custommultiselect"
     | "checkbox"
-    | "radio";
+    | "radio"
+    | "address";
   description?: string;
   additionalValidation?: FieldValidation;
+  key: string;
   defaultValue?: FieldValue;
   options?: string[]; // for select, checkbox, radio
   defaultOptions?: string[]; // for select, checkbox, radio

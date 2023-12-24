@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from "react";
 import ReactSelect from "react-select";
+import CreatableSelect from "react-select/creatable";
 import { FormField, FieldValue } from "@/types/models/FormBuilder";
 
 type SelectProps = {
   field: FormField;
   onChange: (key: string, value: FieldValue) => void;
   isMultiSelect?: boolean;
+  allowArbitraryInput?: boolean;
 };
 
 const Select: React.FC<SelectProps> = ({
   field,
   onChange,
   isMultiSelect = false,
+  allowArbitraryInput = false,
 }) => {
   // Transform the options into the format expected by react-select
   const options =
@@ -23,9 +26,9 @@ const Select: React.FC<SelectProps> = ({
       field.defaultOptions.length > 0
     ) {
       if (isMultiSelect) {
-        onChange(field.question, field.defaultOptions);
+        onChange(field.key, field.defaultOptions);
       } else {
-        onChange(field.question, field.defaultOptions[0]);
+        onChange(field.key, field.defaultOptions[0]);
       }
     }
   }, [field.defaultOptions]);
@@ -39,23 +42,25 @@ const Select: React.FC<SelectProps> = ({
     if (isMultiSelect) {
       setSelectedValue(selectedOption);
       onChange(
-        field.question,
+        field.key,
         selectedOption.map((opt: any) => opt.value)
       );
     } else {
       setSelectedValue(selectedOption);
-      onChange(field.question, selectedOption.value);
+      onChange(field.key, selectedOption.value);
     }
   };
 
   const [selectedValue, setSelectedValue] = useState(defaultValue);
+
+  const SelectComponent = allowArbitraryInput ? CreatableSelect : ReactSelect;
 
   return (
     <div className="form-control">
       <label className="label">
         <span className="label-text">{field.question}</span>
       </label>
-      <ReactSelect
+      <SelectComponent
         isMulti={isMultiSelect}
         options={options}
         value={selectedValue}
