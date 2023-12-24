@@ -27,9 +27,10 @@ interface EventMetadata {
 
 // Address represents a physical address
 interface Address {
+    [key: string]: string | undefined;
     street?: string;
     city?: string;
-    state?: string;
-    postalCode?: string;
+    region?: string;
+    zipCode?: string;
     country?: string;
 }
