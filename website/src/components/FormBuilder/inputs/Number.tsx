@@ -28,6 +28,7 @@ const Number: React.FC<NumberProps> = ({ field, onChange, defaultValue }) => {
         <span className="label-text">{field.question}</span>
       </label>
       <input
+        id={field.key}
         type="number"
         value={value}
         placeholder={field.description || ""}

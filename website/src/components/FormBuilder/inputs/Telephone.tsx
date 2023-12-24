@@ -26,17 +26,13 @@ const Telephone: React.FC<TelephoneInputProps> = ({
     }
   }, [defaultValue]);
 
-  const handleCountryCodeChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleCountryCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const code = e.target.value;
     setCountryCode(code);
     validatePhoneNumber(code, phoneNumber);
   };
 
-  const handlePhoneNumberChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handlePhoneNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const number = e.target.value;
     setPhoneNumber(number);
     validatePhoneNumber(countryCode, number);
@@ -62,6 +58,7 @@ const Telephone: React.FC<TelephoneInputProps> = ({
       </label>
       <div className="telephone-input">
         <input
+          id={field.key}
           type="text"
           value={countryCode}
           placeholder="Country Code"
@@ -70,6 +67,7 @@ const Telephone: React.FC<TelephoneInputProps> = ({
           style={{ width: "100px" }}
         />
         <input
+          id={field.key}
           type="text"
           value={phoneNumber}
           placeholder="Phone Number"

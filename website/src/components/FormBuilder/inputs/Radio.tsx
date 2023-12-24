@@ -32,6 +32,7 @@ const Radio: React.FC<RadioProps> = ({ field, onChange }) => {
           <label key={index} className="label cursor-pointer">
             <span className="label-text mr-2">{option}</span>
             <input
+              id={field.key}
               type="radio"
               name={field.question}
               value={option}

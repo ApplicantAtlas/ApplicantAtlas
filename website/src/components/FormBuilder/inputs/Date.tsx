@@ -53,6 +53,7 @@ const DateInput: React.FC<DateInputProps> = ({ field, onChange, defaultValue }) 
         <span className="label-text">{field.question}</span>
       </label>
       <input
+        id={field.key}
         type="date"
         value={value}
         className="input input-bordered"

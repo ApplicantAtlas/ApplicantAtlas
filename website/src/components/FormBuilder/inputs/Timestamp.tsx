@@ -61,6 +61,7 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
         <span className="label-text">{field.question}</span>
       </label>
       <input
+        id={field.key}
         type="datetime-local"
         value={value}
         className="input input-bordered"

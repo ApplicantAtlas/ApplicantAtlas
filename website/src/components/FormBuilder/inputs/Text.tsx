@@ -43,7 +43,8 @@ const Text: React.FC<TextInputProps> = ({ field, onChange, defaultValue }) => {
         <span className="label-text">{field.question}</span>
       </label>
       <input
-        type="text"
+        id={field.key}
+        type={field.additionalValidation?.isPassword ? "password" : "text"}
         value={value}
         placeholder={field.description || ""}
         className={`input input-bordered ${error ? "input-error" : ""}`}

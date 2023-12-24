@@ -3,6 +3,7 @@ export type FieldValidation = {
   max?: number;
   isEmail?: boolean;
   isEduEmail?: boolean;
+  isPassword?: boolean;
 };
 
 export type FieldValue =

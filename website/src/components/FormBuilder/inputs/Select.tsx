@@ -61,6 +61,7 @@ const Select: React.FC<SelectProps> = ({
         <span className="label-text">{field.question}</span>
       </label>
       <SelectComponent
+        id={field.key}
         isMulti={isMultiSelect}
         options={options}
         value={selectedValue}

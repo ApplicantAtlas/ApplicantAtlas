@@ -28,6 +28,7 @@ const TextArea: React.FC<TextAreaProps> = ({ field, onChange, defaultValue }) =>
         <span className="label-text">{field.question}</span>
       </label>
       <textarea
+        id={field.key}
         value={value}
         placeholder={field.description || ''}
         className="textarea textarea-bordered"

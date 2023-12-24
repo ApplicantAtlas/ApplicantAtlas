@@ -29,6 +29,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
         <span className="label-text mr-2">{field.question}</span>
       </label>
       <input
+        id={field.key}
         type="checkbox"
         checked={checked}
         className="checkbox checkbox-bordered"

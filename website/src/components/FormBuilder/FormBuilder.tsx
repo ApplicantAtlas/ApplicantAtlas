@@ -18,11 +18,16 @@ const SelectDynamic = dynamic(() => import("./inputs/Select"), {
 type FormBuilderProps = {
   formStructure: FormStructure;
   submissionFunction: (formJSON: Record<string, any>) => void;
+  buttonText?: string;
 };
+
+// TODO: Maybe add a way to customize the submit button (optionally abstract it out of the form builder)
+// TODO: Add a way to customize the form colors
 
 const FormBuilder: React.FC<FormBuilderProps> = ({
   formStructure,
   submissionFunction,
+  buttonText = "Submit",
 }) => {
   const [formData, setFormData] = useState<Record<string, any>>({});
 
@@ -189,7 +194,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
         <div key={index}>{renderFormField(field)}</div>
       ))}
       <button type="submit" className="btn">
-        Submit
+        {buttonText}
       </button>
     </form>
   );
