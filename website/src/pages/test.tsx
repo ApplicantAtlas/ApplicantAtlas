@@ -12,14 +12,14 @@ const Test: React.FC = () => {
         question: "When does your event start?",
         type: "timestamp",
         description: "Please enter the start time of your event",
-        required: true,
+        required: false,
       },
       {
         key: "telephone",
         question: "What's your telephone?",
         type: "telephone",
         description: "Please enter your telephone",
-        required: true,
+        required: false,
       },
       {
         key: "email",
@@ -29,7 +29,7 @@ const Test: React.FC = () => {
         additionalValidation: {
           isEduEmail: true,
         },
-        required: true,
+        required: false,
       },
       {
         key: "birthday",
@@ -50,14 +50,14 @@ const Test: React.FC = () => {
           "November",
           "December"
         ],
-        required: true,
+        required: false,
       },
       {
         key: "address",
         question: "What's your address?",
         type: "address",
         description: "Please enter your address",
-        required: true,
+        required: false,
       }
     ],
   };
