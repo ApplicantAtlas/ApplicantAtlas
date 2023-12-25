@@ -25,7 +25,7 @@ const Telephone: React.FC<TelephoneInputProps> = ({
   };
 
   const validatePhoneNumber = (number: string | undefined) => {
-    if (isValidPhoneNumber(number as string)) {
+    if (!number || isValidPhoneNumber(number as string)) {
       onChange(field.key, number as string, true);
       setError("");
     } else {

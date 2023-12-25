@@ -25,19 +25,21 @@ const Text: React.FC<TextInputProps> = ({ field, onChange, defaultValue }) => {
     const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
     if (!field.required && inputValue === "") {
       setError(null);
+      onChange(field.key, inputValue, true)
     }
     else if (field.additionalValidation?.isEmail && !emailPattern.test(inputValue)) {
       setError("Invalid email address");
+      onChange(field.key, inputValue, false)
     } else if (
       field.additionalValidation?.isEduEmail &&
       (!emailPattern.test(inputValue) || !inputValue.endsWith(".edu"))
     ) {
       setError("Invalid EDU email address");
+      onChange(field.key, inputValue, false)
     } else {
       setError(null);
+      onChange(field.key, inputValue, true)
     }
-    
-    onChange(field.key, inputValue, !!error);
   };
 
   return (
@@ -54,7 +56,7 @@ const Text: React.FC<TextInputProps> = ({ field, onChange, defaultValue }) => {
         onChange={handleInputChange}
         required={field.required}
       />
-      {error && <p className="error-message">{error}</p>}
+      {error && <p className="text-red-500">{error}</p>}
     </div>
   );
 };
