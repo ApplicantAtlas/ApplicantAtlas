@@ -8,18 +8,22 @@ type NumberProps = {
 };
 
 const Number: React.FC<NumberProps> = ({ field, onChange, defaultValue }) => {
-  const [value, setValue] = useState<number | undefined>(defaultValue);
+  // Initialize state with defaultValue or 0 if defaultValue is undefined
+  const [value, setValue] = useState<string>(defaultValue !== undefined ? defaultValue.toString() : '');
 
   useEffect(() => {
+    // Only call onChange if defaultValue is defined
     if (defaultValue !== undefined) {
       onChange(field.key, defaultValue);
     }
   }, [defaultValue]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = parseInt(e.target.value);
-    setValue(value);
-    onChange(field.key, value);
+    let newValue = e.target.value;
+    setValue(newValue);
+    // Convert to number or send 0 if empty
+    let numericValue = newValue ? parseInt(newValue) : 0;
+    onChange(field.key, numericValue);
   };
 
   return (

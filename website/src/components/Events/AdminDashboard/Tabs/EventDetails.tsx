@@ -24,8 +24,8 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventDetails }) => {
     return [
       { key: 'name', question: 'Event Name', type: 'text', defaultValue: metadata.name },
       { key: 'address', question: 'Address', type: 'address', defaultValue: metadata.address },
-      { key: 'eventLat', question: 'Latitude', type: 'number', defaultValue: metadata.eventLat },
-      { key: 'eventLon', question: 'Longitude', type: 'number', defaultValue: metadata.eventLon },
+      { key: 'lat', question: 'Latitude', type: 'number', defaultValue: metadata.lat },
+      { key: 'lon', question: 'Longitude', type: 'number', defaultValue: metadata.lon },
       { key: 'startTime', question: 'Start Time', type: 'timestamp', defaultValue: metadata.startTime },
       { key: 'endTime', question: 'End Time', type: 'timestamp', defaultValue: metadata.endTime },
       { key: 'timezone', question: 'Timezone', type: 'text', defaultValue: metadata.timezone },

@@ -12,8 +12,8 @@ export type EventModel = {
 export type EventMetadata = {
   name: string;
   address?: Address;
-  eventLat?: number;
-  eventLon?: number;
+  lat?: number;
+  lon?: number;
   startTime?: Date;
   endTime?: Date;
   timezone?: string;

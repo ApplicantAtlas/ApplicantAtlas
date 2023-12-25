@@ -19,9 +19,9 @@ type Event struct {
 type EventMetadata struct {
 	Name string `bson:"name" json:"name" validate:"required,max=30"` // this is the only required field
 
-	Address  Address `bson:"address,omitempty" json:"address,omitempty"`
-	EventLat float64 `bson:"lat,omitempty" json:"lat,omitempty"` // TODO: Derive this from address
-	EventLon float64 `bson:"lon,omitempty" json:"lon,omitempty"` // TODO: Derive this from address
+	Address Address `bson:"address,omitempty" json:"address,omitempty"`
+	Lat     float64 `bson:"lat,omitempty" json:"lat,omitempty"` // TODO: Derive this from address
+	Lon     float64 `bson:"lon,omitempty" json:"lon,omitempty"` // TODO: Derive this from address
 
 	StartTime time.Time `bson:"startTime,omitempty" json:"startTime,omitempty"`                   // RFC3339
 	EndTime   time.Time `bson:"endTime,omitempty" json:"endTime,omitempty"`                       // RFC3339
