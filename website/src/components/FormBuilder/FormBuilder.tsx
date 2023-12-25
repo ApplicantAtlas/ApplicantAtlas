@@ -171,6 +171,9 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
           defaultTimestamp = undefined;
         }
 
+        /*if (defaultTimestamp) {
+          handleInputChange(field.key, defaultTimestamp);
+        }*/
         return (
           <TimestampInput
             field={field}

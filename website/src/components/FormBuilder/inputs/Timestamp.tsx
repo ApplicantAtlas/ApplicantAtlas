@@ -8,8 +8,6 @@ type TimestampInputProps = {
   defaultValue?: Date;
 };
 
-// TODO: When getting sent out to the backend, we should make sure that the timestamp is stored in UTC or bad things will happen
-
 const TimestampInput: React.FC<TimestampInputProps> = ({
   field,
   onChange,
@@ -30,7 +28,6 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
     const [datePart, timePart] = timestampString.split("T");
     const [year, month, day] = datePart.split("-").map(Number);
     const [hours, minutes] = timePart.split(":").map(Number);
-    // Create a date in UTC
     return new Date(Date.UTC(year, month - 1, day, hours, minutes));
   };
 
@@ -38,25 +35,22 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
     return defaultValue instanceof Date && 
            !isNaN(defaultValue.getTime()) &&
            moment(defaultValue).isValid() &&
-           moment(defaultValue).year() > 1000; // Check if the year is realistic
+           moment(defaultValue).year() > 1000;
   };
 
-  const [value, setValue] = useState<string>(
-    isValidDefaultValue(defaultValue) ? formatTimestampToUTC(defaultValue) : ""
-  );
+  const [value, setValue] = useState<string>('');
 
+  // TODO: We need to do the onChange c
   useEffect(() => {
     if (isValidDefaultValue(defaultValue)) {
-      const formattedTimestamp = formatTimestampToUTC(defaultValue);
-      setValue(formattedTimestamp);
-    } else {
-      setValue(''); // Reset value if defaultValue is not valid
+      setValue(formatTimestampToUTC(defaultValue));
     }
   }, [defaultValue]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     setValue(newValue);
+
     if (newValue && moment(newValue, "YYYY-MM-DDTHH:mm", true).isValid()) {
       const timestampValue = parseTimestampStringToUTC(newValue);
       onChange(field.key, timestampValue);
