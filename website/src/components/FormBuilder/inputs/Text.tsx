@@ -3,7 +3,7 @@ import { FormField, FieldValue } from "@/types/models/FormBuilder";
 
 type TextInputProps = {
   field: FormField;
-  onChange: (key: string, value: FieldValue) => void;
+  onChange: (key: string, value: FieldValue, isValid?: boolean) => void;
   defaultValue?: string;
 };
 
@@ -23,7 +23,10 @@ const Text: React.FC<TextInputProps> = ({ field, onChange, defaultValue }) => {
 
     // Email validation
     const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
-    if (field.additionalValidation?.isEmail && !emailPattern.test(inputValue)) {
+    if (!field.required && inputValue === "") {
+      setError(null);
+    }
+    else if (field.additionalValidation?.isEmail && !emailPattern.test(inputValue)) {
       setError("Invalid email address");
     } else if (
       field.additionalValidation?.isEduEmail &&
@@ -32,9 +35,9 @@ const Text: React.FC<TextInputProps> = ({ field, onChange, defaultValue }) => {
       setError("Invalid EDU email address");
     } else {
       setError(null);
-      onChange(field.key, inputValue);
     }
     
+    onChange(field.key, inputValue, !!error);
   };
 
   return (

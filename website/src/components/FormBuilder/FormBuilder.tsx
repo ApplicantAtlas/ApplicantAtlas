@@ -30,14 +30,22 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   buttonText = "Submit",
 }) => {
   const [formData, setFormData] = useState<Record<string, any>>({});
+  const [invalidInputs, setInvalidInputs] = useState<Record<string, boolean>>({});
 
-  const handleInputChange = (key: string, value: FieldValue) => {
+  const handleInputChange = (key: string, value: FieldValue, isValid?: boolean) => {
+    setInvalidInputs({ ...invalidInputs, [key]: false});
+    if (isValid === false) {
+      setInvalidInputs({ ...invalidInputs, [key]: true});
+    }
+
     setFormData({ ...formData, [key]: value });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    submissionFunction(formData);
+    if (Object.keys(invalidInputs).every((input) => invalidInputs[input] !== true )) {
+      submissionFunction(formData);
+    }
   };
 
   const renderFormField = (field: FormStructure["attrs"][number]) => {
