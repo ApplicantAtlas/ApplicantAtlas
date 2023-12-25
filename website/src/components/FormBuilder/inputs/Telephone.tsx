@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { FormField, FieldValue } from "@/types/models/FormBuilder";
 
-import PhoneInput from 'react-phone-number-input'
-import 'react-phone-number-input/style.css'
+import PhoneInput from "react-phone-number-input";
+import { isValidPhoneNumber } from "react-phone-number-input";
+import "react-phone-number-input/style.css";
 
 type TelephoneInputProps = {
   field: FormField;
@@ -16,6 +17,7 @@ const Telephone: React.FC<TelephoneInputProps> = ({
   defaultValue,
 }) => {
   const [phoneNumber, setPhoneNumber] = useState<string>(defaultValue || "");
+  const [error, setError] = useState<string>("");
 
   const handlePhoneNumberChange = (number: string | undefined) => {
     setPhoneNumber(number || "");
@@ -23,13 +25,12 @@ const Telephone: React.FC<TelephoneInputProps> = ({
   };
 
   const validatePhoneNumber = (number: string | undefined) => {
-    // Regular expression for a simple phone number validation (10 digits)
-    const phoneRegex = /^(\+|00)[1-9][0-9 \-\(\)\.]{7,32}$/;
-
-    if (number && phoneRegex.test(number)) {
-      onChange(field.key, number);
+    if (isValidPhoneNumber(number as string)) {
+      onChange(field.key, number as string);
+      setError("");
     } else {
       onChange(field.key, "");
+      setError("Invalid phone number");
     }
   };
 
@@ -40,15 +41,16 @@ const Telephone: React.FC<TelephoneInputProps> = ({
       </label>
       <div className="telephone-input">
         <PhoneInput
+          id={field.key}
+          name={field.question}
           placeholder="Enter phone number"
           value={phoneNumber}
           onChange={handlePhoneNumberChange}
           required={field.required}
-          className="input input-bordered"
-          style={{width: '250px'}}
-          pattern="^(\+|00)[1-9][0-9 \-\(\)\.]{7,32}$"
+          className="input input-bordered max-w-[250px]"
           defaultCountry="US"
         />
+        {error && <p className="text-red-500">{error}</p>}
       </div>
     </div>
   );
