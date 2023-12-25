@@ -7,7 +7,7 @@ import "react-phone-number-input/style.css";
 
 type TelephoneInputProps = {
   field: FormField;
-  onChange: (key: string, value: FieldValue) => void;
+  onChange: (key: string, value: FieldValue, isValid?: boolean) => void;
   defaultValue?: string;
 };
 
@@ -25,11 +25,11 @@ const Telephone: React.FC<TelephoneInputProps> = ({
   };
 
   const validatePhoneNumber = (number: string | undefined) => {
-    if (isValidPhoneNumber(number as string)) {
-      onChange(field.key, number as string);
+    if (!number || isValidPhoneNumber(number as string)) {
+      onChange(field.key, number as string, true);
       setError("");
     } else {
-      onChange(field.key, "");
+      onChange(field.key, "", false);
       setError("Invalid phone number");
     }
   };

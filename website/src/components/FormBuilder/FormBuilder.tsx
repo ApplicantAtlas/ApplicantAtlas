@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Number from "./inputs/Number";
 import DateInput from "./inputs/Date";
 import Text from "./inputs/Text";
@@ -30,14 +30,28 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   buttonText = "Submit",
 }) => {
   const [formData, setFormData] = useState<Record<string, any>>({});
+  const [invalidInputs, setInvalidInputs] = useState<Record<string, boolean | undefined>>({});
+  const [error, setError] = useState<string | null>("");
 
-  const handleInputChange = (key: string, value: FieldValue) => {
+  useEffect(() => {
+    if (Object.keys(invalidInputs).every((input) => invalidInputs[input] !== false )) {
+      setError(null);
+    } else {
+      setError('Verify all form entries are correct');
+    }
+  }, [invalidInputs]);
+
+  const handleInputChange = (key: string, value: FieldValue, isValid?: boolean) => {
+    setInvalidInputs({ ...invalidInputs, [key]: isValid});
     setFormData({ ...formData, [key]: value });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    submissionFunction(formData);
+    if (!error) {
+      submissionFunction(formData);
+      setError(null);
+    }
   };
 
   const renderFormField = (field: FormStructure["attrs"][number]) => {
@@ -189,14 +203,19 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      {formStructure.attrs.map((field, index) => (
-        <div key={index}>{renderFormField(field)}</div>
-      ))}
-      <button type="submit" className="btn mt-4">
-        {buttonText}
-      </button>
-    </form>
+    <>
+      <form onSubmit={handleSubmit}>
+        {formStructure.attrs.map((field, index) => (
+          <div key={index}>{renderFormField(field)}</div>
+        ))}
+        <span className="flex items-center mt-4">
+          <button type="submit" className="btn mr-2">
+            {buttonText}
+          </button>
+          {error && <p className="text-red-500">{error}</p>}
+        </span>
+      </form>
+    </>
   );
 };
 
