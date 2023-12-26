@@ -57,9 +57,8 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
 
   const timezoneOptions = moment.tz.names();
 
+  // TODO: This might be getting re-rendered too much by toast on submission
   useEffect(() => {
-    // TODO: Fix this gets called when the submission successful toast pops up over and over again
-    console.log("rerendering timestamp", field.defaultOptions);
     if (
       defaultValue &&
       timezone &&
