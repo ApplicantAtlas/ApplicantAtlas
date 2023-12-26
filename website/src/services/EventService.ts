@@ -1,5 +1,6 @@
 import { AxiosResponse } from 'axios';
 import api from './AxiosInterceptor';
+import { EventMetadata, EventModel } from '@/types/models/Event';
 
 type ListEventsResponse = {
     events: EventModel[];

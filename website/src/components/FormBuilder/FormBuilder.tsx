@@ -6,6 +6,7 @@ import Checkbox from "./inputs/Checkbox";
 import Radio from "./inputs/Radio";
 import Telephone from "./inputs/Telephone";
 import AddressInput from "./inputs/Address";
+import ColorPicker from "./inputs/ColorPicker";
 
 import {
   FormStructure,
@@ -210,6 +211,14 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
             field={field}
             onChange={handleInputChange}
             defaultValue={field.defaultValue as Address}
+          />
+        );
+      case "colorpicker":
+        return (
+          <ColorPicker
+            field={field}
+            onChange={handleInputChange}
+            defaultValue={field.defaultValue as string}
           />
         );
       default:
