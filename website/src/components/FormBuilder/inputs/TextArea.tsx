@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { FormField, FieldValue } from '@/types/models/FormBuilder';
+import React, { useEffect, useState } from "react";
+import { FormField, FieldValue } from "@/types/models/FormBuilder";
 
 type TextAreaProps = {
   field: FormField;
@@ -7,8 +7,12 @@ type TextAreaProps = {
   defaultValue?: string;
 };
 
-const TextArea: React.FC<TextAreaProps> = ({ field, onChange, defaultValue }) => {
-  const [value, setValue] = useState<string>(defaultValue || '');
+const TextArea: React.FC<TextAreaProps> = ({
+  field,
+  onChange,
+  defaultValue,
+}) => {
+  const [value, setValue] = useState<string>(defaultValue || "");
 
   useEffect(() => {
     if (defaultValue) {
@@ -25,12 +29,15 @@ const TextArea: React.FC<TextAreaProps> = ({ field, onChange, defaultValue }) =>
   return (
     <div className="form-control">
       <label className="label">
-        <span className="label-text">{field.question}</span>
+        <span className="label-text">
+          {field.question}{" "}
+          {field.required && <span className="text-error">*</span>}
+        </span>
       </label>
       <textarea
         id={field.key}
         value={value}
-        placeholder={field.description || ''}
+        placeholder={field.description || ""}
         className="textarea textarea-bordered"
         onChange={handleInputChange}
         required={field.required}

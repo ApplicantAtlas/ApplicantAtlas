@@ -42,7 +42,10 @@ const Telephone: React.FC<TelephoneInputProps> = ({
   return (
     <div className="form-control">
       <label className="label">
-        <span className="label-text">{field.question}</span>
+        <span className="label-text">
+          {field.question}{" "}
+          {field.required && <span className="text-error">*</span>}
+        </span>
       </label>
       <div className="telephone-input">
         <PhoneInput
@@ -57,7 +60,7 @@ const Telephone: React.FC<TelephoneInputProps> = ({
           className="input input-bordered max-w-[250px]"
           defaultCountry="US"
         />
-        {error && <p className="text-red-500 pl-2">{error}</p>}
+        {error && <p className="text-error pl-2">{error}</p>}
       </div>
     </div>
   );

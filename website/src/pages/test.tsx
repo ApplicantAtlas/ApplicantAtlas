@@ -69,6 +69,13 @@ const Test: React.FC = () => {
         type: "colorpicker",
         description: "Please enter your favorite color",
         required: false,
+      },
+      {
+        key: "visible",
+        question: "Is this visible?",
+        type: "checkbox",
+        description: "Please enter your favorite color",
+        required: true,
       }
     ],
   };

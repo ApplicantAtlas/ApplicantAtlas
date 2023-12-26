@@ -40,7 +40,10 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
   return (
     <div className="form-control relative">
       <label className="label">
-        <span className="label-text">{field.question}</span>
+        <span className="label-text">
+          {field.question}{" "}
+          {field.required && <span className="text-error">*</span>}
+        </span>
       </label>
       <div className="flex items-center">
         <div

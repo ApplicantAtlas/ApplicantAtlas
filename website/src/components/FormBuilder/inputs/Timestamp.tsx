@@ -63,7 +63,7 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
       defaultValue &&
       timezone &&
       isValidDefaultValue(defaultValue) &&
-      moment(defaultValue).isValid() && 
+      moment(defaultValue).isValid() &&
       !isInitialized.current
     ) {
       const formattedDateTime = moment(defaultValue)
@@ -71,7 +71,7 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
         .format("YYYY-MM-DDTHH:mm");
       setLocalDateTime(formattedDateTime);
       onChange(field.key, defaultValue);
-        isInitialized.current = true;
+      isInitialized.current = true;
     }
   }, [defaultValue, timezone]);
 
@@ -124,7 +124,10 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
   return (
     <div className="form-control">
       <label className="label">
-        <span className="label-text">{field.question}</span>
+        <span className="label-text">
+          {field.question}{" "}
+          {field.required && <span className="text-error">*</span>}
+        </span>
       </label>
       <input
         id={field.key + "-date-tz"}
