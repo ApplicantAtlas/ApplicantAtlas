@@ -21,7 +21,7 @@ export type EventMetadata = {
   website?: string;
   description?: string;
   socialMediaLinks?: string[];
-  eventTags?: string[];
+  tags?: string[];
   contactEmail?: string;
 };
 

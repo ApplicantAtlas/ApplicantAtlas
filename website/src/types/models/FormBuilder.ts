@@ -9,8 +9,9 @@ export type FieldValidation = {
 };
 
 export type AdditionalOptions = {
-  [key: string]: string | undefined;
-  defaultTimezone?: string
+  [key: string]: string | undefined | boolean;
+  defaultTimezone?: string;
+  showTimezone?: boolean;
 }
 
 export type FieldValue =

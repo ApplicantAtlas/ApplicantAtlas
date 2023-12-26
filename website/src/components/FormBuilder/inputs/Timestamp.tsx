@@ -14,11 +14,15 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
   onChange,
   defaultValue,
 }) => {
-  const [timezone, setTimezone] = useState<string>('');
+  const askTimezone = field.additionalOptions?.showTimezone || false;
+  const [timezone, setTimezone] = useState<string>("");
   const [guessedTz, setGuessedTz] = useState<string>((): string => {
-    if (field.additionalOptions?.defaultTimezone && field.additionalOptions?.defaultTimezone !== '') {
-        setTimezone(field.additionalOptions?.defaultTimezone);
-        return field.additionalOptions?.defaultTimezone;
+    if (
+      field.additionalOptions?.defaultTimezone &&
+      field.additionalOptions?.defaultTimezone !== ""
+    ) {
+      setTimezone(field.additionalOptions?.defaultTimezone);
+      return field.additionalOptions?.defaultTimezone;
     }
     const guessedTz = moment.tz.guess();
     if (guessedTz) {
@@ -54,21 +58,22 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
   const timezoneOptions = moment.tz.names();
 
   useEffect(() => {
-    console.log('useEffect', defaultValue, timezone, isValidDefaultValue(defaultValue), moment(defaultValue).isValid(), !isInitialized.current)
+    // TODO: Fix this gets called when the submission successful toast pops up over and over again
+    console.log("rerendering timestamp", field.defaultOptions);
     if (
       defaultValue &&
       timezone &&
       isValidDefaultValue(defaultValue) &&
-      moment(defaultValue).isValid() &&
-      !isInitialized.current
+      moment(defaultValue).isValid()
     ) {
-      const formattedDateTime = moment(defaultValue)
+      const newFormattedDateTime = moment(defaultValue)
         .tz(timezone)
         .format("YYYY-MM-DDTHH:mm");
-      setLocalDateTime(formattedDateTime);
-      console.log("call5", field.key, defaultValue)
-      onChange(field.key, defaultValue);
-      isInitialized.current = true;
+      if (!isInitialized.current || localDateTime !== newFormattedDateTime) {
+        setLocalDateTime(newFormattedDateTime);
+        onChange(field.key, defaultValue);
+        isInitialized.current = true;
+      }
     }
   }, [defaultValue, timezone]);
 
@@ -82,16 +87,17 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
         const timestampValue = moment
           .tz(newValue, "YYYY-MM-DDTHH:mm", timezone)
           .toDate();
-          console.log("call6", field.key, timestampValue)
         onChange(field.key, timestampValue);
       }
     }, 0);
   };
 
   const handleTimezoneChange = (k: string, selectedOption: any) => {
-    console.log('handleTimezonechange', k, selectedOption)
-    if (selectedOption && typeof selectedOption === "string" && selectedOption !== timezone) {
-      console.log('handleTimezoneChange', selectedOption);
+    if (
+      selectedOption &&
+      typeof selectedOption === "string" &&
+      selectedOption !== timezone
+    ) {
       setTimezone(selectedOption);
       updateDateTime(localDateTime, selectedOption);
       isInitialized.current = false;
@@ -99,29 +105,24 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
   };
 
   const updateDateTime = (localDateTime: string, tz: string) => {
-    console.log("updateDateTime", field.key,localDateTime, tz)
     if (
       localDateTime &&
       moment(localDateTime, "YYYY-MM-DDTHH:mm", true).isValid()
     ) {
-      console.log('hi')
       const timestampValue = moment
         .tz(localDateTime, "YYYY-MM-DDTHH:mm", tz)
         .toDate();
-      console.log("T&")
       if (!isInitialized.current) {
-        console.log("call8", field.key, timestampValue)
         onChange(field.key, timestampValue);
       }
     }
-    console.log('ret')
   };
 
-
-  if (timezone === '') {
+  if (timezone === "") {
     return <div>Loading...</div>;
   }
 
+  // TODO: I want to make the timezone more pretty and inline with the rest of the form
   return (
     <div className="form-control">
       <label className="label">
@@ -134,16 +135,18 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
         className="input input-bordered"
         onChange={handleInputChange}
       />
-      <Select
-        field={{
-          ...field,
-          key: field.key + "-tz",
-          question: "Select " + field.question + " Timezone",
-          options: timezoneOptions,
-          defaultOptions: defaultOptions,
-        }}
-        onChange={(k, value) => handleTimezoneChange(k, value)}
-      />
+      {!askTimezone ? null : (
+        <Select
+          field={{
+            ...field,
+            key: field.key + "-tz",
+            question: "Select " + field.question + " Timezone",
+            options: timezoneOptions,
+            defaultOptions: defaultOptions,
+          }}
+          onChange={(k, value) => handleTimezoneChange(k, value)}
+        />
+      )}
     </div>
   );
 };

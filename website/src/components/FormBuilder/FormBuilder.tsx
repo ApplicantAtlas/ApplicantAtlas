@@ -42,13 +42,11 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   const [formData, setFormData] = useState<Record<string, any>>({});
 
   const handleInputChange = (key: string, value: FieldValue) => {
-    console.log("handleInputChange", key, value);
     setFormData((formData) => ({ ...formData, [key]: value }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("handleSubmit", formData);
     submissionFunction(formData);
   };
 

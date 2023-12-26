@@ -31,7 +31,7 @@ type EventMetadata struct {
 	Website          string   `bson:"website,omitempty" json:"website,omitempty"`
 	Description      string   `bson:"description,omitempty" json:"description,omitempty" validate:"max=500"`
 	SocialMediaLinks []string `bson:"socialMediaLinks,omitempty" json:"socialMediaLinks,omitempty"`
-	EventTags        []string `bson:"eventTags,omitempty" json:"eventTags,omitempty"`
+	Tags             []string `bson:"tags,omitempty" json:"tags,omitempty"`
 	ContactEmail     string   `bson:"contactEmail,omitempty" json:"contactEmail,omitempty"`
 }
 

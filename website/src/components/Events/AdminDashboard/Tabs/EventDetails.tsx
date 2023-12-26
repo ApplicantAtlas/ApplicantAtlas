@@ -30,14 +30,14 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventDetails }) => {
       { key: 'address', question: 'Address', type: 'address', defaultValue: metadata.address },
       { key: 'lat', question: 'Latitude', type: 'number', defaultValue: metadata.lat },
       { key: 'lon', question: 'Longitude', type: 'number', defaultValue: metadata.lon },
-      { key: 'startTime', question: 'Start Time', type: 'timestamp', defaultValue: metadata.startTime, additionalOptions: { defaultTimezone: metadata.timezone } },
-      { key: 'endTime', question: 'End Time', type: 'timestamp', defaultValue: metadata.endTime, additionalOptions: { defaultTimezone: metadata.timezone } },
+      { key: 'startTime', question: 'Start Time', type: 'timestamp', defaultValue: metadata.startTime, additionalOptions: { defaultTimezone: metadata.timezone, showTimezone: true } },
+      { key: 'endTime', question: 'End Time', type: 'timestamp', defaultValue: metadata.endTime, additionalOptions: { defaultTimezone: metadata.timezone, showTimezone: true } },
       { key: 'timezone', question: 'Timezone', type: 'select', options: timezoneOptions, defaultOptions: timezoneDefaultOptions },
       { key: 'visibility', question: 'Visibility', type: 'checkbox', defaultValue: metadata.visibility },
       { key: 'website', question: 'Website', type: 'text', defaultValue: metadata.website },
       { key: 'description', question: 'Description', type: 'textarea', defaultValue: metadata.description },
-      { key: 'tags', question: 'Tags', type: 'custommultiselect', defaultValue: metadata.eventTags },
-      { key: 'socialMediaLinks', question: 'Social Media Links', type: 'custommultiselect', defaultValue: metadata.socialMediaLinks },
+      { key: 'tags', question: 'Tags', type: 'custommultiselect', defaultOptions: metadata.tags },
+      { key: 'socialMediaLinks', question: 'Social Media Links', type: 'custommultiselect', defaultOptions: metadata.socialMediaLinks },
       { key: "contactEmail", question: "Contact Email", type: "text", defaultValue: metadata.contactEmail },
     ];
   };

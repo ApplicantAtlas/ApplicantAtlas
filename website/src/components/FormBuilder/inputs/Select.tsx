@@ -21,7 +21,6 @@ const Select: React.FC<SelectProps> = ({
     field.options?.map((option) => ({ label: option, value: option })) || [];
 
   useEffect(() => {
-    console.log('rerendering select', field.defaultOptions)
     if (
       field.defaultOptions?.length !== undefined &&
       field.defaultOptions.length > 0
