@@ -25,11 +25,11 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventDetails }) => {
 
   const createFormStructure = (metadata: EventMetadata): FormField[] => {
     const timezoneDefaultOptions = metadata.timezone ? [metadata.timezone] : [];
+
+    // Note: excludes lat & lon bc this is not editable and is derived from the address on the backend.
     return [
       { key: 'name', question: 'Event Name', type: 'text', defaultValue: metadata.name },
       { key: 'address', question: 'Address', type: 'address', defaultValue: metadata.address },
-      { key: 'lat', question: 'Latitude', type: 'number', defaultValue: metadata.lat },
-      { key: 'lon', question: 'Longitude', type: 'number', defaultValue: metadata.lon },
       { key: 'startTime', question: 'Start Time', type: 'timestamp', defaultValue: metadata.startTime, additionalOptions: { defaultTimezone: metadata.timezone, showTimezone: true } },
       { key: 'endTime', question: 'End Time', type: 'timestamp', defaultValue: metadata.endTime, additionalOptions: { defaultTimezone: metadata.timezone, showTimezone: true } },
       { key: 'timezone', question: 'Timezone', type: 'select', options: timezoneOptions, defaultOptions: timezoneDefaultOptions },
