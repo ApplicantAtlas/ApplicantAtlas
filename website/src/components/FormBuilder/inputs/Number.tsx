@@ -9,7 +9,9 @@ type NumberProps = {
 
 const Number: React.FC<NumberProps> = ({ field, onChange, defaultValue }) => {
   // Initialize state with defaultValue or 0 if defaultValue is undefined
-  const [value, setValue] = useState<string>(defaultValue !== undefined ? defaultValue.toString() : '');
+  const [value, setValue] = useState<string>(
+    defaultValue !== undefined ? defaultValue.toString() : ""
+  );
 
   useEffect(() => {
     // Only call onChange if defaultValue is defined
@@ -29,7 +31,10 @@ const Number: React.FC<NumberProps> = ({ field, onChange, defaultValue }) => {
   return (
     <div className="form-control">
       <label className="label">
-        <span className="label-text">{field.question}</span>
+        <span className="label-text">
+          {field.question}{" "}
+          {field.required && <span className="text-error">*</span>}
+        </span>
       </label>
       <input
         id={field.key}

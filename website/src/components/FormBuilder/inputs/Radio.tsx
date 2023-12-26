@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import { FormField, FieldValue } from "@/types/models/FormBuilder";
 
 type RadioProps = {
@@ -12,7 +12,10 @@ const Radio: React.FC<RadioProps> = ({ field, onChange }) => {
   );
 
   useEffect(() => {
-    if (field.defaultOptions?.length !== undefined && field.defaultOptions.length > 0) {
+    if (
+      field.defaultOptions?.length !== undefined &&
+      field.defaultOptions.length > 0
+    ) {
       onChange(field.key, field.defaultOptions[0]);
     }
   }, [field.defaultOptions]);
@@ -25,7 +28,10 @@ const Radio: React.FC<RadioProps> = ({ field, onChange }) => {
   return (
     <div className="form-control">
       <label className="label">
-        <span className="label-text">{field.question}</span>
+        <span className="label-text">
+          {field.question}{" "}
+          {field.required && <span className="text-error">*</span>}
+        </span>
       </label>
       <div className="flex flex-col space-y-2">
         {field.options?.map((option, index) => (

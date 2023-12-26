@@ -26,7 +26,10 @@ const Checkbox: React.FC<CheckboxProps> = ({
   return (
     <div className="form-control">
       <label className="label cursor-pointer">
-        <span className="label-text mr-2">{field.question}</span>
+        <span className="label-text mr-2">
+          {field.question}{" "}
+          {field.required && <span className="text-error">*</span>}
+        </span>
       </label>
       <input
         id={field.key}

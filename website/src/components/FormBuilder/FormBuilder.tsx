@@ -236,7 +236,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
           <button type="submit" className="btn mr-2">
             {buttonText}
           </button>
-          {error && <p className="text-red-500">{error}</p>}
+          {error && <p className="text-error">{error}</p>}
         </span>
       </form>
     </>

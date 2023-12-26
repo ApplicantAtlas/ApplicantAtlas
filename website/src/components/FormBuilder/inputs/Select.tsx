@@ -58,7 +58,10 @@ const Select: React.FC<SelectProps> = ({
   return (
     <div className="form-control">
       <label className="label">
-        <span className="label-text">{field.question}</span>
+        <span className="label-text">
+          {field.question}{" "}
+          {field.required && <span className="text-error">*</span>}
+        </span>
       </label>
       <SelectComponent
         id={field.key}

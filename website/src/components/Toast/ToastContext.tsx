@@ -73,17 +73,27 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
   };
 
   const getToastStyle = (type: ToastType) => {
+    let baseColorClass = "";
+    let darkerEffect = "brightness-75"; // Using CSS filter to darken the color
+  
     switch (type) {
       case ToastType.Success:
-        return ["bg-green-500", "bg-green-700"];
+        baseColorClass = "bg-success";
+        break;
       case ToastType.Warning:
-        return ["bg-yellow-500", "bg-yellow-700"]
+        baseColorClass = "bg-warning";
+        break;
       case ToastType.Error:
-        return ["bg-red-500", "bg-red-700"]
+        baseColorClass = "bg-error";
+        break;
       default:
-        return ["bg-gray-500", "bg-gray-700"]
+        baseColorClass = "bg-neutral";
+        break;
     }
+  
+    return [baseColorClass, `${baseColorClass} ${darkerEffect}`];
   };
+  
 
   return (
     <ToastContext.Provider value={{ showToast }}>

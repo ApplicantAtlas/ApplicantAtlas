@@ -9,18 +9,22 @@ type DateInputProps = {
 
 // TODO: When gettign sent out to the backend, we should make sure that the date is stored in UTC or bad things will happen
 
-const DateInput: React.FC<DateInputProps> = ({ field, onChange, defaultValue }) => {
+const DateInput: React.FC<DateInputProps> = ({
+  field,
+  onChange,
+  defaultValue,
+}) => {
   // Format a Date object to a 'YYYY-MM-DD' string in UTC
   const formatDateToUTC = (date: Date) => {
     const year = date.getUTCFullYear();
-    const month = ('0' + (date.getUTCMonth() + 1)).slice(-2); // Months are 0-indexed
-    const day = ('0' + date.getUTCDate()).slice(-2);
+    const month = ("0" + (date.getUTCMonth() + 1)).slice(-2); // Months are 0-indexed
+    const day = ("0" + date.getUTCDate()).slice(-2);
     return `${year}-${month}-${day}`;
   };
 
   // Convert string in 'YYYY-MM-DD' format to a UTC Date object
   const parseDateStringToUTC = (dateString: string) => {
-    const [year, month, day] = dateString.split('-').map(Number);
+    const [year, month, day] = dateString.split("-").map(Number);
     // Create a date in UTC
     return new Date(Date.UTC(year, month - 1, day));
   };
@@ -50,7 +54,10 @@ const DateInput: React.FC<DateInputProps> = ({ field, onChange, defaultValue }) 
   return (
     <div className="form-control">
       <label className="label">
-        <span className="label-text">{field.question}</span>
+        <span className="label-text">
+          {field.question}{" "}
+          {field.required && <span className="text-error">*</span>}
+        </span>
       </label>
       <input
         id={field.key}
