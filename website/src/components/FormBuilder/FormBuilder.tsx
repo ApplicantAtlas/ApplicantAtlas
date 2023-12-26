@@ -5,7 +5,6 @@ import Text from "./inputs/Text";
 import Checkbox from "./inputs/Checkbox";
 import Radio from "./inputs/Radio";
 import Telephone from "./inputs/Telephone";
-import TimestampInput from "./inputs/Timestamp";
 import AddressInput from "./inputs/Address";
 import moment from 'moment';
 
@@ -19,6 +18,10 @@ import dynamic from "next/dynamic";
 import { Address, isAddress } from "@/types/models/Event";
 
 const SelectDynamic = dynamic(() => import("./inputs/Select"), {
+  ssr: false,
+});
+
+const TimestampDynamic = dynamic(() => import("./inputs/Timestamp"), {
   ssr: false,
 });
 
@@ -175,7 +178,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
           handleInputChange(field.key, defaultTimestamp);
         }*/
         return (
-          <TimestampInput
+          <TimestampDynamic
             field={field}
             onChange={handleInputChange}
             defaultValue={defaultTimestamp}
