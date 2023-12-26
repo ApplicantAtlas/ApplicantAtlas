@@ -46,7 +46,7 @@ export type FormField = {
   defaultValue?: FieldValue;
   options?: string[]; // for select, checkbox, radio
   defaultOptions?: string[]; // for select, checkbox, radio
-  required?: boolean; // TODO: implement
+  required?: boolean;
   disabled?: boolean; // TODO: implement
   additionalOptions?: AdditionalOptions;
 };

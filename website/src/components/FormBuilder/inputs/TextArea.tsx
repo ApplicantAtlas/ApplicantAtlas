@@ -33,6 +33,7 @@ const TextArea: React.FC<TextAreaProps> = ({ field, onChange, defaultValue }) =>
         placeholder={field.description || ''}
         className="textarea textarea-bordered"
         onChange={handleInputChange}
+        required={field.required}
       />
     </div>
   );

@@ -19,6 +19,7 @@
     "react": "^18",
     "react-country-region-selector": "^3.6.1",
     "react-dom": "^18",
+    "react-phone-number-input": "^3.3.7",
     "react-redux": "^9.0.4",
     "react-select": "^5.8.0"
   },

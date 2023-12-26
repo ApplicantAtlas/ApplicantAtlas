@@ -62,12 +62,12 @@ const Address: React.FC<AddressProps> = ({ field, onChange, defaultValue }) => {
   return (
     <div className="space-y-4">
       <Text
-        field={{ question: 'Street Address', key: 'streetAddress', type: 'text' }}
+        field={{ question: 'Street Address', key: 'streetAddress', type: 'text', required: field.required }}
         defaultValue={streetAddress}
         onChange={handleInputChange}
       />
       <Text
-        field={{ question: 'City', key: 'city', type: 'text' }}
+        field={{ question: 'City', key: 'city', type: 'text', required: field.required }}
         defaultValue={city}
         onChange={handleInputChange}
       />
@@ -80,6 +80,8 @@ const Address: React.FC<AddressProps> = ({ field, onChange, defaultValue }) => {
           onChange={selectCountry}
           priorityOptions={["US", "CA", "GB"]}
           classes="select select-bordered w-full"
+          // @ts-ignore
+          required={field.required}
         />
       </div>
       <div className="form-control w-full">
@@ -92,10 +94,12 @@ const Address: React.FC<AddressProps> = ({ field, onChange, defaultValue }) => {
           onChange={selectRegion}
           classes="select select-bordered w-full"
           disableWhenEmpty={true}
+          // @ts-ignore
+          required={field.required}
         />
       </div>
       <Text
-        field={{ question: 'Zip Code', key: 'zipCode', type: 'text' }}
+        field={{ question: 'Zip Code', key: 'zipCode', type: 'text', required: field.required }}
         defaultValue={zipCode}
         onChange={handleInputChange}
       />

@@ -12,13 +12,14 @@ const Test: React.FC = () => {
         question: "When does your event start?",
         type: "timestamp",
         description: "Please enter the start time of your event",
+        required: false,
       },
       {
         key: "telephone",
         question: "What's your telephone?",
         type: "telephone",
         description: "Please enter your telephone",
-
+        required: false,
       },
       {
         key: "email",
@@ -28,6 +29,7 @@ const Test: React.FC = () => {
         additionalValidation: {
           isEduEmail: true,
         },
+        required: false,
       },
       {
         key: "birthday",
@@ -45,21 +47,17 @@ const Test: React.FC = () => {
           "August",
           "September",
           "October",
+          "November",
+          "December"
         ],
-        defaultOptions: ["October", "November"],
+        required: false,
       },
       {
         key: "address",
         question: "What's your address?",
         type: "address",
         description: "Please enter your address",
-        defaultValue: {
-          street: "2 E Main St",
-          city: "Madison",
-          country: "United States",
-          region: "Wisconsin",
-          zipCode: "53703",
-        }
+        required: false,
       }
     ],
   };

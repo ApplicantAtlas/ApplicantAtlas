@@ -58,6 +58,7 @@ const DateInput: React.FC<DateInputProps> = ({ field, onChange, defaultValue }) 
         value={value}
         className="input input-bordered"
         onChange={handleInputChange}
+        required={field.required}
       />
     </div>
   );

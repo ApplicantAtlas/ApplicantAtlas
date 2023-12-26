@@ -1,9 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { FormField, FieldValue } from "@/types/models/FormBuilder";
+
+import PhoneInput from "react-phone-number-input";
+import { isValidPhoneNumber } from "react-phone-number-input";
+import "react-phone-number-input/style.css";
 
 type TelephoneInputProps = {
   field: FormField;
-  onChange: (key: string, value: FieldValue) => void;
+  onChange: (key: string, value: FieldValue, isValid?: boolean) => void;
   defaultValue?: string;
 };
 
@@ -12,42 +16,21 @@ const Telephone: React.FC<TelephoneInputProps> = ({
   onChange,
   defaultValue,
 }) => {
-  const [countryCode, setCountryCode] = useState<string>("");
   const [phoneNumber, setPhoneNumber] = useState<string>(defaultValue || "");
-  const [isValid, setIsValid] = useState<boolean>(true);
+  const [error, setError] = useState<string>("");
 
-  useEffect(() => {
-    if (defaultValue) {
-      const parts = defaultValue.split(" ");
-      if (parts.length === 2) {
-        setCountryCode(parts[0]);
-        setPhoneNumber(parts[1]);
-      }
-    }
-  }, [defaultValue]);
-
-  const handleCountryCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const code = e.target.value;
-    setCountryCode(code);
-    validatePhoneNumber(code, phoneNumber);
+  const handlePhoneNumberChange = (number: string | undefined) => {
+    setPhoneNumber(number || "");
+    validatePhoneNumber(number);
   };
 
-  const handlePhoneNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const number = e.target.value;
-    setPhoneNumber(number);
-    validatePhoneNumber(countryCode, number);
-  };
-
-  const validatePhoneNumber = (code: string, number: string) => {
-    // Regular expression for a simple phone number validation (10 digits)
-    const phoneRegex = /^[0-9]{10}$/;
-
-    if (code && number && phoneRegex.test(number)) {
-      setIsValid(true);
-      onChange(field.key, `${code} ${number}`);
+  const validatePhoneNumber = (number: string | undefined) => {
+    if (!number || isValidPhoneNumber(number as string)) {
+      onChange(field.key, number as string, true);
+      setError("");
     } else {
-      setIsValid(false);
-      onChange(field.key, "");
+      onChange(field.key, "", false);
+      setError("Invalid phone number");
     }
   };
 
@@ -57,29 +40,18 @@ const Telephone: React.FC<TelephoneInputProps> = ({
         <span className="label-text">{field.question}</span>
       </label>
       <div className="telephone-input">
-        <input
+        <PhoneInput
           id={field.key}
-          type="text"
-          value={countryCode}
-          placeholder="Country Code"
-          className={`input input-bordered ${isValid ? "" : "border-red-500"}`}
-          onChange={handleCountryCodeChange}
-          style={{ width: "100px" }}
-        />
-        <input
-          id={field.key}
-          type="text"
+          name={field.question}
+          placeholder="Enter phone number"
           value={phoneNumber}
-          placeholder="Phone Number"
-          className={`input input-bordered ${isValid ? "" : "border-red-500"}`}
           onChange={handlePhoneNumberChange}
+          required={field.required}
+          className="input input-bordered max-w-[250px]"
+          defaultCountry="US"
         />
+        {error && <p className="text-red-500">{error}</p>}
       </div>
-      {!isValid && (
-        <p className="text-red-500 text-sm mt-2">
-          Please enter a valid phone number.
-        </p>
-      )}
     </div>
   );
 };

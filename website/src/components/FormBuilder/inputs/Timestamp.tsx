@@ -133,6 +133,7 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
         value={localDateTime}
         className="input input-bordered"
         onChange={handleInputChange}
+        required={field.required}
       />
       {!askTimezone ? null : (
         <Select

@@ -40,6 +40,7 @@ const Number: React.FC<NumberProps> = ({ field, onChange, defaultValue }) => {
         min={field.additionalValidation?.min}
         max={field.additionalValidation?.max}
         onChange={handleInputChange}
+        required={field.required}
       />
     </div>
   );
