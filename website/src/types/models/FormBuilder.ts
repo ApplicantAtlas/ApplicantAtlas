@@ -8,6 +8,11 @@ export type FieldValidation = {
   isPassword?: boolean;
 };
 
+export type AdditionalOptions = {
+  [key: string]: string | undefined;
+  defaultTimezone?: string
+}
+
 export type FieldValue =
   | string
   | number
@@ -42,6 +47,7 @@ export type FormField = {
   defaultOptions?: string[]; // for select, checkbox, radio
   required?: boolean; // TODO: implement
   disabled?: boolean; // TODO: implement
+  additionalOptions?: AdditionalOptions;
 };
 
 export type FormStructure = {

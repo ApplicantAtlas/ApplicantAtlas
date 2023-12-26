@@ -4,6 +4,7 @@ import { useToast, ToastType } from '@/components/Toast/ToastContext';
 import FormBuilder from '@/components/FormBuilder/FormBuilder';
 import { FormField, FieldValue } from '@/types/models/FormBuilder';
 import { EventModel, EventMetadata } from '@/types/models/Event';
+import moment from 'moment-timezone';
 
 interface EventDetailsProps {
   eventDetails: EventModel | null;
@@ -20,15 +21,18 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventDetails }) => {
     }
   };
 
+  const timezoneOptions = moment.tz.names();
+
   const createFormStructure = (metadata: EventMetadata): FormField[] => {
+    const timezoneDefaultOptions = metadata.timezone ? [metadata.timezone] : [];
     return [
       { key: 'name', question: 'Event Name', type: 'text', defaultValue: metadata.name },
       { key: 'address', question: 'Address', type: 'address', defaultValue: metadata.address },
       { key: 'lat', question: 'Latitude', type: 'number', defaultValue: metadata.lat },
       { key: 'lon', question: 'Longitude', type: 'number', defaultValue: metadata.lon },
-      { key: 'startTime', question: 'Start Time', type: 'timestamp', defaultValue: metadata.startTime },
-      { key: 'endTime', question: 'End Time', type: 'timestamp', defaultValue: metadata.endTime },
-      { key: 'timezone', question: 'Timezone', type: 'text', defaultValue: metadata.timezone },
+      { key: 'startTime', question: 'Start Time', type: 'timestamp', defaultValue: metadata.startTime, additionalOptions: { defaultTimezone: metadata.timezone } },
+      { key: 'endTime', question: 'End Time', type: 'timestamp', defaultValue: metadata.endTime, additionalOptions: { defaultTimezone: metadata.timezone } },
+      { key: 'timezone', question: 'Timezone', type: 'select', options: timezoneOptions, defaultOptions: timezoneDefaultOptions },
       { key: 'visibility', question: 'Visibility', type: 'checkbox', defaultValue: metadata.visibility },
       { key: 'website', question: 'Website', type: 'text', defaultValue: metadata.website },
       { key: 'description', question: 'Description', type: 'textarea', defaultValue: metadata.description },

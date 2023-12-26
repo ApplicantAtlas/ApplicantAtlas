@@ -15,7 +15,18 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
   defaultValue,
 }) => {
   const [timezone, setTimezone] = useState<string>('');
-  const [guessedTz, setGuessedTz] = useState<string>(moment.tz.guess());
+  const [guessedTz, setGuessedTz] = useState<string>((): string => {
+    if (field.additionalOptions?.defaultTimezone && field.additionalOptions?.defaultTimezone !== '') {
+        setTimezone(field.additionalOptions?.defaultTimezone);
+        return field.additionalOptions?.defaultTimezone;
+    }
+    const guessedTz = moment.tz.guess();
+    if (guessedTz) {
+      setTimezone(guessedTz);
+    }
+    return guessedTz;
+  });
+
   const defaultOptions = useMemo(() => [guessedTz], [guessedTz]);
   const isInitialized = useRef(false);
 
@@ -43,13 +54,7 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
   const timezoneOptions = moment.tz.names();
 
   useEffect(() => {
-    const guessedTz = moment.tz.guess();
-    console.log('guessedTz', guessedTz)
-    setTimezone(guessedTz);
-    setGuessedTz(guessedTz);
-  }, []);
-
-  useEffect(() => {
+    console.log('useEffect', defaultValue, timezone, isValidDefaultValue(defaultValue), moment(defaultValue).isValid(), !isInitialized.current)
     if (
       defaultValue &&
       timezone &&
@@ -65,17 +70,7 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
       onChange(field.key, defaultValue);
       isInitialized.current = true;
     }
-  }, [defaultValue, [timezone]]);
-
-  /*useEffect(() => {
-    if (localDateTime && moment(localDateTime, "YYYY-MM-DDTHH:mm", true).isValid()) {
-      const timestampValue = moment
-        .tz(localDateTime, "YYYY-MM-DDTHH:mm", timezone)
-        .toDate();
-        console.log("call3", field.key, timestampValue)
-      onChange(field.key, timestampValue);
-    }
-  }, [timezone])*/
+  }, [defaultValue, timezone]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
@@ -99,21 +94,9 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
       console.log('handleTimezoneChange', selectedOption);
       setTimezone(selectedOption);
       updateDateTime(localDateTime, selectedOption);
+      isInitialized.current = false;
     }
   };
-
-
-  /*const updateDateTime = (localDateTime: string, tz: string) => {
-    if (
-      localDateTime &&
-      moment(localDateTime, "YYYY-MM-DDTHH:mm", true).isValid()
-    ) {
-      const timestampValue = moment
-        .tz(localDateTime, "YYYY-MM-DDTHH:mm", tz)
-        .toDate();
-      onChange(field.key, timestampValue);
-    }
-  };*/
 
   const updateDateTime = (localDateTime: string, tz: string) => {
     console.log("updateDateTime", field.key,localDateTime, tz)
