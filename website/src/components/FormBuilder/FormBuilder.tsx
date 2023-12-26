@@ -54,7 +54,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   
      setError((): string | null => {
       if (errors.length > 0) {
-        return `Your form has the following errors: ${errors}`;
+        return 'Your form is incorrect, please verify your answers.'
       }
       return null;
      })

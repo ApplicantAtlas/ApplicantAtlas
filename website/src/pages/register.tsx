@@ -35,14 +35,24 @@ const RegistrationPage = () => {
         question: "Email",
         type: "text",
         key: "email",
-        additionalValidation: { isEmail: true },
+        additionalValidation: {
+          isEmail: {
+            isEmail: true,
+          },
+        },
         required: true,
       },
       {
         question: "School Email (Optional)",
         type: "text",
         key: "schoolEmail",
-        additionalValidation: { isEduEmail: true },
+        additionalValidation: {
+          isEmail: {
+            isEmail: true,
+            allowSubdomains: true,
+            allowTLDs: ["edu"],
+          }
+        },
       },
       {
         question: "Birthday",
@@ -54,7 +64,9 @@ const RegistrationPage = () => {
         question: "Password",
         type: "text",
         key: "password",
-        additionalValidation: { isPassword: true },
+        additionalOptions: {
+          isPassword: true,
+        },
         required: true,
       },
     ],

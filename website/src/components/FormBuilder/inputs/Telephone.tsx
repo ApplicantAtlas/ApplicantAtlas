@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { FormField, FieldValue } from "@/types/models/FormBuilder";
 
 import PhoneInput from "react-phone-number-input";
@@ -17,6 +17,7 @@ const Telephone: React.FC<TelephoneInputProps> = ({
   defaultValue,
 }) => {
   const [phoneNumber, setPhoneNumber] = useState<string>(defaultValue || "");
+  const inputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string>("");
 
   const handlePhoneNumberChange = (number: string | undefined) => {
@@ -25,7 +26,11 @@ const Telephone: React.FC<TelephoneInputProps> = ({
   };
 
   const validatePhoneNumber = (number: string | undefined) => {
-    if (!number || isValidPhoneNumber(number as string)) {
+    const isValid = !number || isValidPhoneNumber(number);
+    if (inputRef.current) {
+      inputRef.current.setCustomValidity(isValid ? "" : "Invalid phone number");
+    }
+    if (isValid) {
       onChange(field.key, number as string);
       setError("");
     } else {
@@ -41,6 +46,8 @@ const Telephone: React.FC<TelephoneInputProps> = ({
       </label>
       <div className="telephone-input">
         <PhoneInput
+          // @ts-ignore
+          ref={inputRef}
           id={field.key}
           name={field.question}
           placeholder="Enter phone number"
@@ -50,7 +57,7 @@ const Telephone: React.FC<TelephoneInputProps> = ({
           className="input input-bordered max-w-[250px]"
           defaultCountry="US"
         />
-        {error && <p className="text-red-500">{error}</p>}
+        {error && <p className="text-red-500 pl-2">{error}</p>}
       </div>
     </div>
   );

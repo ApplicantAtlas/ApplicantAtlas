@@ -30,13 +30,18 @@ const LoginPage = () => {
         type: 'text',
         key: 'email',
         required: true,
+        additionalValidation: {
+          isEmail: {
+            isEmail: true,
+          },
+        },
       },
       {
         question: 'Password',
         type: 'text',
         key: 'password',
         required: true,
-        additionalValidation: {
+        additionalOptions: {
           isPassword: true,
         }
       },
