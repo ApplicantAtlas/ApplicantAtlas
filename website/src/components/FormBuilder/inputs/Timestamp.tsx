@@ -1,73 +1,152 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { FormField, FieldValue } from "@/types/models/FormBuilder";
+import moment from "moment-timezone";
+import Select from "./Select";
 
 type TimestampInputProps = {
   field: FormField;
-  onChange: (key: string, value: FieldValue) => void;
+  onChange: (key: string, value: FieldValue, errorMessage?: string) => void;
   defaultValue?: Date;
 };
-
-// TODO: When getting sent out to the backend, we should make sure that the timestamp is stored in UTC or bad things will happen
 
 const TimestampInput: React.FC<TimestampInputProps> = ({
   field,
   onChange,
   defaultValue,
 }) => {
-  // Format a Date object to a 'YYYY-MM-DDTHH:mm' string in UTC
-  const formatTimestampToUTC = (timestamp: Date) => {
-    const year = timestamp.getUTCFullYear();
-    const month = ("0" + (timestamp.getUTCMonth() + 1)).slice(-2); // Months are 0-indexed
-    const day = ("0" + timestamp.getUTCDate()).slice(-2);
-    const hours = ("0" + timestamp.getUTCHours()).slice(-2);
-    const minutes = ("0" + timestamp.getUTCMinutes()).slice(-2);
-    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  const askTimezone = field.additionalOptions?.showTimezone || false;
+  const [timezone, setTimezone] = useState<string>("");
+  const [guessedTz, setGuessedTz] = useState<string>((): string => {
+    if (
+      field.additionalOptions?.defaultTimezone &&
+      field.additionalOptions?.defaultTimezone !== ""
+    ) {
+      setTimezone(field.additionalOptions?.defaultTimezone);
+      return field.additionalOptions?.defaultTimezone;
+    }
+    const guessedTz = moment.tz.guess();
+    if (guessedTz) {
+      setTimezone(guessedTz);
+    }
+    return guessedTz;
+  });
+
+  const defaultOptions = useMemo(() => [guessedTz], [guessedTz]);
+  const isInitialized = useRef(false);
+
+  const isValidDefaultValue = (
+    defaultValue: Date | undefined
+  ): defaultValue is Date => {
+    return (
+      defaultValue instanceof Date &&
+      !isNaN(defaultValue.getTime()) &&
+      moment(defaultValue).isValid() &&
+      moment(defaultValue).year() > 1000
+    );
   };
 
-  // Convert string in 'YYYY-MM-DDTHH:mm' format to a UTC Date object
-  const parseTimestampStringToUTC = (timestampString: string) => {
-    const [datePart, timePart] = timestampString.split("T");
-    const [year, month, day] = datePart.split("-").map(Number);
-    const [hours, minutes] = timePart.split(":").map(Number);
-    // Create a date in UTC
-    return new Date(Date.UTC(year, month - 1, day, hours, minutes));
-  };
-
-  // Initialize state with formatted timestamp string or empty string
-  const [value, setValue] = useState<string>(
-    defaultValue ? formatTimestampToUTC(defaultValue) : ""
+  const formattedDefaultValue =
+    defaultValue &&
+    isValidDefaultValue(defaultValue) &&
+    moment(defaultValue).isValid()
+      ? moment(defaultValue).tz("UTC").format("YYYY-MM-DDTHH:mm")
+      : "";
+  const [localDateTime, setLocalDateTime] = useState<string>(
+    formattedDefaultValue
   );
 
+  const timezoneOptions = moment.tz.names();
+
+  // TODO: This might be getting re-rendered too much by toast on submission
   useEffect(() => {
-    if (defaultValue) {
-      const formattedTimestamp = formatTimestampToUTC(defaultValue);
-      setValue(formattedTimestamp);
-      onChange(field.key, defaultValue);
+    if (
+      defaultValue &&
+      timezone &&
+      isValidDefaultValue(defaultValue) &&
+      moment(defaultValue).isValid()
+    ) {
+      const newFormattedDateTime = moment(defaultValue)
+        .tz(timezone)
+        .format("YYYY-MM-DDTHH:mm");
+      if (!isInitialized.current || localDateTime !== newFormattedDateTime) {
+        setLocalDateTime(newFormattedDateTime);
+        onChange(field.key, defaultValue);
+        isInitialized.current = true;
+      }
     }
-  }, [defaultValue]);
+  }, [defaultValue, timezone]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
-    setValue(newValue);
-    if (newValue) {
-      const timestampValue = parseTimestampStringToUTC(newValue);
-      onChange(field.key, timestampValue);
+    setLocalDateTime(newValue);
+
+    // Delay the onChange to ensure state is updated
+    setTimeout(() => {
+      if (newValue && moment(newValue, "YYYY-MM-DDTHH:mm", true).isValid()) {
+        const timestampValue = moment
+          .tz(newValue, "YYYY-MM-DDTHH:mm", timezone)
+          .toDate();
+        onChange(field.key, timestampValue);
+      }
+    }, 0);
+  };
+
+  const handleTimezoneChange = (k: string, selectedOption: any) => {
+    if (
+      selectedOption &&
+      typeof selectedOption === "string" &&
+      selectedOption !== timezone
+    ) {
+      setTimezone(selectedOption);
+      updateDateTime(localDateTime, selectedOption);
+      isInitialized.current = false;
     }
   };
 
+  const updateDateTime = (localDateTime: string, tz: string) => {
+    if (
+      localDateTime &&
+      moment(localDateTime, "YYYY-MM-DDTHH:mm", true).isValid()
+    ) {
+      const timestampValue = moment
+        .tz(localDateTime, "YYYY-MM-DDTHH:mm", tz)
+        .toDate();
+      if (!isInitialized.current) {
+        onChange(field.key, timestampValue);
+      }
+    }
+  };
+
+  if (timezone === "") {
+    return <div>Loading...</div>;
+  }
+
+  // TODO: I want to make the timezone more pretty and inline with the rest of the form
   return (
     <div className="form-control">
       <label className="label">
         <span className="label-text">{field.question}</span>
       </label>
       <input
-        id={field.key}
+        id={field.key + "-date-tz"}
         type="datetime-local"
-        value={value}
+        value={localDateTime}
         className="input input-bordered"
         onChange={handleInputChange}
         required={field.required}
       />
+      {!askTimezone ? null : (
+        <Select
+          field={{
+            ...field,
+            key: field.key + "-tz",
+            question: "Select " + field.question + " Timezone",
+            options: timezoneOptions,
+            defaultOptions: defaultOptions,
+          }}
+          onChange={(k, value) => handleTimezoneChange(k, value)}
+        />
+      )}
     </div>
   );
 };

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { CountryDropdown, RegionDropdown } from 'react-country-region-selector';
 import Text from './Text';
 import { FieldValue, FormField } from '@/types/models/FormBuilder';
+import { Address } from '@/types/models/Event';
 
 type AddressProps = {
     field: FormField;
@@ -12,43 +13,50 @@ type AddressProps = {
 const Address: React.FC<AddressProps> = ({ field, onChange, defaultValue }) => {
   const [country, setCountry] = useState(defaultValue?.country || '');
   const [region, setRegion] = useState(defaultValue?.region || '');
-  const [streetAddress, setStreetAddress] = useState(defaultValue?.street || '');
+  const [streetAddress, setStreetAddress] = useState(defaultValue?.streetAddress || '');
   const [city, setCity] = useState(defaultValue?.city || '');
   const [zipCode, setZipCode] = useState(defaultValue?.zipCode || '');
 
+  var formAddress = (): Address => {
+    var address: Address = {
+      country,
+      region,
+      streetAddress,
+      city,
+      zipCode,
+    };
+    return address;
+  }
+
   useEffect(() => {
-    onChange('country', defaultValue?.country || '');
-    onChange('region', defaultValue?.region || '');
-    onChange('street', defaultValue?.street || '');
-    onChange('city', defaultValue?.city || '');
-    onChange('zipCode', defaultValue?.zipCode || '');
+    onChange(field.key, formAddress());
   }, [defaultValue])
 
   const selectCountry = (val: string) => {
     setCountry(val);
-    onChange('country', val);
+    onChange(field.key, formAddress());
   };
 
   const selectRegion = (val: string) => {
     setRegion(val);
-    onChange('region', val);
+    onChange(field.key, formAddress());
   };
 
   const handleInputChange = (key: string, value: FieldValue) => {
-    switch (value) {
+    switch (key) {
       case 'streetAddress':
-        setStreetAddress(value);
+        setStreetAddress(value as string);
         break;
       case 'city':
-        setCity(value);
+        setCity(value as string);
         break;
       case 'zipCode':
-        setZipCode(value);
+        setZipCode(value as string);
         break;
       default:
         break;
     }
-    onChange(key, value);
+    onChange(field.key, formAddress());
   };
 
   return (

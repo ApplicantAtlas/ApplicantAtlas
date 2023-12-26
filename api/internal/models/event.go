@@ -19,9 +19,9 @@ type Event struct {
 type EventMetadata struct {
 	Name string `bson:"name" json:"name" validate:"required,max=30"` // this is the only required field
 
-	Address  Address `bson:"address,omitempty" json:"address,omitempty"`
-	EventLat float64 `bson:"lat,omitempty" json:"lat,omitempty"` // TODO: Derive this from address
-	EventLon float64 `bson:"lon,omitempty" json:"lon,omitempty"` // TODO: Derive this from address
+	Address Address `bson:"address,omitempty" json:"address,omitempty"`
+	Lat     float64 `bson:"lat,omitempty" json:"lat,omitempty"` // TODO: Derive this from address
+	Lon     float64 `bson:"lon,omitempty" json:"lon,omitempty"` // TODO: Derive this from address
 
 	StartTime time.Time `bson:"startTime,omitempty" json:"startTime,omitempty"`                   // RFC3339
 	EndTime   time.Time `bson:"endTime,omitempty" json:"endTime,omitempty"`                       // RFC3339
@@ -31,16 +31,16 @@ type EventMetadata struct {
 	Website          string   `bson:"website,omitempty" json:"website,omitempty"`
 	Description      string   `bson:"description,omitempty" json:"description,omitempty" validate:"max=500"`
 	SocialMediaLinks []string `bson:"socialMediaLinks,omitempty" json:"socialMediaLinks,omitempty"`
-	EventTags        []string `bson:"eventTags,omitempty" json:"eventTags,omitempty"`
+	Tags             []string `bson:"tags,omitempty" json:"tags,omitempty"`
 	ContactEmail     string   `bson:"contactEmail,omitempty" json:"contactEmail,omitempty"`
 }
 
 // Address represents a physical address
 // TODO: Add validation
 type Address struct {
-	Street  string `bson:"street,omitempty" json:"street,omitempty"`
-	City    string `bson:"city,omitempty" json:"city,omitempty"`
-	Region  string `bson:"region,omitempty" json:"region,omitempty"`
-	ZipCode string `bson:"zipCode,omitempty" json:"zipCode,omitempty"`
-	Country string `bson:"country,omitempty" json:"country,omitempty"`
+	StreetAddress string `bson:"streetAddress,omitempty" json:"streetAddress,omitempty"`
+	City          string `bson:"city,omitempty" json:"city,omitempty"`
+	Region        string `bson:"region,omitempty" json:"region,omitempty"`
+	ZipCode       string `bson:"zipCode,omitempty" json:"zipCode,omitempty"`
+	Country       string `bson:"country,omitempty" json:"country,omitempty"`
 }

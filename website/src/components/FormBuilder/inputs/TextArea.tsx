@@ -3,7 +3,7 @@ import { FormField, FieldValue } from '@/types/models/FormBuilder';
 
 type TextAreaProps = {
   field: FormField;
-  onChange: (key: string, value: FieldValue) => void;
+  onChange: (key: string, value: FieldValue, errorString?: string) => void;
   defaultValue?: string;
 };
 

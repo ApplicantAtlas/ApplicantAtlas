@@ -2,35 +2,46 @@
 type ObjectID = string;
 
 // Event represents an event
-interface EventModel {
-    ID: ObjectID;
-    organizerIDs?: ObjectID[];
-    metadata: EventMetadata;
-}
+export type EventModel = {
+  ID: ObjectID;
+  organizerIDs?: ObjectID[];
+  metadata: EventMetadata;
+};
 
 // EventMetadata represents the user-defined metadata for an event
-interface EventMetadata {
-    name: string;
-    address?: Address;
-    eventLat?: number;
-    eventLon?: number;
-    startTime?: Date;
-    endTime?: Date;  
-    timezone?: string;
-    visibility?: boolean;
-    website?: string;
-    description?: string;
-    socialMediaLinks?: string[];
-    eventTags?: string[];
-    contactEmail?: string;
-}
+export type EventMetadata = {
+  name: string;
+  address?: Address;
+  lat?: number;
+  lon?: number;
+  startTime?: Date;
+  endTime?: Date;
+  timezone?: string;
+  visibility?: boolean;
+  website?: string;
+  description?: string;
+  socialMediaLinks?: string[];
+  tags?: string[];
+  contactEmail?: string;
+};
 
 // Address represents a physical address
-interface Address {
-    [key: string]: string | undefined;
-    street?: string;
-    city?: string;
-    region?: string;
-    zipCode?: string;
-    country?: string;
+export type Address = {
+  [key: string]: string | undefined;
+  streetAddress?: string;
+  city?: string;
+  region?: string;
+  zipCode?: string;
+  country?: string;
+};
+
+// Type guard for Address
+export function isAddress(value: any): value is Address {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    typeof value.streetAddress === "string" &&
+    typeof value.city === "string" &&
+    typeof value.zipCode === "string"
+  );
 }

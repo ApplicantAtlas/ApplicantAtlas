@@ -1,3 +1,5 @@
+import { Address } from "./Event";
+
 export type FieldValidation = {
   min?: number;
   max?: number;
@@ -5,6 +7,12 @@ export type FieldValidation = {
   isEduEmail?: boolean;
   isPassword?: boolean;
 };
+
+export type AdditionalOptions = {
+  [key: string]: string | undefined | boolean;
+  defaultTimezone?: string;
+  showTimezone?: boolean;
+}
 
 export type FieldValue =
   | string
@@ -40,6 +48,7 @@ export type FormField = {
   defaultOptions?: string[]; // for select, checkbox, radio
   required?: boolean;
   disabled?: boolean; // TODO: implement
+  additionalOptions?: AdditionalOptions;
 };
 
 export type FormStructure = {
