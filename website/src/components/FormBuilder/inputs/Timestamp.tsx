@@ -5,7 +5,7 @@ import Select from "./Select";
 
 type TimestampInputProps = {
   field: FormField;
-  onChange: (key: string, value: FieldValue, errorMessage?: string) => void;
+  onChange: (key: string, value: FieldValue) => void;
   defaultValue?: Date;
 };
 
@@ -63,16 +63,15 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
       defaultValue &&
       timezone &&
       isValidDefaultValue(defaultValue) &&
-      moment(defaultValue).isValid()
+      moment(defaultValue).isValid() && 
+      !isInitialized.current
     ) {
-      const newFormattedDateTime = moment(defaultValue)
+      const formattedDateTime = moment(defaultValue)
         .tz(timezone)
         .format("YYYY-MM-DDTHH:mm");
-      if (!isInitialized.current || localDateTime !== newFormattedDateTime) {
-        setLocalDateTime(newFormattedDateTime);
-        onChange(field.key, defaultValue);
+      setLocalDateTime(formattedDateTime);
+      onChange(field.key, defaultValue);
         isInitialized.current = true;
-      }
     }
   }, [defaultValue, timezone]);
 
