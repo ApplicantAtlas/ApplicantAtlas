@@ -5,7 +5,7 @@ import Select from "./Select";
 
 type TimestampInputProps = {
   field: FormField;
-  onChange: (key: string, value: FieldValue) => void;
+  onChange: (key: string, value: FieldValue, errorMessage?: string) => void;
   defaultValue?: Date;
 };
 

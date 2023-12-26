@@ -6,16 +6,14 @@ import Checkbox from "./inputs/Checkbox";
 import Radio from "./inputs/Radio";
 import Telephone from "./inputs/Telephone";
 import AddressInput from "./inputs/Address";
-import moment from 'moment';
 
 import {
   FormStructure,
   FieldValue,
-  FormField,
 } from "@/types/models/FormBuilder";
 import TextArea from "./inputs/TextArea";
 import dynamic from "next/dynamic";
-import { Address, isAddress } from "@/types/models/Event";
+import { Address } from "@/types/models/Event";
 
 const SelectDynamic = dynamic(() => import("./inputs/Select"), {
   ssr: false,
@@ -40,20 +38,30 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   buttonText = "Submit",
 }) => {
   const [formData, setFormData] = useState<Record<string, any>>({});
-  const [invalidInputs, setInvalidInputs] = useState<Record<string, boolean | undefined>>({});
+  const [invalidInputs, setInvalidInputs] = useState<Record<string, string | undefined>>({});
   const [error, setError] = useState<string | null>("");
 
   useEffect(() => {
-    if (Object.keys(invalidInputs).every((input) => invalidInputs[input] !== false )) {
-      setError(null);
-    } else {
-      setError('Verify all form entries are correct');
-    }
-  }, [invalidInputs]);
+    // Generate an error message by looking up the question for each invalid input
+    const errors = Object.entries(invalidInputs)
+      .filter(([key, errorMsg]) => errorMsg !== undefined)
+      .map(([key, errorMsg]) => {
+        const fieldQuestion = formStructure.attrs.find(field => field.key === key)?.question || key;
+        return `${fieldQuestion}: ${errorMsg}`;
+      })
+      .join(', ');
+  
+     setError((): string | null => {
+      if (errors.length > 0) {
+        return `Your form has the following errors: ${errors}`;
+      }
+      return null;
+     })
+  }, [invalidInputs, formStructure.attrs]);
 
-  const handleInputChange = (key: string, value: FieldValue, isValid?: boolean) => {
-    setInvalidInputs({ ...invalidInputs, [key]: isValid});
-    setFormData({ ...formData, [key]: value });
+  const handleInputChange = (key: string, value: FieldValue, errorString?: string | undefined) => {
+    setInvalidInputs({ ...invalidInputs, [key]: errorString});
+    setFormData((formData) => ({ ...formData, [key]: value }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
