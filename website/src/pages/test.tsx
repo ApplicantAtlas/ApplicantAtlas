@@ -27,7 +27,11 @@ const Test: React.FC = () => {
         type: "text",
         description: "Please enter your email",
         additionalValidation: {
-          isEduEmail: true,
+          isEmail: {
+            isEmail: true,
+            allowSubdomains: true,
+            allowTLDs: ["edu"],
+          },
         },
         required: false,
       },

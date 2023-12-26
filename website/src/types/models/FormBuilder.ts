@@ -1,17 +1,23 @@
 import { Address } from "./Event";
 
+export type EmailValidationOptions = {
+  isEmail?: boolean;
+  requireDomain?: string[];
+  allowSubdomains?: boolean;
+  allowTLDs?: string[];
+}
+
 export type FieldValidation = {
   min?: number;
   max?: number;
-  isEmail?: boolean;
-  isEduEmail?: boolean;
-  isPassword?: boolean;
+  isEmail?: EmailValidationOptions;
 };
 
 export type AdditionalOptions = {
   [key: string]: string | undefined | boolean;
   defaultTimezone?: string;
   showTimezone?: boolean;
+  isPassword?: boolean;
 }
 
 export type FieldValue =
