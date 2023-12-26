@@ -26,11 +26,13 @@ const Text: React.FC<TextInputProps> = ({ field, onChange, defaultValue }) => {
 
     // Basic email pattern validation
     const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+    var foundError = false;
     if (
       field.additionalValidation?.isEmail?.isEmail &&
       !emailPattern.test(inputValue)
     ) {
       setError("Invalid email address");
+      foundError = true;
       e.target.setCustomValidity("Invalid email address");
     } else if (field.additionalValidation?.isEmail) {
       const { requireDomain, allowSubdomains, allowTLDs } =
@@ -60,12 +62,14 @@ const Text: React.FC<TextInputProps> = ({ field, onChange, defaultValue }) => {
           ": " +
           (requireDomain !== undefined ? requireDomain.join(", ") : "");
         setError(domainInvalidMsg);
+        foundError = true;
         e.target.setCustomValidity(domainInvalidMsg);
       } else if (!tldValid) {
         const tldInvalidMsg =
           "Disallowed top-level domain, allowed top-level domains: " +
           (allowTLDs !== undefined ? allowTLDs.join(", ") : "");
         setError(tldInvalidMsg);
+        foundError = true;
         e.target.setCustomValidity(tldInvalidMsg);
       } else {
         setError(undefined);
@@ -74,7 +78,7 @@ const Text: React.FC<TextInputProps> = ({ field, onChange, defaultValue }) => {
       setError(undefined);
     }
 
-    onChange(field.key, inputValue, error);
+    onChange(field.key, inputValue, foundError ? error : undefined);
   };
 
   return (
