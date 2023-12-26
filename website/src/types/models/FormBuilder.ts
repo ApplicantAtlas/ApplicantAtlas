@@ -39,7 +39,8 @@ export type FormField = {
     | "custommultiselect"
     | "checkbox"
     | "radio"
-    | "address";
+    | "address"
+    | "colorpicker";
   description?: string;
   additionalValidation?: FieldValidation;
   key: string;

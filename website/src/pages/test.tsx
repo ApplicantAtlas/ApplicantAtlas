@@ -58,6 +58,13 @@ const Test: React.FC = () => {
         type: "address",
         description: "Please enter your address",
         required: false,
+      },
+      {
+        key: "color",
+        question: "What's your favorite color?",
+        type: "colorpicker",
+        description: "Please enter your favorite color",
+        required: false,
       }
     ],
   };
