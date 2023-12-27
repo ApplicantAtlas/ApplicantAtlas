@@ -5,6 +5,7 @@ import (
 	"api/internal/models"
 	"api/internal/utils"
 	"context"
+	"errors"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -18,6 +19,7 @@ type MongoService interface {
 	FindUserByEmail(ctx context.Context, email string) (*models.User, error)
 	InsertUser(ctx context.Context, user models.User) (*mongo.InsertOneResult, error)
 	DeleteUserByEmail(ctx context.Context, email string) (*mongo.DeleteResult, error)
+	UpdateUserDetails(ctx context.Context, userId primitive.ObjectID, updatedUserDetails models.User) error
 	CreateEvent(ctx context.Context, event models.Event) (*mongo.InsertOneResult, error)
 	DeleteEvent(ctx *gin.Context, eventID primitive.ObjectID) (*mongo.DeleteResult, error)
 	GetEvent(ctx *gin.Context, eventID primitive.ObjectID) (*models.Event, error)
@@ -224,4 +226,27 @@ func (s *Service) GetEvent(ctx *gin.Context, eventID primitive.ObjectID) (*model
 	}
 
 	return &event, nil
+}
+
+// UpdateUserDetails updates a user given the user's ObjectId
+func (s *Service) UpdateUserDetails(ctx context.Context, userId primitive.ObjectID, updatedUserDetails models.User) error {
+	// Update the user details in the database
+	update := bson.M{"$set": bson.M{
+		"firstName":   updatedUserDetails.FirstName,
+		"lastName":    updatedUserDetails.LastName,
+		"schoolEmail": updatedUserDetails.SchoolEmail,
+		"birthday":    updatedUserDetails.Birthday,
+	}}
+
+	filter := bson.M{"_id": userId}
+	result, err := s.Database.Collection("users").UpdateOne(ctx, filter, update)
+	if err != nil {
+		return err
+	}
+
+	if result.MatchedCount == 0 {
+		return errors.New("no user found with that ID")
+	}
+
+	return nil
 }

@@ -134,6 +134,20 @@ func (m *MockMongoService) GetEvent(ctx *gin.Context, eventID primitive.ObjectID
 	return &event, nil
 }
 
+func (m *MockMongoService) UpdateUserDetails(ctx context.Context, userId primitive.ObjectID, updatedUserDetails models.User) error {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	id := userId.Hex()
+	if _, exists := m.data[id]; !exists {
+		return mongo.ErrNoDocuments
+	}
+
+	// Update user details
+	m.data[id] = updatedUserDetails
+	return nil
+}
+
 // matchesFilter is a helper function that matches an event against a filter.
 // This is a simplified example. You would need to implement matching logic
 // based on your application's requirements.

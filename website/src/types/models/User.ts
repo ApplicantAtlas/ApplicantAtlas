@@ -6,4 +6,5 @@ export type User = {
     schoolEmail?: string;
     birthday: string;
     password?: string;
+    alternativeEmails?: string[];
 };

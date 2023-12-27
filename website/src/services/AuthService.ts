@@ -17,7 +17,6 @@ const login = (u: User): Promise<User> => {
 
       const decoded: User = jwtDecode<User>(tok);
       localStorage.setItem('user', JSON.stringify(decoded));
-
       resolve(decoded);
     } catch (error) {
       reject(error);
