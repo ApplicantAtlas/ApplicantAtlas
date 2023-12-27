@@ -18,6 +18,7 @@ export type AdditionalOptions = {
   defaultTimezone?: string;
   showTimezone?: boolean;
   isPassword?: boolean;
+  useDefaultValuesFrom?: 'mlh-schools' | undefined;
 }
 
 export type FieldValue =

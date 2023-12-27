@@ -76,6 +76,15 @@ const Test: React.FC = () => {
         type: "checkbox",
         description: "Please enter your favorite color",
         required: true,
+      },
+      {
+        key: "schoolSelect",
+        question: "What school do you go to?",
+        type: "select",
+        description: "Please enter your school",
+        additionalOptions: {
+          useDefaultValuesFrom: "mlh-schools",
+        }
       }
     ],
   };

@@ -15,6 +15,7 @@ import {
 import TextArea from "./inputs/TextArea";
 import dynamic from "next/dynamic";
 import { Address } from "@/types/models/Event";
+import { getSelectorOptions } from "@/services/FormService";
 
 const SelectDynamic = dynamic(() => import("./inputs/Select"), {
   ssr: false,
@@ -41,6 +42,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   const [formData, setFormData] = useState<Record<string, any>>({});
   const [invalidInputs, setInvalidInputs] = useState<Record<string, string | undefined>>({});
   const [error, setError] = useState<string | null>("");
+  const [fetchedOptions, setFetchedOptions] = useState<Record<string, any>>({});
 
   useEffect(() => {
     // Generate an error message by looking up the question for each invalid input
@@ -73,7 +75,32 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
     }
   };
 
+  useEffect(() => {
+    formStructure.attrs.forEach(field => {
+      if (field.additionalOptions?.useDefaultValuesFrom) {
+        const defaultValuesFrom = field.additionalOptions.useDefaultValuesFrom;
+  
+        // Check if the options have already been fetched
+        if (!fetchedOptions[defaultValuesFrom]) {
+          getSelectorOptions(defaultValuesFrom)
+            .then(options => {
+              setFetchedOptions(prevOptions => ({
+                ...prevOptions,
+                [defaultValuesFrom]: options
+              }));
+            })
+            .catch(error => console.error(error));
+        }
+      }
+    });
+  }, [formStructure.attrs]);
+
   const renderFormField = (field: FormStructure["attrs"][number]) => {
+    // Handle additionalOptions
+    if (field.additionalOptions?.useDefaultValuesFrom) {
+      field.options = fetchedOptions[field.additionalOptions.useDefaultValuesFrom];
+    }
+
     switch (field.type) {
       case "number":
         let defaultNumber: number | undefined;
