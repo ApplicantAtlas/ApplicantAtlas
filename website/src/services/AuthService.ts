@@ -17,7 +17,6 @@ const login = (u: User): Promise<User> => {
 
       const decoded: User = jwtDecode<User>(tok);
       localStorage.setItem('user', JSON.stringify(decoded));
-
       resolve(decoded);
     } catch (error) {
       reject(error);
@@ -39,10 +38,16 @@ const isAuth = (): boolean => {
   return Boolean(localStorage.getItem('token'));
 };
 
+const getUserFull = async (): Promise<User> => {
+  const response = await api.get<User>(`/users/me`);
+  return response.data;
+}
+
 export default {
   register,
   login,
   logout,
   deleteUser,
-  isAuth
+  isAuth,
+  getUserFull
 };
