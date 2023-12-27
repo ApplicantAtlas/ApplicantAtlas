@@ -81,6 +81,13 @@ const UserSettings: React.FC = () => {
                 defaultValue: user?.schoolEmail,
             },
             {
+                key: "alternativeEmails",
+                question: "Alternative Emails",
+                type: "custommultiselect",
+                required: false,
+                defaultValue: user?.alternativeEmails,
+            },
+            {
                 key: "birthday",
                 question: "Birthday",
                 type: "date",
