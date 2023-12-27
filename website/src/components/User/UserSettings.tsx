@@ -1,11 +1,12 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { User } from "@/types/models/User";
-import AuthService from "@/services/AuthService";
+import { getUserFull, updateUser } from "@/services/UserService";
 import { useRouter } from "next/router";
 import { useToast, ToastType } from "@/components/Toast/ToastContext";
 import LoadingOverlay from "@/components/Loading/LoadingOverlay";
 import { FormStructure } from "@/types/models/FormBuilder";
 import FormBuilder from "@/components/FormBuilder/FormBuilder";
+import AuthService from "@/services/AuthService";
 
 const UserSettings: React.FC = () => {
   const [user, setUser] = useState<User | undefined>();
@@ -14,7 +15,7 @@ const UserSettings: React.FC = () => {
   const { showToast } = useToast();
 
   useEffect(() => {
-    AuthService.getUserFull().then((r) => {
+    getUserFull().then((r) => {
         setUser(r);
         setFormFields(createFormStructure(r));
     }).catch(() => {})
@@ -91,8 +92,21 @@ const UserSettings: React.FC = () => {
     }
 
   const handleFormSubmission = (formData: Record<string, any>) => {
-    // Handle form data submission logic here
-    console.log(formData);
+    // Convert birthday from Date object to format with utc, 0 padded month and day
+    const d = new Date(formData.birthday)
+    const year = d.getUTCFullYear();
+    const month = (d.getUTCMonth() + 1).toString().padStart(2, "0");
+    const day = d.getUTCDate().toString().padStart(2, "0");
+
+    formData.birthday = `${month}/${day}/${year}`;
+
+    updateUser(formData as User).then((r) => {
+        getUserFull().then((r) => {
+            setUser(r);
+            setFormFields(createFormStructure(r));
+        }).catch(() => {})
+        showToast("Account updated successfully", ToastType.Success);
+    }).catch(() => {})
   };
 
   if (!user || !formFields) {

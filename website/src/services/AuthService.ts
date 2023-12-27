@@ -38,16 +38,10 @@ const isAuth = (): boolean => {
   return Boolean(localStorage.getItem('token'));
 };
 
-const getUserFull = async (): Promise<User> => {
-  const response = await api.get<User>(`/users/me`);
-  return response.data;
-}
-
 export default {
   register,
   login,
   logout,
   deleteUser,
-  isAuth,
-  getUserFull
+  isAuth
 };

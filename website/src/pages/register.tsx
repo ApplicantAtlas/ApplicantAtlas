@@ -93,8 +93,8 @@ const RegistrationPage = () => {
   const formatDate = (dateString: string): string => {
     // Get the UTC month day year from the date string, it's passed in as a Date() string
     const date = new Date(dateString);
-    const utcMonth = date.getUTCMonth() + 1;
-    const utcDay = date.getUTCDate();
+    const utcMonth = (date.getUTCMonth() + 1).toString().padStart(2, "0");
+    const utcDay = date.getUTCDate().toString().padStart(2, "0");
     const utcYear = date.getUTCFullYear();
     return `${utcMonth}/${utcDay}/${utcYear}`;
   };
