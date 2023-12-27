@@ -31,7 +31,7 @@ const logout = (): void => {
 
 // Delete self
 const deleteUser = async (): Promise<AxiosResponse> => {
-    return api.post(`/auth/delete`);
+    return api.delete(`/auth/delete`);
 };
 
 const isAuth = (): boolean => {
