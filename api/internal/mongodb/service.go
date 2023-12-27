@@ -25,6 +25,9 @@ type MongoService interface {
 	GetEvent(ctx *gin.Context, eventID primitive.ObjectID) (*models.Event, error)
 	UpdateEventMetadata(ctx *gin.Context, eventID primitive.ObjectID, metadata models.EventMetadata) (*mongo.UpdateResult, error)
 	ListEventsMetadata(ctx context.Context, filter bson.M) ([]models.Event, error)
+	CreateSource(ctx context.Context, source models.SelectorSource) (*mongo.InsertOneResult, error)
+	UpdateSource(ctx context.Context, source models.SelectorSource, sourceID primitive.ObjectID) (*mongo.UpdateResult, error)
+	GetSourceByName(ctx context.Context, name string) (*models.SelectorSource, error)
 }
 
 // Service implements MongoService with a mongo.Client.
@@ -249,4 +252,33 @@ func (s *Service) UpdateUserDetails(ctx context.Context, userId primitive.Object
 	}
 
 	return nil
+}
+
+// GetSourceByName retrieves a SelectorSource by its name
+func (s *Service) GetSourceByName(ctx context.Context, name string) (*models.SelectorSource, error) {
+	var source models.SelectorSource
+	err := s.Database.Collection("sources").FindOne(ctx, bson.M{"sourceName": name}).Decode(&source)
+	if err != nil {
+		return nil, err
+	}
+	return &source, nil
+}
+
+func (s *Service) CreateSource(ctx context.Context, source models.SelectorSource) (*mongo.InsertOneResult, error) {
+	_, err := s.GetSourceByName(ctx, source.SourceName)
+	if err == nil {
+		return nil, errors.New("source already exists")
+	}
+	return s.Database.Collection("sources").InsertOne(ctx, source)
+}
+
+func (s *Service) UpdateSource(ctx context.Context, source models.SelectorSource, sourceID primitive.ObjectID) (*mongo.UpdateResult, error) {
+	update := bson.M{"$set": bson.M{
+		"sourceName":  source.SourceName,
+		"lastUpdated": source.LastUpdated,
+		"options":     source.Options,
+	}}
+
+	filter := bson.M{"_id": sourceID}
+	return s.Database.Collection("sources").UpdateOne(ctx, filter, update)
 }

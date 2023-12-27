@@ -4,6 +4,7 @@ import (
 	"api/internal/mongodb"
 	"api/internal/routes/auth"
 	"api/internal/routes/events"
+	"api/internal/routes/forms"
 	"api/internal/routes/users"
 
 	"github.com/gin-gonic/gin"
@@ -19,4 +20,7 @@ func SetupRoutes(r *gin.Engine, mongoService mongodb.MongoService) {
 
 	userGroup := r.Group("/users")
 	users.RegisterRoutes(userGroup, mongoService)
+
+	formGroup := r.Group("/forms")
+	forms.RegisterDefaultSelectorValues(formGroup, mongoService)
 }

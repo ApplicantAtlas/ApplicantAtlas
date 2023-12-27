@@ -16,15 +16,17 @@ import (
 
 type MockMongoService struct {
 	mock.Mock
-	data   map[string]models.User // In-memory store
-	events map[string]models.Event
-	mutex  sync.RWMutex // Mutex for concurrent access
+	data    map[string]models.User // In-memory store
+	events  map[string]models.Event
+	sources map[string]models.SelectorSource
+	mutex   sync.RWMutex // Mutex for concurrent access
 }
 
 func NewMockMongoService() *MockMongoService {
 	return &MockMongoService{
-		data:   make(map[string]models.User),
-		events: make(map[string]models.Event),
+		data:    make(map[string]models.User),
+		events:  make(map[string]models.Event),
+		sources: make(map[string]models.SelectorSource),
 	}
 }
 
@@ -146,6 +148,44 @@ func (m *MockMongoService) UpdateUserDetails(ctx context.Context, userId primiti
 	// Update user details
 	m.data[id] = updatedUserDetails
 	return nil
+}
+
+func (m *MockMongoService) CreateSource(ctx context.Context, source models.SelectorSource) (*mongo.InsertOneResult, error) {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	if _, exists := m.sources[source.SourceName]; exists {
+		return nil, errors.New("source already exists")
+	}
+
+	m.sources[source.SourceName] = source
+	return &mongo.InsertOneResult{}, nil
+}
+
+func (m *MockMongoService) GetSourceByName(ctx context.Context, name string) (*models.SelectorSource, error) {
+	m.mutex.RLock()
+	defer m.mutex.RUnlock()
+
+	source, exists := m.sources[name]
+	if !exists {
+		return nil, mongo.ErrNoDocuments
+	}
+
+	return &source, nil
+}
+
+func (m *MockMongoService) UpdateSource(ctx context.Context, source models.SelectorSource, sourceID primitive.ObjectID) (*mongo.UpdateResult, error) {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	id := sourceID.Hex()
+	if _, exists := m.sources[id]; !exists {
+		return nil, mongo.ErrNoDocuments
+	}
+
+	// Update source
+	m.sources[id] = source
+	return &mongo.UpdateResult{ModifiedCount: 1}, nil
 }
 
 // matchesFilter is a helper function that matches an event against a filter.
