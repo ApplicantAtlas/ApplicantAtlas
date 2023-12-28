@@ -7,6 +7,7 @@ import LoadingOverlay from "@/components/Loading/LoadingOverlay";
 import { FormStructure } from "@/types/models/FormBuilder";
 import FormBuilder from "@/components/FormBuilder/FormBuilder";
 import AuthService from "@/services/AuthService";
+import Header from "../Header";
 
 const UserSettings: React.FC = () => {
   const [user, setUser] = useState<User | undefined>();
@@ -121,6 +122,13 @@ const UserSettings: React.FC = () => {
   }
 
   return (
+    <>
+    <Header
+      menuItems={[
+        { label: "My Events", href: "/user/dashboard" },
+      ]}
+      showUserProfile={true}
+    />
     <div className="container mx-auto p-4">
       <h2 className="text-2xl font-semibold">User Settings</h2>
       <FormBuilder 
@@ -132,6 +140,7 @@ const UserSettings: React.FC = () => {
         Delete Account
       </button>
     </div>
+    </>
   );
 };
 

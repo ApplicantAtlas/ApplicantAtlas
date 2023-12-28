@@ -1,5 +1,6 @@
 import { useToast, ToastType } from "@/components/Toast/ToastContext";
 import { deleteEvent } from "@/services/EventService";
+import { EventModel } from "@/types/models/Event";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 

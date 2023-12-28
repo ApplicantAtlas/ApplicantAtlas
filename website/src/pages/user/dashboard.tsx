@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import Link from "next/link";
-import Header from "@/components/Landing/Header";
+import Header from "@/components/Header";
 import withAuth from "@/middleware/WithAuth";
 import {
   listMyEvents,
@@ -55,7 +55,12 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-100 text-gray-900">
-      <Header />
+      <Header 
+        menuItems={[
+          { label: "My Events", href: "/user/dashboard" },
+        ]}
+        showUserProfile={true}
+      />
       <Head>
         <title>Dashboard</title>
       </Head>
