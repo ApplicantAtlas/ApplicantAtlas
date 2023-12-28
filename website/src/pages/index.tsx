@@ -1,11 +1,34 @@
 import FeatureCard from "@/components/Landing/FeatureCard";
-import Header from "@/components/Landing/Header";
+import Header, { MenuItem } from "@/components/Header";
 import Hero from "@/components/Landing/Hero";
+import AuthService from "@/services/AuthService";
+import { useEffect, useState } from "react";
 
 export default function Component() {
+  const [primaryButton, setPrimaryButton] = useState<MenuItem>({
+    label: "Get Started",
+    href: "/user/register",
+  });
+  const menuItems: MenuItem[] = [
+    { label: "Home", href: "/" },
+    { label: "Features", href: "#features" },
+    { label: "Pricing", href: "#pricing" },
+    { label: "About", href: "#about" },
+    { label: "Contact", href: "#contact" },
+  ];
+
+  useEffect(() => {
+    if (AuthService.isAuth()) {
+      setPrimaryButton({ label: "Dashboard", href: "/user/dashboard" });
+    }
+  }, [])
+  
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 text-gray-900">
-      <Header />
+      <Header
+        menuItems={menuItems}
+        primaryButton={primaryButton}
+      />
 
       <main className="flex-1">
         <Hero />
