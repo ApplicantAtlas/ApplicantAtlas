@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 export default function Component() {
   const [primaryButton, setPrimaryButton] = useState<MenuItem>({
     label: "Get Started",
-    href: "/user/register",
+    href: "/register",
   });
   const menuItems: MenuItem[] = [
     { label: "Home", href: "/" },

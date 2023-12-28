@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { getUserFull, getJWTUser } from "@/services/UserService";
 import { User } from "@/types/models/User";
@@ -40,7 +40,22 @@ export default function Header({
   showUserProfile = false,
 }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const [user, setUser] = useState<User | null>(null);
+
+  const handleBlur = (event: React.FocusEvent<HTMLDivElement>) => {
+    // Delay the check to allow for the new active element to gain focus
+    setTimeout(() => {
+      // Check if the currently active element is outside the dropdown
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(document.activeElement)
+      ) {
+        setDropdownOpen(false);
+      }
+    }, 0);
+  };
 
   useEffect(() => {
     getJWTUser()
@@ -56,6 +71,10 @@ export default function Header({
     {
       label: "Settings",
       href: "/user/settings",
+    },
+    {
+      label: "Logout",
+      href: "/logout",
     },
   ];
 
@@ -107,7 +126,8 @@ export default function Header({
           ))}
 
           {/* User Profile Section */}
-          {showUserProfile && user && (
+          {showUserProfile &&
+            user &&
             userSubmenuItems.map((item, index) => (
               <li key={index}>
                 <Link href={item.href}>
@@ -122,8 +142,7 @@ export default function Header({
                   </span>
                 </Link>
               </li>
-            ))
-          )}
+            ))}
         </ul>
 
         {/* Registration Button for Mobile */}
@@ -175,7 +194,6 @@ export default function Header({
                 </li>
               ))}
             </ul>
-
             {/* Registration Button for Desktop */}
             {primaryButton && (
               <div className="ml-4">
@@ -188,39 +206,52 @@ export default function Header({
                 </Link>
               </div>
             )}
-
-            {/* User Profile Section */}
             {showUserProfile && user && (
-              <div className="ml-4 relative">
+              <div className="ml-4 relative" ref={dropdownRef}>
                 {/* User Profile Button and Dropdown */}
-                <details className="dropdown">
-                  <summary className="btn btn-ghost btn-circle avatar online placeholder cursor-pointer">
+                <div
+                  tabIndex={0}
+                  className="dropdown"
+                  onBlur={handleBlur}
+                  onFocus={() => setDropdownOpen(true)}
+                >
+                  <div
+                    tabIndex={0}
+                    role="button"
+                    className="btn btn-ghost btn-circle avatar online placeholder cursor-pointer focus:outline-none"
+                    onKeyDown={(event) =>
+                      event.key === "Enter" && setDropdownOpen(!dropdownOpen)
+                    }
+                  >
                     <div className="bg-neutral text-neutral-content rounded-full w-10">
                       <span className="text-lg">
                         {user.firstName.charAt(0).toUpperCase() +
                           user.lastName.charAt(0).toUpperCase()}
                       </span>
                     </div>
-                  </summary>
+                  </div>
 
                   {/* Dropdown Menu */}
-                  <ul className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-40">
-                    {userSubmenuItems.map((item, index) => (
-                      <li key={index}>
-                        <Link href={item.href}>
-                          <span
-                            className="block py-2 font-bold text-gray-700 cursor-pointer"
-                            onClick={() => {
-                              item.onClick && item.onClick();
-                            }}
-                          >
-                            {item.label}
-                          </span>
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </details>
+                  {dropdownOpen && (
+                    <ul
+                      tabIndex={0}
+                      className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-40"
+                    >
+                      {userSubmenuItems.map((item, index) => (
+                        <li key={index}>
+                          <Link href={item.href}>
+                            <span
+                              className="block py-2 font-bold text-gray-700 cursor-pointer"
+                              onClick={() => setDropdownOpen(false)}
+                            >
+                              {item.label}
+                            </span>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
               </div>
             )}
           </div>
