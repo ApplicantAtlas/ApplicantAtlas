@@ -76,24 +76,24 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   };
 
   useEffect(() => {
-    formStructure.attrs.forEach(field => {
-      if (field.additionalOptions?.useDefaultValuesFrom) {
-        const defaultValuesFrom = field.additionalOptions.useDefaultValuesFrom;
-  
-        // Check if the options have already been fetched
-        if (!fetchedOptions[defaultValuesFrom]) {
-          getSelectorOptions(defaultValuesFrom)
-            .then(options => {
-              setFetchedOptions(prevOptions => ({
-                ...prevOptions,
-                [defaultValuesFrom]: options
-              }));
-            })
-            .catch(error => console.error(error));
-        }
+  formStructure.attrs.forEach(field => {
+    if (field.additionalOptions?.useDefaultValuesFrom) {
+      const defaultValuesFrom = field.additionalOptions.useDefaultValuesFrom;
+
+      // Check if the options have already been fetched
+      if (!fetchedOptions[defaultValuesFrom]) {
+        getSelectorOptions(defaultValuesFrom)
+          .then(options => {
+            setFetchedOptions(prevOptions => ({
+              ...prevOptions,
+              [defaultValuesFrom]: options
+            }));
+          })
+          .catch(error => console.error(error));
       }
-    });
-  }, [formStructure.attrs]);
+    }
+  });
+}, [formStructure.attrs]);
 
   const renderFormField = (field: FormStructure["attrs"][number]) => {
     // Handle additionalOptions
@@ -173,6 +173,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
             field={field}
             onChange={handleInputChange}
             isMultiSelect={false}
+            defaultOptions={field.defaultOptions}
           />
         );
       case "multiselect":
@@ -181,6 +182,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
             field={field}
             onChange={handleInputChange}
             isMultiSelect={true}
+            defaultOptions={field.defaultOptions}
           />
         );
       case "customselect":
@@ -190,6 +192,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
             onChange={handleInputChange}
             isMultiSelect={false}
             allowArbitraryInput={true}
+            defaultOptions={field.defaultOptions}
           />
         );
       case "custommultiselect":
@@ -199,6 +202,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
             onChange={handleInputChange}
             isMultiSelect={true}
             allowArbitraryInput={true}
+            defaultOptions={field.defaultOptions}
           />
         );
       case "telephone":

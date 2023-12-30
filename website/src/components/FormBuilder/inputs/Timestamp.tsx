@@ -146,6 +146,7 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
             options: timezoneOptions,
             defaultOptions: defaultOptions,
           }}
+          defaultOptions={defaultOptions}
           onChange={(k, value) => handleTimezoneChange(k, value)}
         />
       )}
