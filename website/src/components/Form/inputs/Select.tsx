@@ -28,7 +28,7 @@ const Select: React.FC<SelectProps> = ({
       : options.find((option) => option.value === defaultOptions?.[0]);
   };
 
-  const [selectedValue, setSelectedValue] = useState(getDefaultValue);
+  const [selectedValue, setSelectedValue] = useState(getDefaultValue());
 
   useEffect(() => {
     setSelectedValue(getDefaultValue());
