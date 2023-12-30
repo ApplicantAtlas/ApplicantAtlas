@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { FormField, FieldValue } from "@/types/models/FormBuilder";
+import { FormField, FieldValue } from "@/types/models/Form";
 import moment from "moment-timezone";
 import Select from "./Select";
 

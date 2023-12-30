@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ReactSelect from "react-select";
 import CreatableSelect from "react-select/creatable";
-import { FormField, FieldValue } from "@/types/models/FormBuilder";
+import { FormField, FieldValue } from "@/types/models/Form";
 
 type SelectProps = {
   field: FormField;

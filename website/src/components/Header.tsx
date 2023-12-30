@@ -30,6 +30,8 @@ export interface HeaderProps {
   showUserProfile?: boolean;
 }
 
+// TODO: Convert to a daisyui drawer for mobile menu hamburger
+
 export default function Header({
   menuItems,
   brandName = "ApplicantAtlas",

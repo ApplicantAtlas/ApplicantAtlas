@@ -5,8 +5,8 @@ import AuthService from "@/services/AuthService";
 import { User } from "@/types/models/User";
 import { eventEmitter } from "@/events/EventEmitter";
 import { useRouter } from "next/router";
-import FormBuilder from "@/components/FormBuilder/FormBuilder";
-import { FormStructure } from "@/types/models/FormBuilder";
+import FormBuilder from "@/components/Form/FormBuilder";
+import { FormStructure } from "@/types/models/Form";
 
 const RegistrationPage = () => {
   const router = useRouter();

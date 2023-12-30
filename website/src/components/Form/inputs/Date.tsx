@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { FormField, FieldValue } from "@/types/models/FormBuilder";
+import { FormField, FieldValue } from "@/types/models/Form";
 
 type DateInputProps = {
   field: FormField;

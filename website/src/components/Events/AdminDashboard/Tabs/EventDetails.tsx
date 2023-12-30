@@ -1,8 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import { updateEvent } from '@/services/EventService';
 import { useToast, ToastType } from '@/components/Toast/ToastContext';
-import FormBuilder from '@/components/FormBuilder/FormBuilder';
-import { FormField, FieldValue } from '@/types/models/FormBuilder';
+import FormBuilder from '@/components/Form/FormBuilder';
+import { FormField, FieldValue } from '@/types/models/Form';
 import { EventModel, EventMetadata } from '@/types/models/Event';
 import moment from 'moment-timezone';
 

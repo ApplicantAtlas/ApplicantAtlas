@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import CountryRegionData from "@../../../node_modules/country-region-data/data.json";
 import Text from "./Text";
-import { FieldValue, FormField } from "@/types/models/FormBuilder";
+import { FieldValue, FormField } from "@/types/models/Form";
 import { Address } from "@/types/models/Event";
 import dynamic from "next/dynamic";
 

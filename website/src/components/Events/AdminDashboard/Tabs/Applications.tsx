@@ -1,4 +1,4 @@
-import FormCreator from "@/components/FormBuilder/FormCreator";
+import FormCreator from "@/components/Form/Creator/FormCreator";
 import { EventModel } from "@/types/models/Event";
 import React from "react";
 

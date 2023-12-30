@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormField, FieldValue } from "@/types/models/FormBuilder";
+import { FormField, FieldValue } from "@/types/models/Form";
 
 type RadioProps = {
   field: FormField;

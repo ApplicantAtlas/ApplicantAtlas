@@ -5,7 +5,7 @@ export type EmailValidationOptions = {
   requireDomain?: string[];
   allowSubdomains?: boolean;
   allowTLDs?: string[];
-}
+};
 
 export type FieldValidation = {
   min?: number;
@@ -18,8 +18,8 @@ export type AdditionalOptions = {
   defaultTimezone?: string;
   showTimezone?: boolean;
   isPassword?: boolean;
-  useDefaultValuesFrom?: 'mlh-schools' | undefined;
-}
+  useDefaultValuesFrom?: "mlh-schools" | undefined;
+};
 
 export type FieldValue =
   | string
@@ -31,23 +31,25 @@ export type FieldValue =
   | Date
   | Address;
 
+export type FormFieldType =
+  | "number"
+  | "text"
+  | "date"
+  | "timestamp"
+  | "telephone"
+  | "textarea"
+  | "select"
+  | "multiselect"
+  | "customselect"
+  | "custommultiselect"
+  | "checkbox"
+  | "radio"
+  | "address"
+  | "colorpicker";
+
 export type FormField = {
   question: string;
-  type:
-    | "number"
-    | "text"
-    | "date"
-    | "timestamp"
-    | "telephone"
-    | "textarea"
-    | "select"
-    | "multiselect"
-    | "customselect"
-    | "custommultiselect"
-    | "checkbox"
-    | "radio"
-    | "address"
-    | "colorpicker";
+  type: FormFieldType;
   description?: string;
   additionalValidation?: FieldValidation;
   key: string;

@@ -11,7 +11,7 @@ import ColorPicker from "./inputs/ColorPicker";
 import {
   FormStructure,
   FieldValue,
-} from "@/types/models/FormBuilder";
+} from "@/types/models/Form";
 import TextArea from "./inputs/TextArea";
 import dynamic from "next/dynamic";
 import { Address } from "@/types/models/Event";

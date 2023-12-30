@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ChromePicker } from "react-color";
-import { FormField, FieldValue } from "@/types/models/FormBuilder";
+import { FormField, FieldValue } from "@/types/models/Form";
 
 type ColorPickerProps = {
   field: FormField;
