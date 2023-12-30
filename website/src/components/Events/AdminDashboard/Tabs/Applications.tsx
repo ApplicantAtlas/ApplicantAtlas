@@ -1,3 +1,5 @@
+import FormCreator from "@/components/Form/Creator/FormCreator";
+import { EventModel } from "@/types/models/Event";
 import React from "react";
 
 interface ApplicationsProps {
@@ -8,8 +10,9 @@ const Applications: React.FC<ApplicationsProps> = ({ eventDetails }) => {
   return (
     <div>
       <h1>Applications</h1>
-      <h1>Name: {eventDetails?.metadata.name}</h1>
-      <p>Description: {eventDetails?.metadata.description}</p>
+      <FormCreator submissionFunction={
+        (formStructure) => console.log(formStructure)
+      } />
     </div>
   );
 };

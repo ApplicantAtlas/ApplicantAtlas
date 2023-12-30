@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { FormField, FieldValue } from "@/types/models/FormBuilder";
+import { FormField, FieldValue } from "@/types/models/Form";
 
 import PhoneInput from "react-phone-number-input";
 import { isValidPhoneNumber } from "react-phone-number-input";

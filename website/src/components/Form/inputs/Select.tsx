@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import ReactSelect from "react-select";
 import CreatableSelect from "react-select/creatable";
-import { FormField, FieldValue } from "@/types/models/FormBuilder";
+import { FormField, FieldValue } from "@/types/models/Form";
 
 type SelectProps = {
   field: FormField;
   onChange: (key: string, value: FieldValue) => void;
   isMultiSelect?: boolean;
   allowArbitraryInput?: boolean;
+  defaultOptions?: string[];
 };
 
 const Select: React.FC<SelectProps> = ({
@@ -15,43 +16,32 @@ const Select: React.FC<SelectProps> = ({
   onChange,
   isMultiSelect = false,
   allowArbitraryInput = false,
+  defaultOptions = undefined,
 }) => {
-  // Transform the options into the format expected by react-select
   const options =
     field.options?.map((option) => ({ label: option, value: option })) || [];
 
-  useEffect(() => {
-    if (
-      field.defaultOptions?.length !== undefined &&
-      field.defaultOptions.length > 0
-    ) {
-      if (isMultiSelect) {
-        onChange(field.key, field.defaultOptions);
-      } else {
-        onChange(field.key, field.defaultOptions[0]);
-      }
-    }
-  }, [field.defaultOptions]);
-
   // Transform the defaultOptions into the format expected by react-select
-  const defaultValue = isMultiSelect
-    ? field.defaultOptions?.map((option) => ({ label: option, value: option }))
-    : options.find((option) => option.value === field.defaultOptions?.[0]);
-
-  const handleChange = (selectedOption: any) => {
-    if (isMultiSelect) {
-      setSelectedValue(selectedOption);
-      onChange(
-        field.key,
-        selectedOption.map((opt: any) => opt.value)
-      );
-    } else {
-      setSelectedValue(selectedOption);
-      onChange(field.key, selectedOption.value);
-    }
+  const getDefaultValue = () => {
+    return isMultiSelect
+      ? defaultOptions?.map((option) => ({ label: option, value: option }))
+      : options.find((option) => option.value === defaultOptions?.[0]);
   };
 
-  const [selectedValue, setSelectedValue] = useState(defaultValue);
+  const [selectedValue, setSelectedValue] = useState(getDefaultValue());
+
+  useEffect(() => {
+    setSelectedValue(getDefaultValue());
+  }, [defaultOptions]);
+
+  const handleChange = (selectedOption: any) => {
+    const value = isMultiSelect
+      ? selectedOption.map((opt: any) => opt.value)
+      : selectedOption.value;
+
+    setSelectedValue(selectedOption);
+    onChange(field.key, value);
+  };
 
   const SelectComponent = allowArbitraryInput ? CreatableSelect : ReactSelect;
 

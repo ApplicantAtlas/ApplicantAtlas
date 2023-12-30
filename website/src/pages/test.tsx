@@ -1,6 +1,6 @@
 import React from "react";
-import FormBuilder from "@/components/FormBuilder/FormBuilder";
-import { FormStructure } from "@/types/models/FormBuilder";
+import FormBuilder from "@/components/Form/FormBuilder";
+import { FormStructure } from "@/types/models/Form";
 
 // TODO: This is a test page for the form builder. Remove this page when done.
 
