@@ -16,7 +16,7 @@ const Select: React.FC<SelectProps> = ({
   onChange,
   isMultiSelect = false,
   allowArbitraryInput = false,
-  defaultOptions = [],
+  defaultOptions = undefined,
 }) => {
   const options =
     field.options?.map((option) => ({ label: option, value: option })) || [];
