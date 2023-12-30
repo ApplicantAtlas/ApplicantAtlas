@@ -5,6 +5,7 @@ import (
 	"api/internal/mongodb"
 	"bufio"
 	"errors"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -65,35 +66,35 @@ func valuesFromSource(mongoService mongodb.MongoService) gin.HandlerFunc {
 		}
 
 		source, err := mongoService.GetSourceByName(c, sourceName)
-		addOrRefreshSource := false
+		refreshSource := false
+		addSource := false
 		if err != nil {
 			if err == mongo.ErrNoDocuments {
-				addOrRefreshSource = true
+				addSource = true
 			} else {
-
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve source"})
 				return
 			}
 		}
 
 		if source == nil {
-			addOrRefreshSource = true
+			refreshSource = true
 		}
 
 		// check if source updated in last 24h
-		if !addOrRefreshSource {
+		if !addSource {
 			lastUpdated := source.LastUpdated
 			now := time.Now()
 			diff := now.Sub(lastUpdated)
 			if diff.Hours() > 24 {
-				addOrRefreshSource = true
+				refreshSource = true
 			}
 		}
 
 		// We haven't cached the source yet, so we need to fetch it from the external source
 		// This probably should be abstracted out into a setup script or something, but for now it's
 		// fine to just do it here
-		if addOrRefreshSource {
+		if addSource || refreshSource {
 			switch sourceName {
 			case "mlh-schools":
 				schools, err := getMLHSchools()
@@ -103,16 +104,26 @@ func valuesFromSource(mongoService mongodb.MongoService) gin.HandlerFunc {
 				}
 
 				// Create the source
-				source := models.SelectorSource{
+				newSource := models.SelectorSource{
 					SourceName:  sourceName,
 					LastUpdated: time.Now(),
 					Options:     schools,
 				}
 
-				_, err = mongoService.CreateSource(c, source)
-				if err != nil {
-					c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve source"})
-					return
+				if addSource {
+					_, err = mongoService.CreateSource(c, newSource)
+					if err != nil {
+						fmt.Println(err)
+						c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve source"})
+						return
+					}
+				} else if refreshSource {
+					_, err = mongoService.UpdateSource(c, newSource, source.ID)
+					if err != nil {
+						fmt.Println(err)
+						c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve source"})
+						return
+					}
 				}
 
 				c.JSON(http.StatusOK, schools)

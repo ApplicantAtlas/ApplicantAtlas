@@ -1,8 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { CountryDropdown, RegionDropdown } from 'react-country-region-selector';
+import CountryRegionData from '@../../../node_modules/country-region-data/data.json';
 import Text from './Text';
 import { FieldValue, FormField } from '@/types/models/FormBuilder';
 import { Address } from '@/types/models/Event';
+import dynamic from 'next/dynamic';
+
+const SelectDynamic = dynamic(() => import("./Select"), {
+  ssr: false,
+});
+
 
 type AddressProps = {
     field: FormField;
@@ -32,16 +38,6 @@ const Address: React.FC<AddressProps> = ({ field, onChange, defaultValue }) => {
     onChange(field.key, formAddress());
   }, [defaultValue])
 
-  const selectCountry = (val: string) => {
-    setCountry(val);
-    onChange(field.key, formAddress());
-  };
-
-  const selectRegion = (val: string) => {
-    setRegion(val);
-    onChange(field.key, formAddress());
-  };
-
   const handleInputChange = (key: string, value: FieldValue) => {
     switch (key) {
       case 'streetAddress':
@@ -52,6 +48,12 @@ const Address: React.FC<AddressProps> = ({ field, onChange, defaultValue }) => {
         break;
       case 'zipCode':
         setZipCode(value as string);
+        break;
+      case 'country':
+        setCountry(value as string);
+        break;
+      case 'region':
+        setRegion(value as string);
         break;
       default:
         break;
@@ -72,30 +74,30 @@ const Address: React.FC<AddressProps> = ({ field, onChange, defaultValue }) => {
         onChange={handleInputChange}
       />
       <div className="form-control w-full">
-        <label className="label">
-          <span className="label-text">Country</span>
-        </label>
-        <CountryDropdown
-          value={country}
-          onChange={selectCountry}
-          priorityOptions={["US", "CA", "GB"]}
-          classes="select select-bordered w-full"
-          // @ts-ignore
-          required={field.required}
+        <SelectDynamic
+        field={{
+          question: 'Country',
+          key: 'country',
+          type: 'select',
+          required: field.required,
+          options: CountryRegionData.map((country) => country.countryName),
+        }}
+        onChange={handleInputChange}
         />
       </div>
       <div className="form-control w-full">
-        <label className="label">
-          <span className="label-text">Region</span>
-        </label>
-        <RegionDropdown
-          country={country}
-          value={region}
-          onChange={selectRegion}
-          classes="select select-bordered w-full"
-          disableWhenEmpty={true}
-          // @ts-ignore
-          required={field.required}
+        <SelectDynamic
+          key={country} // force re-render when country changes
+          field={{
+            question: 'Region',
+            key: 'region',
+            type: 'select',
+            required: field.required,
+            options: CountryRegionData.find((country_i) => country_i.countryName === country)?.regions.map(
+              (region) => region.name
+            ),
+          }}
+          onChange={handleInputChange}
         />
       </div>
       <Text
