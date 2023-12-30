@@ -11,6 +11,7 @@ import LoadingSpinner from "@/components/Loading/LoadingSpinner";
 import { ToastType, useToast } from "@/components/Toast/ToastContext";
 import { useRouter } from "next/router";
 import { EventModel } from "@/types/models/Event";
+import Footer from "@/components/Footer";
 
 const Dashboard: React.FC = () => {
   const [events, setEvents] = useState<EventModel[]>([]);
@@ -54,6 +55,7 @@ const Dashboard: React.FC = () => {
   };
 
   return (
+    <>
     <div className="flex flex-col min-h-screen bg-gray-100 text-gray-900">
       <Header 
         menuItems={[
@@ -135,6 +137,9 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
     </div>
+
+    <Footer />
+    </>
   );
 };
 

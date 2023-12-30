@@ -2,7 +2,7 @@
 import React from "react";
 import { useRouter } from "next/router";
 import Sidebar from "@/components/Events/AdminDashboard/Sidebar";
-import Footer from "@/components/Events/AdminDashboard/Footer";
+import Footer from "@/components/Footer";
 import { EventProvider, useEventContext } from "@/contexts/EventContext";
 import LoadingSpinner from "@/components/Loading/LoadingSpinner";
 import Header from "@/components/Header";
