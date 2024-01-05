@@ -36,6 +36,7 @@ api.interceptors.response.use(
       eventEmitter.emit('apiError', error.response.data.error);
     } 
     if (error.response && error.response.status == 401) {
+      eventEmitter.emit('apiError', 'You have been logged out. Please log in again.');
       window.location.href = '/logout'; // Redirect to logout if not already on login page 
     } 
     return Promise.reject(error);
