@@ -61,6 +61,23 @@ export type FormField = {
   additionalOptions?: AdditionalOptions;
 };
 
+// We have a lot of optional fields here because we want to be able to use FormStructure as a way to define our own forms like login/register
+// without having to define every single field
 export type FormStructure = {
   attrs: FormField[];
+  id?: string;
+  allowMultipleSubmissions?: boolean;
+  closeSubmissionsAt?: Date;
+  openSubmissionsAt?: Date;
+  name?: string;
+  description?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  status?: 'draft' | 'published' | 'archived' | 'deleted';
+  isDeleted?: boolean;
+  eventID?: string;
+  maxSubmissions?: number; // could be useful for rsvp forms
+  webhookURL?: string;
+  submissionMessage?: string;
+  confirmationEmailTemplateID?: string; // point to collection "email_templates"
 };

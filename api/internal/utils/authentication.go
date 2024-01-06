@@ -104,6 +104,13 @@ func GetUserFromContext(c *gin.Context, writeResponse bool) (*models.User, bool)
 		return nil, false
 	}
 
+	if authenticatedUser.ID == primitive.NilObjectID {
+		if writeResponse {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "User ID not found"})
+		}
+		return nil, false
+	}
+
 	return authenticatedUser, true
 }
 

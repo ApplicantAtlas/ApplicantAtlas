@@ -23,4 +23,5 @@ func SetupRoutes(r *gin.Engine, mongoService mongodb.MongoService) {
 
 	formGroup := r.Group("/forms")
 	forms.RegisterDefaultSelectorValues(formGroup, mongoService)
+	forms.RegisterRoutes(formGroup, mongoService)
 }

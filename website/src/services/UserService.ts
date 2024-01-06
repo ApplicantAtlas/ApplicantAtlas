@@ -10,10 +10,9 @@ export const getUserFull = async (): Promise<User> => {
 
 // pulls from localstorage
 export const getJWTUser = async (): Promise<User> => {
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
   return user;
-}
-
+};
 
 export const updateUser = async (user: User): Promise<AxiosResponse> => {
   const response = await api.put<AxiosResponse>(`/users/me`, user);

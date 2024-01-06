@@ -7,6 +7,7 @@ import (
 	"context"
 	"errors"
 	"log"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
@@ -28,6 +29,10 @@ type MongoService interface {
 	CreateSource(ctx context.Context, source models.SelectorSource) (*mongo.InsertOneResult, error)
 	UpdateSource(ctx context.Context, source models.SelectorSource, sourceID primitive.ObjectID) (*mongo.UpdateResult, error)
 	GetSourceByName(ctx context.Context, name string) (*models.SelectorSource, error)
+	GetForm(ctx context.Context, formID primitive.ObjectID) (*models.FormStructure, error)
+	CreateForm(ctx context.Context, form models.FormStructure) (*mongo.InsertOneResult, error)
+	UpdateForm(ctx context.Context, form models.FormStructure, formID primitive.ObjectID) (*mongo.UpdateResult, error)
+	DeleteForm(ctx context.Context, formID primitive.ObjectID) (*mongo.DeleteResult, error)
 }
 
 // Service implements MongoService with a mongo.Client.
@@ -281,4 +286,38 @@ func (s *Service) UpdateSource(ctx context.Context, source models.SelectorSource
 
 	filter := bson.M{"_id": sourceID}
 	return s.Database.Collection("sources").UpdateOne(ctx, filter, update)
+}
+
+// GetForm retrieves a form by its ID
+func (s *Service) GetForm(ctx context.Context, formID primitive.ObjectID) (*models.FormStructure, error) {
+	var form models.FormStructure
+	err := s.Database.Collection("forms").FindOne(ctx, bson.M{"_id": formID}).Decode(&form)
+	if err != nil {
+		return nil, err
+	}
+	return &form, nil
+}
+
+// CreateForm creates a new form
+func (s *Service) CreateForm(ctx context.Context, form models.FormStructure) (*mongo.InsertOneResult, error) {
+	form.CreatedAt = time.Now()
+	form.UpdatedAt = time.Now()
+	form.IsDeleted = false
+	form.Status = "draft"
+	return s.Database.Collection("forms").InsertOne(ctx, form)
+}
+
+// UpdateForm updates a form by its ID
+func (s *Service) UpdateForm(ctx context.Context, form models.FormStructure, formID primitive.ObjectID) (*mongo.UpdateResult, error) {
+	form.UpdatedAt = time.Now()
+	update := bson.M{"$set": form}
+	filter := bson.M{"_id": formID}
+	return s.Database.Collection("forms").UpdateOne(ctx, filter, update)
+}
+
+// DeleteForm deletes a form by its ID
+func (s *Service) DeleteForm(ctx context.Context, formID primitive.ObjectID) (*mongo.DeleteResult, error) {
+	filter := bson.M{"_id": formID}
+	// TODO: Delete all submissions for this form
+	return s.Database.Collection("forms").DeleteOne(ctx, filter)
 }

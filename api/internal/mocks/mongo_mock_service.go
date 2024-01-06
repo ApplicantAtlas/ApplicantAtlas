@@ -19,6 +19,7 @@ type MockMongoService struct {
 	data    map[string]models.User // In-memory store
 	events  map[string]models.Event
 	sources map[string]models.SelectorSource
+	forms   map[string]models.FormStructure
 	mutex   sync.RWMutex // Mutex for concurrent access
 }
 
@@ -27,6 +28,7 @@ func NewMockMongoService() *MockMongoService {
 		data:    make(map[string]models.User),
 		events:  make(map[string]models.Event),
 		sources: make(map[string]models.SelectorSource),
+		forms:   make(map[string]models.FormStructure),
 	}
 }
 
@@ -200,4 +202,56 @@ func matchesFilter(event models.Event, filter bson.M) bool {
 		// Add other filter conditions as needed
 	}
 	return true
+}
+
+func (m *MockMongoService) CreateForm(ctx context.Context, form models.FormStructure) (*mongo.InsertOneResult, error) {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	if _, exists := m.forms[form.Name]; exists {
+		return nil, errors.New("form already exists")
+	}
+
+	m.forms[form.Name] = form
+	return &mongo.InsertOneResult{}, nil
+}
+
+func (m *MockMongoService) GetForm(ctx context.Context, formID primitive.ObjectID) (*models.FormStructure, error) {
+	m.mutex.RLock()
+	defer m.mutex.RUnlock()
+
+	id := formID.Hex()
+	form, exists := m.forms[id]
+	if !exists {
+		return nil, mongo.ErrNoDocuments
+	}
+
+	return &form, nil
+}
+
+func (m *MockMongoService) UpdateForm(ctx context.Context, form models.FormStructure, formID primitive.ObjectID) (*mongo.UpdateResult, error) {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	id := formID.Hex()
+	if _, exists := m.forms[id]; !exists {
+		return nil, mongo.ErrNoDocuments
+	}
+
+	// Update form
+	m.forms[id] = form
+	return &mongo.UpdateResult{ModifiedCount: 1}, nil
+}
+
+func (m *MockMongoService) DeleteForm(ctx context.Context, formID primitive.ObjectID) (*mongo.DeleteResult, error) {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	id := formID.Hex()
+	if _, exists := m.forms[id]; !exists {
+		return nil, mongo.ErrNoDocuments
+	}
+
+	delete(m.forms, id)
+	return &mongo.DeleteResult{DeletedCount: 1}, nil
 }
