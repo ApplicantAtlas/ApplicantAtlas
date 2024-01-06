@@ -37,8 +37,7 @@ const FormCreator: React.FC<FormCreatorProps> = ({
       setEditingFieldIndex(null);
     } else {
       // Generate unique id
-      field.id = uuidv4();
-      field.key = field.id;
+      field.key = uuidv4();
 
       // Add new field
       setUserFormStructure((prev) => ({
@@ -137,7 +136,7 @@ const FormCreator: React.FC<FormCreatorProps> = ({
 
       <button
         onClick={() => setModalOpen(true)}
-        className="btn btn-primary mt-4"
+        className="btn btn-primary mt-4 mr-1"
       >
         Add Field
       </button>

@@ -45,7 +45,6 @@ const UserSettings: React.FC = () => {
     return {
       attrs: [
         {
-          id: "",
           key: "firstName",
           question: "First Name",
           type: "text",
@@ -53,7 +52,6 @@ const UserSettings: React.FC = () => {
           defaultValue: user?.firstName,
         },
         {
-          id: "",
           key: "lastName",
           question: "Last Name",
           type: "text",
@@ -61,7 +59,6 @@ const UserSettings: React.FC = () => {
           defaultValue: user?.lastName,
         },
         {
-          id: "",
           key: "email",
           question: "Email",
           type: "text",
@@ -74,7 +71,6 @@ const UserSettings: React.FC = () => {
           defaultValue: user?.email,
         },
         {
-          id: "",
           key: "schoolEmail",
           question: "School Email",
           type: "text",
@@ -89,7 +85,6 @@ const UserSettings: React.FC = () => {
           defaultValue: user?.schoolEmail,
         },
         {
-          id: "",
           key: "alternativeEmails",
           question: "Alternative Emails",
           type: "custommultiselect",
@@ -97,7 +92,6 @@ const UserSettings: React.FC = () => {
           defaultValue: user?.alternativeEmails,
         },
         {
-          id: "",
           key: "birthday",
           question: "Birthday",
           type: "date",

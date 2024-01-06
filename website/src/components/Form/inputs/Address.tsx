@@ -41,19 +41,19 @@ const Address: React.FC<AddressProps> = ({ field, onChange, defaultValue }) => {
 
   const handleInputChange = (key: string, value: FieldValue) => {
     switch (key) {
-      case "streetAddress":
+      case field.key + "_streetAddress":
         setStreetAddress(value as string);
         break;
-      case "city":
+      case field.key + "_city":
         setCity(value as string);
         break;
-      case "zipCode":
+      case field.key + "_zipCode":
         setZipCode(value as string);
         break;
-      case "country":
+      case field.key + "_country":
         setCountry(value as string);
         break;
-      case "region":
+      case field.key + "_region":
         setRegion(value as string);
         break;
       default:
@@ -66,9 +66,8 @@ const Address: React.FC<AddressProps> = ({ field, onChange, defaultValue }) => {
     <div className="space-y-4">
       <Text
         field={{
-          id: field.key + "_streetAddress",
           question: "Street Address",
-          key: "streetAddress",
+          key: field.key + "_streetAddress",
           type: "text",
           required: field.required,
           defaultValue: streetAddress,
@@ -78,9 +77,8 @@ const Address: React.FC<AddressProps> = ({ field, onChange, defaultValue }) => {
       />
       <Text
         field={{
-          id: field.key + "_city",
+          key: field.key + "_city",
           question: "City",
-          key: "city",
           type: "text",
           required: field.required,
           defaultValue: city,
@@ -91,9 +89,8 @@ const Address: React.FC<AddressProps> = ({ field, onChange, defaultValue }) => {
       <div className="form-control w-full">
         <SelectDynamic
           field={{
-            id: field.key + "_country",
+            key: field.key + "_country",
             question: "Country",
-            key: "country",
             type: "select",
             required: field.required,
             options: CountryRegionData.map((country) => country.countryName),
@@ -107,9 +104,8 @@ const Address: React.FC<AddressProps> = ({ field, onChange, defaultValue }) => {
         <SelectDynamic
           key={country} // force re-render when country changes
           field={{
-            id: field.key + "_region",
+            key: field.key + "_region",
             question: "Region",
-            key: "region",
             type: "select",
             required: field.required,
             options: CountryRegionData.find(
@@ -123,9 +119,8 @@ const Address: React.FC<AddressProps> = ({ field, onChange, defaultValue }) => {
       </div>
       <Text
         field={{
-          id: field.key + "_zipCode",
+          key: field.key + "_zipCode",
           question: "Zip Code",
-          key: "zipCode",
           type: "text",
           required: field.required,
           defaultValue: zipCode,

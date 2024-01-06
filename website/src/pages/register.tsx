@@ -20,21 +20,18 @@ const RegistrationPage = () => {
   const registrationFormStructure: FormStructure = {
     attrs: [
       {
-        id: "",
         question: "First Name",
         type: "text",
         key: "firstName",
         required: true,
       },
       {
-        id: "",
         question: "Last Name",
         type: "text",
         key: "lastName",
         required: true,
       },
       {
-        id: "",
         question: "Email",
         type: "text",
         key: "email",
@@ -46,7 +43,6 @@ const RegistrationPage = () => {
         required: true,
       },
       {
-        id: "",
         question: "School Email (Optional)",
         type: "text",
         key: "schoolEmail",
@@ -59,14 +55,12 @@ const RegistrationPage = () => {
         },
       },
       {
-        id: "",
         question: "Birthday",
         type: "date",
         key: "birthday",
         required: true,
       },
       {
-        id: "",
         question: "Password",
         type: "text",
         key: "password",

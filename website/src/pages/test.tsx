@@ -8,7 +8,6 @@ const Test: React.FC = () => {
   const formStructure: FormStructure = {
     attrs: [
       { 
-        id: "unique_id_startTime",
         key: "unique_id_startTime",
         question: "When does your event start?",
         type: "timestamp",
@@ -16,7 +15,6 @@ const Test: React.FC = () => {
         required: false,
       },
       {
-        id: "unique_id_telephone",
         key: "unique_id_telephone",
         question: "What's your telephone?",
         type: "telephone",
@@ -24,7 +22,6 @@ const Test: React.FC = () => {
         required: false,
       },
       {
-        id: "unique_id_email",
         key: "unique_id_email",
         question: "What's your email?",
         type: "text",
@@ -39,7 +36,6 @@ const Test: React.FC = () => {
         required: false,
       },
       {
-        id: "unique_id_birthday",
         key: "unique_id_birthday",
         question: "When is your birthday",
         type: "customselect",
@@ -61,7 +57,6 @@ const Test: React.FC = () => {
         required: false,
       },
       {
-        id: "unique_id_address",
         key: "unique_id_address",
         question: "What's your address?",
         type: "address",
@@ -69,7 +64,6 @@ const Test: React.FC = () => {
         required: false,
       },
       {
-        id: "unique_id_color",
         key: "unique_id_color",
         question: "What's your favorite color?",
         type: "colorpicker",
@@ -77,7 +71,6 @@ const Test: React.FC = () => {
         required: false,
       },
       {
-        id: "unique_id_visible",
         key: "unique_id_visible",
         question: "Is this visible?",
         type: "checkbox",
@@ -85,7 +78,6 @@ const Test: React.FC = () => {
         required: true,
       },
       {
-        id: "unique_id_schoolSelect",
         key: "unique_id_schoolSelect",
         question: "What school do you go to?",
         type: "select",
@@ -95,7 +87,6 @@ const Test: React.FC = () => {
         }
       },
       {
-        id: "unique_id_address",
         key: "unique_id_address",
         question: "What's your address?",
         type: "address",

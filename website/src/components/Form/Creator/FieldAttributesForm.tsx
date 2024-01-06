@@ -22,7 +22,6 @@ const FieldAttributesForm: React.FC<FieldAttributesFormProps> = ({
 
   const handleFormSubmission = (formData: Record<string, any>) => {
     const newField: FormField = {
-      id: "", // filled out with uuid in FormCreator
       question: formData.question,
       type: fieldType as FormFieldType,
       key: "", // filled out with uuid in FormCreator
@@ -42,7 +41,6 @@ const FieldAttributesForm: React.FC<FieldAttributesFormProps> = ({
     console.log('createFormInitial', initialAttributes)
     var attrs: FormField[] = [
       {
-        id: "",
         key: "question",
         question: "Field Label/Question",
         type: "text",
@@ -57,7 +55,6 @@ const FieldAttributesForm: React.FC<FieldAttributesFormProps> = ({
         case "customselect":
         case "custommultiselect":
             attrs.push({
-                id: "",
                 key: "options",
                 question: "Options",
                 type: "custommultiselect",
@@ -72,7 +69,6 @@ const FieldAttributesForm: React.FC<FieldAttributesFormProps> = ({
     
 
     attrs.push({
-      id: "",
       key: "defaultValue",
       question: "Default Value",
       type: fieldType === "number" ? "number" : "text",
@@ -80,7 +76,6 @@ const FieldAttributesForm: React.FC<FieldAttributesFormProps> = ({
       defaultValue: initialAttributes?.defaultValue,
     });
     attrs.push({
-      id: "",
       key: "required",
       question: "Is this field required?",
       type: "checkbox",

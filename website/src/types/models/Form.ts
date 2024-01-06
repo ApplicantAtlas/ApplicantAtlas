@@ -48,7 +48,6 @@ export type FormFieldType =
   | "colorpicker";
 
 export type FormField = {
-  id: string;
   question: string;
   type: FormFieldType;
   description?: string;

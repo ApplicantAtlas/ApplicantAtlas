@@ -26,7 +26,6 @@ const LoginPage = () => {
   const loginFormStructure: FormStructure = {
     attrs: [
       {
-        id: "",
         question: 'Email',
         type: 'text',
         key: 'email',
@@ -38,7 +37,6 @@ const LoginPage = () => {
         },
       },
       {
-        id: "",
         question: 'Password',
         type: 'text',
         key: 'password',
