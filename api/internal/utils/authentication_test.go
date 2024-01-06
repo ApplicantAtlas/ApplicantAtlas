@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/stretchr/testify/assert"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func TestGenerateJWT(t *testing.T) {
@@ -91,7 +92,13 @@ func TestGetUserFromContext(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	c, _ := gin.CreateTestContext(nil)
 
+	userID, err := primitive.ObjectIDFromHex("5f9b3b2b4f4d7a1e3c9d9a1a")
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	user := models.User{
+		ID:        userID,
 		Email:     "test@example.com",
 		FirstName: "John",
 		LastName:  "Doe",

@@ -14,6 +14,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func TestAuthHandlers(t *testing.T) {
@@ -25,7 +26,13 @@ func TestAuthHandlers(t *testing.T) {
 	rg := r.Group("/auth")
 	RegisterRoutes(rg, mockMongoService)
 
+	objectID, err := primitive.ObjectIDFromHex("5f9b3b2b4f4d7a1e3c9d9a1a")
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	user := models.User{
+		ID:           objectID,
 		FirstName:    "John",
 		LastName:     "Doe",
 		Email:        "john@example.com",
@@ -187,6 +194,12 @@ func TestAuthHandlers(t *testing.T) {
 	t.Run("delete non-existent user", func(t *testing.T) {
 		// Create a new user with a different email
 		newUser := user
+		objectID, err := primitive.ObjectIDFromHex("5f9b3b2b4f4d7a1e3c9d9a1a")
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		newUser.ID = objectID
 		newUser.Email = "test@test.com"
 
 		token, _ := utils.GenerateJWT(&newUser)
