@@ -66,6 +66,7 @@ const Address: React.FC<AddressProps> = ({ field, onChange, defaultValue }) => {
     <div className="space-y-4">
       <Text
         field={{
+          id: field.key + "_streetAddress",
           question: "Street Address",
           key: "streetAddress",
           type: "text",
@@ -77,6 +78,7 @@ const Address: React.FC<AddressProps> = ({ field, onChange, defaultValue }) => {
       />
       <Text
         field={{
+          id: field.key + "_city",
           question: "City",
           key: "city",
           type: "text",
@@ -89,6 +91,7 @@ const Address: React.FC<AddressProps> = ({ field, onChange, defaultValue }) => {
       <div className="form-control w-full">
         <SelectDynamic
           field={{
+            id: field.key + "_country",
             question: "Country",
             key: "country",
             type: "select",
@@ -104,6 +107,7 @@ const Address: React.FC<AddressProps> = ({ field, onChange, defaultValue }) => {
         <SelectDynamic
           key={country} // force re-render when country changes
           field={{
+            id: field.key + "_region",
             question: "Region",
             key: "region",
             type: "select",
@@ -119,6 +123,7 @@ const Address: React.FC<AddressProps> = ({ field, onChange, defaultValue }) => {
       </div>
       <Text
         field={{
+          id: field.key + "_zipCode",
           question: "Zip Code",
           key: "zipCode",
           type: "text",

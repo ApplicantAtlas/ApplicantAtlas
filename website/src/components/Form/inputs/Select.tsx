@@ -18,8 +18,11 @@ const Select: React.FC<SelectProps> = ({
   allowArbitraryInput = false,
   defaultOptions = undefined,
 }) => {
-  const options =
-    field.options?.map((option) => ({ label: option, value: option })) || [];
+  //const options = field.options?.map((option) => ({ label: option, value: option })) || [];
+
+  const options = Array.isArray(field.options)
+    ? field.options.map((option) => ({ label: option, value: option }))
+    : [];
 
   // Transform the defaultOptions into the format expected by react-select
   const getDefaultValue = () => {

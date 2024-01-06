@@ -8,21 +8,24 @@ const Test: React.FC = () => {
   const formStructure: FormStructure = {
     attrs: [
       { 
-        key: "startTime",
+        id: "unique_id_startTime",
+        key: "unique_id_startTime",
         question: "When does your event start?",
         type: "timestamp",
         description: "Please enter the start time of your event",
         required: false,
       },
       {
-        key: "telephone",
+        id: "unique_id_telephone",
+        key: "unique_id_telephone",
         question: "What's your telephone?",
         type: "telephone",
         description: "Please enter your telephone",
         required: false,
       },
       {
-        key: "email",
+        id: "unique_id_email",
+        key: "unique_id_email",
         question: "What's your email?",
         type: "text",
         description: "Please enter your email",
@@ -36,7 +39,8 @@ const Test: React.FC = () => {
         required: false,
       },
       {
-        key: "birthday",
+        id: "unique_id_birthday",
+        key: "unique_id_birthday",
         question: "When is your birthday",
         type: "customselect",
         description: "Please enter your birthday",
@@ -57,34 +61,44 @@ const Test: React.FC = () => {
         required: false,
       },
       {
-        key: "address",
+        id: "unique_id_address",
+        key: "unique_id_address",
         question: "What's your address?",
         type: "address",
         description: "Please enter your address",
         required: false,
       },
       {
-        key: "color",
+        id: "unique_id_color",
+        key: "unique_id_color",
         question: "What's your favorite color?",
         type: "colorpicker",
         description: "Please enter your favorite color",
         required: false,
       },
       {
-        key: "visible",
+        id: "unique_id_visible",
+        key: "unique_id_visible",
         question: "Is this visible?",
         type: "checkbox",
         description: "Please enter your favorite color",
         required: true,
       },
       {
-        key: "schoolSelect",
+        id: "unique_id_schoolSelect",
+        key: "unique_id_schoolSelect",
         question: "What school do you go to?",
         type: "select",
         description: "Please enter your school",
         additionalOptions: {
           useDefaultValuesFrom: "mlh-schools",
         }
+      },
+      {
+        id: "unique_id_address",
+        key: "unique_id_address",
+        question: "What's your address?",
+        type: "address",
       }
     ],
   };

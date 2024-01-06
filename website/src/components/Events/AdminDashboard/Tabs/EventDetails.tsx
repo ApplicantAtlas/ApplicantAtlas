@@ -15,7 +15,7 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventDetails }) => {
 
   const handleFormSubmission = async (formData: Record<string, any>) => {
     if (eventDetails) {
-      updateEvent(eventDetails.ID, { metadata: formData }).then(() => {
+      updateEvent(eventDetails.ID, { metadata: formData as EventMetadata }).then(() => {
         showToast('Event updated successfully', ToastType.Success);
       }).catch(() => {})
     }
@@ -28,17 +28,17 @@ const EventDetails: React.FC<EventDetailsProps> = ({ eventDetails }) => {
 
     // Note: excludes lat & lon bc this is not editable and is derived from the address on the backend.
     return [
-      { key: 'name', question: 'Event Name', type: 'text', defaultValue: metadata.name },
-      { key: 'address', question: 'Address', type: 'address', defaultValue: metadata.address },
-      { key: 'startTime', question: 'Start Time', type: 'timestamp', defaultValue: metadata.startTime, additionalOptions: { defaultTimezone: metadata.timezone, showTimezone: true } },
-      { key: 'endTime', question: 'End Time', type: 'timestamp', defaultValue: metadata.endTime, additionalOptions: { defaultTimezone: metadata.timezone, showTimezone: true } },
-      { key: 'timezone', question: 'Timezone', type: 'select', options: timezoneOptions, defaultOptions: timezoneDefaultOptions },
-      { key: 'visibility', question: 'Visibility', type: 'checkbox', defaultValue: metadata.visibility },
-      { key: 'website', question: 'Website', type: 'text', defaultValue: metadata.website },
-      { key: 'description', question: 'Description', type: 'textarea', defaultValue: metadata.description },
-      { key: 'tags', question: 'Tags', type: 'custommultiselect', defaultOptions: metadata.tags },
-      { key: 'socialMediaLinks', question: 'Social Media Links', type: 'custommultiselect', defaultOptions: metadata.socialMediaLinks },
-      { key: "contactEmail", question: "Contact Email", type: "text", defaultValue: metadata.contactEmail },
+      { id: "", key: 'name', question: 'Event Name', type: 'text', defaultValue: metadata.name },
+      { id: "", key: 'address', question: 'Address', type: 'address', defaultValue: metadata.address },
+      { id: "", key: 'startTime', question: 'Start Time', type: 'timestamp', defaultValue: metadata.startTime, additionalOptions: { defaultTimezone: metadata.timezone, showTimezone: true } },
+      { id: "", key: 'endTime', question: 'End Time', type: 'timestamp', defaultValue: metadata.endTime, additionalOptions: { defaultTimezone: metadata.timezone, showTimezone: true } },
+      { id: "", key: 'timezone', question: 'Timezone', type: 'select', options: timezoneOptions, defaultOptions: timezoneDefaultOptions },
+      { id: "", key: 'visibility', question: 'Visibility', type: 'checkbox', defaultValue: metadata.visibility },
+      { id: "", key: 'website', question: 'Website', type: 'text', defaultValue: metadata.website },
+      { id: "", key: 'description', question: 'Description', type: 'textarea', defaultValue: metadata.description },
+      { id: "", key: 'tags', question: 'Tags', type: 'custommultiselect', defaultOptions: metadata.tags },
+      { id: "", key: 'socialMediaLinks', question: 'Social Media Links', type: 'custommultiselect', defaultOptions: metadata.socialMediaLinks },
+      { id: "", key: "contactEmail", question: "Contact Email", type: "text", defaultValue: metadata.contactEmail },
     ];
   };
 
