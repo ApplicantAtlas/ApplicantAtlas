@@ -140,8 +140,9 @@ func NewWebhook(url string, method string, headers map[string]string, body map[s
 
 // PipelineConfiguration represents the configuration of a pipeline
 type PipelineConfiguration struct {
-	Event     PipelineEvent    `bson:"event" json:"event" validate:"required,pipelineevent"`
-	Actions   []PipelineAction `bson:"actions" json:"actions" validate:"required,dive,pipelineaction"`
-	EventID   string           `bson:"eventID" json:"eventID" validate:"required"`
-	UpdatedAt time.Time        `bson:"updatedAt" json:"updatedAt" validate:"required"`
+	ID        primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
+	Event     PipelineEvent      `bson:"event" json:"event" validate:"required,pipelineevent"`
+	Actions   []PipelineAction   `bson:"actions" json:"actions" validate:"required,dive,pipelineaction"`
+	EventID   string             `bson:"eventID" json:"eventID" validate:"required"`
+	UpdatedAt time.Time          `bson:"updatedAt" json:"updatedAt" validate:"required"`
 }
