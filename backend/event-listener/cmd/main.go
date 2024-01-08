@@ -3,12 +3,12 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"event-listener/internal/handlers"
 	"event-listener/internal/types"
 	"fmt"
 	"log"
 	"shared/kafka"
-	"shared/models"
 	"shared/utils"
 
 	"github.com/IBM/sarama"
@@ -37,7 +37,7 @@ func (h consumerGroupHandler) Setup(_ sarama.ConsumerGroupSession) error {
 func (h consumerGroupHandler) Cleanup(_ sarama.ConsumerGroupSession) error { return nil }
 func (h consumerGroupHandler) ConsumeClaim(sess sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
 	for msg := range claim.Messages() {
-		var actionTypeMap map[string]string
+		var actionTypeMap map[string]any
 		err := json.Unmarshal(msg.Value, &actionTypeMap)
 		if err != nil {
 			log.Printf("Error unmarshalling action type: %v", err)
@@ -50,15 +50,21 @@ func (h consumerGroupHandler) ConsumeClaim(sess sarama.ConsumerGroupSession, cla
 			continue
 		}
 
-		if handler, ok := actionHandlers[actionType]; ok {
-			var action models.PipelineAction
+		actionTypeStr, ok := actionType.(string)
+		if !ok {
+			log.Println("Action type is not a string")
+			return errors.New("action type is not a string")
+		}
+
+		if handler, ok := actionHandlers[actionTypeStr]; ok {
+			var action kafka.PipelineActionMessage
 			switch actionType {
 			case "SendEmail":
-				action = new(models.SendEmail)
+				action = new(kafka.SendEmailMessage)
 			case "AllowFormAccess":
-				action = new(models.AllowFormAccess)
+				action = new(kafka.AllowFormAccessMessage)
 			case "Webhook":
-				action = new(models.Webhook)
+				action = new(kafka.WebhookMessage)
 			default:
 				log.Fatalf("No object found for action type: %s", actionType)
 			}

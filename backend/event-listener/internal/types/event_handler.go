@@ -1,7 +1,9 @@
 package types
 
-import "shared/models"
+import (
+	"shared/kafka"
+)
 
 type EventHandler interface {
-	HandleAction(action models.PipelineAction) error
+	HandleAction(action kafka.PipelineActionMessage) error
 }

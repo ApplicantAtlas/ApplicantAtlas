@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"shared/models"
 	"shared/utils"
 
 	"github.com/IBM/sarama"
@@ -54,8 +53,7 @@ func createAWSKafkaProducer() (sarama.SyncProducer, error) {
 	return nil, errors.New("AWS Kafka producer not implemented")
 }
 
-func WriteActionToKafka(producer sarama.SyncProducer, action models.PipelineAction) error {
-	action.ActionType()
+func WriteActionToKafka(producer sarama.SyncProducer, action PipelineActionMessage) error {
 	eventJSON, err := json.Marshal(action)
 	if err != nil {
 		return err

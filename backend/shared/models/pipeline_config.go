@@ -58,10 +58,14 @@ type FieldChangeCondition struct {
 	Value      string     `bson:"value" json:"value" validate:"required"`
 }
 
+// SendEmail requires either an email field ID or an email address.
+// If an email field ID is provided, the email address will be pulled from the data.
 // SendEmail represents the action to send an email
 type SendEmail struct {
 	Type            string             `json:"type" bson:"type" validate:"required,eq=SendEmail"`
 	EmailTemplateID primitive.ObjectID `bson:"emailTemplateID" json:"emailTemplateID" validate:"required"`
+	EmailFieldID    string             `bson:"emailFieldID" json:"emailFieldID"`
+	EmailAddress    string             `bson:"emailAddress" json:"emailAddress"`
 }
 
 func (s SendEmail) ActionType() string {
@@ -101,14 +105,7 @@ type FormAccessOptions struct {
 
 // ExpirationOptions represents expiration options for form access
 type ExpirationOptions struct {
-	InHoursFromPipelineRun int             `bson:"inHoursFromPipelineRun" json:"inHoursFromPipelineRun" validate:"required,gt=0"`
-	Reminder               ReminderOptions `bson:"reminder" json:"reminder" validate:"required"`
-}
-
-// ReminderOptions represents reminder options for form expiration
-type ReminderOptions struct {
-	Remind                  bool `bson:"remind" json:"remind"`
-	InHoursBeforeExpiration int  `bson:"inHoursBeforeExpiration" json:"inHoursBeforeExpiration" validate:"gte=0"`
+	InHoursFromPipelineRun int `bson:"inHoursFromPipelineRun" json:"inHoursFromPipelineRun" validate:"required,gt=0"`
 }
 
 // Webhook represents a webhook action

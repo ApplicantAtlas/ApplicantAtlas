@@ -3,13 +3,13 @@ package handlers
 import (
 	"errors"
 	"fmt"
-	"shared/models"
+	"shared/kafka"
 )
 
 type AllowFormAccessHandler struct{}
 
-func (s AllowFormAccessHandler) HandleAction(action models.PipelineAction) error {
-	allowFormAccessAction, ok := action.(*models.AllowFormAccess)
+func (s AllowFormAccessHandler) HandleAction(action kafka.PipelineActionMessage) error {
+	allowFormAccessAction, ok := action.(*kafka.AllowFormAccessMessage)
 	if !ok {
 		return errors.New("invalid action type for AllowFormAccessHandler")
 	}

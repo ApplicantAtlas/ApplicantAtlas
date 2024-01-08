@@ -17,6 +17,7 @@ export type FieldChange = {
 // Actions
 export type SendEmail = {
     emailTemplateID: string;
+    emailFieldID: string;
 }
 
 export type AllowFormAccess = {
@@ -24,10 +25,6 @@ export type AllowFormAccess = {
     options: {
         expiration: {
             inHoursFromPipelineRun: number;
-            reminder: {
-                remind: boolean;
-                inHoursBeforeExpiration: number;
-            }
         };
     }
 }
