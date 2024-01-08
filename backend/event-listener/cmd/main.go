@@ -22,6 +22,14 @@ var actionHandlers = map[string]types.EventHandler{
 
 type consumerGroupHandler struct{}
 
+/*
+  TODO: We should consider adding like Metadata to this message that's on the PipelineConfiguration
+  like EventID, PipelineID, etc. so that we can track the status of the pipeline and the events.
+  We could just consume the entire PipelineConfiguration and then just process the actions in
+  order.
+  TODO: Lets add logging in a collection like `pipeline_runs` that tracks the status of the pipeline and report any errors
+*/
+
 func (h consumerGroupHandler) Setup(_ sarama.ConsumerGroupSession) error {
 	fmt.Println("Consumer group started")
 	return nil
