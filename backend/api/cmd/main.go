@@ -2,10 +2,12 @@ package main
 
 import (
 	"api/internal/routes"
+	"api/internal/types"
 	"context"
 	"log"
 	"net/http"
 	"os/signal"
+	"shared/kafka"
 	"shared/mongodb"
 	"shared/utils"
 	"strings"
@@ -46,8 +48,18 @@ func main() {
 	}
 	defer cleanup()
 
+	producer, err := kafka.CreateProducer()
+	if err != nil {
+		log.Fatalf("Failed to create Kafka producer: %v", err)
+	}
+	defer producer.Close()
+
 	// Setup routes
-	routes.SetupRoutes(r, mongoService)
+	params := types.RouteParams{
+		MongoService:  mongoService,
+		KafkaProducer: producer,
+	}
+	routes.SetupRoutes(r, &params)
 
 	// Handle 404s
 	r.NoRoute(func(c *gin.Context) {

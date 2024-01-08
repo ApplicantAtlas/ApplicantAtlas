@@ -2,6 +2,7 @@
 package auth
 
 import (
+	"api/internal/types"
 	"bytes"
 	"encoding/json"
 	"net/http"
@@ -24,7 +25,12 @@ func TestAuthHandlers(t *testing.T) {
 	// Create a gin router with the auth routes
 	r := gin.Default()
 	rg := r.Group("/auth")
-	RegisterRoutes(rg, mockMongoService)
+
+	params := types.RouteParams{
+		MongoService: mockMongoService,
+	}
+
+	RegisterRoutes(rg, &params)
 
 	objectID, err := primitive.ObjectIDFromHex("5f9b3b2b4f4d7a1e3c9d9a1a")
 	if err != nil {

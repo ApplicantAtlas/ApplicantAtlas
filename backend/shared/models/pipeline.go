@@ -60,25 +60,38 @@ type FieldChangeCondition struct {
 
 // SendEmail represents the action to send an email
 type SendEmail struct {
-	Type            string             `json:"type"`
+	Type            string             `json:"type" bson:"type" validate:"required,eq=SendEmail"`
 	EmailTemplateID primitive.ObjectID `bson:"emailTemplateID" json:"emailTemplateID" validate:"required"`
 }
 
-func (f SendEmail) ActionType() string {
-	f.Type = "SendEmail"
-	return f.Type
+func (s SendEmail) ActionType() string {
+	return s.Type
+}
+
+func NewSendEmail(emailTemplate primitive.ObjectID) *SendEmail {
+	return &SendEmail{
+		Type:            "SendEmail",
+		EmailTemplateID: emailTemplate,
+	}
 }
 
 // AllowFormAccess represents the action to allow access to a form
 type AllowFormAccess struct {
-	Type     string            `json:"type"`
+	Type     string            `json:"type" bson:"type" validate:"required,eq=AllowFormAccess"`
 	ToFormID string            `bson:"toFormID" json:"toFormID" validate:"required"`
 	Options  FormAccessOptions `bson:"options" json:"options" validate:"required"`
 }
 
-func (f AllowFormAccess) ActionType() string {
-	f.Type = "AllowFormAccess"
-	return f.Type
+func (s AllowFormAccess) ActionType() string {
+	return s.Type
+}
+
+func NewAllowFormAccess(toFormID string, options FormAccessOptions) *AllowFormAccess {
+	return &AllowFormAccess{
+		Type:     "AllowFormAccess",
+		ToFormID: toFormID,
+		Options:  options,
+	}
 }
 
 // FormAccessOptions represents options for form access
@@ -100,16 +113,25 @@ type ReminderOptions struct {
 
 // Webhook represents a webhook action
 type Webhook struct {
-	Type    string            `json:"type"`
+	Type    string            `json:"type" bson:"type" validate:"required,eq=Webhook"`
 	URL     string            `bson:"url" json:"url" validate:"required,url"`
 	Method  string            `bson:"method" json:"method" validate:"required,oneof=POST GET PUT DELETE"`
 	Headers map[string]string `bson:"headers" json:"headers"`
 	Body    map[string]string `bson:"body" json:"body"`
 }
 
-func (f Webhook) ActionType() string {
-	f.Type = "Webhook"
-	return f.Type
+func (s Webhook) ActionType() string {
+	return s.Type
+}
+
+func NewWebhook(url string, method string, headers map[string]string, body map[string]string) *Webhook {
+	return &Webhook{
+		Type:    "Webhook",
+		URL:     url,
+		Method:  method,
+		Headers: headers,
+		Body:    body,
+	}
 }
 
 //

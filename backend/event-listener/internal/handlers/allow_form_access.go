@@ -9,11 +9,10 @@ import (
 type AllowFormAccessHandler struct{}
 
 func (s AllowFormAccessHandler) HandleAction(action models.PipelineAction) error {
-	allowFormAccessAction, ok := action.(models.AllowFormAccess)
+	allowFormAccessAction, ok := action.(*models.AllowFormAccess)
 	if !ok {
 		return errors.New("invalid action type for AllowFormAccessHandler")
 	}
-	// Now you can work with allowFormAccessAction, which is of type models.AllowFormAccess
 	fmt.Println(allowFormAccessAction)
 	return errors.New("not implemented")
 }

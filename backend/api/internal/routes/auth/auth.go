@@ -2,6 +2,7 @@ package auth
 
 import (
 	"api/internal/middlewares"
+	"api/internal/types"
 	"net/http"
 	"shared/models"
 	"shared/mongodb"
@@ -15,10 +16,10 @@ import (
 )
 
 // RegisterRoutes sets up the routes for authentication
-func RegisterRoutes(r *gin.RouterGroup, mongoService mongodb.MongoService) {
-	r.POST("/login", loginUser(mongoService))
-	r.POST("/register", registerUser(mongoService))
-	r.DELETE("/delete", middlewares.JWTAuthMiddleware(), deleteUser(mongoService))
+func RegisterRoutes(r *gin.RouterGroup, params *types.RouteParams) {
+	r.POST("/login", loginUser(params))
+	r.POST("/register", registerUser(params))
+	r.DELETE("/delete", middlewares.JWTAuthMiddleware(), deleteUser(params))
 }
 
 type loginRequest struct {
@@ -26,7 +27,7 @@ type loginRequest struct {
 	Password string `json:"password" validate:"required"`
 }
 
-func loginUser(mongoService mongodb.MongoService) gin.HandlerFunc {
+func loginUser(params *types.RouteParams) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req loginRequest
 		if err := utils.BindJSON(c, &req); err != nil {
@@ -34,7 +35,7 @@ func loginUser(mongoService mongodb.MongoService) gin.HandlerFunc {
 			return
 		}
 
-		user, err := mongoService.FindUserByEmail(c, req.Email)
+		user, err := params.MongoService.FindUserByEmail(c, req.Email)
 		if err != nil {
 			if err == mongo.ErrNoDocuments {
 				// User not found
@@ -71,7 +72,7 @@ type registerRequest struct {
 	Birthday    string `json:"birthday" validate:"required,dateformat=01/02/2006,minage=13;01/02/2006"`
 }
 
-func registerUser(mongoService mongodb.MongoService) gin.HandlerFunc {
+func registerUser(params *types.RouteParams) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req registerRequest
 		if err := utils.BindJSON(c, &req); err != nil {
@@ -111,7 +112,7 @@ func registerUser(mongoService mongodb.MongoService) gin.HandlerFunc {
 		}
 
 		// Insert the new user into the database
-		_, err = mongoService.InsertUser(c, newUser)
+		_, err = params.MongoService.InsertUser(c, newUser)
 		if err != nil {
 			if err == mongodb.ErrUserAlreadyExists {
 				c.JSON(http.StatusBadRequest, gin.H{"error": "An account with that email already exists"})
@@ -125,14 +126,14 @@ func registerUser(mongoService mongodb.MongoService) gin.HandlerFunc {
 }
 
 // TODO: We should base this on the user's id instead of email
-func deleteUser(mongoService mongodb.MongoService) gin.HandlerFunc {
+func deleteUser(params *types.RouteParams) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authenticatedUser, ok := utils.GetUserFromContext(c, true)
 		if !ok {
 			return // Error is handled in GetUserFromContext
 		}
 
-		_, err := mongoService.DeleteUserByEmail(c, authenticatedUser.Email)
+		_, err := params.MongoService.DeleteUserByEmail(c, authenticatedUser.Email)
 		if err != nil {
 			if err == mongo.ErrNoDocuments {
 				c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})

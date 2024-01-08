@@ -1,20 +1,20 @@
 package forms
 
 import (
+	"api/internal/types"
 	"bufio"
 	"errors"
 	"fmt"
 	"net/http"
 	"shared/models"
-	"shared/mongodb"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func RegisterDefaultSelectorValues(r *gin.RouterGroup, mongoService mongodb.MongoService) {
-	r.GET("default_selector_values/:source_name", valuesFromSource(mongoService))
+func RegisterDefaultSelectorValues(r *gin.RouterGroup, params *types.RouteParams) {
+	r.GET("default_selector_values/:source_name", valuesFromSource(params))
 }
 
 func getMLHSchools() ([]string, error) {
@@ -46,7 +46,7 @@ func getMLHSchools() ([]string, error) {
 	return schools, nil
 }
 
-func valuesFromSource(mongoService mongodb.MongoService) gin.HandlerFunc {
+func valuesFromSource(params *types.RouteParams) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		sourceName := c.Param("source_name")
 
@@ -65,7 +65,7 @@ func valuesFromSource(mongoService mongodb.MongoService) gin.HandlerFunc {
 			return
 		}
 
-		source, err := mongoService.GetSourceByName(c, sourceName)
+		source, err := params.MongoService.GetSourceByName(c, sourceName)
 		refreshSource := false
 		addSource := false
 		if err != nil {
@@ -111,14 +111,14 @@ func valuesFromSource(mongoService mongodb.MongoService) gin.HandlerFunc {
 				}
 
 				if addSource {
-					_, err = mongoService.CreateSource(c, newSource)
+					_, err = params.MongoService.CreateSource(c, newSource)
 					if err != nil {
 						fmt.Println(err)
 						c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve source"})
 						return
 					}
 				} else if refreshSource {
-					_, err = mongoService.UpdateSource(c, newSource, source.ID)
+					_, err = params.MongoService.UpdateSource(c, newSource, source.ID)
 					if err != nil {
 						fmt.Println(err)
 						c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve source"})

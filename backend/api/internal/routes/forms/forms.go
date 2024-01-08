@@ -1,6 +1,7 @@
 package forms
 
 import (
+	"api/internal/types"
 	"net/http"
 	"shared/models"
 	"shared/mongodb"
@@ -11,14 +12,14 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func RegisterRoutes(r *gin.RouterGroup, mongoService mongodb.MongoService) {
-	r.GET(":form_id", getFormDataHandler(mongoService))
-	r.POST("", createFormHandler(mongoService))
-	r.PUT(":form_id", updateFormHandler(mongoService))
-	r.DELETE(":form_id", deleteFormHandler(mongoService))
+func RegisterRoutes(r *gin.RouterGroup, params *types.RouteParams) {
+	r.GET(":form_id", getFormDataHandler(params))
+	r.POST("", createFormHandler(params))
+	r.PUT(":form_id", updateFormHandler(params))
+	r.DELETE(":form_id", deleteFormHandler(params))
 }
 
-func getFormDataHandler(mongoService mongodb.MongoService) gin.HandlerFunc {
+func getFormDataHandler(params *types.RouteParams) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// TODO: Restrict to approved users for like rsvp forms and such
 		formID, err := primitive.ObjectIDFromHex(c.Param("form_id"))
@@ -27,7 +28,7 @@ func getFormDataHandler(mongoService mongodb.MongoService) gin.HandlerFunc {
 			return
 		}
 
-		form, err := mongoService.GetForm(c, formID)
+		form, err := params.MongoService.GetForm(c, formID)
 		if err != nil {
 			c.JSON(404, gin.H{"error": "Form not found"})
 			return
@@ -37,7 +38,7 @@ func getFormDataHandler(mongoService mongodb.MongoService) gin.HandlerFunc {
 	}
 }
 
-func createFormHandler(mongoService mongodb.MongoService) gin.HandlerFunc {
+func createFormHandler(params *types.RouteParams) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req models.FormStructure
 		if err := utils.BindJSON(c, &req); err != nil {
@@ -62,7 +63,7 @@ func createFormHandler(mongoService mongodb.MongoService) gin.HandlerFunc {
 			return
 		}
 
-		event, err := mongoService.GetEvent(c, eventID)
+		event, err := params.MongoService.GetEvent(c, eventID)
 		if err != nil {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Event not found"})
 			return
@@ -81,7 +82,7 @@ func createFormHandler(mongoService mongodb.MongoService) gin.HandlerFunc {
 			return
 		}
 
-		formID, err := mongoService.CreateForm(c, req)
+		formID, err := params.MongoService.CreateForm(c, req)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create form"})
 			return
@@ -91,7 +92,7 @@ func createFormHandler(mongoService mongodb.MongoService) gin.HandlerFunc {
 	}
 }
 
-func deleteFormHandler(mongoService mongodb.MongoService) gin.HandlerFunc {
+func deleteFormHandler(params *types.RouteParams) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authenticatedUser, ok := utils.GetUserFromContext(c, true)
 		if !ok {
@@ -105,12 +106,12 @@ func deleteFormHandler(mongoService mongodb.MongoService) gin.HandlerFunc {
 			return
 		}
 
-		if !isUserAuthorizedForForm(c, mongoService, authenticatedUser, formID) {
+		if !isUserAuthorizedForForm(c, params.MongoService, authenticatedUser, formID) {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "You are not authorized to delete this form"})
 			return
 		}
 
-		_, err = mongoService.DeleteForm(c, formID)
+		_, err = params.MongoService.DeleteForm(c, formID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete form"})
 			return
@@ -120,7 +121,7 @@ func deleteFormHandler(mongoService mongodb.MongoService) gin.HandlerFunc {
 	}
 }
 
-func updateFormHandler(mongoService mongodb.MongoService) gin.HandlerFunc {
+func updateFormHandler(params *types.RouteParams) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req models.FormStructure
 		if err := utils.BindJSON(c, &req); err != nil {
@@ -145,12 +146,12 @@ func updateFormHandler(mongoService mongodb.MongoService) gin.HandlerFunc {
 			return
 		}
 
-		if !isUserAuthorizedForForm(c, mongoService, authenticatedUser, formID) {
+		if !isUserAuthorizedForForm(c, params.MongoService, authenticatedUser, formID) {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "You are not authorized to update this form"})
 			return
 		}
 
-		_, err = mongoService.UpdateForm(c, req, formID)
+		_, err = params.MongoService.UpdateForm(c, req, formID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update form"})
 			return

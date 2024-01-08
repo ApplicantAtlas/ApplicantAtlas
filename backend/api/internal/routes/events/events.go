@@ -2,6 +2,7 @@ package events
 
 import (
 	"api/internal/middlewares"
+	"api/internal/types"
 	"net/http"
 	"shared/models"
 	"shared/mongodb"
@@ -14,16 +15,16 @@ import (
 )
 
 // RegisterRoutes sets up the routes for event management
-func RegisterRoutes(r *gin.RouterGroup, mongoService mongodb.MongoService) {
-	r.GET("", listEventsHandler(mongoService))
-	r.POST("", middlewares.JWTAuthMiddleware(), createEventHandler(mongoService))
-	r.PUT("/:event_id", middlewares.JWTAuthMiddleware(), updateEventHandler(mongoService))
-	r.DELETE("/:event_id", middlewares.JWTAuthMiddleware(), deleteEventHandler(mongoService))
-	r.GET("/:event_id", getEventHandler(mongoService))
-	r.GET("/my-events", middlewares.JWTAuthMiddleware(), listMyEventsHandler(mongoService))
+func RegisterRoutes(r *gin.RouterGroup, params *types.RouteParams) {
+	r.GET("", listEventsHandler(params))
+	r.POST("", middlewares.JWTAuthMiddleware(), createEventHandler(params))
+	r.PUT("/:event_id", middlewares.JWTAuthMiddleware(), updateEventHandler(params))
+	r.DELETE("/:event_id", middlewares.JWTAuthMiddleware(), deleteEventHandler(params))
+	r.GET("/:event_id", getEventHandler(params))
+	r.GET("/my-events", middlewares.JWTAuthMiddleware(), listMyEventsHandler(params))
 }
 
-func listEventsHandler(mongoService mongodb.MongoService) gin.HandlerFunc {
+func listEventsHandler(params *types.RouteParams) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		/*
 			TODO:
@@ -33,7 +34,7 @@ func listEventsHandler(mongoService mongodb.MongoService) gin.HandlerFunc {
 			* Sort by date desc
 			* Only for visible events
 		*/
-		events, err := mongoService.ListEventsMetadata(c, nil)
+		events, err := params.MongoService.ListEventsMetadata(c, nil)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to list events"})
 			return
@@ -47,7 +48,7 @@ type createEventRequest struct {
 	Name string `json:"name" validate:"required"`
 }
 
-func createEventHandler(mongoService mongodb.MongoService) gin.HandlerFunc {
+func createEventHandler(params *types.RouteParams) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req createEventRequest
 		if err := utils.BindJSON(c, &req); err != nil {
@@ -79,7 +80,7 @@ func createEventHandler(mongoService mongodb.MongoService) gin.HandlerFunc {
 		}
 
 		// Insert the new event into the database
-		rec, err := mongoService.CreateEvent(c, event)
+		rec, err := params.MongoService.CreateEvent(c, event)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create event"})
 			return
@@ -93,7 +94,7 @@ type updateEventMetadataRequest struct {
 	Metadata models.EventMetadata `json:"metadata" validate:"required"`
 }
 
-func updateEventHandler(mongoService mongodb.MongoService) gin.HandlerFunc {
+func updateEventHandler(params *types.RouteParams) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		eventID := c.Param("event_id")
 		var req updateEventMetadataRequest
@@ -115,7 +116,7 @@ func updateEventHandler(mongoService mongodb.MongoService) gin.HandlerFunc {
 		}
 
 		// Update the event
-		_, err = mongoService.UpdateEventMetadata(c, objID, req.Metadata)
+		_, err = params.MongoService.UpdateEventMetadata(c, objID, req.Metadata)
 		if err != nil {
 			if err == mongodb.ErrUserNotAuthenticated {
 				c.JSON(http.StatusUnauthorized, gin.H{"error": "User not an organizer of this event"})
@@ -129,7 +130,7 @@ func updateEventHandler(mongoService mongodb.MongoService) gin.HandlerFunc {
 	}
 }
 
-func listMyEventsHandler(mongoService mongodb.MongoService) gin.HandlerFunc {
+func listMyEventsHandler(params *types.RouteParams) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authenticatedUser, ok := utils.GetUserFromContext(c, true)
 		if !ok {
@@ -143,7 +144,7 @@ func listMyEventsHandler(mongoService mongodb.MongoService) gin.HandlerFunc {
 		}
 
 		// List all events where the user is an organizer
-		events, err := mongoService.ListEventsMetadata(c, bson.M{"organizerIDs": authenticatedUser.ID})
+		events, err := params.MongoService.ListEventsMetadata(c, bson.M{"organizerIDs": authenticatedUser.ID})
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to list events"})
 			return
@@ -153,7 +154,7 @@ func listMyEventsHandler(mongoService mongodb.MongoService) gin.HandlerFunc {
 	}
 }
 
-func deleteEventHandler(mongoService mongodb.MongoService) gin.HandlerFunc {
+func deleteEventHandler(params *types.RouteParams) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		eventID := c.Param("event_id")
 
@@ -164,7 +165,7 @@ func deleteEventHandler(mongoService mongodb.MongoService) gin.HandlerFunc {
 			return
 		}
 
-		_, err = mongoService.DeleteEvent(c, objID)
+		_, err = params.MongoService.DeleteEvent(c, objID)
 		if err != nil {
 			if err == mongodb.ErrUserNotAuthenticated {
 				c.JSON(http.StatusUnauthorized, gin.H{"error": "User not an organizer of this event"})
@@ -178,7 +179,7 @@ func deleteEventHandler(mongoService mongodb.MongoService) gin.HandlerFunc {
 	}
 }
 
-func getEventHandler(mongoService mongodb.MongoService) gin.HandlerFunc {
+func getEventHandler(params *types.RouteParams) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		eventID := c.Param("event_id")
 
@@ -189,7 +190,7 @@ func getEventHandler(mongoService mongodb.MongoService) gin.HandlerFunc {
 			return
 		}
 
-		event, err := mongoService.GetEvent(c, objID)
+		event, err := params.MongoService.GetEvent(c, objID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get event"})
 			return

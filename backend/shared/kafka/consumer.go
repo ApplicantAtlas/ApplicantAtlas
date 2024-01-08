@@ -27,7 +27,7 @@ func createLocalKafkaConsumer() (sarama.ConsumerGroup, error) {
 
 	// Additional local configuration setup as needed, like authentication
 
-	group, err := sarama.NewConsumerGroup(brokers, "applicant-atlas-consumers", config)
+	group, err := sarama.NewConsumerGroup(brokers, PipelineActionTopicGroup, config)
 	if err != nil {
 		return nil, err
 	}

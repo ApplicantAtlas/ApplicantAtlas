@@ -2,6 +2,7 @@
 package events
 
 import (
+	"api/internal/types"
 	"bytes"
 	"encoding/json"
 	"net/http"
@@ -23,7 +24,12 @@ func TestEventsHandlers(t *testing.T) {
 	// Create a gin router with the events routes
 	r := gin.Default()
 	rg := r.Group("/events")
-	RegisterRoutes(rg, mockMongoService)
+
+	params := types.RouteParams{
+		MongoService: mockMongoService,
+	}
+
+	RegisterRoutes(rg, &params)
 
 	// Set up common data
 	eventID := primitive.NewObjectID()

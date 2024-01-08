@@ -9,7 +9,7 @@ import (
 type WebhookHandler struct{}
 
 func (s WebhookHandler) HandleAction(action models.PipelineAction) error {
-	webhookAction, ok := action.(models.Webhook)
+	webhookAction, ok := action.(*models.Webhook)
 	if !ok {
 		return errors.New("invalid action type for WebhookHandler")
 	}

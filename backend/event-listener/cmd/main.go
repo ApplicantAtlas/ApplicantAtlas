@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"event-listener/internal/handlers"
 	"event-listener/internal/types"
+	"fmt"
 	"log"
 	"shared/kafka"
 	"shared/models"
@@ -21,7 +22,10 @@ var actionHandlers = map[string]types.EventHandler{
 
 type consumerGroupHandler struct{}
 
-func (h consumerGroupHandler) Setup(_ sarama.ConsumerGroupSession) error   { return nil }
+func (h consumerGroupHandler) Setup(_ sarama.ConsumerGroupSession) error {
+	fmt.Println("Consumer group started")
+	return nil
+}
 func (h consumerGroupHandler) Cleanup(_ sarama.ConsumerGroupSession) error { return nil }
 func (h consumerGroupHandler) ConsumeClaim(sess sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
 	for msg := range claim.Messages() {
@@ -47,7 +51,8 @@ func (h consumerGroupHandler) ConsumeClaim(sess sarama.ConsumerGroupSession, cla
 				action = new(models.AllowFormAccess)
 			case "Webhook":
 				action = new(models.Webhook)
-				// Add other cases as necessary
+			default:
+				log.Fatalf("No object found for action type: %s", actionType)
 			}
 
 			err = json.Unmarshal(msg.Value, &action)
@@ -80,7 +85,7 @@ func main() {
 		}
 
 		// List of topics to subscribe to
-		topics := []string{"SendEmail", "AllowFormAccess", "Webhook"}
+		topics := []string{kafka.PipelineActionTopic}
 
 		handler := consumerGroupHandler{}
 		ctx := context.Background()

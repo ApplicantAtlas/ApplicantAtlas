@@ -2,9 +2,9 @@ package users
 
 import (
 	"api/internal/middlewares"
+	"api/internal/types"
 	"net/http"
 	"shared/models"
-	"shared/mongodb"
 	"shared/utils"
 	"time"
 
@@ -12,19 +12,19 @@ import (
 )
 
 // RegisterRoutes sets up the routes for user management
-func RegisterRoutes(r *gin.RouterGroup, mongoService mongodb.MongoService) {
-	r.GET("/me", middlewares.JWTAuthMiddleware(), getUserMyself(mongoService))
-	r.PUT("/me", middlewares.JWTAuthMiddleware(), updateUserMyself(mongoService))
+func RegisterRoutes(r *gin.RouterGroup, params *types.RouteParams) {
+	r.GET("/me", middlewares.JWTAuthMiddleware(), getUserMyself(params))
+	r.PUT("/me", middlewares.JWTAuthMiddleware(), updateUserMyself(params))
 }
 
-func getUserMyself(mongoService mongodb.MongoService) gin.HandlerFunc {
+func getUserMyself(params *types.RouteParams) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authenticatedUser, ok := utils.GetUserFromContext(c, true)
 		if !ok {
 			return // Error is handled in GetUserFromContext
 		}
 
-		user, err := mongoService.FindUserByEmail(c, authenticatedUser.Email)
+		user, err := params.MongoService.FindUserByEmail(c, authenticatedUser.Email)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve user details"})
 			return
@@ -42,7 +42,7 @@ type updateUserRequest struct {
 	Birthday    string `json:"birthday" validate:"required,dateformat=01/02/2006,minage=13;01/02/2006"`
 }
 
-func updateUserMyself(mongoService mongodb.MongoService) gin.HandlerFunc {
+func updateUserMyself(params *types.RouteParams) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authenticatedUser, ok := utils.GetUserFromContext(c, true)
 		if !ok {
@@ -69,7 +69,7 @@ func updateUserMyself(mongoService mongodb.MongoService) gin.HandlerFunc {
 			Birthday:    parsedBirthday,
 		}
 
-		err = mongoService.UpdateUserDetails(c, authenticatedUser.ID, updatedUserDetailsModel)
+		err = params.MongoService.UpdateUserDetails(c, authenticatedUser.ID, updatedUserDetailsModel)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user details"})
 			return
