@@ -9,11 +9,13 @@ import (
 // PipelineAction represents a pipeline action
 type PipelineActionMessage interface {
 	MessageType() string
+	GetName() string
 }
 
 // SendEmailMessage requires either an email field ID or an email address.
 // SendEmailMessage represents a send email message
 type SendEmailMessage struct {
+	Name            string                 `bson:"_id,omitempty" json:"_id,omitempty"`
 	PipelineRunID   primitive.ObjectID     `bson:"pipelineRunID" json:"pipelineRunID" validate:"required"`
 	Type            string                 `json:"type" bson:"type" validate:"required,eq=SendEmail"`
 	EmailTemplateID primitive.ObjectID     `bson:"emailTemplateID" json:"emailTemplateID" validate:"required"`
@@ -27,8 +29,13 @@ func (s SendEmailMessage) MessageType() string {
 	return s.Type
 }
 
-func NewSendEmailMessage(pipelineRunID primitive.ObjectID, emailTemplate primitive.ObjectID, eventID primitive.ObjectID, data map[string]interface{}, emailFieldID string, emailAddress string) *SendEmailMessage {
+func (s SendEmailMessage) GetName() string {
+	return s.Name
+}
+
+func NewSendEmailMessage(name string, pipelineRunID primitive.ObjectID, emailTemplate primitive.ObjectID, eventID primitive.ObjectID, data map[string]interface{}, emailFieldID string, emailAddress string) *SendEmailMessage {
 	return &SendEmailMessage{
+		Name:            name,
 		PipelineRunID:   pipelineRunID,
 		Type:            "SendEmail",
 		EmailTemplateID: emailTemplate,
@@ -41,6 +48,7 @@ func NewSendEmailMessage(pipelineRunID primitive.ObjectID, emailTemplate primiti
 
 // AllowFormAccessMessage represents an allow form access message
 type AllowFormAccessMessage struct {
+	Name          string                   `bson:"_id,omitempty" json:"_id,omitempty"`
 	PipelineRunID primitive.ObjectID       `bson:"pipelineRunID" json:"pipelineRunID" validate:"required"`
 	Type          string                   `json:"type" bson:"type" validate:"required,eq=AllowFormAccess"`
 	ToFormID      string                   `bson:"toFormID" json:"toFormID" validate:"required"`
@@ -51,8 +59,13 @@ func (s AllowFormAccessMessage) MessageType() string {
 	return s.Type
 }
 
-func NewAllowFormAccessMessage(pipelineRunID primitive.ObjectID, toFormID string, options models.FormAccessOptions) *AllowFormAccessMessage {
+func (s AllowFormAccessMessage) GetName() string {
+	return s.Name
+}
+
+func NewAllowFormAccessMessage(name string, pipelineRunID primitive.ObjectID, toFormID string, options models.FormAccessOptions) *AllowFormAccessMessage {
 	return &AllowFormAccessMessage{
+		Name:          name,
 		PipelineRunID: pipelineRunID,
 		Type:          "AllowFormAccess",
 		ToFormID:      toFormID,
@@ -62,6 +75,7 @@ func NewAllowFormAccessMessage(pipelineRunID primitive.ObjectID, toFormID string
 
 // WebhookMessage represents a webhook message
 type WebhookMessage struct {
+	Name          string                 `bson:"_id,omitempty" json:"_id,omitempty"`
 	PipelineRunID primitive.ObjectID     `bson:"pipelineRunID" json:"pipelineRunID" validate:"required"`
 	Type          string                 `json:"type" bson:"type" validate:"required,eq=Webhook"`
 	Endpoint      string                 `bson:"endpoint" json:"endpoint" validate:"required"`
@@ -74,8 +88,13 @@ func (s WebhookMessage) MessageType() string {
 	return s.Type
 }
 
-func NewWebhookMessage(pipelineRunID primitive.ObjectID, endpoint string, method string, headers map[string]interface{}, body map[string]interface{}) *WebhookMessage {
+func (s WebhookMessage) GetName() string {
+	return s.Name
+}
+
+func NewWebhookMessage(name string, pipelineRunID primitive.ObjectID, endpoint string, method string, headers map[string]interface{}, body map[string]interface{}) *WebhookMessage {
 	return &WebhookMessage{
+		Name:          name,
 		PipelineRunID: pipelineRunID,
 		Type:          "Webhook",
 		Endpoint:      endpoint,

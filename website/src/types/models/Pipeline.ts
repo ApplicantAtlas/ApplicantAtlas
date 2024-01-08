@@ -16,11 +16,13 @@ export type FieldChange = {
 
 // Actions
 export type SendEmail = {
+    ID: string;
     emailTemplateID: string;
     emailFieldID: string;
 }
 
 export type AllowFormAccess = {
+    ID: string;
     toFormID: string;
     options: {
         expiration: {
@@ -30,6 +32,7 @@ export type AllowFormAccess = {
 }
 
 export type Webhook = {
+    ID: string;
     url: string;
     method: "POST" | "GET" | "PUT" | "DELETE";
     headers: {

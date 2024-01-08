@@ -50,6 +50,7 @@ func (f FieldChange) EventType() string {
 // PipelineAction represents a pipeline action
 type PipelineAction interface {
 	ActionType() string
+	GetName() string
 }
 
 // FieldChangeCondition represents the condition for a field change
@@ -62,6 +63,7 @@ type FieldChangeCondition struct {
 // If an email field ID is provided, the email address will be pulled from the data.
 // SendEmail represents the action to send an email
 type SendEmail struct {
+	Name            string             `bson:"name" json:"name" validate:"required"`
 	Type            string             `json:"type" bson:"type" validate:"required,eq=SendEmail"`
 	EmailTemplateID primitive.ObjectID `bson:"emailTemplateID" json:"emailTemplateID" validate:"required"`
 	EmailFieldID    string             `bson:"emailFieldID" json:"emailFieldID"`
@@ -72,8 +74,13 @@ func (s SendEmail) ActionType() string {
 	return s.Type
 }
 
-func NewSendEmail(emailTemplate primitive.ObjectID) *SendEmail {
+func (s SendEmail) GetName() string {
+	return s.Name
+}
+
+func NewSendEmail(name string, emailTemplate primitive.ObjectID) *SendEmail {
 	return &SendEmail{
+		Name:            name,
 		Type:            "SendEmail",
 		EmailTemplateID: emailTemplate,
 	}
@@ -81,6 +88,7 @@ func NewSendEmail(emailTemplate primitive.ObjectID) *SendEmail {
 
 // AllowFormAccess represents the action to allow access to a form
 type AllowFormAccess struct {
+	Name     string            `bson:"name" json:"name" validate:"required"`
 	Type     string            `json:"type" bson:"type" validate:"required,eq=AllowFormAccess"`
 	ToFormID string            `bson:"toFormID" json:"toFormID" validate:"required"`
 	Options  FormAccessOptions `bson:"options" json:"options" validate:"required"`
@@ -90,8 +98,13 @@ func (s AllowFormAccess) ActionType() string {
 	return s.Type
 }
 
-func NewAllowFormAccess(toFormID string, options FormAccessOptions) *AllowFormAccess {
+func (s AllowFormAccess) GetName() string {
+	return s.Name
+}
+
+func NewAllowFormAccess(name string, toFormID string, options FormAccessOptions) *AllowFormAccess {
 	return &AllowFormAccess{
+		Name:     name,
 		Type:     "AllowFormAccess",
 		ToFormID: toFormID,
 		Options:  options,
@@ -110,6 +123,7 @@ type ExpirationOptions struct {
 
 // Webhook represents a webhook action
 type Webhook struct {
+	Name    string            `bson:"name" json:"name" validate:"required"`
 	Type    string            `json:"type" bson:"type" validate:"required,eq=Webhook"`
 	URL     string            `bson:"url" json:"url" validate:"required,url"`
 	Method  string            `bson:"method" json:"method" validate:"required,oneof=POST GET PUT DELETE"`
@@ -121,8 +135,13 @@ func (s Webhook) ActionType() string {
 	return s.Type
 }
 
-func NewWebhook(url string, method string, headers map[string]string, body map[string]string) *Webhook {
+func (s Webhook) GetName() string {
+	return s.Name
+}
+
+func NewWebhook(name string, url string, method string, headers map[string]string, body map[string]string) *Webhook {
 	return &Webhook{
+		Name:    name,
 		Type:    "Webhook",
 		URL:     url,
 		Method:  method,
