@@ -25,22 +25,24 @@ type PipelineEvent interface {
 
 // FormSubmission represents a form submission event
 type FormSubmission struct {
+	Type     string `json:"type" bson:"type" validate:"required,eq=FormSubmission"`
 	OnFormID string `bson:"onFormID" json:"onFormID" validate:"required"`
 }
 
 func (f FormSubmission) EventType() string {
-	return "FormSubmission"
+	return f.Type
 }
 
 // FieldChange represents a field change event
 type FieldChange struct {
+	Type      string               `json:"type" bson:"type" validate:"required,eq=FieldChange"`
 	OnFormID  string               `bson:"onFormID" json:"onFormID" validate:"required"`
 	OnFieldID string               `bson:"onFieldID" json:"onFieldID" validate:"required"`
 	Condition FieldChangeCondition `bson:"condition" json:"condition" validate:"required"`
 }
 
 func (f FieldChange) EventType() string {
-	return "FieldChange"
+	return f.Type
 }
 
 //

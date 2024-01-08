@@ -2,10 +2,12 @@ export type comparison = "eq" | "neq";
 
 // Events
 export type FormSubmission = {
+    type: "FormSubmission";
     onFormID: string;
 }
 
 export type FieldChange = {
+    type: "FieldChange";
     onFormID: string;
     onFieldID: string;
     condition: {
@@ -16,12 +18,14 @@ export type FieldChange = {
 
 // Actions
 export type SendEmail = {
+    type: "SendEmail";
     ID: string;
     emailTemplateID: string;
     emailFieldID: string;
 }
 
 export type AllowFormAccess = {
+    type: "AllowFormAccess";
     ID: string;
     toFormID: string;
     options: {
@@ -32,6 +36,7 @@ export type AllowFormAccess = {
 }
 
 export type Webhook = {
+    type: "Webhook";
     ID: string;
     url: string;
     method: "POST" | "GET" | "PUT" | "DELETE";
