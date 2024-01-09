@@ -258,25 +258,85 @@ func (m *MockMongoService) DeleteForm(ctx context.Context, formID primitive.Obje
 }
 
 func (m *MockMongoService) CreatePipeline(ctx context.Context, pipeline models.PipelineConfiguration) (*mongo.InsertOneResult, error) {
-	// todo
-	return nil, nil
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	// Generate a new ObjectID for the pipeline
+	pipeline.ID = primitive.NewObjectID()
+	id := pipeline.ID.Hex()
+
+	// Check if the pipeline already exists
+	if _, exists := m.pipelines[id]; exists {
+		return nil, errors.New("pipeline already exists")
+	}
+
+	m.pipelines[id] = pipeline
+	return &mongo.InsertOneResult{InsertedID: pipeline.ID}, nil
 }
 
 func (m *MockMongoService) UpdatePipeline(ctx context.Context, pipeline models.PipelineConfiguration, pipelineID primitive.ObjectID) (*mongo.UpdateResult, error) {
-	// todo
-	return nil, nil
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	id := pipelineID.Hex()
+	if _, exists := m.pipelines[id]; !exists {
+		return nil, mongo.ErrNoDocuments
+	}
+
+	// Update the pipeline
+	m.pipelines[id] = pipeline
+	return &mongo.UpdateResult{ModifiedCount: 1}, nil
 }
 
 func (m *MockMongoService) GetPipeline(ctx context.Context, pipelineID primitive.ObjectID) (*models.PipelineConfiguration, error) {
-	// todo
-	return nil, nil
+	m.mutex.RLock()
+	defer m.mutex.RUnlock()
+
+	id := pipelineID.Hex()
+	pipeline, exists := m.pipelines[id]
+	if !exists {
+		return nil, mongo.ErrNoDocuments
+	}
+
+	return &pipeline, nil
 }
 
 func (m *MockMongoService) ListEventPipelines(ctx context.Context, filter bson.M) ([]models.PipelineConfiguration, error) {
-	// todo
-	return nil, nil
+	m.mutex.RLock()
+	defer m.mutex.RUnlock()
+
+	var pipelines []models.PipelineConfiguration
+	for _, pipeline := range m.pipelines {
+		if matchesPipelineFilter(pipeline, filter) {
+			pipelines = append(pipelines, pipeline)
+		}
+	}
+	return pipelines, nil
+}
+
+// Helper function for matching a pipeline against a filter
+func matchesPipelineFilter(pipeline models.PipelineConfiguration, filter bson.M) bool {
+	// Check if filter contains 'EventID'
+	if eventIDFilter, ok := filter["EventID"]; ok {
+		// Compare the pipeline's EventID with the filter's EventID
+		return pipeline.EventID == eventIDFilter
+	}
+
+	// TODO: probably will cause silly errors for unit tests
+	// If the filter does not contain 'EventID', consider it a match.
+	// You can modify this behavior based on your requirements.
+	return true
 }
 
 func (m *MockMongoService) DeletePipeline(ctx context.Context, pipelineID primitive.ObjectID) (*mongo.DeleteResult, error) {
-	return nil, nil
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	id := pipelineID.Hex()
+	if _, exists := m.pipelines[id]; !exists {
+		return nil, mongo.ErrNoDocuments
+	}
+
+	delete(m.pipelines, id)
+	return &mongo.DeleteResult{DeletedCount: 1}, nil
 }
