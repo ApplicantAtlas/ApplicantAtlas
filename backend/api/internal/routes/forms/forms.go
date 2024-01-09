@@ -1,6 +1,7 @@
 package forms
 
 import (
+	"api/internal/middlewares"
 	"api/internal/types"
 	"net/http"
 	"shared/models"
@@ -13,10 +14,10 @@ import (
 )
 
 func RegisterRoutes(r *gin.RouterGroup, params *types.RouteParams) {
-	r.GET(":form_id", getFormDataHandler(params))
-	r.POST("", createFormHandler(params))
-	r.PUT(":form_id", updateFormHandler(params))
-	r.DELETE(":form_id", deleteFormHandler(params))
+	r.GET(":form_id", middlewares.JWTAuthMiddleware(), getFormDataHandler(params))
+	r.POST("", middlewares.JWTAuthMiddleware(), createFormHandler(params))
+	r.PUT(":form_id", middlewares.JWTAuthMiddleware(), updateFormHandler(params))
+	r.DELETE(":form_id", middlewares.JWTAuthMiddleware(), deleteFormHandler(params))
 }
 
 func getFormDataHandler(params *types.RouteParams) gin.HandlerFunc {
@@ -172,7 +173,17 @@ func isUserAuthorizedForForm(ctx *gin.Context, mongoService mongodb.MongoService
 		return false
 	}
 
-	event, err := mongoService.GetEvent(ctx, formID)
+	form, err := mongoService.GetForm(ctx, formID)
+	if err != nil {
+		return false
+	}
+
+	eventID, err := primitive.ObjectIDFromHex(form.EventID)
+	if err != nil {
+		return false
+	}
+
+	event, err := mongoService.GetEvent(ctx, eventID)
 	if err != nil {
 		return false
 	}

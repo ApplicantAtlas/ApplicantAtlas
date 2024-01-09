@@ -33,6 +33,11 @@ type MongoService interface {
 	CreateForm(ctx context.Context, form models.FormStructure) (*mongo.InsertOneResult, error)
 	UpdateForm(ctx context.Context, form models.FormStructure, formID primitive.ObjectID) (*mongo.UpdateResult, error)
 	DeleteForm(ctx context.Context, formID primitive.ObjectID) (*mongo.DeleteResult, error)
+	CreatePipeline(ctx context.Context, pipeline models.PipelineConfiguration) (*mongo.InsertOneResult, error)
+	UpdatePipeline(ctx context.Context, pipeline models.PipelineConfiguration, pipelineID primitive.ObjectID) (*mongo.UpdateResult, error)
+	GetPipeline(ctx context.Context, pipelineID primitive.ObjectID) (*models.PipelineConfiguration, error)
+	ListEventPipelines(ctx context.Context, filter bson.M) ([]models.PipelineConfiguration, error)
+	DeletePipeline(ctx context.Context, pipelineID primitive.ObjectID) (*mongo.DeleteResult, error)
 }
 
 // Service implements MongoService with a mongo.Client.
@@ -320,4 +325,65 @@ func (s *Service) DeleteForm(ctx context.Context, formID primitive.ObjectID) (*m
 	filter := bson.M{"_id": formID}
 	// TODO: Delete all submissions for this form
 	return s.Database.Collection("forms").DeleteOne(ctx, filter)
+}
+
+// CreatePipeline creates a new pipeline
+func (s *Service) CreatePipeline(ctx context.Context, pipeline models.PipelineConfiguration) (*mongo.InsertOneResult, error) {
+	pipeline.UpdatedAt = time.Now()
+	return s.Database.Collection("pipeline_configs").InsertOne(ctx, pipeline)
+}
+
+// UpdatePipeline updates a pipeline by its ID
+func (s *Service) UpdatePipeline(ctx context.Context, pipeline models.PipelineConfiguration, pipelineID primitive.ObjectID) (*mongo.UpdateResult, error) {
+	pipeline.UpdatedAt = time.Now()
+	update := bson.M{"$set": pipeline}
+	filter := bson.M{"_id": pipelineID}
+	return s.Database.Collection("pipeline_configs").UpdateOne(ctx, filter, update)
+}
+
+// GetPipeline retrieves a pipeline by its ID
+func (s *Service) GetPipeline(ctx context.Context, pipelineID primitive.ObjectID) (*models.PipelineConfiguration, error) {
+	var pipeline models.PipelineConfiguration
+	err := s.Database.Collection("pipeline_configs").FindOne(ctx, bson.M{"_id": pipelineID}).Decode(&pipeline)
+	if err != nil {
+		return nil, err
+	}
+	return &pipeline, nil
+}
+
+// ListEventPipelines retrieves pipelines based on a filter
+func (s *Service) ListEventPipelines(ctx context.Context, filter bson.M) ([]models.PipelineConfiguration, error) {
+	var pipelines []models.PipelineConfiguration
+
+	cursor, err := s.Database.Collection("pipeline_configs").Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx) {
+		var pipeline models.PipelineConfiguration
+		if err := cursor.Decode(&pipeline); err != nil {
+			return nil, err
+		}
+
+		pipelines = append(pipelines, pipeline)
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	// If pipelines is null then return an empty slice instead
+	if pipelines == nil {
+		return []models.PipelineConfiguration{}, nil
+	}
+
+	return pipelines, nil
+}
+
+// DeletePipeline deletes a pipeline by its ID
+func (s *Service) DeletePipeline(ctx context.Context, pipelineID primitive.ObjectID) (*mongo.DeleteResult, error) {
+	filter := bson.M{"_id": pipelineID}
+	return s.Database.Collection("pipeline_configs").DeleteOne(ctx, filter)
 }

@@ -15,19 +15,21 @@ import (
 
 type MockMongoService struct {
 	mock.Mock
-	data    map[string]models.User // In-memory store
-	events  map[string]models.Event
-	sources map[string]models.SelectorSource
-	forms   map[string]models.FormStructure
-	mutex   sync.RWMutex // Mutex for concurrent access
+	data      map[string]models.User // In-memory store
+	events    map[string]models.Event
+	sources   map[string]models.SelectorSource
+	forms     map[string]models.FormStructure
+	pipelines map[string]models.PipelineConfiguration
+	mutex     sync.RWMutex // Mutex for concurrent access
 }
 
 func NewMockMongoService() *MockMongoService {
 	return &MockMongoService{
-		data:    make(map[string]models.User),
-		events:  make(map[string]models.Event),
-		sources: make(map[string]models.SelectorSource),
-		forms:   make(map[string]models.FormStructure),
+		data:      make(map[string]models.User),
+		events:    make(map[string]models.Event),
+		sources:   make(map[string]models.SelectorSource),
+		forms:     make(map[string]models.FormStructure),
+		pipelines: make(map[string]models.PipelineConfiguration),
 	}
 }
 
@@ -253,4 +255,28 @@ func (m *MockMongoService) DeleteForm(ctx context.Context, formID primitive.Obje
 
 	delete(m.forms, id)
 	return &mongo.DeleteResult{DeletedCount: 1}, nil
+}
+
+func (m *MockMongoService) CreatePipeline(ctx context.Context, pipeline models.PipelineConfiguration) (*mongo.InsertOneResult, error) {
+	// todo
+	return nil, nil
+}
+
+func (m *MockMongoService) UpdatePipeline(ctx context.Context, pipeline models.PipelineConfiguration, pipelineID primitive.ObjectID) (*mongo.UpdateResult, error) {
+	// todo
+	return nil, nil
+}
+
+func (m *MockMongoService) GetPipeline(ctx context.Context, pipelineID primitive.ObjectID) (*models.PipelineConfiguration, error) {
+	// todo
+	return nil, nil
+}
+
+func (m *MockMongoService) ListEventPipelines(ctx context.Context, filter bson.M) ([]models.PipelineConfiguration, error) {
+	// todo
+	return nil, nil
+}
+
+func (m *MockMongoService) DeletePipeline(ctx context.Context, pipelineID primitive.ObjectID) (*mongo.DeleteResult, error) {
+	return nil, nil
 }

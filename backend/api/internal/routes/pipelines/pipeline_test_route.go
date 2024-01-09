@@ -8,8 +8,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func RegisterRoutes(r *gin.RouterGroup, params *types.RouteParams) {
-	r.GET("", testPipeline(params))
+func RegisterTestRoute(r *gin.RouterGroup, params *types.RouteParams) {
+	r.GET("test", testPipeline(params))
 }
 
 func testPipeline(params *types.RouteParams) gin.HandlerFunc {

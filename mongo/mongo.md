@@ -35,3 +35,11 @@ These should allow for some sort of templating language to be used to allow for 
 This collection contains all the email logs in the system. It is used to store all the email logs that are created by sending emails to users, through their smtp solution.
 
 TODO: I need to figure out the best way to do this, because this is sort of set up for lambda functions for the rest of the api, so we might need some sort of queue system to handle this. Ideally like how firebase does it where we can listen for changes to the collection and then send the email. Preferably can trigger events based on changes to the collection, which then hit a lambda function that sends the email and then updates the collection with the email log.
+
+### `pipeline_configs`
+
+This collection contains all the pipeline configs in the system. It is used to store all the pipeline configs that are created by users.
+
+### `pipeline_runs`
+
+This collection contains all the pipeline runs in the system. It is used to store all the pipeline runs that are created by users.
