@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { EventModel } from '@/types/models/Event';
 import React, { memo } from 'react';
 
 interface SidebarProps {
@@ -15,10 +15,11 @@ interface SidebarLink {
 const Sidebar: React.FC<SidebarProps> = ({ eventDetails, activeSection, setActiveSection }) => {
     const links: SidebarLink[] = [
         { title: 'Dashboard', sectionName: 'dashboard' },
+        { title: 'Forms', sectionName: 'forms' },
         { title: 'Event Details', sectionName: 'event-details'},
         { title: 'Applications', sectionName: 'applications' },
-        { title: 'RSVP', sectionName: 'rsvps' },
         { title: 'Announcements', sectionName: 'announcements' },
+        { title: 'Pipelines', sectionName: 'pipelines'},
         { title: 'Settings', sectionName: 'settings' },
     ];
 
