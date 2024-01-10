@@ -132,3 +132,7 @@ func hexToObjectID(hexStr string) (primitive.ObjectID, error) {
 	}
 	return objID, nil
 }
+
+//
+// Document Authentication Helpers
+//

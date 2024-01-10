@@ -161,6 +161,6 @@ type PipelineConfiguration struct {
 	ID        primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
 	Event     PipelineEvent      `bson:"event" json:"event" validate:"required,pipelineevent"`
 	Actions   []PipelineAction   `bson:"actions" json:"actions" validate:"required,dive,pipelineaction"`
-	EventID   string             `bson:"eventID" json:"eventID" validate:"required"`
+	EventID   primitive.ObjectID `bson:"eventID" json:"eventID" validate:"required"`
 	UpdatedAt time.Time          `bson:"updatedAt" json:"updatedAt" validate:"required"`
 }

@@ -1,4 +1,3 @@
-// TODO: Clean this up, I wrote this code while a little annoyed and tired
 package pipelines
 
 import (
@@ -6,6 +5,7 @@ import (
 	"api/internal/types"
 	"net/http"
 	"shared/models"
+	"shared/mongodb"
 	"shared/utils"
 
 	"github.com/gin-gonic/gin"
@@ -27,18 +27,19 @@ func getPipelineConfigHandler(params *types.RouteParams) gin.HandlerFunc {
 			return
 		}
 
+		authenticatedUser, ok := utils.GetUserFromContext(c, true)
+		if !ok {
+			return
+		}
+
 		pipelineConfig, err := params.MongoService.GetPipeline(c, pipelineID)
 		if err != nil {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Pipeline configuration not found"})
 			return
 		}
 
-		authenticatedUser, ok := utils.GetUserFromContext(c, true)
-		if !ok {
-			return
-		}
-
-		if !isUserAuthorizedToUpdatePipeline(c, authenticatedUser, pipelineConfig.ID, params) {
+		canModify := mongodb.CanUserModifyPipeline(c, params.MongoService, authenticatedUser, primitive.NilObjectID, pipelineConfig)
+		if !canModify {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "You are not authorized to view this pipeline"})
 			return
 		}
@@ -61,28 +62,15 @@ func createPipelineConfigHandler(params *types.RouteParams) gin.HandlerFunc {
 			return
 		}
 
-		eventID, err := primitive.ObjectIDFromHex(req.EventID)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid event ID"})
-			return
-		}
-		event, err := params.MongoService.GetEvent(c, eventID)
+		event, err := params.MongoService.GetEvent(c, req.EventID)
 		if err != nil {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Event not found"})
 			return
 		}
 
-		var found = false
-		for _, organizerID := range event.OrganizerIDs {
-			if organizerID == authenticatedUser.ID {
-				found = true
-				break
-			}
-		}
-
-		if !found {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "You are not authorized to create a pipeline for this event"})
-			return
+		canUserModifyEvent := mongodb.CanUserModifyEvent(c, params.MongoService, authenticatedUser, primitive.NilObjectID, event)
+		if !canUserModifyEvent {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "You cannot create a pipeline on this event"})
 		}
 
 		pipelineID, err := params.MongoService.CreatePipeline(c, req)
@@ -94,8 +82,6 @@ func createPipelineConfigHandler(params *types.RouteParams) gin.HandlerFunc {
 		c.JSON(http.StatusOK, gin.H{"id": pipelineID})
 	}
 }
-
-// update_pipeline_config_handler.go
 
 func updatePipelineConfigHandler(params *types.RouteParams) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -116,7 +102,7 @@ func updatePipelineConfigHandler(params *types.RouteParams) gin.HandlerFunc {
 			return
 		}
 
-		if !isUserAuthorizedToUpdatePipeline(c, authenticatedUser, pipelineID, params) {
+		if !mongodb.CanUserModifyPipeline(c, params.MongoService, authenticatedUser, pipelineID, nil) {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "You are not authorized to update this pipeline"})
 			return
 		}
@@ -131,8 +117,6 @@ func updatePipelineConfigHandler(params *types.RouteParams) gin.HandlerFunc {
 	}
 }
 
-// delete_pipeline_config_handler.go
-
 func deletePipelineConfigHandler(params *types.RouteParams) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		pipelineID, err := primitive.ObjectIDFromHex(c.Param("pipeline_id"))
@@ -146,7 +130,7 @@ func deletePipelineConfigHandler(params *types.RouteParams) gin.HandlerFunc {
 			return
 		}
 
-		if !isUserAuthorizedToUpdatePipeline(c, authenticatedUser, pipelineID, params) {
+		if !mongodb.CanUserModifyPipeline(c, params.MongoService, authenticatedUser, pipelineID, nil) {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "You are not authorized to delete this pipeline"})
 			return
 		}
@@ -159,41 +143,4 @@ func deletePipelineConfigHandler(params *types.RouteParams) gin.HandlerFunc {
 
 		c.JSON(http.StatusOK, gin.H{"message": "Pipeline configuration deleted successfully"})
 	}
-}
-
-// helpers
-
-// TODO: this isn't super efficient since some functions are called multipel times through this
-// if we abstracted this out to shared functionality and made it more modular we could make it more eff.
-func isUserAuthorizedToUpdatePipeline(c *gin.Context, user *models.User, pipelineID primitive.ObjectID, params *types.RouteParams) bool {
-	if user == nil {
-		return false
-	}
-
-	if user.ID == primitive.NilObjectID {
-		return false
-	}
-
-	pipelineConfig, err := params.MongoService.GetPipeline(c, pipelineID)
-	if err != nil {
-		return false
-	}
-
-	eventID, err := primitive.ObjectIDFromHex(pipelineConfig.EventID)
-	if err != nil {
-		return false
-	}
-
-	event, err := params.MongoService.GetEvent(c, eventID)
-	if err != nil {
-		return false
-	}
-
-	for _, organizerID := range event.OrganizerIDs {
-		if organizerID == user.ID {
-			return true
-		}
-	}
-
-	return false
 }

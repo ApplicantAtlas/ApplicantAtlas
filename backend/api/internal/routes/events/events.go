@@ -33,6 +33,7 @@ func listEventsHandler(params *types.RouteParams) gin.HandlerFunc {
 			* Filtering by address
 			* Sort by date desc
 			* Only for visible events
+			* We need to ensure certain fields dropped if admin or not like on the get method
 		*/
 		events, err := params.MongoService.ListEventsMetadata(c, nil)
 		if err != nil {

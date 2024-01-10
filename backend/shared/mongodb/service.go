@@ -116,15 +116,7 @@ func (s *Service) UpdateEventMetadata(ctx *gin.Context, eventID primitive.Object
 		return nil, err
 	}
 
-	// Ensure the user is an organizer
-	isOrganizer := false
-	for _, organizerID := range event.OrganizerIDs {
-		if organizerID == authenticatedUser.ID {
-			isOrganizer = true
-			break
-		}
-	}
-	if !isOrganizer {
+	if !CanUserModifyEvent(ctx, s, authenticatedUser, event.ID, &event) {
 		return nil, ErrUserNotAuthorized
 	}
 
@@ -188,14 +180,7 @@ func (s *Service) DeleteEvent(ctx *gin.Context, eventID primitive.ObjectID) (*mo
 	}
 
 	// Ensure the user is an organizer
-	isOrganizer := false
-	for _, organizerID := range event.OrganizerIDs {
-		if organizerID == authenticatedUser.ID {
-			isOrganizer = true
-			break
-		}
-	}
-	if !isOrganizer {
+	if !CanUserModifyEvent(ctx, s, authenticatedUser, event.ID, &event) {
 		return nil, ErrUserNotAuthorized
 	}
 
@@ -219,19 +204,8 @@ func (s *Service) GetEvent(ctx *gin.Context, eventID primitive.ObjectID) (*model
 		return nil, err
 	}
 
-	// Ensure the user is an organizer
-	isOrganizer := false
-	if isAuthenticated {
-		for _, organizerID := range event.OrganizerIDs {
-			if organizerID == authenticatedUser.ID {
-				isOrganizer = true
-				break
-			}
-		}
-	}
-
 	// If the user is not an organizer then return the metadata
-	if !isOrganizer {
+	if !isAuthenticated || !CanUserModifyEvent(ctx, s, authenticatedUser, event.ID, &event) {
 		return &models.Event{
 			ID:       event.ID,
 			Metadata: event.Metadata,
