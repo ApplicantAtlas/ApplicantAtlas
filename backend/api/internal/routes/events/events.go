@@ -18,10 +18,11 @@ import (
 func RegisterRoutes(r *gin.RouterGroup, params *types.RouteParams) {
 	r.GET("", listEventsHandler(params))
 	r.POST("", middlewares.JWTAuthMiddleware(), createEventHandler(params))
-	r.PUT("/:event_id", middlewares.JWTAuthMiddleware(), updateEventHandler(params))
-	r.DELETE("/:event_id", middlewares.JWTAuthMiddleware(), deleteEventHandler(params))
-	r.GET("/:event_id", getEventHandler(params))
-	r.GET("/my-events", middlewares.JWTAuthMiddleware(), listMyEventsHandler(params))
+	r.GET("my-events", middlewares.JWTAuthMiddleware(), listMyEventsHandler(params))
+	r.PUT(":event_id", middlewares.JWTAuthMiddleware(), updateEventHandler(params))
+	r.DELETE(":event_id", middlewares.JWTAuthMiddleware(), deleteEventHandler(params))
+	r.GET(":event_id", getEventHandler(params))
+	r.GET(":event_id/forms", middlewares.JWTAuthMiddleware(), getEventFormsHandler(params))
 }
 
 func listEventsHandler(params *types.RouteParams) gin.HandlerFunc {
@@ -198,5 +199,33 @@ func getEventHandler(params *types.RouteParams) gin.HandlerFunc {
 		}
 
 		c.JSON(http.StatusOK, gin.H{"event": event})
+	}
+}
+
+func getEventFormsHandler(params *types.RouteParams) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		eventParam := c.Param("event_id")
+		eventID, err := primitive.ObjectIDFromHex(eventParam)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid event ID"})
+			return
+		}
+
+		authenticatedUser, ok := utils.GetUserFromContext(c, true)
+		if !ok {
+			return
+		}
+
+		if !mongodb.CanUserModifyEvent(c, params.MongoService, authenticatedUser, eventID, nil) {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "You are not allowed to modify this event"})
+			return
+		}
+
+		forms, err := params.MongoService.ListForms(c, bson.M{"EventID": eventID})
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving event forms"})
+		}
+
+		c.JSON(http.StatusOK, gin.H{"forms": forms})
 	}
 }

@@ -1,6 +1,7 @@
 import { AxiosResponse } from 'axios';
 import api from './AxiosInterceptor';
 import { EventMetadata, EventModel } from '@/types/models/Event';
+import { FormStructure } from '@/types/models/Form';
 
 type ListEventsResponse = {
     events: EventModel[];
@@ -48,7 +49,10 @@ export const listMyEvents = async (): Promise<AxiosResponse<ListMyEventsResponse
     return api.get<ListMyEventsResponse>(`/events/my-events`);
 };
 
-
 export const getEvent = async (eventId: string): Promise<AxiosResponse<{event: EventModel}>> => {
     return api.get<{event: EventModel}>(`/events/${eventId}`);
+}
+
+export const getEventForms = async (eventId: string): Promise<AxiosResponse<{forms: FormStructure[]}>> => {
+    return api.get<{forms: FormStructure[]}>(`/events/${eventId}/forms`)
 }

@@ -30,6 +30,7 @@ type MongoService interface {
 	UpdateSource(ctx context.Context, source models.SelectorSource, sourceID primitive.ObjectID) (*mongo.UpdateResult, error)
 	GetSourceByName(ctx context.Context, name string) (*models.SelectorSource, error)
 	GetForm(ctx context.Context, formID primitive.ObjectID) (*models.FormStructure, error)
+	ListForms(ctx context.Context, filter bson.M) ([]models.FormStructure, error)
 	CreateForm(ctx context.Context, form models.FormStructure) (*mongo.InsertOneResult, error)
 	UpdateForm(ctx context.Context, form models.FormStructure, formID primitive.ObjectID) (*mongo.UpdateResult, error)
 	DeleteForm(ctx context.Context, formID primitive.ObjectID) (*mongo.DeleteResult, error)
@@ -213,6 +214,34 @@ func (s *Service) GetEvent(ctx *gin.Context, eventID primitive.ObjectID) (*model
 	}
 
 	return &event, nil
+}
+
+// GetEventForms returns a list of all of the events forms
+func (s *Service) ListForms(ctx context.Context, filter bson.M) ([]models.FormStructure, error) {
+	var forms []models.FormStructure
+	cursor, err := s.Database.Collection("forms").Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx) {
+		var form models.FormStructure
+		if err := cursor.Decode(&form); err != nil {
+			return nil, err
+		}
+		forms = append(forms, form)
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	if forms == nil {
+		return []models.FormStructure{}, nil
+	}
+
+	return forms, nil
 }
 
 // UpdateUserDetails updates a user given the user's ObjectId

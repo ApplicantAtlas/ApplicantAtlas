@@ -340,3 +340,8 @@ func (m *MockMongoService) DeletePipeline(ctx context.Context, pipelineID primit
 	delete(m.pipelines, id)
 	return &mongo.DeleteResult{DeletedCount: 1}, nil
 }
+
+func (m *MockMongoService) ListForms(ctx context.Context, filter bson.M) ([]models.FormStructure, error) {
+	// TODO: implement
+	return nil, nil
+}

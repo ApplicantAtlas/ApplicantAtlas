@@ -1,5 +1,8 @@
+import LoadingSpinner from "@/components/Loading/LoadingSpinner";
+import { getEventForms } from "@/services/EventService";
 import { EventModel } from "@/types/models/Event";
-import React from "react";
+import { FormStructure } from "@/types/models/Form";
+import React, { useEffect, useState } from "react";
 
 interface FormProps {
   eventDetails: EventModel | null;
@@ -15,11 +18,31 @@ interface FormProps {
     * We should be able to share link to the form as well with a little icon either on the list of all forms view and a share button when you click into the form
 */
 const Forms: React.FC<FormProps> = ({ eventDetails }) => {
+  const [forms, setForms] = useState<FormStructure[] | undefined>();
+
+  useEffect(() => {
+    if (eventDetails !== null) {
+      getEventForms(eventDetails.ID).then((f) => {
+        setForms(f.data.forms)
+      }).catch(() => {})
+    }
+  }, []);
+
+  if (forms === undefined) {
+    return (
+        <>
+            <p>Loading forms...</p>
+            <LoadingSpinner />
+        </>
+    )
+  }
+
   return (
     <div>
       <h1>Forms</h1>
       <h1>Name: {eventDetails?.metadata.name}</h1>
       <p>Description: {eventDetails?.metadata.description}</p>
+      <p>data: {forms.toString()}</p>
     </div>
   );
 };
