@@ -7,7 +7,7 @@ import RSVPs from '@/components/Events/AdminDashboard/Tabs/RSVPs';
 import Settings from '@/components/Events/AdminDashboard/Tabs/Settings';
 import EventDetails from '@/components/Events/AdminDashboard/Tabs/EventDetails';
 import Pipelines from '@/components/Events/AdminDashboard/Tabs/Pipelines';
-import Forms from '@/components/Events/AdminDashboard/Tabs/Forms';
+import Forms from '@/components/Events/AdminDashboard/Tabs/Forms/Forms';
 
 const AdminDashboard: React.FC = () => {
     const [activeSection, setActiveSection] = useState('dashboard');

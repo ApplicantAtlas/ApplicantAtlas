@@ -26,6 +26,25 @@ func CanUserModifyPipeline(c *gin.Context, m MongoService, u *models.User, pipel
 	return CanUserModifyEvent(c, m, u, pipeline.EventID, nil)
 }
 
+// CanUserModifyForm checks if the user provided can modify a form.
+func CanUserModifyForm(c *gin.Context, m MongoService, u *models.User, formID primitive.ObjectID, formObject *models.FormStructure) bool {
+	if u == nil {
+		return false
+	}
+
+	form := formObject
+	if form == nil {
+		f, err := m.GetForm(c, formID)
+		if err != nil {
+			return false
+		}
+
+		form = f
+	}
+
+	return CanUserModifyEvent(c, m, u, form.EventID, nil)
+}
+
 // CanUserModify event checks if the given user and event can manipulate an event
 // If eventObject is nil, we will retrieve a new object from mongo, otherwise we use it.
 func CanUserModifyEvent(c *gin.Context, m MongoService, u *models.User, eventID primitive.ObjectID, eventObject *models.Event) bool {

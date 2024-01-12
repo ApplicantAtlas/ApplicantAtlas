@@ -73,7 +73,7 @@ export type FormStructure = {
   description?: string;
   createdAt?: Date;
   updatedAt?: Date;
-  status?: 'draft' | 'published' | 'archived' | 'deleted';
+  status?: 'draft' | 'published' | 'archived' | 'deleted' | 'closed';
   isDeleted?: boolean;
   eventID?: string;
   maxSubmissions?: number; // could be useful for rsvp forms

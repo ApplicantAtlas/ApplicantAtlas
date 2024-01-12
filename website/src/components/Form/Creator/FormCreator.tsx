@@ -7,11 +7,13 @@ import { v4 as uuidv4 } from "uuid";
 type FormCreatorProps = {
   submissionFunction: (formStructure: FormStructure) => void;
   defaultFormStructure?: FormStructure;
+  submissionButtonText?: string;
 };
 
 const FormCreator: React.FC<FormCreatorProps> = ({
   defaultFormStructure,
   submissionFunction,
+  submissionButtonText
 }) => {
   const [userFormStructure, setUserFormStructure] = useState<FormStructure>(
     defaultFormStructure || { attrs: [] }
@@ -24,7 +26,8 @@ const FormCreator: React.FC<FormCreatorProps> = ({
   );
 
   const handleFieldSelect = (fieldType: string) => {
-    setSelectedFieldType(fieldType as FormFieldType); // TODO: We need to map human readable like "email" to actual type like text with validations on it
+    // TODO: We need to map human readable like "email" to actual type like text with validations on it
+    setSelectedFieldType(fieldType as FormFieldType); 
     setModalOpen(false);
   };
 
@@ -162,7 +165,7 @@ const FormCreator: React.FC<FormCreatorProps> = ({
       )}
 
       <button onClick={handleSubmit} className="btn btn-secondary mt-4">
-        Create Form
+        {submissionButtonText || "Create Form"}
       </button>
     </div>
   );

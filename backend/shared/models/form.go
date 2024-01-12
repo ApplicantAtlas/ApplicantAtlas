@@ -83,7 +83,7 @@ type FormStructure struct {
 	UpdatedAt                   time.Time          `json:"updatedAt,omitempty" bson:"updatedAt,omitempty"`
 	Status                      string             `json:"status,omitempty" bson:"status,omitempty"`
 	IsDeleted                   bool               `json:"isDeleted,omitempty" bson:"isDeleted,omitempty"`
-	EventID                     string             `json:"eventID,omitempty" bson:"eventID,omitempty"`
+	EventID                     primitive.ObjectID `json:"eventID,omitempty" bson:"eventID,omitempty"`
 	MaxSubmissions              int                `json:"maxSubmissions,omitempty" bson:"maxSubmissions,omitempty"`
 	WebhookURL                  string             `json:"webhookURL,omitempty" bson:"webhookURL,omitempty"`
 	SubmissionMessage           string             `json:"submissionMessage,omitempty" bson:"submissionMessage,omitempty"`

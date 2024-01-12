@@ -221,7 +221,7 @@ func getEventFormsHandler(params *types.RouteParams) gin.HandlerFunc {
 			return
 		}
 
-		forms, err := params.MongoService.ListForms(c, bson.M{"EventID": eventID})
+		forms, err := params.MongoService.ListForms(c, bson.M{"eventID": eventID})
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving event forms"})
 		}

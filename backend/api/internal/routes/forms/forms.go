@@ -58,13 +58,7 @@ func createFormHandler(params *types.RouteParams) gin.HandlerFunc {
 		}
 
 		// Check if user is authorized to create form on this event
-		eventID, err := primitive.ObjectIDFromHex(req.EventID)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid event ID"})
-			return
-		}
-
-		event, err := params.MongoService.GetEvent(c, eventID)
+		event, err := params.MongoService.GetEvent(c, req.EventID)
 		if err != nil {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Event not found"})
 			return
@@ -79,7 +73,7 @@ func createFormHandler(params *types.RouteParams) gin.HandlerFunc {
 		}
 
 		if !found {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "You are not authorized to create a form for this event"})
+			c.JSON(http.StatusBadRequest, gin.H{"error": "You are not authorized to create a form for this event"})
 			return
 		}
 
@@ -107,7 +101,7 @@ func deleteFormHandler(params *types.RouteParams) gin.HandlerFunc {
 			return
 		}
 
-		if !isUserAuthorizedForForm(c, params.MongoService, authenticatedUser, formID) {
+		if !mongodb.CanUserModifyForm(c, params.MongoService, authenticatedUser, formID, nil) {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "You are not authorized to delete this form"})
 			return
 		}
@@ -147,8 +141,8 @@ func updateFormHandler(params *types.RouteParams) gin.HandlerFunc {
 			return
 		}
 
-		if !isUserAuthorizedForForm(c, params.MongoService, authenticatedUser, formID) {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "You are not authorized to update this form"})
+		if !mongodb.CanUserModifyForm(c, params.MongoService, authenticatedUser, formID, nil) {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "You are not authorized to update this form"})
 			return
 		}
 
@@ -160,39 +154,4 @@ func updateFormHandler(params *types.RouteParams) gin.HandlerFunc {
 
 		c.JSON(http.StatusOK, gin.H{"message": "Form updated successfully"})
 	}
-}
-
-// helpers
-
-func isUserAuthorizedForForm(ctx *gin.Context, mongoService mongodb.MongoService, user *models.User, formID primitive.ObjectID) bool {
-	if user == nil {
-		return false
-	}
-
-	if user.ID == primitive.NilObjectID {
-		return false
-	}
-
-	form, err := mongoService.GetForm(ctx, formID)
-	if err != nil {
-		return false
-	}
-
-	eventID, err := primitive.ObjectIDFromHex(form.EventID)
-	if err != nil {
-		return false
-	}
-
-	event, err := mongoService.GetEvent(ctx, eventID)
-	if err != nil {
-		return false
-	}
-
-	for _, organizerID := range event.OrganizerIDs {
-		if organizerID == user.ID {
-			return true
-		}
-	}
-
-	return false
 }
