@@ -38,7 +38,6 @@ const FieldAttributesForm: React.FC<FieldAttributesFormProps> = ({
     fieldType: FormFieldType,
     initialAttributes?: FormField
   ): FormStructure => {
-    console.log('createFormInitial', initialAttributes)
     var attrs: FormField[] = [
       {
         key: "question",
