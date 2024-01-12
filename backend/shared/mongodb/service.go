@@ -37,7 +37,7 @@ type MongoService interface {
 	CreatePipeline(ctx context.Context, pipeline models.PipelineConfiguration) (*mongo.InsertOneResult, error)
 	UpdatePipeline(ctx context.Context, pipeline models.PipelineConfiguration, pipelineID primitive.ObjectID) (*mongo.UpdateResult, error)
 	GetPipeline(ctx context.Context, pipelineID primitive.ObjectID) (*models.PipelineConfiguration, error)
-	ListEventPipelines(ctx context.Context, filter bson.M) ([]models.PipelineConfiguration, error)
+	ListPipelines(ctx context.Context, filter bson.M) ([]models.PipelineConfiguration, error)
 	DeletePipeline(ctx context.Context, pipelineID primitive.ObjectID) (*mongo.DeleteResult, error)
 }
 
@@ -354,8 +354,8 @@ func (s *Service) GetPipeline(ctx context.Context, pipelineID primitive.ObjectID
 	return &pipeline, nil
 }
 
-// ListEventPipelines retrieves pipelines based on a filter
-func (s *Service) ListEventPipelines(ctx context.Context, filter bson.M) ([]models.PipelineConfiguration, error) {
+// ListPipelines retrieves pipelines based on a filter
+func (s *Service) ListPipelines(ctx context.Context, filter bson.M) ([]models.PipelineConfiguration, error) {
 	var pipelines []models.PipelineConfiguration
 
 	cursor, err := s.Database.Collection("pipeline_configs").Find(ctx, filter)

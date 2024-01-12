@@ -301,7 +301,7 @@ func (m *MockMongoService) GetPipeline(ctx context.Context, pipelineID primitive
 	return &pipeline, nil
 }
 
-func (m *MockMongoService) ListEventPipelines(ctx context.Context, filter bson.M) ([]models.PipelineConfiguration, error) {
+func (m *MockMongoService) ListPipelines(ctx context.Context, filter bson.M) ([]models.PipelineConfiguration, error) {
 	m.mutex.RLock()
 	defer m.mutex.RUnlock()
 
