@@ -22,10 +22,21 @@ jobs:
 
     - name: Get dependencies
       run: |
-        cd api
+        cd backend/api
         go get -v -t -d ./...
 
-    - name: Test
+    - name: Test API 
       run: |
-        cd api
+        cd backend/api
         go test ./... -count=1
+
+    - name: Get event listener dependencies
+      run: |
+        cd backend/event-listener
+        go get -v -t -d ./...
+
+    - name: Test event listener
+      run: |
+        cd backend/event-listener
+        go test ./... -count=1
+
