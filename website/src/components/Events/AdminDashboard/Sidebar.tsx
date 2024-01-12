@@ -17,7 +17,6 @@ const Sidebar: React.FC<SidebarProps> = ({ eventDetails, activeSection, setActiv
         { title: 'Dashboard', sectionName: 'dashboard' },
         { title: 'Forms', sectionName: 'forms' },
         { title: 'Event Details', sectionName: 'event-details'},
-        { title: 'Applications', sectionName: 'applications' },
         { title: 'Announcements', sectionName: 'announcements' },
         { title: 'Pipelines', sectionName: 'pipelines'},
         { title: 'Settings', sectionName: 'settings' },
