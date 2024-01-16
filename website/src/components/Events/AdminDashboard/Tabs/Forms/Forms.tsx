@@ -74,6 +74,11 @@ const Forms: React.FC<FormProps> = ({ eventDetails }) => {
     );
   }
 
+  const onDeletedForm = () => {
+    setRefresh(true);
+    setSelectedForm(null);
+  }
+
   // Edit Form
   if (selectedForm !== null) {
     return (
@@ -81,6 +86,7 @@ const Forms: React.FC<FormProps> = ({ eventDetails }) => {
         <SelectForm
           form={selectedForm}
           action={selectedFormAction}
+          onDelete={onDeletedForm}
         />
         <button
           className="btn btn-error mt-4"
