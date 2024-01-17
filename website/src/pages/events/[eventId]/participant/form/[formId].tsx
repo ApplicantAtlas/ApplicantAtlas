@@ -1,0 +1,93 @@
+import FormBuilder from "@/components/Form/FormBuilder";
+import Header, { MenuItem } from "@/components/Header";
+import LoadingSpinner from "@/components/Loading/LoadingSpinner";
+import { ToastType, useToast } from "@/components/Toast/ToastContext";
+import AuthService from "@/services/AuthService";
+import { getEvent } from "@/services/EventService";
+import { getForm } from "@/services/FormService";
+import { EventModel } from "@/types/models/Event";
+import { FormStructure } from "@/types/models/Form";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+
+const FormSubmission = () => {
+  const router = useRouter();
+  const { eventId, formId } = router.query;
+  const [formStructure, setFormStructure] = useState<FormStructure | null>(
+    null
+  );
+  const [event, setEvent] = useState<EventModel | null>(null);
+  const [err, setErr] = useState<string | null>(null);
+  const { showToast } = useToast();
+
+  useEffect(() => {
+    if (!eventId || !formId) return;
+
+    getEvent(eventId as string)
+      .then((r) => {
+        setEvent(r.data.event);
+      })
+      .catch(() => {
+        let msg = "Could not retrieve this event, is it a valid?";
+        showToast(msg, ToastType.Error);
+        setErr(msg);
+      });
+
+    getForm(formId as string)
+      .then((r) => {
+        if (r.status !== "published") {
+          let msg =
+            "This form is not published yet, please contact the event organizers if you believe this is incorrect.";
+          showToast(msg, ToastType.Error);
+          setErr(msg);
+        } else {
+          setFormStructure(r);
+        }
+      })
+      .catch(() => {
+        let msg = "Could not retrieve this form, is it a valid?";
+        showToast(msg, ToastType.Error);
+        setErr(msg);
+      });
+  }, [eventId, formId]);
+
+  if (!AuthService.isAuth) {
+    showToast("You must be logged in to access this form.", ToastType.Error);
+    router.push("/login");
+  }
+
+  if (err) {
+    return (
+      <>
+        <Header />
+        <p>{err}</p>
+      </>
+    );
+  }
+
+  if (!formStructure || !event) return <LoadingSpinner />;
+
+  const onSubmission = (formData: Record<string, any>) => {
+    console.log(formData);
+  };
+
+  return (
+    <>
+      <div className="flex flex-col min-h-screen bg-gray-50 text-gray-900">
+        <Header showUserProfile={true} />
+        <div className="p-4">
+        <h1 className="text-3xl font-semibold text-gray-800 mt-4">
+            {formStructure.name}
+        </h1>
+       
+        <FormBuilder
+          formStructure={formStructure}
+          submissionFunction={onSubmission}
+        />
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default FormSubmission;

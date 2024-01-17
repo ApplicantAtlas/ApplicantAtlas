@@ -8,10 +8,7 @@ import Telephone from "./inputs/Telephone";
 import AddressInput from "./inputs/Address";
 import ColorPicker from "./inputs/ColorPicker";
 
-import {
-  FormStructure,
-  FieldValue,
-} from "@/types/models/Form";
+import { FormStructure, FieldValue } from "@/types/models/Form";
 import TextArea from "./inputs/TextArea";
 import dynamic from "next/dynamic";
 import { Address } from "@/types/models/Event";
@@ -40,7 +37,9 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   buttonText = "Submit",
 }) => {
   const [formData, setFormData] = useState<Record<string, any>>({});
-  const [invalidInputs, setInvalidInputs] = useState<Record<string, string | undefined>>({});
+  const [invalidInputs, setInvalidInputs] = useState<
+    Record<string, string | undefined>
+  >({});
   const [error, setError] = useState<string | null>("");
   const [fetchedOptions, setFetchedOptions] = useState<Record<string, any>>({});
 
@@ -49,21 +48,27 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
     const errors = Object.entries(invalidInputs)
       .filter(([key, errorMsg]) => errorMsg !== undefined)
       .map(([key, errorMsg]) => {
-        const fieldQuestion = formStructure.attrs.find(field => field.key === key)?.question || key;
+        const fieldQuestion =
+          formStructure.attrs.find((field) => field.key === key)?.question ||
+          key;
         return `${fieldQuestion}: ${errorMsg}`;
       })
-      .join(', ');
-  
-     setError((): string | null => {
+      .join(", ");
+
+    setError((): string | null => {
       if (errors.length > 0) {
-        return 'Your form is incorrect, please verify your answers.'
+        return "Your form is incorrect, please verify your answers.";
       }
       return null;
-     })
+    });
   }, [invalidInputs, formStructure.attrs]);
 
-  const handleInputChange = (key: string, value: FieldValue, errorString?: string | undefined) => {
-    setInvalidInputs({ ...invalidInputs, [key]: errorString});
+  const handleInputChange = (
+    key: string,
+    value: FieldValue,
+    errorString?: string | undefined
+  ) => {
+    setInvalidInputs({ ...invalidInputs, [key]: errorString });
     setFormData((formData) => ({ ...formData, [key]: value }));
   };
 
@@ -76,29 +81,33 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   };
 
   useEffect(() => {
-  formStructure.attrs.forEach(field => {
-    if (field.additionalOptions?.useDefaultValuesFrom) {
-      const defaultValuesFrom = field.additionalOptions.useDefaultValuesFrom;
+    if (formStructure.attrs !== undefined) {
+      formStructure.attrs.forEach((field) => {
+        if (field.additionalOptions?.useDefaultValuesFrom) {
+          const defaultValuesFrom =
+            field.additionalOptions.useDefaultValuesFrom;
 
-      // Check if the options have already been fetched
-      if (!fetchedOptions[defaultValuesFrom]) {
-        getSelectorOptions(defaultValuesFrom)
-          .then(options => {
-            setFetchedOptions(prevOptions => ({
-              ...prevOptions,
-              [defaultValuesFrom]: options
-            }));
-          })
-          .catch(error => console.error(error));
-      }
+          // Check if the options have already been fetched
+          if (!fetchedOptions[defaultValuesFrom]) {
+            getSelectorOptions(defaultValuesFrom)
+              .then((options) => {
+                setFetchedOptions((prevOptions) => ({
+                  ...prevOptions,
+                  [defaultValuesFrom]: options,
+                }));
+              })
+              .catch((error) => console.error(error));
+          }
+        }
+      });
     }
-  });
-}, [formStructure.attrs]);
+  }, [formStructure.attrs]);
 
   const renderFormField = (field: FormStructure["attrs"][number]) => {
     // Handle additionalOptions
     if (field.additionalOptions?.useDefaultValuesFrom) {
-      field.options = fetchedOptions[field.additionalOptions.useDefaultValuesFrom];
+      field.options =
+        fetchedOptions[field.additionalOptions.useDefaultValuesFrom];
     }
 
     switch (field.type) {
@@ -256,6 +265,10 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
         return null;
     }
   };
+
+  if (formStructure.attrs === undefined || formStructure.attrs.length === 0) {
+    return <p>This form has no fields. Please contact the event organizers if you believe this is an error.</p>;
+  }
 
   return (
     <>

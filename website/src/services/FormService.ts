@@ -10,8 +10,8 @@ export const getSelectorOptions = async (name: string): Promise<string[]> => {
 };
 
 export const getForm = async (id: string): Promise<FormStructure> => {
-  const response = await api.get<FormStructure>(`/forms/${id}`);
-  return response.data;
+  const response = await api.get<{form: FormStructure}>(`/forms/${id}`);
+  return response.data.form;
 };
 
 export const createForm = async (

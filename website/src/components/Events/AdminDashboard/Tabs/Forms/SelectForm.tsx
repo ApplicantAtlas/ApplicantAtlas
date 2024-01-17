@@ -6,6 +6,8 @@ import { EventModel } from "@/types/models/Event";
 import { FormStructure } from "@/types/models/Form";
 import { useState } from "react";
 import FormSettings from "./FormSettings";
+import { ToastType, useToast } from "@/components/Toast/ToastContext";
+import LinkIcon from "@/components/Icons/LinkIcon";
 
 interface SelectFormProps {
   form: FormStructure;
@@ -18,6 +20,7 @@ const SelectForm: React.FC<SelectFormProps> = ({ form, action, onDelete }) => {
     "edit" | "responses" | "preview" | "settings"
   >(action);
   const [formStructure, setFormStructure] = useState<FormStructure>(form);
+  const { showToast } = useToast();
 
   // Edit
   const onFormStructureChange = (newFormStructure: FormStructure) => {
@@ -29,8 +32,29 @@ const SelectForm: React.FC<SelectFormProps> = ({ form, action, onDelete }) => {
       .catch((err) => {});
   };
 
+  const changeForm = (form: FormStructure) => {
+    setFormStructure(form);
+  }
+
   const isActive = (page: string) =>
     page === pageSelected ? "btn-active" : "";
+
+  const onShareClick = () => {
+    if (!formStructure.eventID || !formStructure.id) {
+      showToast("Could not share form.", ToastType.Error);
+      return;
+    }
+    const formURL = `${window.location.origin}/events/${formStructure.eventID}/participant/form/${formStructure.id}`;
+    navigator.clipboard
+      .writeText(formURL)
+      .then(() => {
+        showToast("Copied form URL to clipboard.", ToastType.Success);
+      })
+      .catch((err) => {
+        showToast("Could not copy form link.", ToastType.Error);
+      });
+  };
+
   return (
     <>
       <div className="flex space-x-2 bg-gray-100 p-2 rounded">
@@ -58,7 +82,17 @@ const SelectForm: React.FC<SelectFormProps> = ({ form, action, onDelete }) => {
         >
           Settings
         </button>
+        <button
+          className={`btn`}
+          onClick={onShareClick}
+        >
+           <LinkIcon  /> Share
+        </button>
       </div>
+
+      <h2 className="text-2xl font-semibold text-gray-800 mt-4">
+        {formStructure.name}
+      </h2>
 
       {pageSelected === "edit" && (
         <FormCreator
@@ -80,7 +114,9 @@ const SelectForm: React.FC<SelectFormProps> = ({ form, action, onDelete }) => {
         />
       )}
 
-      {pageSelected === "settings" && <FormSettings form={formStructure} onDelete={onDelete} />}
+      {pageSelected === "settings" && (
+        <FormSettings form={formStructure} onDelete={onDelete} changeForm={changeForm} />
+      )}
 
       {pageSelected !== "edit" &&
         pageSelected !== "responses" &&

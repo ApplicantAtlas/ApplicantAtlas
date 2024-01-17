@@ -35,6 +35,18 @@ func getFormDataHandler(params *types.RouteParams) gin.HandlerFunc {
 			return
 		}
 
+		if form.Status != "published" {
+			authenticatedUser, ok := utils.GetUserFromContext(c, true)
+			if !ok {
+				return
+			}
+
+			if !mongodb.CanUserModifyForm(c, params.MongoService, authenticatedUser, formID, form) {
+				c.JSON(http.StatusUnauthorized, gin.H{"error": "You are not authorized to view this form"})
+				return
+			}
+		}
+
 		c.JSON(http.StatusOK, gin.H{"form": form})
 	}
 }

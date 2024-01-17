@@ -16,7 +16,7 @@ export interface PrimaryButton {
 }
 
 export interface HeaderProps {
-  menuItems: MenuItem[];
+  menuItems?: MenuItem[];
   brandName?: string;
   customStyles?: {
     overlay?: string;
@@ -83,7 +83,7 @@ export default function Header({
   return (
     <>
       {/* Overlay for Mobile Menu */}
-      {isMenuOpen && (
+      {menuItems !== undefined && isMenuOpen && (
         <div
           className={`fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden ${customStyles.overlay}`}
           onClick={() => setIsMenuOpen(false)}
@@ -91,6 +91,7 @@ export default function Header({
       )}
 
       {/* Sidebar Menu for Mobile */}
+
       <div
         className={`fixed inset-y-0 left-0 transform ${
           isMenuOpen ? "translate-x-0" : "-translate-x-full"
@@ -111,21 +112,22 @@ export default function Header({
 
         {/* Mobile Menu Items */}
         <ul className="space-y-6 p-6">
-          {menuItems.map((item, index) => (
-            <li key={index}>
-              <Link href={item.href}>
-                <span
-                  className="block py-2 font-bold text-gray-700 cursor-pointer"
-                  onClick={() => {
-                    setIsMenuOpen(false);
-                    item.onClick && item.onClick();
-                  }}
-                >
-                  {item.label}
-                </span>
-              </Link>
-            </li>
-          ))}
+          {menuItems &&
+            menuItems.map((item, index) => (
+              <li key={index}>
+                <Link href={item.href}>
+                  <span
+                    className="block py-2 font-bold text-gray-700 cursor-pointer"
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      item.onClick && item.onClick();
+                    }}
+                  >
+                    {item.label}
+                  </span>
+                </Link>
+              </li>
+            ))}
 
           {/* User Profile Section */}
           {showUserProfile &&
@@ -174,28 +176,33 @@ export default function Header({
           </Link>
 
           {/* Mobile Menu Toggle Button */}
-          <div className="block lg:hidden">
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-gray-700 focus:outline-none h-8 w-8"
-            >
-              {isMenuOpen ? <CloseIconComponent /> : <MenuIconComponent />}
-            </button>
-          </div>
+          {menuItems !== undefined && (
+            <div className="block lg:hidden">
+              <button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="text-gray-700 focus:outline-none h-8 w-8"
+              >
+                {isMenuOpen ? <CloseIconComponent /> : <MenuIconComponent />}
+              </button>
+            </div>
+          )}
 
           {/* Desktop Menu */}
           <div className="hidden lg:flex items-center">
-            <ul className="inline-flex items-center">
-              {menuItems.map((item, index) => (
-                <li key={index} className="mx-3">
-                  <Link href={item.href}>
-                    <span className="font-bold text-gray-700 hover:text-gray-900">
-                      {item.label}
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            {menuItems !== undefined && (
+              <ul className="inline-flex items-center">
+                {menuItems.map((item, index) => (
+                  <li key={index} className="mx-3">
+                    <Link href={item.href}>
+                      <span className="font-bold text-gray-700 hover:text-gray-900">
+                        {item.label}
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+
             {/* Registration Button for Desktop */}
             {primaryButton && (
               <div className="ml-4">
@@ -208,6 +215,7 @@ export default function Header({
                 </Link>
               </div>
             )}
+
             {showUserProfile && user && (
               <div className="ml-4 relative" ref={dropdownRef}>
                 {/* User Profile Button and Dropdown */}
