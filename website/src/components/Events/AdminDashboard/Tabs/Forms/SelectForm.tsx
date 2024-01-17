@@ -44,6 +44,12 @@ const SelectForm: React.FC<SelectFormProps> = ({ form, action, onDelete }) => {
       showToast("Could not share form.", ToastType.Error);
       return;
     }
+
+    if (formStructure.status !== "published") {
+      showToast("This form is not published, please publish it in form settings before sharing.", ToastType.Warning);
+      return;
+    }
+
     const formURL = `${window.location.origin}/events/${formStructure.eventID}/participant/form/${formStructure.id}`;
     navigator.clipboard
       .writeText(formURL)
