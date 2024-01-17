@@ -317,6 +317,8 @@ func (s *Service) CreateForm(ctx context.Context, form models.FormStructure) (*m
 
 // UpdateForm updates a form by its ID
 func (s *Service) UpdateForm(ctx context.Context, form models.FormStructure, formID primitive.ObjectID) (*mongo.UpdateResult, error) {
+	// TODO: Using $set causes an issue, because of omitempty it will remove fields that are not present in the form on the struct
+	// but when updating it'll keep these fields even if they've been intentionally removed
 	form.UpdatedAt = time.Now()
 	update := bson.M{"$set": form}
 	filter := bson.M{"_id": formID}

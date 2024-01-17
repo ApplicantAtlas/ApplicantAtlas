@@ -25,24 +25,106 @@ const FormSettings: React.FC<FormSettingsProps> = ({ form, onDelete, changeForm 
       .catch(() => {});
   };
 
+  // TODO: Handle when a default value is provided, but we want to clear it to be undefined
   const formSettingStructure: FormStructure = {
     attrs: [
       {
+        question: 'Form Name',
+        description: 'The name of the form',
+        type: 'text',
+        key: 'name',
+        required: true,
+        defaultValue: form.name,
+      },
+      {
+        question: 'Form Description',
+        description: 'The description of the form',
+        type: 'textarea',
+        key: 'description',
+        required: false,
+        defaultValue: form.description,
+      },
+      {
+        question: 'Allow Multiple Submissions',
+        description: 'Allow users to submit the form multiple times',
+        type: 'checkbox',
+        key: 'allowMultipleSubmissions',
+        required: false,
+        defaultValue: form.allowMultipleSubmissions,
+      },
+      {
+        question: "Max Submissions",
+        description: "The maximum number of total submissions allowed",
+        type: "number",
+        key: "maxSubmissions",
+        required: false,
+        defaultValue: form.maxSubmissions,
+      },
+      {
         question: 'Form Status',
+        description: 'The status of the form',
         type: 'radio',
         key: 'status',
         required: true,
         options: ["draft", "published", "closed", "archived"],
         defaultOptions: [form.status ? form.status : "draft"],
       },
+      {
+        question: "Open Submission Date",
+        description: "The date the form will open for submissions",
+        type: "timestamp",
+        key: "openSubmissionsAt",
+        required: false,
+        defaultValue: form.openSubmissionsAt,
+      },
+      {
+        question: "Close Submission Date",
+        description: "The date the form will close for submissions",
+        type: "timestamp",
+        key: "closeSubmissionsAt",
+        required: false,
+        defaultValue: form.closeSubmissionsAt,
+      },
+      {
+        question: "Form Submission Message",
+        description: "The message to display after the form is submitted",
+        type: "textarea",
+        key: "submissionMessage",
+        required: false,
+        defaultValue: form.submissionMessage,
+      }
     ],
   };
 
   const handleSubmit = (formData: Record<string, any>) => {
-    form.status = formData.status;
+    console.log(formData)
+    const {
+      status,
+      allowMultipleSubmissions,
+      openSubmissionsAt,
+      closeSubmissionsAt,
+      maxSubmissions,
+      submissionMessage,
+      name,
+      description,
+    } = formData;
+  
+    Object.assign(form, {
+      status,
+      allowMultipleSubmissions,
+      openSubmissionsAt,
+      closeSubmissionsAt,
+      maxSubmissions,
+      submissionMessage,
+      name,
+      description,
+    });
+
+    console.log(form)
+
     updateForm(form.id || "", form).then(() => {
         showToast("Successfully updated form!", ToastType.Success);
-        changeForm(form);
+        changeForm(form); // idk if needed or not
     }).catch((err) => {});
   };
 
@@ -52,7 +134,7 @@ const FormSettings: React.FC<FormSettingsProps> = ({ form, onDelete, changeForm 
 
       <p>
         <button
-          className="btn btn-outline btn-error"
+          className="btn btn-outline btn-error mt-2"
           onClick={() => setShowDeleteConfirmation(true)}
         >
           Delete Form

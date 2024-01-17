@@ -3,6 +3,7 @@ package forms
 import (
 	"api/internal/middlewares"
 	"api/internal/types"
+	"log"
 	"net/http"
 	"shared/models"
 	"shared/mongodb"
@@ -161,6 +162,7 @@ func updateFormHandler(params *types.RouteParams) gin.HandlerFunc {
 		_, err = params.MongoService.UpdateForm(c, req, formID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update form"})
+			log.Fatalf("Failed to update form: %v", err)
 			return
 		}
 

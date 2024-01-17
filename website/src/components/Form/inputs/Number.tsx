@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FormField, FieldValue } from "@/types/models/Form";
+import InformationIcon from "@/components/Icons/InformationIcon";
 
 type NumberProps = {
   field: FormField;
@@ -24,7 +25,7 @@ const Number: React.FC<NumberProps> = ({ field, onChange, defaultValue }) => {
     let newValue = e.target.value;
     setValue(newValue);
     // Convert to number or send 0 if empty
-    let numericValue = newValue ? parseInt(newValue) : 0;
+    let numericValue = newValue ? parseInt(newValue) : undefined;
     onChange(field.key, numericValue);
   };
 
@@ -34,6 +35,11 @@ const Number: React.FC<NumberProps> = ({ field, onChange, defaultValue }) => {
         <span className="label-text">
           {field.question}{" "}
           {field.required && <span className="text-error">*</span>}
+          {field.description && (
+            <div className="tooltip" data-tip={field.description}>
+              <InformationIcon className="h-4 w-4" />
+            </div>
+          )}
         </span>
       </label>
       <input

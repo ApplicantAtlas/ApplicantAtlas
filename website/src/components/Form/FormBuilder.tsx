@@ -69,7 +69,16 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
     errorString?: string | undefined
   ) => {
     setInvalidInputs({ ...invalidInputs, [key]: errorString });
-    setFormData((formData) => ({ ...formData, [key]: value }));
+    setFormData((formData) => {
+      if (value !== undefined) {
+        // If value is defined, add/update the key with value
+        return { ...formData, [key]: value };
+      } else {
+        // If value is undefined, remove the key from formData
+        const { [key]: removed, ...newFormData } = formData;
+        return newFormData;
+      }
+    });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -277,7 +286,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
           <div key={index}>{renderFormField(field)}</div>
         ))}
         <span className="flex items-center mt-4">
-          <button type="submit" className="btn mr-2">
+          <button type="submit" className="btn mr-2 btn-primary">
             {buttonText}
           </button>
           {error && <p className="text-error">{error}</p>}

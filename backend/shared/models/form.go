@@ -72,20 +72,18 @@ type FormField struct {
 
 // FormStructure represents the overall structure of a form
 type FormStructure struct {
-	Attrs                       []FormField        `json:"attrs" bson:"attrs"`
-	ID                          primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty"`
-	AllowMultipleSubmissions    bool               `json:"allowMultipleSubmissions,omitempty" bson:"allowMultipleSubmissions,omitempty"`
-	CloseSubmissionsAt          time.Time          `json:"closeSubmissionsAt,omitempty" bson:"closeSubmissionsAt,omitempty"`
-	OpenSubmissionsAt           time.Time          `json:"openSubmissionsAt,omitempty" bson:"openSubmissionsAt,omitempty"`
-	Name                        string             `json:"name,omitempty" bson:"name,omitempty"`
-	Description                 string             `json:"description,omitempty" bson:"description,omitempty"`
-	CreatedAt                   time.Time          `json:"createdAt,omitempty" bson:"createdAt,omitempty"`
-	UpdatedAt                   time.Time          `json:"updatedAt,omitempty" bson:"updatedAt,omitempty"`
-	Status                      string             `json:"status,omitempty" bson:"status,omitempty"`
-	IsDeleted                   bool               `json:"isDeleted,omitempty" bson:"isDeleted,omitempty"`
-	EventID                     primitive.ObjectID `json:"eventID,omitempty" bson:"eventID,omitempty"`
-	MaxSubmissions              int                `json:"maxSubmissions,omitempty" bson:"maxSubmissions,omitempty"`
-	WebhookURL                  string             `json:"webhookURL,omitempty" bson:"webhookURL,omitempty"`
-	SubmissionMessage           string             `json:"submissionMessage,omitempty" bson:"submissionMessage,omitempty"`
-	ConfirmationEmailTemplateID primitive.ObjectID `json:"confirmationEmailTemplateID,omitempty" bson:"confirmationEmailTemplateID,omitempty"`
+	Attrs                    []FormField        `json:"attrs" bson:"attrs"`
+	ID                       primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty"`
+	AllowMultipleSubmissions bool               `json:"allowMultipleSubmissions,omitempty" bson:"allowMultipleSubmissions,omitempty"`
+	CloseSubmissionsAt       time.Time          `json:"closeSubmissionsAt,omitempty" bson:"closeSubmissionsAt,omitempty"`
+	OpenSubmissionsAt        time.Time          `json:"openSubmissionsAt,omitempty" bson:"openSubmissionsAt,omitempty"`
+	Name                     string             `json:"name,omitempty" bson:"name,omitempty"`
+	Description              string             `json:"description,omitempty" bson:"description,omitempty"`
+	CreatedAt                time.Time          `json:"createdAt,omitempty" bson:"createdAt,omitempty"`
+	UpdatedAt                time.Time          `json:"updatedAt,omitempty" bson:"updatedAt,omitempty"`
+	Status                   string             `json:"status,omitempty" bson:"status,omitempty"`
+	IsDeleted                bool               `json:"isDeleted,omitempty" bson:"isDeleted,omitempty"`
+	EventID                  primitive.ObjectID `json:"eventID,omitempty" bson:"eventID,omitempty"`
+	MaxSubmissions           int                `json:"maxSubmissions,omitempty" bson:"maxSubmissions,omitempty"`
+	SubmissionMessage        string             `json:"submissionMessage,omitempty" bson:"submissionMessage,omitempty"`
 }

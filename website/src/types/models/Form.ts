@@ -29,7 +29,8 @@ export type FieldValue =
   | number[]
   | boolean[]
   | Date
-  | Address;
+  | Address
+  | undefined;
 
 export type FormFieldType =
   | "number"
@@ -77,7 +78,5 @@ export type FormStructure = {
   isDeleted?: boolean;
   eventID?: string;
   maxSubmissions?: number; // could be useful for rsvp forms
-  webhookURL?: string;
   submissionMessage?: string;
-  confirmationEmailTemplateID?: string; // point to collection "email_templates"
 };

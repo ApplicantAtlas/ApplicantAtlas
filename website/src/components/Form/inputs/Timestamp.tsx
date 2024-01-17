@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { FormField, FieldValue } from "@/types/models/Form";
 import moment from "moment-timezone";
 import Select from "./Select";
+import InformationIcon from "@/components/Icons/InformationIcon";
 
 type TimestampInputProps = {
   field: FormField;
@@ -127,6 +128,11 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
         <span className="label-text">
           {field.question}{" "}
           {field.required && <span className="text-error">*</span>}
+          {field.description && (
+            <div className="tooltip" data-tip={field.description}>
+              <InformationIcon className="h-4 w-4" />
+            </div>
+          )}
         </span>
       </label>
       <input
