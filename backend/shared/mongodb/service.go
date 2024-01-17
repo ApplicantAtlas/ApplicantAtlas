@@ -39,6 +39,11 @@ type MongoService interface {
 	GetPipeline(ctx context.Context, pipelineID primitive.ObjectID) (*models.PipelineConfiguration, error)
 	ListPipelines(ctx context.Context, filter bson.M) ([]models.PipelineConfiguration, error)
 	DeletePipeline(ctx context.Context, pipelineID primitive.ObjectID) (*mongo.DeleteResult, error)
+	ListResponses(ctx context.Context, filter bson.M) ([]models.FormResponse, error)
+	CreateResponse(ctx context.Context, response models.FormResponse) (*mongo.InsertOneResult, error)
+	UpdateResponse(ctx context.Context, response models.FormResponse, responseID primitive.ObjectID) (*mongo.UpdateResult, error)
+	DeleteResponse(ctx context.Context, responseID primitive.ObjectID) (*mongo.DeleteResult, error)
+	CreatePipelineRun(ctx context.Context, pipelineRun models.PipelineRun) (*mongo.InsertOneResult, error)
 }
 
 // Service implements MongoService with a mongo.Client.
@@ -391,4 +396,57 @@ func (s *Service) ListPipelines(ctx context.Context, filter bson.M) ([]models.Pi
 func (s *Service) DeletePipeline(ctx context.Context, pipelineID primitive.ObjectID) (*mongo.DeleteResult, error) {
 	filter := bson.M{"_id": pipelineID}
 	return s.Database.Collection("pipeline_configs").DeleteOne(ctx, filter)
+}
+
+// ListResponses retrieves responses based on a filter
+func (s *Service) ListResponses(ctx context.Context, filter bson.M) ([]models.FormResponse, error) {
+	var responses []models.FormResponse
+
+	cursor, err := s.Database.Collection("responses").Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx) {
+		var response models.FormResponse
+		if err := cursor.Decode(&response); err != nil {
+			return nil, err
+		}
+
+		responses = append(responses, response)
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	// If responses is null then return an empty slice instead
+	if responses == nil {
+		return []models.FormResponse{}, nil
+	}
+
+	return responses, nil
+}
+
+// CreateResponse creates a new response
+func (s *Service) CreateResponse(ctx context.Context, response models.FormResponse) (*mongo.InsertOneResult, error) {
+	return s.Database.Collection("responses").InsertOne(ctx, response)
+}
+
+// UpdateResponse updates a response by its ID
+func (s *Service) UpdateResponse(ctx context.Context, response models.FormResponse, responseID primitive.ObjectID) (*mongo.UpdateResult, error) {
+	update := bson.M{"$set": response}
+	filter := bson.M{"_id": responseID}
+	return s.Database.Collection("responses").UpdateOne(ctx, filter, update)
+}
+
+// DeleteResponse
+func (s *Service) DeleteResponse(ctx context.Context, responseID primitive.ObjectID) (*mongo.DeleteResult, error) {
+	filter := bson.M{"_id": responseID}
+	return s.Database.Collection("responses").DeleteOne(ctx, filter)
+}
+
+func (s *Service) CreatePipelineRun(ctx context.Context, pipelineRun models.PipelineRun) (*mongo.InsertOneResult, error) {
+	return s.Database.Collection("pipeline_runs").InsertOne(ctx, pipelineRun)
 }

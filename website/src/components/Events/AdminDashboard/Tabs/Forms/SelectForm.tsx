@@ -8,6 +8,7 @@ import { useState } from "react";
 import FormSettings from "./FormSettings";
 import { ToastType, useToast } from "@/components/Toast/ToastContext";
 import LinkIcon from "@/components/Icons/LinkIcon";
+import Responses from "./Responses";
 
 interface SelectFormProps {
   form: FormStructure;
@@ -96,7 +97,7 @@ const SelectForm: React.FC<SelectFormProps> = ({ form, action, onDelete }) => {
         </button>
       </div>
 
-      <h2 className="text-2xl font-semibold text-gray-800 mt-4">
+      <h2 className="text-2xl font-semibold text-gray-800 mt-4 mb-2">
         {formStructure.name}
       </h2>
 
@@ -108,7 +109,7 @@ const SelectForm: React.FC<SelectFormProps> = ({ form, action, onDelete }) => {
         />
       )}
 
-      {pageSelected === "responses" && <p>Responses</p>}
+      {pageSelected === "responses" && <Responses form={formStructure} />}
 
       {pageSelected === "preview" && (
         <FormBuilder

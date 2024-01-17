@@ -38,9 +38,7 @@ func testPipeline(params *types.RouteParams) gin.HandlerFunc {
 		}
 
 		var emailFieldID string
-		emailAddress := "contact.davidteather@gmail.com"
-
-		testAction := kafka.NewSendEmailMessage("email-action", pipelineRunID, emailTemplateID, eventID, data, emailFieldID, emailAddress)
+		testAction := kafka.NewSendEmailMessage("email-action", pipelineRunID, emailTemplateID, eventID, data, emailFieldID)
 
 		err = kafka.WriteActionToKafka(params.KafkaProducer, testAction)
 		if err != nil {

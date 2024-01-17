@@ -345,3 +345,23 @@ func (m *MockMongoService) ListForms(ctx context.Context, filter bson.M) ([]mode
 	// TODO: implement
 	return nil, nil
 }
+
+func (m *MockMongoService) CreateResponse(ctx context.Context, submission models.FormResponse) (*mongo.InsertOneResult, error) {
+	return nil, nil
+}
+
+func (m *MockMongoService) ListResponses(ctx context.Context, filter bson.M) ([]models.FormResponse, error) {
+	return nil, nil
+}
+
+func (m *MockMongoService) UpdateResponse(ctx context.Context, submission models.FormResponse, submissionID primitive.ObjectID) (*mongo.UpdateResult, error) {
+	return nil, nil
+}
+
+func (m *MockMongoService) DeleteResponse(ctx context.Context, submissionID primitive.ObjectID) (*mongo.DeleteResult, error) {
+	return nil, nil
+}
+
+func (m *MockMongoService) CreatePipelineRun(ctx context.Context, run models.PipelineRun) (*mongo.InsertOneResult, error) {
+	return nil, nil
+}

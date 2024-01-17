@@ -2,6 +2,7 @@ package forms
 
 import (
 	"api/internal/middlewares"
+	"api/internal/routes/forms/responses"
 	"api/internal/types"
 	"log"
 	"net/http"
@@ -19,6 +20,9 @@ func RegisterRoutes(r *gin.RouterGroup, params *types.RouteParams) {
 	r.POST("", middlewares.JWTAuthMiddleware(), createFormHandler(params))
 	r.PUT(":form_id", middlewares.JWTAuthMiddleware(), updateFormHandler(params))
 	r.DELETE(":form_id", middlewares.JWTAuthMiddleware(), deleteFormHandler(params))
+
+	responsesGroup := r.Group(":form_id/responses")
+	responses.RegisterFormResponsesRoutes(responsesGroup, params)
 }
 
 func getFormDataHandler(params *types.RouteParams) gin.HandlerFunc {

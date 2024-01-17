@@ -22,7 +22,6 @@ type SendEmailMessage struct {
 	EventID         primitive.ObjectID     `bson:"eventID" json:"eventID" validate:"required"`
 	Data            map[string]interface{} `bson:"data" json:"data" validate:"required"`
 	EmailFieldID    string                 `bson:"emailFieldID" json:"emailFieldID"`
-	EmailAddress    string                 `bson:"emailAddress" json:"emailAddress"`
 }
 
 func (s SendEmailMessage) MessageType() string {
@@ -33,7 +32,7 @@ func (s SendEmailMessage) GetName() string {
 	return s.Name
 }
 
-func NewSendEmailMessage(name string, pipelineRunID primitive.ObjectID, emailTemplate primitive.ObjectID, eventID primitive.ObjectID, data map[string]interface{}, emailFieldID string, emailAddress string) *SendEmailMessage {
+func NewSendEmailMessage(name string, pipelineRunID primitive.ObjectID, emailTemplate primitive.ObjectID, eventID primitive.ObjectID, data map[string]interface{}, emailFieldID string) *SendEmailMessage {
 	return &SendEmailMessage{
 		Name:            name,
 		PipelineRunID:   pipelineRunID,
@@ -42,7 +41,6 @@ func NewSendEmailMessage(name string, pipelineRunID primitive.ObjectID, emailTem
 		EventID:         eventID,
 		Data:            data,
 		EmailFieldID:    emailFieldID,
-		EmailAddress:    emailAddress,
 	}
 }
 

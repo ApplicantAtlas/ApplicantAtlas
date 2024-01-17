@@ -45,7 +45,7 @@ const ContentWithLoading: React.FC<{
   // So that each tab we click doesn't have to re-fetch the event details.
   return (
     <>
-      <div className="flex flex-1 min-h-screen">
+      <div className="flex flex-1 min-h-screen overflow-x-auto">
         <Sidebar
           eventDetails={eventDetails}
           activeSection={activeSection}
