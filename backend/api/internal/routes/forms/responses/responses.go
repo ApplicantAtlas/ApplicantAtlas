@@ -120,11 +120,7 @@ func submitFormHandler(params *types.RouteParams) gin.HandlerFunc {
 		}
 
 		for _, pipeline := range pipelines {
-			if pipeline.Event == nil {
-				continue
-			}
-
-			if pipeline.Event.EventType() == "FormSubmission" {
+			if pipeline.Event.Type == "FormSubmission" {
 				err := helpers.TriggerPipeline(c, params.KafkaProducer, params.MongoService, pipeline, req.Data)
 
 				if err != nil {

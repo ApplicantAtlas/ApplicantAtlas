@@ -1,6 +1,5 @@
 import FormBuilder from "@/components/Form/FormBuilder";
 import { ToastType, useToast } from "@/components/Toast/ToastContext";
-import { deleteForm, updateForm } from "@/services/FormService";
 import { DeletePipeline, UpdatePipeline } from "@/services/PipelineService";
 import { FormStructure } from "@/types/models/Form";
 import { PipelineConfiguration } from "@/types/models/Pipeline";
@@ -16,7 +15,7 @@ const PipelineSettings: React.FC<PipelineSettingsProps> = ({ pipeline, onDelete,
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const { showToast } = useToast();
 
-  const handleDeleteForm = async (pipelineID: string | undefined) => {
+  const handleDeletePipeline = async (pipelineID: string | undefined) => {
     if (!pipelineID) return;
 
     DeletePipeline(pipelineID)
@@ -38,16 +37,26 @@ const PipelineSettings: React.FC<PipelineSettingsProps> = ({ pipeline, onDelete,
         required: true,
         defaultValue: pipeline.name,
       },
+      {
+        question: "Enable Pipeline",
+        description: "Enable the pipeline",
+        type: "checkbox",
+        key: "enabled",
+        required: false,
+        defaultValue: pipeline.enabled,
+      }
     ],
   };
 
   const handleSubmit = (formData: Record<string, any>) => {
     const {
-      name
+      name,
+      enabled,
     } = formData;
   
     Object.assign(pipeline, {
       name,
+      enabled,
     });
 
     UpdatePipeline(pipeline).then(() => {
@@ -65,7 +74,7 @@ const PipelineSettings: React.FC<PipelineSettingsProps> = ({ pipeline, onDelete,
           className="btn btn-outline btn-error mt-2"
           onClick={() => setShowDeleteConfirmation(true)}
         >
-          Delete Form
+          Delete Pipeline
         </button>
       </p>
 
@@ -73,14 +82,14 @@ const PipelineSettings: React.FC<PipelineSettingsProps> = ({ pipeline, onDelete,
         <div className="modal modal-open">
           <div className="modal-box">
             <h3 className="font-bold text-lg">
-              Are you sure you want to delete this form?
+              Are you sure you want to delete this pipeline?
               <br />
               Name: {pipeline.name}
             </h3>
             <div className="modal-action">
               <button
                 className="btn btn-error"
-                onClick={() => handleDeleteForm(pipeline.id)}
+                onClick={() => handleDeletePipeline(pipeline.id)}
               >
                 Delete
               </button>

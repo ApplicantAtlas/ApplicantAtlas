@@ -1,8 +1,5 @@
 import React, { useState } from "react";
 import {
-  SendEmail,
-  AllowFormAccess,
-  Webhook,
   PipelineAction,
 } from "@/types/models/Pipeline";
 import { FieldValue, FormField, FormStructure } from "@/types/models/Form";
@@ -23,39 +20,45 @@ const PipelineActionModal: React.FC<PipelineActionModalProps> = ({
   const [selectedActionType, setSelectedActionType] =
     useState<string>("SendEmail");
 
-  const createActionObject = (
-    data: Record<string, any>
-  ): PipelineAction | null => {
-    switch (selectedActionType) {
-      case "SendEmail":
-        const sendEmailConfig = data as SendEmail;
-        return {
-          name: sendEmailConfig.name,
-          type: "SendEmail",
-          emailTemplateID: sendEmailConfig.emailTemplateID,
-          emailFieldID: sendEmailConfig.emailFieldID,
-        };
-      case "AllowFormAccess":
-        const allowFormAccessConfig = data as AllowFormAccess;
-        return {
-          name: allowFormAccessConfig.name,
-          type: "AllowFormAccess",
-          toFormID: allowFormAccessConfig.toFormID,
-          options: allowFormAccessConfig.options,
-        };
-      case "Webhook":
-        const webhookConfig = data as Webhook;
-        return {
-          name: webhookConfig.name,
-          type: "Webhook",
-          url: webhookConfig.url,
-          method: webhookConfig.method,
-          headers: webhookConfig.headers,
-        };
-      default:
-        return null;
-    }
-  };
+    const createActionObject = (formData: Record<string, any>): PipelineAction | null => {
+        switch (selectedActionType) {
+            case "SendEmail":
+                return {
+                    name: formData.name,
+                    type: "SendEmail",
+                    sendEmail: {
+                        emailTemplateID: formData.emailTemplateID,
+                        emailFieldID: formData.emailFieldID,
+                    },
+                };
+            case "AllowFormAccess":
+                return {
+                    name: formData.name,
+                    type: "AllowFormAccess",
+                    allowFormAccess: {
+                        toFormID: formData.toFormID,
+                        options: {
+                            expiration: {
+                                inHoursFromPipelineRun: formData.expiration,
+                            },
+                        },
+                    },
+                };
+            case "Webhook":
+                return {
+                    name: formData.name,
+                    type: "Webhook",
+                    webhook: {
+                        url: formData.url,
+                        method: formData.method,
+                        headers: formData.headers, // Ensure headers are correctly handled
+                    },
+                };
+            default:
+                return null;
+        }
+    };
+    
 
   const handleAddAction = (formData: Record<string, any>) => {
     if (selectedActionType) {

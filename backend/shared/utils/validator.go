@@ -151,8 +151,7 @@ func requireExistsIf(fl validator.FieldLevel) bool {
 
 func validateEventType(fl validator.FieldLevel) bool {
 	if event, ok := fl.Field().Interface().(models.PipelineEvent); ok {
-		eventType := event.EventType()
-		switch eventType {
+		switch event.Type {
 		case "FormSubmission", "FieldChange":
 			return true
 		default:
@@ -164,8 +163,7 @@ func validateEventType(fl validator.FieldLevel) bool {
 
 func validateActionType(fl validator.FieldLevel) bool {
 	if action, ok := fl.Field().Interface().(models.PipelineAction); ok {
-		actionType := action.ActionType()
-		switch actionType {
+		switch action.Type {
 		case "SendEmail", "AllowFormAccess", "Webhook":
 			return true
 		default:

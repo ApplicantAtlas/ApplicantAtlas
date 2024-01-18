@@ -13,6 +13,10 @@ import (
 )
 
 func TriggerPipeline(c context.Context, producer sarama.SyncProducer, mongo mongodb.MongoService, pipeline models.PipelineConfiguration, actionData map[string]interface{}) error {
+	if !pipeline.Enabled {
+		return nil
+	}
+
 	pipelineRun := models.PipelineRun{
 		PipelineID:  pipeline.ID,
 		TriggeredAt: time.Now(),
@@ -28,17 +32,11 @@ func TriggerPipeline(c context.Context, producer sarama.SyncProducer, mongo mong
 
 	for _, action := range pipeline.Actions {
 		var actionMessage kafka.PipelineActionMessage
-		switch action.ActionType() {
+		switch action.Type {
 		case "SendEmail":
-			// convert to SendEmail
-			sendEmail, ok := action.(models.SendEmail)
-			if !ok {
-				return errors.New("could not convert action to SendEmail")
-			}
-
-			actionMessage = kafka.NewSendEmailMessage("email-action", runID, sendEmail.EmailTemplateID, pipeline.EventID, actionData, sendEmail.EmailFieldID)
+			actionMessage = kafka.NewSendEmailMessage("email-action", runID, action.SendEmail.EmailTemplateID, pipeline.EventID, actionData, action.SendEmail.EmailFieldID)
 		default:
-			return errors.New("Action type not implemented")
+			return errors.New("action type not implemented")
 		}
 
 		kafka.WriteActionToKafka(producer, actionMessage)
