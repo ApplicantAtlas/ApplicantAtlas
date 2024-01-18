@@ -28,7 +28,7 @@ const ListForms = ({ forms, selectForm }: ListFormsProps) => {
             return (
               <tr
                 key={form.id}
-                className="hover"
+                className="hover cursor-pointer"
                 onClick={() => {
                   selectForm(form);
                 }}

@@ -28,7 +28,7 @@ const ListPipelines = ({ pipelines, selectPipeline }: ListPipelinesProps) => {
             return (
               <tr
                 key={pipeline.id}
-                className="hover"
+                className="hover cursor-pointer"
                 onClick={() => {
                   selectPipeline(pipeline);
                 }}
