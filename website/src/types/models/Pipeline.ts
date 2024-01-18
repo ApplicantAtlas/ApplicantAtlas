@@ -19,14 +19,16 @@ export type FieldChange = {
 // Actions
 export type SendEmail = {
   type: "SendEmail";
-  ID: string;
+  id?: string;
+  name: string;
   emailTemplateID: string;
   emailFieldID: string;
 };
 
 export type AllowFormAccess = {
   type: "AllowFormAccess";
-  ID: string;
+  name:  string;
+  id?: string;
   toFormID: string;
   options: {
     expiration: {
@@ -37,23 +39,25 @@ export type AllowFormAccess = {
 
 export type Webhook = {
   type: "Webhook";
-  ID: string;
+  name: string;
+  id?: string;
   url: string;
   method: "POST" | "GET" | "PUT" | "DELETE";
   headers: {
     [key: string]: string;
   };
-  body: {
-    [key: string]: string;
-  };
 };
 
 // Pipeline
+export type PipelineEvent = FormSubmission | FieldChange;
+export type PipelineAction = SendEmail | AllowFormAccess | Webhook;
+
+
 export type PipelineConfiguration = {
   id?: string;
   name: string;
-  event?: FormSubmission | FieldChange;
-  actions?: (SendEmail | AllowFormAccess | Webhook)[];
+  event?: PipelineEvent;
+  actions?: PipelineAction[];
   eventID: string;
   updatedAt?: Date;
 };

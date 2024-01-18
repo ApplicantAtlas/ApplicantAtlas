@@ -3,6 +3,7 @@ package pipelines
 import (
 	"api/internal/middlewares"
 	"api/internal/types"
+	"fmt"
 	"net/http"
 	"shared/models"
 	"shared/mongodb"
@@ -93,6 +94,7 @@ func updatePipelineConfigHandler(params *types.RouteParams) gin.HandlerFunc {
 
 		var req models.PipelineConfiguration
 		if err := c.BindJSON(&req); err != nil {
+			fmt.Println(err)
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
 			return
 		}

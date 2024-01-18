@@ -2,6 +2,7 @@
 package mongodb
 
 import (
+	"fmt"
 	"shared/models"
 
 	"github.com/gin-gonic/gin"
@@ -23,6 +24,7 @@ func CanUserModifyPipeline(c *gin.Context, m MongoService, u *models.User, pipel
 		pipeline = p
 	}
 
+	fmt.Println(pipeline)
 	return CanUserModifyEvent(c, m, u, pipeline.EventID, nil)
 }
 

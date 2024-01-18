@@ -10,6 +10,7 @@ import LinkIcon from "@/components/Icons/LinkIcon";
 import { PipelineConfiguration } from "@/types/models/Pipeline";
 import { UpdatePipeline } from "@/services/PipelineService";
 import PipelineSettings from "./PipelineSettings";
+import PipelineBuilder from "./PipelineBuilder";
 
 interface SelectPipelineProps {
   pipeline: PipelineConfiguration;
@@ -39,6 +40,15 @@ const SelectPipeline: React.FC<SelectPipelineProps> = ({
 
   const changePipeline = (pipeline: PipelineConfiguration) => {
     setPipeline(pipeline);
+  };
+
+  const updatePipeline = (pipeline: PipelineConfiguration) => {
+    UpdatePipeline(pipeline)
+      .then(() => {
+        showToast("Successfully updated pipeline!", ToastType.Success);
+        changePipeline(pipeline);
+      })
+      .catch((err) => {});
   };
 
   const isActive = (page: string) =>
@@ -77,12 +87,18 @@ const SelectPipeline: React.FC<SelectPipelineProps> = ({
         {pipeline.name}
       </h2>
 
-      {pageSelected === "edit" && <p>Edit Pipeline</p>}
+      {pageSelected === "edit" && (
+        <PipelineBuilder pipeline={pipeline} onSubmit={updatePipeline} />
+      )}
 
-      {pageSelected === "view" && <p>View Pipeline</p>}
+      {pageSelected === "view" && <p>{JSON.stringify(pipeline)}</p>}
 
       {pageSelected === "settings" && (
-        <PipelineSettings pipeline={pipeline} onDelete={onDelete} changePipeline={changePipeline} />
+        <PipelineSettings
+          pipeline={pipeline}
+          onDelete={onDelete}
+          changePipeline={changePipeline}
+        />
       )}
 
       {pageSelected === "runs" && <p>Runs</p>}

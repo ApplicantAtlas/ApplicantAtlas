@@ -18,8 +18,6 @@ const Select: React.FC<SelectProps> = ({
   allowArbitraryInput = false,
   defaultOptions = undefined,
 }) => {
-  //const options = field.options?.map((option) => ({ label: option, value: option })) || [];
-
   const options = Array.isArray(field.options)
     ? field.options.map((option) => ({ label: option, value: option }))
     : [];
@@ -65,6 +63,8 @@ const Select: React.FC<SelectProps> = ({
         className="react-select-container"
         classNamePrefix="react-select"
         required={field.required}
+        menuPortalTarget={document.body} // Append the menu to body to avoid clipping issues
+        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
       />
     </div>
   );

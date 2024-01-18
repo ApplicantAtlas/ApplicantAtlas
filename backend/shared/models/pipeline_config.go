@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -95,11 +96,11 @@ type FieldChangeCondition struct {
 // If an email field ID is provided, the email address will be pulled from the data.
 // SendEmail represents the action to send an email
 type SendEmail struct {
+	ID              primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
 	Name            string             `bson:"name" json:"name" validate:"required"`
 	Type            string             `json:"type" bson:"type" validate:"required,eq=SendEmail"`
 	EmailTemplateID primitive.ObjectID `bson:"emailTemplateID" json:"emailTemplateID" validate:"required"`
 	EmailFieldID    string             `bson:"emailFieldID" json:"emailFieldID"`
-	EmailAddress    string             `bson:"emailAddress" json:"emailAddress"`
 }
 
 func (s SendEmail) ActionType() string {
@@ -120,10 +121,11 @@ func NewSendEmail(name string, emailTemplate primitive.ObjectID) *SendEmail {
 
 // AllowFormAccess represents the action to allow access to a form
 type AllowFormAccess struct {
-	Name     string            `bson:"name" json:"name" validate:"required"`
-	Type     string            `json:"type" bson:"type" validate:"required,eq=AllowFormAccess"`
-	ToFormID string            `bson:"toFormID" json:"toFormID" validate:"required"`
-	Options  FormAccessOptions `bson:"options" json:"options" validate:"required"`
+	ID       primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
+	Name     string             `bson:"name" json:"name" validate:"required"`
+	Type     string             `json:"type" bson:"type" validate:"required,eq=AllowFormAccess"`
+	ToFormID string             `bson:"toFormID" json:"toFormID" validate:"required"`
+	Options  FormAccessOptions  `bson:"options" json:"options" validate:"required"`
 }
 
 func (s AllowFormAccess) ActionType() string {
@@ -155,12 +157,12 @@ type ExpirationOptions struct {
 
 // Webhook represents a webhook action
 type Webhook struct {
-	Name    string            `bson:"name" json:"name" validate:"required"`
-	Type    string            `json:"type" bson:"type" validate:"required,eq=Webhook"`
-	URL     string            `bson:"url" json:"url" validate:"required,url"`
-	Method  string            `bson:"method" json:"method" validate:"required,oneof=POST GET PUT DELETE"`
-	Headers map[string]string `bson:"headers" json:"headers"`
-	Body    map[string]string `bson:"body" json:"body"`
+	ID      primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
+	Name    string             `bson:"name" json:"name" validate:"required"`
+	Type    string             `json:"type" bson:"type" validate:"required,eq=Webhook"`
+	URL     string             `bson:"url" json:"url" validate:"required,url"`
+	Method  string             `bson:"method" json:"method" validate:"required,oneof=POST GET PUT DELETE"`
+	Headers map[string]string  `bson:"headers" json:"headers"`
 }
 
 func (s Webhook) ActionType() string {
@@ -171,14 +173,13 @@ func (s Webhook) GetName() string {
 	return s.Name
 }
 
-func NewWebhook(name string, url string, method string, headers map[string]string, body map[string]string) *Webhook {
+func NewWebhook(name string, url string, method string, headers map[string]string) *Webhook {
 	return &Webhook{
 		Name:    name,
 		Type:    "Webhook",
 		URL:     url,
 		Method:  method,
 		Headers: headers,
-		Body:    body,
 	}
 }
 
@@ -194,4 +195,78 @@ type PipelineConfiguration struct {
 	Actions   []PipelineAction   `bson:"actions,omitempty" json:"actions,omitempty" validate:"dive,pipelineaction"`
 	EventID   primitive.ObjectID `bson:"eventID" json:"eventID" validate:"required"`
 	UpdatedAt time.Time          `bson:"updatedAt" json:"updatedAt" validate:"required"`
+}
+
+// Custom unmarshaler for PipelineConfiguration's JSON representation
+func (pc *PipelineConfiguration) UnmarshalJSON(data []byte) error {
+	type Alias PipelineConfiguration
+	aux := &struct {
+		Actions []json.RawMessage `json:"actions"`
+		Event   json.RawMessage   `json:"event"`
+		*Alias
+	}{
+		Alias: (*Alias)(pc),
+	}
+
+	// Unmarshal data into auxiliary struct
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+
+	// Manually unmarshal event
+	if len(aux.Event) > 0 {
+		var baseEvent struct {
+			Type string `json:"type"`
+		}
+		if err := json.Unmarshal(aux.Event, &baseEvent); err != nil {
+			return err
+		}
+
+		if baseEvent.Type != "" {
+			switch baseEvent.Type {
+			case "FormSubmission":
+				pc.Event = new(FormSubmission)
+			case "FieldChange":
+				pc.Event = new(FieldChange)
+			default:
+				return fmt.Errorf("unknown event type: %s", baseEvent.Type)
+			}
+
+			if err := json.Unmarshal(aux.Event, pc.Event); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Manually unmarshal actions
+	for _, rawAction := range aux.Actions {
+		var baseAction struct {
+			Type string `json:"type"`
+		}
+		if err := json.Unmarshal(rawAction, &baseAction); err != nil {
+			return err
+		}
+
+		if baseAction.Type != "" {
+			var action PipelineAction
+			switch baseAction.Type {
+			case "SendEmail":
+				action = new(SendEmail)
+			case "AllowFormAccess":
+				action = new(AllowFormAccess)
+			case "Webhook":
+				action = new(Webhook)
+			default:
+				return fmt.Errorf("unknown action type: %s", baseAction.Type)
+			}
+
+			if err := json.Unmarshal(rawAction, action); err != nil {
+				return err
+			}
+
+			pc.Actions = append(pc.Actions, action)
+		}
+	}
+
+	return nil
 }

@@ -253,8 +253,8 @@ func getEventPipelinesHandler(params *types.RouteParams) gin.HandlerFunc {
 
 		pipelines, err := params.MongoService.ListPipelines(c, bson.M{"eventID": eventID})
 		if err != nil {
+			log.Printf("Error retrieving event pipelines: %v", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving event pipelines"})
-			log.Fatal(err)
 			return
 		}
 

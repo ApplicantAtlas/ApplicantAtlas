@@ -15,6 +15,9 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+// TODO: we should prevent potentially sensitive internal fields from getting overwritten on update
+// eg: id, EventID, etc just force dropping these fields on update?
+
 // MongoService defines the interface for interacting with MongoDB.
 type MongoService interface {
 	FindUserByEmail(ctx context.Context, email string) (*models.User, error)

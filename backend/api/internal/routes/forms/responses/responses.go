@@ -111,13 +111,7 @@ func submitFormHandler(params *types.RouteParams) gin.HandlerFunc {
 
 		// TODO: restrict to users who have access
 
-		// Submit form
-		req.UserID = authenticatedUser.ID
-		if _, err := params.MongoService.CreateResponse(c, req); err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
-			return
-		}
-
+		// TODO: We should do this in a transaction
 		// Check pipeline
 		pipelines, err := params.MongoService.ListPipelines(c, bson.M{"eventID": form.EventID})
 		if err != nil {
@@ -126,6 +120,10 @@ func submitFormHandler(params *types.RouteParams) gin.HandlerFunc {
 		}
 
 		for _, pipeline := range pipelines {
+			if pipeline.Event == nil {
+				continue
+			}
+
 			if pipeline.Event.EventType() == "FormSubmission" {
 				err := helpers.TriggerPipeline(c, params.KafkaProducer, params.MongoService, pipeline, req.Data)
 
@@ -134,6 +132,13 @@ func submitFormHandler(params *types.RouteParams) gin.HandlerFunc {
 					return
 				}
 			}
+		}
+
+		// Submit form
+		req.UserID = authenticatedUser.ID
+		if _, err := params.MongoService.CreateResponse(c, req); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+			return
 		}
 
 		c.JSON(http.StatusOK, gin.H{"message": "Success"})

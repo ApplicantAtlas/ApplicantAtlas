@@ -26,7 +26,6 @@ func TriggerPipeline(c context.Context, producer sarama.SyncProducer, mongo mong
 	}
 	runID := newPipeline.InsertedID.(primitive.ObjectID)
 
-	// kafka.NewSendEmailMessage("email-action", pipelineRunID, emailTemplateID, eventID, data, emailFieldID, emailAddress)
 	for _, action := range pipeline.Actions {
 		var actionMessage kafka.PipelineActionMessage
 		switch action.ActionType() {
