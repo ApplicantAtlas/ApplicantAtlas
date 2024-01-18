@@ -65,17 +65,17 @@ const SelectForm: React.FC<SelectFormProps> = ({ form, action, onDelete }) => {
   return (
     <>
       <div className="flex space-x-2 bg-gray-100 p-2 rounded">
+      <button
+          className={`btn ${isActive("responses")}`}
+          onClick={() => setPageSelected("responses")}
+        >
+          Responses
+        </button>
         <button
           className={`btn ${isActive("edit")}`}
           onClick={() => setPageSelected("edit")}
         >
           Edit
-        </button>
-        <button
-          className={`btn ${isActive("responses")}`}
-          onClick={() => setPageSelected("responses")}
-        >
-          Responses
         </button>
         <button
           className={`btn ${isActive("preview")}`}

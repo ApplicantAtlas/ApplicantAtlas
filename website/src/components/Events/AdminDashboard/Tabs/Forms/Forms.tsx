@@ -28,7 +28,7 @@ const Forms: React.FC<FormProps> = ({ eventDetails }) => {
   const [selectedForm, setSelectedForm] = useState<FormStructure | null>(null);
   const [selectedFormAction, setSelectedFormAction] = useState<
     "responses" | "edit"
-  >("edit");
+  >("responses");
 
   useEffect(() => {
     if (eventDetails !== null) {

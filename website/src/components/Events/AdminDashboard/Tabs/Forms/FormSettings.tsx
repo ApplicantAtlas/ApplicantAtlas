@@ -144,7 +144,7 @@ const FormSettings: React.FC<FormSettingsProps> = ({ form, onDelete, changeForm 
             <h3 className="font-bold text-lg">
               Are you sure you want to delete this form?
               <br />
-              Name: {form.id}
+              Name: {form.name}
             </h3>
             <div className="modal-action">
               <button

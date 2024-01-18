@@ -82,7 +82,7 @@ const Responses = ({ form }: ResponsesProps) => {
         </button>
       </div>
       <div className="overflow-x-auto">
-        <table className="table table-pin-rows table-pin-cols bg-white">
+        <table className="table table-sm table-pin-rows table-pin-cols bg-white">
           <thead>
             <tr>
               {headers.map((header) => (

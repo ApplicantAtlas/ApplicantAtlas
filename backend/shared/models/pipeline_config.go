@@ -1,6 +1,7 @@
 package models
 
 import (
+	"encoding/json"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -21,6 +22,7 @@ const (
 // PipelineEvent represents a pipeline event
 type PipelineEvent interface {
 	EventType() string
+	UnmarshalJSON(data []byte) error
 }
 
 // FormSubmission represents a form submission event
@@ -33,6 +35,20 @@ func (f FormSubmission) EventType() string {
 	return f.Type
 }
 
+func (f *FormSubmission) UnmarshalJSON(data []byte) error {
+	type Alias FormSubmission
+	aux := &struct {
+		*Alias
+	}{
+		Alias: (*Alias)(f),
+	}
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+	f.Type = "FormSubmission"
+	return nil
+}
+
 // FieldChange represents a field change event
 type FieldChange struct {
 	Type      string               `json:"type" bson:"type" validate:"required,eq=FieldChange"`
@@ -43,6 +59,20 @@ type FieldChange struct {
 
 func (f FieldChange) EventType() string {
 	return f.Type
+}
+
+func (f *FieldChange) UnmarshalJSON(data []byte) error {
+	type Alias FieldChange
+	aux := &struct {
+		*Alias
+	}{
+		Alias: (*Alias)(f),
+	}
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+	f.Type = "FieldChange"
+	return nil
 }
 
 //
@@ -159,8 +189,9 @@ func NewWebhook(name string, url string, method string, headers map[string]strin
 // PipelineConfiguration represents the configuration of a pipeline
 type PipelineConfiguration struct {
 	ID        primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
-	Event     PipelineEvent      `bson:"event" json:"event" validate:"required,pipelineevent"`
-	Actions   []PipelineAction   `bson:"actions" json:"actions" validate:"required,dive,pipelineaction"`
+	Name      string             `bson:"name" json:"name" validate:"required"`
+	Event     PipelineEvent      `bson:"event,omitempty" json:"event,omitempty" validate:"pipelineevent"`
+	Actions   []PipelineAction   `bson:"actions,omitempty" json:"actions,omitempty" validate:"dive,pipelineaction"`
 	EventID   primitive.ObjectID `bson:"eventID" json:"eventID" validate:"required"`
 	UpdatedAt time.Time          `bson:"updatedAt" json:"updatedAt" validate:"required"`
 }

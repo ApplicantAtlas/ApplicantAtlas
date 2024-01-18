@@ -4,7 +4,7 @@ import Dashboard from '@/components/Events/AdminDashboard/Tabs/Dashboard';
 import Announcements from '@/components/Events/AdminDashboard/Tabs/Announcements';
 import Settings from '@/components/Events/AdminDashboard/Tabs/Settings';
 import EventDetails from '@/components/Events/AdminDashboard/Tabs/EventDetails';
-import Pipelines from '@/components/Events/AdminDashboard/Tabs/Pipelines';
+import Pipelines from '@/components/Events/AdminDashboard/Tabs/Pipelines/Pipelines';
 import Forms from '@/components/Events/AdminDashboard/Tabs/Forms/Forms';
 
 const AdminDashboard: React.FC = () => {

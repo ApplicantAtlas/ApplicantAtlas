@@ -1,3 +1,4 @@
+import { EventModel } from '@/types/models/Event';
 import React from 'react';
 
 interface AnnouncementsProps {

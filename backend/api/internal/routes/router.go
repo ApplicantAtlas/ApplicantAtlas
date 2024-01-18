@@ -28,4 +28,5 @@ func SetupRoutes(r *gin.Engine, params *types.RouteParams) {
 
 	pipelineGroup := r.Group("/pipelines")
 	pipelines.RegisterTestRoute(pipelineGroup, params)
+	pipelines.RegisterRoutes(pipelineGroup, params)
 }
