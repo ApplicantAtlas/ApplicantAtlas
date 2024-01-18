@@ -70,7 +70,6 @@ const FormSubmission = () => {
   if (!formStructure || !event) return <LoadingSpinner />;
 
   const onSubmission = (formData: Record<string, any>) => {
-    console.log(formData);
     SubmitResponse(formStructure.id || "", formData)
       .then(() => {
         showToast("Successfully submitted form!", ToastType.Success);

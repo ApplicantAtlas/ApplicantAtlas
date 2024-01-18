@@ -97,7 +97,6 @@ const FormSettings: React.FC<FormSettingsProps> = ({ form, onDelete, changeForm 
   };
 
   const handleSubmit = (formData: Record<string, any>) => {
-    console.log(formData)
     const {
       status,
       allowMultipleSubmissions,
@@ -119,8 +118,6 @@ const FormSettings: React.FC<FormSettingsProps> = ({ form, onDelete, changeForm 
       name,
       description,
     });
-
-    console.log(form)
 
     updateForm(form.id || "", form).then(() => {
         showToast("Successfully updated form!", ToastType.Success);

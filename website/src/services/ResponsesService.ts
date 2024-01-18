@@ -7,8 +7,8 @@ export const GetResponses = async (
   formID: string,
 ): Promise<
   AxiosResponse<{
-    responses: FormResponse[];
-    form: FormStructure;
+    responses: Record<string, any>;
+    columnOrder: string[];
   }>
 > => {
   return api.get(`/forms/${formID}/responses`);
@@ -20,3 +20,11 @@ export const SubmitResponse = async (
 ): Promise<AxiosResponse<{ id: string }>> => {
   return api.post(`/forms/${formID}/responses`, data);
 };
+
+export const DownloadResponses = async (
+    formID: string,
+    ): Promise<AxiosResponse<Blob>> => {
+    return api.get(`/forms/${formID}/responses/csv`, {
+        responseType: "blob",
+    });
+}
