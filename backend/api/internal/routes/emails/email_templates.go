@@ -76,7 +76,7 @@ func createNewTemplate(params *types.RouteParams) gin.HandlerFunc {
 			return
 		}
 
-		template.LastUpdated = time.Now()
+		template.UpdatedAt = time.Now()
 		templateID, err := params.MongoService.CreateEmailTemplate(c, template)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Error creating email template"})
@@ -111,7 +111,7 @@ func updateTemplate(params *types.RouteParams) gin.HandlerFunc {
 			return
 		}
 
-		req.LastUpdated = time.Now()
+		req.UpdatedAt = time.Now()
 		_, err = params.MongoService.UpdateEmailTemplate(c, req, templateID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update pipeline configuration"})

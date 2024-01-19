@@ -19,6 +19,7 @@ const Sidebar: React.FC<SidebarProps> = ({ eventDetails, activeSection, setActiv
         { title: 'Event Details', sectionName: 'event-details'},
         { title: 'Announcements', sectionName: 'announcements' },
         { title: 'Pipelines', sectionName: 'pipelines'},
+        { title: 'Email Templates', sectionName: 'email-templates'},
         { title: 'Settings', sectionName: 'settings' },
     ];
 

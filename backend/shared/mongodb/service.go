@@ -509,5 +509,12 @@ func (s *Service) DeleteEmailTemplate(ctx context.Context, emailTemplateID primi
 
 // GetEmailTemplate retrieves an email template by its ID
 func (s *Service) GetEmailTemplate(ctx context.Context, emailTemplateID primitive.ObjectID) (*models.EmailTemplate, error) {
-	return s.GetEmailTemplate(ctx, emailTemplateID)
+	var emailTemplate models.EmailTemplate
+
+	err := s.Database.Collection("email_templates").FindOne(ctx, bson.M{"_id": emailTemplateID}).Decode(&emailTemplate)
+	if err != nil {
+		return nil, err
+	}
+
+	return &emailTemplate, nil
 }

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FormField, FieldValue } from "@/types/models/Form";
+import InformationIcon from "@/components/Icons/InformationIcon";
 
 type TextInputProps = {
   field: FormField;
@@ -87,6 +88,11 @@ const Text: React.FC<TextInputProps> = ({ field, onChange, defaultValue }) => {
         <span className="label-text">
           {field.question}{" "}
           {field.required && <span className="text-error">*</span>}
+          {field.description && (
+            <div className="tooltip" data-tip={field.description}>
+              <InformationIcon className="h-4 w-4" />
+            </div>
+          )}
         </span>
       </label>
       <input

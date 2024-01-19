@@ -21,11 +21,13 @@
     "react-color": "^2.19.3",
     "react-dom": "^18",
     "react-phone-number-input": "^3.3.7",
+    "react-quill": "^2.0.0",
     "react-redux": "^9.0.4",
     "react-select": "^5.8.0",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
+    "@tailwindcss/typography": "^0.5.10",
     "@types/lodash": "^4.14.202",
     "@types/node": "^20",
     "@types/react": "^18",

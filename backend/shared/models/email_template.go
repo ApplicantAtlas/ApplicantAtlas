@@ -16,6 +16,7 @@ type EmailTemplate struct {
 	CC             []string           `bson:"cc" json:"cc"`
 	BCC            []string           `bson:"bcc" json:"bcc"`
 	ReplyTo        string             `bson:"replyTo" json:"replyTo"`
-	LastUpdated    time.Time          `bson:"lastUpdated" json:"lastUpdated"`
+	UpdatedAt      time.Time          `bson:"updatedAt" json:"updatedAt"`
 	Description    string             `bson:"description" json:"description"`
+	IsHTML         bool               `bson:"isHTML" json:"isHTML"`
 }

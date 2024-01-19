@@ -1,12 +1,6 @@
-import FormCreator from "@/components/Form/Creator/FormCreator";
-import FormBuilder from "@/components/Form/FormBuilder";
 import { eventEmitter } from "@/events/EventEmitter";
-import { updateForm } from "@/services/FormService";
-import { EventModel } from "@/types/models/Event";
-import { FormStructure } from "@/types/models/Form";
 import { useState } from "react";
 import { ToastType, useToast } from "@/components/Toast/ToastContext";
-import LinkIcon from "@/components/Icons/LinkIcon";
 import { PipelineConfiguration } from "@/types/models/Pipeline";
 import { UpdatePipeline } from "@/services/PipelineService";
 import PipelineSettings from "./PipelineSettings";
@@ -29,15 +23,6 @@ const SelectPipeline: React.FC<SelectPipelineProps> = ({
   const { showToast } = useToast();
 
   // Edit
-  const onFormStructureChange = (newPipelineConfig: PipelineConfiguration) => {
-    UpdatePipeline(newPipelineConfig)
-      .then(() => {
-        eventEmitter.emit("success", "Successfully updated form!");
-        setPipeline(newPipelineConfig);
-      })
-      .catch((err) => {});
-  };
-
   const changePipeline = (pipeline: PipelineConfiguration) => {
     setPipeline(pipeline);
   };

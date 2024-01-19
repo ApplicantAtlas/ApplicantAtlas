@@ -22,6 +22,10 @@ const TimestampDynamic = dynamic(() => import("./inputs/Timestamp"), {
   ssr: false,
 });
 
+const RichTextDynamic = dynamic(() => import("./inputs/RichText"), {
+  ssr: false,
+});
+
 type FormBuilderProps = {
   formStructure: FormStructure;
   submissionFunction: (formJSON: Record<string, any>) => void;
@@ -265,6 +269,14 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
       case "colorpicker":
         return (
           <ColorPicker
+            field={field}
+            onChange={handleInputChange}
+            defaultValue={field.defaultValue as string}
+          />
+        );
+      case "richtext":
+        return (
+          <RichTextDynamic
             field={field}
             onChange={handleInputChange}
             defaultValue={field.defaultValue as string}

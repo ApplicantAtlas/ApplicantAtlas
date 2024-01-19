@@ -46,7 +46,8 @@ export type FormFieldType =
   | "checkbox"
   | "radio"
   | "address"
-  | "colorpicker";
+  | "colorpicker"
+  | "richtext";
 
 export type FormField = {
   question: string;
