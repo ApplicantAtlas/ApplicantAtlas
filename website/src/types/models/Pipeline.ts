@@ -3,6 +3,7 @@ export type comparison = "eq" | "neq";
 export type PipelineEvent = {
     id?: string;
     name: string;
+    type: string;
     
     formSubmission?: FormSubmission
     fieldChange?: FieldChange

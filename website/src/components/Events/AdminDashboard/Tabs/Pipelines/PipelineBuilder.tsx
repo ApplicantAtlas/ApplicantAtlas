@@ -1,14 +1,6 @@
 import React, { useState } from "react";
-import FormBuilder from "@/components/Form/FormBuilder";
 import PipelineActionModal from "./PipelineActionModal";
-import {
-  AllowFormAccess,
-  PipelineAction,
-  PipelineConfiguration,
-  SendEmail,
-  Webhook,
-} from "@/types/models/Pipeline";
-import { FormStructure } from "@/types/models/Form";
+import { PipelineAction, PipelineConfiguration, PipelineEvent } from "@/types/models/Pipeline";
 
 interface PipelineBuilderProps {
   pipeline: PipelineConfiguration;
@@ -21,41 +13,19 @@ const PipelineBuilder: React.FC<PipelineBuilderProps> = ({
 }) => {
   const [pipelineConfig, setPipelineConfig] =
     useState<PipelineConfiguration>(pipeline);
-  const [showActionModal, setShowActionModal] = useState(false);
+  const [showModalType, setShowModalType] = useState<"action" | "event" | null>(
+    null
+  );
   const [deleteAction, setDeleteAction] = useState<PipelineAction>();
 
-  const pipelineFormStructure: FormStructure = {
-    attrs: [
-      {
-        question: "Pipeline Name",
-        type: "text",
-        key: "name",
-        required: true,
-        defaultValue: pipeline.name || "",
-      },
-      {
-        question: "Event Configuration (JSON)",
-        type: "textarea",
-        key: "event",
-        defaultValue: JSON.stringify(pipeline.event || {}, null, 2),
-      },
-    ],
+  const handleFormSubmit = () => {
+    onSubmit(pipelineConfig);
   };
 
-  const handleFormSubmit = (formData: Record<string, any>) => {
-    const updatedPipeline: PipelineConfiguration = {
-        ...pipelineConfig,
-        name: formData.name,
-        event: JSON.parse(formData.event),
-        actions: pipelineConfig.actions,
-    };
-    onSubmit(updatedPipeline);
-  };
-
-  const handleAddAction = (action: PipelineAction) => {
+  const handleAddAction = (action: PipelineAction | PipelineEvent) => {
     setPipelineConfig((prevConfig) => ({
       ...prevConfig,
-      actions: [...(prevConfig.actions || []), action],
+      actions: [...(prevConfig.actions || []), action as PipelineAction],
     }));
   };
 
@@ -67,14 +37,57 @@ const PipelineBuilder: React.FC<PipelineBuilderProps> = ({
     }));
   };
 
+  const handleSetEvent = (event: PipelineEvent | PipelineAction) => {
+    setPipelineConfig((prevConfig) => ({
+      ...prevConfig,
+      event: event as PipelineEvent,
+    }))
+  };
+
   return (
     <>
-      <FormBuilder
-        formStructure={pipelineFormStructure}
-        submissionFunction={handleFormSubmit}
-        buttonText="Update Pipeline"
+      <h2 className="text-lg">Pipeline Trigger</h2>
+
+      {pipelineConfig.event && pipelineConfig.event.name && (
+        <div className="overflow-x-auto mt-4">
+          <table className="table table-pin-rows table-pin-cols bg-white">
+            <thead>
+              <tr>
+                <td>Type</td>
+                <td>Details</td>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className="hover cursor-pointer">
+                <td>{pipelineConfig.event.name}</td>
+                <td>{JSON.stringify(pipelineConfig.event, null, 2)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {pipelineConfig.event && !pipelineConfig.event.name && (
+        <p>No event configured.</p>
+      )}
+
+      <p>
+        <button
+          onClick={() => setShowModalType("event")}
+          className="btn btn-primary mt-4"
+        >
+          {pipelineConfig.event?.name ? "Edit Event" : "Set Event"}
+        </button>
+      </p>
+
+      <PipelineActionModal
+        isOpen={showModalType === "event"}
+        onClose={() => setShowModalType(null)}
+        onSelect={handleSetEvent}
+        modalType="event"
       />
 
+      <h2 className="text-lg mt-4">Pipeline Actions</h2>
       {pipelineConfig &&
         pipelineConfig.actions &&
         pipelineConfig.actions.length > 0 && (
@@ -114,17 +127,27 @@ const PipelineBuilder: React.FC<PipelineBuilderProps> = ({
 
       <p>
         <button
-          onClick={() => setShowActionModal(true)}
+          onClick={() => setShowModalType("action")}
           className="btn btn-primary mt-4"
         >
           Add Action
         </button>
       </p>
 
+      <p>
+        <button
+          onClick={handleFormSubmit}
+          className="btn btn-primary mt-4"
+        >
+          Save Pipeline
+        </button>
+      </p>
+
       <PipelineActionModal
-        isOpen={showActionModal}
-        onClose={() => setShowActionModal(false)}
-        onActionSelect={handleAddAction}
+        isOpen={showModalType === "action"}
+        onClose={() => setShowModalType(null)}
+        onSelect={handleAddAction}
+        modalType="action"
       />
 
       {deleteAction && (

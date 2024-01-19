@@ -20,7 +20,8 @@ const (
 
 // PipelineEvent represents a pipeline event
 type PipelineEvent struct {
-	Type string `bson:"eventType" json:"eventType" validate:"required"`
+	Type string `bson:"type" json:"type" validate:"required"`
+	Name string `bson:"name" json:"name" validate:"required"`
 
 	// Embed each specific event type
 	FormSubmission *FormSubmission `bson:"formSubmission,omitempty" json:"formSubmission,omitempty"`
