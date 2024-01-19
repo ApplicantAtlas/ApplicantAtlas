@@ -365,3 +365,35 @@ func (m *MockMongoService) DeleteResponse(ctx context.Context, submissionID prim
 func (m *MockMongoService) CreatePipelineRun(ctx context.Context, run models.PipelineRun) (*mongo.InsertOneResult, error) {
 	return nil, nil
 }
+
+func (m *MockMongoService) ListPipelineRuns(ctx context.Context, filter bson.M) ([]models.PipelineRun, error) {
+	return nil, nil
+}
+
+func (m *MockMongoService) UpdatePipelineRun(ctx context.Context, run models.PipelineRun, runID primitive.ObjectID) (*mongo.UpdateResult, error) {
+	return nil, nil
+}
+
+func (m *MockMongoService) DeletePipelineRun(ctx context.Context, runID primitive.ObjectID) (*mongo.DeleteResult, error) {
+	return nil, nil
+}
+
+func (m *MockMongoService) CreateEmailTemplate(ctx context.Context, template models.EmailTemplate) (*mongo.InsertOneResult, error) {
+	return nil, nil
+}
+
+func (m *MockMongoService) GetEmailTemplate(ctx context.Context, templateID primitive.ObjectID) (*models.EmailTemplate, error) {
+	return nil, nil
+}
+
+func (m *MockMongoService) UpdateEmailTemplate(ctx context.Context, template models.EmailTemplate, templateID primitive.ObjectID) (*mongo.UpdateResult, error) {
+	return nil, nil
+}
+
+func (m *MockMongoService) DeleteEmailTemplate(ctx context.Context, templateID primitive.ObjectID) (*mongo.DeleteResult, error) {
+	return nil, nil
+}
+
+func (m *MockMongoService) ListEmailTemplates(ctx context.Context, filter bson.M) ([]models.EmailTemplate, error) {
+	return nil, nil
+}

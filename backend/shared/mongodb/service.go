@@ -47,6 +47,11 @@ type MongoService interface {
 	UpdateResponse(ctx context.Context, response models.FormResponse, responseID primitive.ObjectID) (*mongo.UpdateResult, error)
 	DeleteResponse(ctx context.Context, responseID primitive.ObjectID) (*mongo.DeleteResult, error)
 	CreatePipelineRun(ctx context.Context, pipelineRun models.PipelineRun) (*mongo.InsertOneResult, error)
+	ListEmailTemplates(ctx context.Context, filter bson.M) ([]models.EmailTemplate, error)
+	CreateEmailTemplate(ctx context.Context, emailTemplate models.EmailTemplate) (*mongo.InsertOneResult, error)
+	UpdateEmailTemplate(ctx context.Context, emailTemplate models.EmailTemplate, emailTemplateID primitive.ObjectID) (*mongo.UpdateResult, error)
+	DeleteEmailTemplate(ctx context.Context, emailTemplateID primitive.ObjectID) (*mongo.DeleteResult, error)
+	GetEmailTemplate(ctx context.Context, emailTemplateID primitive.ObjectID) (*models.EmailTemplate, error)
 }
 
 // Service implements MongoService with a mongo.Client.
@@ -452,4 +457,57 @@ func (s *Service) DeleteResponse(ctx context.Context, responseID primitive.Objec
 
 func (s *Service) CreatePipelineRun(ctx context.Context, pipelineRun models.PipelineRun) (*mongo.InsertOneResult, error) {
 	return s.Database.Collection("pipeline_runs").InsertOne(ctx, pipelineRun)
+}
+
+// ListEmailTemplates retrieves email templates based on a filter
+func (s *Service) ListEmailTemplates(ctx context.Context, filter bson.M) ([]models.EmailTemplate, error) {
+	var emailTemplates []models.EmailTemplate
+
+	cursor, err := s.Database.Collection("email_templates").Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx) {
+		var emailTemplate models.EmailTemplate
+		if err := cursor.Decode(&emailTemplate); err != nil {
+			return nil, err
+		}
+
+		emailTemplates = append(emailTemplates, emailTemplate)
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	// If emailTemplates is null then return an empty slice instead
+	if emailTemplates == nil {
+		return []models.EmailTemplate{}, nil
+	}
+
+	return emailTemplates, nil
+}
+
+// CreateEmailTemplate creates a new email template
+func (s *Service) CreateEmailTemplate(ctx context.Context, emailTemplate models.EmailTemplate) (*mongo.InsertOneResult, error) {
+	return s.Database.Collection("email_templates").InsertOne(ctx, emailTemplate)
+}
+
+// UpdateEmailTemplate updates an email template by its ID
+func (s *Service) UpdateEmailTemplate(ctx context.Context, emailTemplate models.EmailTemplate, emailTemplateID primitive.ObjectID) (*mongo.UpdateResult, error) {
+	update := bson.M{"$set": emailTemplate}
+	filter := bson.M{"_id": emailTemplateID}
+	return s.Database.Collection("email_templates").UpdateOne(ctx, filter, update)
+}
+
+// DeleteEmailTemplate deletes an email template by its ID
+func (s *Service) DeleteEmailTemplate(ctx context.Context, emailTemplateID primitive.ObjectID) (*mongo.DeleteResult, error) {
+	return s.Database.Collection("email_templates").DeleteOne(ctx, bson.M{"_id": emailTemplateID})
+}
+
+// GetEmailTemplate retrieves an email template by its ID
+func (s *Service) GetEmailTemplate(ctx context.Context, emailTemplateID primitive.ObjectID) (*models.EmailTemplate, error) {
+	return s.GetEmailTemplate(ctx, emailTemplateID)
 }

@@ -25,6 +25,23 @@ func CanUserModifyPipeline(c *gin.Context, m MongoService, u *models.User, pipel
 	return CanUserModifyEvent(c, m, u, pipeline.EventID, nil)
 }
 
+// CanUserModifyEmailTemplate checks if the user provided can modify an email template.
+func CanUserModifyEmailTemplate(c *gin.Context, m MongoService, u *models.User, templateID primitive.ObjectID, template *models.EmailTemplate) bool {
+	if u == nil {
+		return false
+	}
+
+	emailTemplate := template
+	if emailTemplate == nil {
+		t, err := m.GetEmailTemplate(c, templateID)
+		if err != nil {
+			return false
+		}
+		emailTemplate = t
+	}
+	return CanUserModifyEvent(c, m, u, emailTemplate.EventID, nil)
+}
+
 // CanUserModifyForm checks if the user provided can modify a form.
 func CanUserModifyForm(c *gin.Context, m MongoService, u *models.User, formID primitive.ObjectID, formObject *models.FormStructure) bool {
 	if u == nil {

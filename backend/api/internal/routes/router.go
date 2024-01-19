@@ -2,6 +2,7 @@ package routes
 
 import (
 	"api/internal/routes/auth"
+	"api/internal/routes/emails"
 	"api/internal/routes/events"
 	"api/internal/routes/forms"
 	"api/internal/routes/pipelines"
@@ -27,6 +28,8 @@ func SetupRoutes(r *gin.Engine, params *types.RouteParams) {
 	forms.RegisterRoutes(formGroup, params)
 
 	pipelineGroup := r.Group("/pipelines")
-	pipelines.RegisterTestRoute(pipelineGroup, params)
 	pipelines.RegisterRoutes(pipelineGroup, params)
+
+	emailTemplateGroup := r.Group("/email_templates")
+	emails.RegisterEmailTemplateRoutes(emailTemplateGroup, params)
 }
