@@ -44,6 +44,7 @@ const PipelineBuilder: React.FC<PipelineBuilderProps> = ({
     }))
   };
 
+  // TODO: Pre-populate the email action & form id to be a selector 
   return (
     <>
       <h2 className="text-lg">Pipeline Trigger</h2>

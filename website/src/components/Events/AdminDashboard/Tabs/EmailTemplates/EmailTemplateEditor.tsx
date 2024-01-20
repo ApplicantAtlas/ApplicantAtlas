@@ -15,6 +15,8 @@ const EmailTemplateEditor = ({
 }: EmailTemplateEditorProps) => {
   const [templateData, setTemplateData] = useState<EmailTemplate>(template);
 
+  // TODO: Pre-populate the templating form ID with the list of all forms
+  // TODO: Allow some sort of validation and auto popup for the templating form field IDs
   const formFields: FormField[] = useMemo(() => {
     return [
       {
