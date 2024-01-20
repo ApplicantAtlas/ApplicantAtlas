@@ -53,19 +53,20 @@ const EmailTemplateEditor = ({
         key: "cc",
         question: "CC",
         type: "custommultiselect",
-        defaultValue: templateData.cc,
+        defaultOptions: templateData.cc,
       },
       {
         key: "bcc",
         question: "BCC",
         type: "custommultiselect",
-        defaultValue: templateData.bcc,
+        defaultOptions: templateData.bcc,
       },
       {
         key: "replyTo",
         question: "Reply To",
         type: "customselect",
-        defaultValue: templateData.replyTo,
+        defaultOptions: templateData.replyTo ? [templateData.replyTo] : [],
+        options: templateData.replyTo ? [templateData.replyTo] : [],
       },
     ];
   }, [templateData]);

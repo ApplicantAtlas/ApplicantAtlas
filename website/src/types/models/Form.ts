@@ -19,6 +19,7 @@ export type AdditionalOptions = {
   showTimezone?: boolean;
   isPassword?: boolean;
   useDefaultValuesFrom?: "mlh-schools" | undefined;
+  ifInputHTMLKeepHTML?: boolean; // for richtext
 };
 
 export type FieldValue =

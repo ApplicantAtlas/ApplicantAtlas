@@ -1,5 +1,5 @@
 import { ToastType, useToast } from "@/components/Toast/ToastContext";
-import { DeleteEmailTemplate, UpdateEmailTemplate } from "@/services/EmailTemplateService";
+import { DeleteEmailTemplate } from "@/services/EmailTemplateService";
 import { EmailTemplate } from "@/types/models/EmailTemplate";
 import { useState } from "react";
 
