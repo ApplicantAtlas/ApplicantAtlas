@@ -1,15 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PipelineActionModal from "./PipelineActionModal";
 import { PipelineAction, PipelineConfiguration, PipelineEvent } from "@/types/models/Pipeline";
+import { EventModel } from "@/types/models/Event";
+import { FormStructure } from "@/types/models/Form";
+import { getEventForms } from "@/services/EventService";
 
 interface PipelineBuilderProps {
   pipeline: PipelineConfiguration;
   onSubmit: (pipeline: PipelineConfiguration) => void;
+  eventDetails: EventModel;
 }
 
 const PipelineBuilder: React.FC<PipelineBuilderProps> = ({
   pipeline,
   onSubmit,
+  eventDetails
 }) => {
   const [pipelineConfig, setPipelineConfig] =
     useState<PipelineConfiguration>(pipeline);
@@ -17,10 +22,21 @@ const PipelineBuilder: React.FC<PipelineBuilderProps> = ({
     null
   );
   const [deleteAction, setDeleteAction] = useState<PipelineAction>();
+  const [eventForms, setEventForms] = useState<FormStructure[]>();
 
   const handleFormSubmit = () => {
     onSubmit(pipelineConfig);
   };
+
+  useEffect(() => {
+    if (eventDetails !== null) {
+      getEventForms(eventDetails.ID)
+        .then((f) => {
+          setEventForms(f.data.forms);
+        })
+        .catch(() => {});
+    }
+  }, [eventDetails])
 
   const handleAddAction = (action: PipelineAction | PipelineEvent) => {
     setPipelineConfig((prevConfig) => ({
@@ -149,6 +165,7 @@ const PipelineBuilder: React.FC<PipelineBuilderProps> = ({
         onClose={() => setShowModalType(null)}
         onSelect={handleAddAction}
         modalType="action"
+        eventForms={eventForms}
       />
 
       {deleteAction && (

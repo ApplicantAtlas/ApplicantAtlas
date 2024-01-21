@@ -50,6 +50,11 @@ export type FormFieldType =
   | "colorpicker"
   | "richtext";
 
+export type FormOptionCustomLabelValue = {
+  label: string;
+  value: string;
+}
+
 export type FormField = {
   question: string;
   type: FormFieldType;
@@ -57,8 +62,8 @@ export type FormField = {
   additionalValidation?: FieldValidation;
   key: string;
   defaultValue?: FieldValue;
-  options?: string[]; // for select, checkbox, radio
-  defaultOptions?: string[]; // for select, checkbox, radio
+  options?: string[] | FormOptionCustomLabelValue[]; // for select, checkbox, radio
+  defaultOptions?: string[] | FormOptionCustomLabelValue[]; // for select, checkbox, radio
   required?: boolean;
   disabled?: boolean; // TODO: implement
   additionalOptions?: AdditionalOptions;

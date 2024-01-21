@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from "react";
 import ReactSelect from "react-select";
 import CreatableSelect from "react-select/creatable";
-import { FormField, FieldValue } from "@/types/models/Form";
+import {
+  FormField,
+  FieldValue,
+  FormOptionCustomLabelValue,
+} from "@/types/models/Form";
 
 type SelectProps = {
   field: FormField;
   onChange: (key: string, value: FieldValue) => void;
   isMultiSelect?: boolean;
   allowArbitraryInput?: boolean;
-  defaultOptions?: string[];
+  defaultOptions?: string[] | FormOptionCustomLabelValue[];
 };
 
 const Select: React.FC<SelectProps> = ({
@@ -19,14 +23,33 @@ const Select: React.FC<SelectProps> = ({
   defaultOptions = undefined,
 }) => {
   const options = Array.isArray(field.options)
-    ? field.options.map((option) => ({ label: option, value: option }))
+    ? field.options.map((option) =>
+        typeof option === "string" ? { label: option, value: option } : option
+      )
     : [];
 
   // Transform the defaultOptions into the format expected by react-select
   const getDefaultValue = () => {
-    return isMultiSelect
-      ? defaultOptions?.map((option) => ({ label: option, value: option }))
-      : options.find((option) => option.value === defaultOptions?.[0]);
+    if (isMultiSelect) {
+      // For multi-select, each default option is mapped to an object
+      return Array.isArray(defaultOptions)
+        ? defaultOptions.map((option) =>
+            typeof option === "string"
+              ? { label: option, value: option }
+              : option
+          )
+        : [];
+    } else {
+      // For single-select, use the first default option if it exists
+      const singleDefaultValue =
+        Array.isArray(defaultOptions) && defaultOptions.length > 0
+          ? defaultOptions[0]
+          : undefined;
+
+      return typeof singleDefaultValue === "string"
+        ? options.find((option) => option.value === singleDefaultValue)
+        : singleDefaultValue;
+    }
   };
 
   const [selectedValue, setSelectedValue] = useState(getDefaultValue());
@@ -64,7 +87,7 @@ const Select: React.FC<SelectProps> = ({
         classNamePrefix="react-select"
         required={field.required}
         menuPortalTarget={document.body} // Append the menu to body to avoid clipping issues
-        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+        styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
       />
     </div>
   );

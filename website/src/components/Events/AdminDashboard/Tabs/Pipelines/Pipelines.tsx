@@ -82,6 +82,7 @@ const Pipelines: React.FC<PipelinesProps> = ({ eventDetails }) => {
       <>
         <SelectPipeline
           pipeline={selectedPipeline}
+          eventDetails={eventDetails}
           onDelete={onDeletedForm}
         />
         <button

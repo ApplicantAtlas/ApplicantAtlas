@@ -5,15 +5,18 @@ import { PipelineConfiguration } from "@/types/models/Pipeline";
 import { UpdatePipeline } from "@/services/PipelineService";
 import PipelineSettings from "./PipelineSettings";
 import PipelineBuilder from "./PipelineBuilder";
+import { EventModel } from "@/types/models/Event";
 
 interface SelectPipelineProps {
   pipeline: PipelineConfiguration;
   onDelete: () => void;
+  eventDetails: EventModel;
 }
 
 const SelectPipeline: React.FC<SelectPipelineProps> = ({
   pipeline,
   onDelete,
+  eventDetails
 }) => {
   const [pageSelected, setPageSelected] = useState<
     "view" | "edit" | "settings" | "runs"
@@ -73,7 +76,7 @@ const SelectPipeline: React.FC<SelectPipelineProps> = ({
       </h2>
 
       {pageSelected === "edit" && (
-        <PipelineBuilder pipeline={pipeline} onSubmit={updatePipeline} />
+        <PipelineBuilder pipeline={pipeline} onSubmit={updatePipeline} eventDetails={eventDetails} />
       )}
 
       {pageSelected === "view" && <p>{JSON.stringify(pipeline)}</p>}
