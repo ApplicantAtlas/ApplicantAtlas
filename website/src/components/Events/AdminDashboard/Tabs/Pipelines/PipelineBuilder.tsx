@@ -102,6 +102,7 @@ const PipelineBuilder: React.FC<PipelineBuilderProps> = ({
         onClose={() => setShowModalType(null)}
         onSelect={handleSetEvent}
         modalType="event"
+        eventForms={eventForms}
       />
 
       <h2 className="text-lg mt-4">Pipeline Actions</h2>

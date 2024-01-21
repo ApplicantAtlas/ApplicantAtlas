@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import { PipelineAction, PipelineEvent } from "@/types/models/Pipeline";
-import { FieldValue, FormField, FormOptionCustomLabelValue, FormStructure } from "@/types/models/Form";
+import {
+  FieldValue,
+  FormField,
+  FormOptionCustomLabelValue,
+  FormStructure,
+} from "@/types/models/Form";
 import FormBuilder from "@/components/Form/FormBuilder";
 import Select from "@/components/Form/inputs/Select";
 import { toTitleCase } from "@/utils/strings";
@@ -18,7 +23,7 @@ const PipelineActionModal: React.FC<PipelineActionModalProps> = ({
   onClose,
   onSelect,
   modalType,
-  eventForms
+  eventForms,
 }) => {
   const options =
     modalType === "action"
@@ -46,8 +51,8 @@ const PipelineActionModal: React.FC<PipelineActionModalProps> = ({
             onFormID: formData.onFormID,
             onFieldID: formData.onFieldID,
             condition: {
-                comparison: "eq", // dropdown
-                value: "accepted", // todo: make these out
+              comparison: "eq", // dropdown
+              value: "accepted", // todo: make these out
             },
           },
         };
@@ -115,7 +120,7 @@ const PipelineActionModal: React.FC<PipelineActionModalProps> = ({
         onClose();
       }
     }
-  }
+  };
 
   const renderPipelineEventForm = (t: string | undefined) => {
     if (!t) return null;
@@ -146,7 +151,9 @@ const PipelineActionModal: React.FC<PipelineActionModalProps> = ({
       return (
         <FormBuilder
           formStructure={formStructure}
-          submissionFunction={modalType === "action" ? handleAddAction : handleAddEvent}
+          submissionFunction={
+            modalType === "action" ? handleAddAction : handleAddEvent
+          }
           buttonText={modalType === "action" ? "Add Action" : "Set Event"}
         />
       );
@@ -172,7 +179,7 @@ const PipelineActionModal: React.FC<PipelineActionModalProps> = ({
                 } as FormField
               }
               onChange={(k, v: FieldValue) => {
-                setSelectedType(v as string)
+                setSelectedType(v as string);
               }}
               isMultiSelect={false}
               allowArbitraryInput={false}
@@ -180,10 +187,13 @@ const PipelineActionModal: React.FC<PipelineActionModalProps> = ({
 
             {modalType !== null && renderPipelineEventForm(selectedType)}
             <div className="modal-action">
-              <button onClick={() => {
-                setSelectedType(undefined);
-                onClose();
-              }} className="btn btn-outline">
+              <button
+                onClick={() => {
+                  setSelectedType(undefined);
+                  onClose();
+                }}
+                className="btn btn-outline"
+              >
                 Close
               </button>
             </div>
@@ -197,7 +207,9 @@ const PipelineActionModal: React.FC<PipelineActionModalProps> = ({
 export default PipelineActionModal;
 
 // Helper functions to create form structures for each action type
-const createSendEmailFormStructure = (eventForms: FormStructure[] | undefined): FormStructure => {
+const createSendEmailFormStructure = (
+  eventForms: FormStructure[] | undefined
+): FormStructure => {
   return {
     attrs: [
       {
@@ -223,7 +235,9 @@ const createSendEmailFormStructure = (eventForms: FormStructure[] | undefined): 
   };
 };
 
-const createAllowFormAccessFormStructure = (eventForms: FormStructure[] | undefined): FormStructure => {
+const createAllowFormAccessFormStructure = (
+  eventForms: FormStructure[] | undefined
+): FormStructure => {
   return {
     attrs: [
       {
@@ -240,9 +254,9 @@ const createAllowFormAccessFormStructure = (eventForms: FormStructure[] | undefi
         options: eventForms?.map((form) => {
           return {
             value: form.id,
-            label: `${form.name} (${form.id})`
+            label: `${form.name} (${form.id})`,
           } as FormOptionCustomLabelValue;
-        })
+        }),
       },
       {
         question: "Expiration (in hours)",
@@ -255,7 +269,9 @@ const createAllowFormAccessFormStructure = (eventForms: FormStructure[] | undefi
   };
 };
 
-const createWebhookFormStructure = (eventForms: FormStructure[] | undefined): FormStructure => {
+const createWebhookFormStructure = (
+  eventForms: FormStructure[] | undefined
+): FormStructure => {
   return {
     attrs: [
       {
@@ -282,7 +298,9 @@ const createWebhookFormStructure = (eventForms: FormStructure[] | undefined): Fo
   };
 };
 
-const createFormSubmissionFormStructure = (eventForms: FormStructure[] | undefined): FormStructure => {
+const createFormSubmissionFormStructure = (
+  eventForms: FormStructure[] | undefined
+): FormStructure => {
   return {
     attrs: [
       {
@@ -299,15 +317,17 @@ const createFormSubmissionFormStructure = (eventForms: FormStructure[] | undefin
         options: eventForms?.map((form) => {
           return {
             value: form.id,
-            label: `${form.name} (${form.id})`
+            label: `${form.name} (${form.id})`,
           } as FormOptionCustomLabelValue;
-        })
+        }),
       },
     ],
   };
 };
 
-const createFieldChangeFormStructure = (eventForms: FormStructure[] | undefined): FormStructure => {
+const createFieldChangeFormStructure = (
+  eventForms: FormStructure[] | undefined
+): FormStructure => {
   return {
     attrs: [
       {
@@ -318,21 +338,27 @@ const createFieldChangeFormStructure = (eventForms: FormStructure[] | undefined)
       },
       {
         question: "On Form",
-        type: "text",
+        type: "select",
         key: "onFormID",
         required: true,
         options: eventForms?.map((form) => {
           return {
             value: form.id,
-            label: `${form.name} (${form.id})`
+            label: `${form.name} (${form.id})`,
           } as FormOptionCustomLabelValue;
-        })
+        }),
       },
       {
-        question: "On Field ID",
-        type: "text",
+        question: "On Form Field",
+        type: "select",
         key: "onFieldID",
         required: true,
+        options: eventForms?.flatMap((form) =>
+          form.attrs.map((attr) => ({
+            value: `${attr.key}`,
+            label: `${attr.question} (${form.name} id: ${form.id})`, // TODO: Conditional options depending on form selected.
+          }))
+        ),
       },
       // TODO: Need to do the condition
     ],
