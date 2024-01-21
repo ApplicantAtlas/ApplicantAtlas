@@ -83,6 +83,7 @@ const EmailTemplates: React.FC<EmailTemplatesProps> = ({ eventDetails }) => {
         <SelectEmailTemplate
           template={selectedEmailTemplate}
           onDelete={onDeletedTemplate}
+          eventDetails={eventDetails}
         />
         <button
           className="btn btn-error mt-4"

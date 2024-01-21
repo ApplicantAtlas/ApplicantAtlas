@@ -1,19 +1,43 @@
 import React, { useMemo, useState } from "react";
 import FormBuilder from "@/components/Form/FormBuilder";
-import { FormField, FieldValue } from "@/types/models/Form";
+import {
+  FormField,
+  FieldValue,
+  FormStructure,
+  FormOptionCustomLabelValue,
+} from "@/types/models/Form";
 import { EmailTemplate } from "@/types/models/EmailTemplate";
 import { IsObjectIDNotNull } from "@/utils/conversions";
+import { EventModel } from "@/types/models/Event";
+import { getEventForms } from "@/services/EventService";
+import { ToastType, useToast } from "@/components/Toast/ToastContext";
 
 interface EmailTemplateEditorProps {
   template: EmailTemplate;
   onSubmit: (template: EmailTemplate) => void;
+  eventDetails: EventModel;
 }
 
 const EmailTemplateEditor = ({
   template,
   onSubmit,
+  eventDetails,
 }: EmailTemplateEditorProps) => {
   const [templateData, setTemplateData] = useState<EmailTemplate>(template);
+  const [eventForms, setEventForms] = useState<FormStructure[]>();
+  const { showToast } = useToast();
+
+  useMemo(() => {
+    if (eventDetails !== null) {
+      getEventForms(eventDetails.ID)
+        .then((f) => {
+          setEventForms(f.data.forms);
+        })
+        .catch(() => {});
+    } else {
+      showToast("Could not find event details to load forms", ToastType.Error);
+    }
+  }, [eventDetails]);
 
   // TODO: Pre-populate the templating form ID with the list of all forms
   // TODO: Allow some sort of validation and auto popup for the templating form field IDs
@@ -47,9 +71,17 @@ const EmailTemplateEditor = ({
       {
         key: "dataFromFormID",
         question: "Allow Templating From Form ID",
-        description: "If you want to use data from a form's submission in your email template, enter the form ID here. You can then template with ${field_id}", // TODO: Want to link out to docs about templating on click
-        type: "text",
-        defaultValue: IsObjectIDNotNull(templateData.dataFromFormID) ? templateData.dataFromFormID : "",
+        description:
+          "If you want to use data from a form's submission in your email template, enter the form ID here. You can then template with ${field_id}", // TODO: Want to link out to docs about templating on click
+        type: "select",
+        defaultOptions: IsObjectIDNotNull(templateData.dataFromFormID) ? [templateData.dataFromFormID as string] : undefined,
+        options: eventForms?.map(
+          (form) =>
+            ({
+              value: form.id,
+              label: `${form.name} (${form.id})`,
+            } as FormOptionCustomLabelValue)
+        ),
       },
       {
         key: "cc",
@@ -71,7 +103,7 @@ const EmailTemplateEditor = ({
         options: templateData.replyTo ? [templateData.replyTo] : [],
       },
     ];
-  }, [templateData]);
+  }, [templateData, eventForms]);
 
   const handleFormSubmission = (formData: Record<string, FieldValue>) => {
     const updatedTemplate = {

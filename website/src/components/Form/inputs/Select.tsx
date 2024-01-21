@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ReactSelect from "react-select";
 import CreatableSelect from "react-select/creatable";
+import InformationIcon from "@/components/Icons/InformationIcon";
 import {
   FormField,
   FieldValue,
@@ -75,6 +76,11 @@ const Select: React.FC<SelectProps> = ({
         <span className="label-text">
           {field.question}{" "}
           {field.required && <span className="text-error">*</span>}
+          {field.description && (
+            <div className="tooltip" data-tip={field.description}>
+              <InformationIcon className="h-4 w-4" />
+            </div>
+          )}
         </span>
       </label>
       <SelectComponent

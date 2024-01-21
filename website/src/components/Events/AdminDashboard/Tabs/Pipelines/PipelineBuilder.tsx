@@ -16,7 +16,7 @@ interface PipelineBuilderProps {
 const PipelineBuilder: React.FC<PipelineBuilderProps> = ({
   pipeline,
   onSubmit,
-  eventDetails
+  eventDetails,
 }) => {
   const [pipelineConfig, setPipelineConfig] =
     useState<PipelineConfiguration>(pipeline);
@@ -26,6 +26,7 @@ const PipelineBuilder: React.FC<PipelineBuilderProps> = ({
   const [deleteAction, setDeleteAction] = useState<PipelineAction>();
   const [eventForms, setEventForms] = useState<FormStructure[]>();
   const [eventEmailTemplates, setEventEmailTemplates] = useState<EmailTemplate[]>();
+  const [editAction, setEditAction] = useState<PipelineAction>();
 
   const handleFormSubmit = () => {
     onSubmit(pipelineConfig);
@@ -113,6 +114,7 @@ const PipelineBuilder: React.FC<PipelineBuilderProps> = ({
         modalType="event"
         eventForms={eventForms}
         eventEmailTemplates={eventEmailTemplates}
+        defaultEvent={pipelineConfig.event}
       />
 
       <h2 className="text-lg mt-4">Pipeline Actions</h2>
@@ -126,6 +128,7 @@ const PipelineBuilder: React.FC<PipelineBuilderProps> = ({
                   <td>Type</td>
                   <td>Details</td>
                   <td></td>
+                  <td></td>
                 </tr>
               </thead>
               <tbody>
@@ -134,6 +137,18 @@ const PipelineBuilder: React.FC<PipelineBuilderProps> = ({
                     <tr key={index} className="hover cursor-pointer">
                       <td>{action.type}</td>
                       <td>{JSON.stringify(action, null, 2)}</td>
+                      <td>
+                        <button
+                          className="btn btn-primary"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setEditAction(action);
+                            setShowModalType("action");
+                          }}
+                        >
+                          Edit
+                        </button>
+                      </td>
                       <td>
                         <button
                           className="btn btn-error"
@@ -173,11 +188,15 @@ const PipelineBuilder: React.FC<PipelineBuilderProps> = ({
 
       <PipelineActionModal
         isOpen={showModalType === "action"}
-        onClose={() => setShowModalType(null)}
+        onClose={() => {
+          setShowModalType(null)
+          setEditAction(undefined)
+        }}
         onSelect={handleAddAction}
         modalType="action"
         eventForms={eventForms}
         eventEmailTemplates={eventEmailTemplates}
+        defaultAction={editAction}
       />
 
       {deleteAction && (
@@ -197,7 +216,9 @@ const PipelineBuilder: React.FC<PipelineBuilderProps> = ({
               </button>
               <button
                 className="btn btn-ghost"
-                onClick={() => setDeleteAction(undefined)}
+                onClick={() => {
+                  setDeleteAction(undefined)
+                }}
               >
                 Cancel
               </button>
