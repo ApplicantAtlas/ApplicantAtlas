@@ -4,6 +4,8 @@ import { PipelineAction, PipelineConfiguration, PipelineEvent } from "@/types/mo
 import { EventModel } from "@/types/models/Event";
 import { FormStructure } from "@/types/models/Form";
 import { getEventForms } from "@/services/EventService";
+import { EmailTemplate } from "@/types/models/EmailTemplate";
+import { GetEmailTemplates } from "@/services/EmailTemplateService";
 
 interface PipelineBuilderProps {
   pipeline: PipelineConfiguration;
@@ -23,6 +25,7 @@ const PipelineBuilder: React.FC<PipelineBuilderProps> = ({
   );
   const [deleteAction, setDeleteAction] = useState<PipelineAction>();
   const [eventForms, setEventForms] = useState<FormStructure[]>();
+  const [eventEmailTemplates, setEventEmailTemplates] = useState<EmailTemplate[]>();
 
   const handleFormSubmit = () => {
     onSubmit(pipelineConfig);
@@ -33,6 +36,12 @@ const PipelineBuilder: React.FC<PipelineBuilderProps> = ({
       getEventForms(eventDetails.ID)
         .then((f) => {
           setEventForms(f.data.forms);
+        })
+        .catch(() => {});
+
+      GetEmailTemplates(eventDetails.ID)
+        .then((f) => {
+          setEventEmailTemplates(f.data.email_templates);
         })
         .catch(() => {});
     }
@@ -103,6 +112,7 @@ const PipelineBuilder: React.FC<PipelineBuilderProps> = ({
         onSelect={handleSetEvent}
         modalType="event"
         eventForms={eventForms}
+        eventEmailTemplates={eventEmailTemplates}
       />
 
       <h2 className="text-lg mt-4">Pipeline Actions</h2>
@@ -167,6 +177,7 @@ const PipelineBuilder: React.FC<PipelineBuilderProps> = ({
         onSelect={handleAddAction}
         modalType="action"
         eventForms={eventForms}
+        eventEmailTemplates={eventEmailTemplates}
       />
 
       {deleteAction && (

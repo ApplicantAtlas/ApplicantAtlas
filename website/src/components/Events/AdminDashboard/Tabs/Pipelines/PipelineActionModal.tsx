@@ -9,6 +9,7 @@ import {
 import FormBuilder from "@/components/Form/FormBuilder";
 import Select from "@/components/Form/inputs/Select";
 import { toTitleCase } from "@/utils/strings";
+import { EmailTemplate } from "@/types/models/EmailTemplate";
 
 interface PipelineActionModalProps {
   isOpen: boolean;
@@ -16,6 +17,7 @@ interface PipelineActionModalProps {
   onSelect: (action: PipelineAction | PipelineEvent) => void;
   modalType: "action" | "event";
   eventForms?: FormStructure[];
+  eventEmailTemplates?: EmailTemplate[];
 }
 
 const PipelineActionModal: React.FC<PipelineActionModalProps> = ({
@@ -24,6 +26,7 @@ const PipelineActionModal: React.FC<PipelineActionModalProps> = ({
   onSelect,
   modalType,
   eventForms,
+  eventEmailTemplates,
 }) => {
   const options =
     modalType === "action"
@@ -129,7 +132,10 @@ const PipelineActionModal: React.FC<PipelineActionModalProps> = ({
 
     switch (t) {
       case "SendEmail":
-        formStructure = createSendEmailFormStructure(eventForms);
+        formStructure = createSendEmailFormStructure(
+          eventForms,
+          eventEmailTemplates
+        );
         break;
       case "AllowFormAccess":
         formStructure = createAllowFormAccessFormStructure(eventForms);
@@ -208,7 +214,8 @@ export default PipelineActionModal;
 
 // Helper functions to create form structures for each action type
 const createSendEmailFormStructure = (
-  eventForms: FormStructure[] | undefined
+  eventForms: FormStructure[] | undefined,
+  eventEmailTemplates: EmailTemplate[] | undefined
 ): FormStructure => {
   return {
     attrs: [
@@ -219,16 +226,29 @@ const createSendEmailFormStructure = (
         required: true,
       },
       {
-        question: "Email Template ID",
-        type: "text",
+        question: "Email Template",
+        type: "select",
         key: "emailTemplateID",
         required: true,
+        options: eventEmailTemplates?.map((template) => {
+          return {
+            value: template.id,
+            label: `${template.name} (${template.id})`,
+          } as FormOptionCustomLabelValue;
+        }),
       },
       {
-        question: "Email Field ID",
-        type: "text",
+        question: "Email Address Field",
+        type: "select",
         key: "emailFieldID",
+        description: "What field contains the email address?",
         required: true,
+        options: eventForms?.flatMap((form) =>
+          form.attrs.map((attr) => ({
+            value: `${attr.key}`,
+            label: `${attr.question} (${form.name} id: ${form.id})`, // TODO: Conditional options depending on form selected.
+          }))
+        ),
       },
       // Add more fields as needed
     ],
