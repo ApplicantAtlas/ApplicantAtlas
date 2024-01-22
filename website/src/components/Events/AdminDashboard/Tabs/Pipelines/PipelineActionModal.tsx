@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { PipelineAction, PipelineEvent } from "@/types/models/Pipeline";
 import {
   FieldValue,
@@ -18,6 +18,8 @@ interface PipelineActionModalProps {
   modalType: "action" | "event";
   eventForms?: FormStructure[];
   eventEmailTemplates?: EmailTemplate[];
+  defaultEvent?: PipelineEvent;
+  defaultAction?: PipelineAction;
 }
 
 const PipelineActionModal: React.FC<PipelineActionModalProps> = ({
@@ -27,12 +29,15 @@ const PipelineActionModal: React.FC<PipelineActionModalProps> = ({
   modalType,
   eventForms,
   eventEmailTemplates,
+  defaultEvent,
+  defaultAction,
 }) => {
   const options =
     modalType === "action"
       ? ["SendEmail", "AllowFormAccess", "Webhook"]
       : ["FormSubmission", "FieldChange"];
-  const [selectedType, setSelectedType] = useState<string>();
+  const defaultType = defaultEvent?.type || defaultAction?.type;
+  const [selectedType, setSelectedType] = useState<string | undefined>(defaultType);
 
   const createEventObject = (
     formData: Record<string, any>
@@ -126,6 +131,7 @@ const PipelineActionModal: React.FC<PipelineActionModalProps> = ({
   };
 
   const renderPipelineEventForm = (t: string | undefined) => {
+    console.log('rendering pipeline', t, defaultType)
     if (!t) return null;
 
     let formStructure: FormStructure | null = null;
@@ -134,20 +140,21 @@ const PipelineActionModal: React.FC<PipelineActionModalProps> = ({
       case "SendEmail":
         formStructure = createSendEmailFormStructure(
           eventForms,
-          eventEmailTemplates
+          eventEmailTemplates,
+          defaultAction
         );
         break;
       case "AllowFormAccess":
-        formStructure = createAllowFormAccessFormStructure(eventForms);
+        formStructure = createAllowFormAccessFormStructure(eventForms, defaultAction);
         break;
       case "Webhook":
-        formStructure = createWebhookFormStructure(eventForms);
+        formStructure = createWebhookFormStructure(eventForms, defaultAction);
         break;
       case "FormSubmission":
-        formStructure = createFormSubmissionFormStructure(eventForms);
+        formStructure = createFormSubmissionFormStructure(eventForms, defaultEvent);
         break;
       case "FieldChange":
-        formStructure = createFieldChangeFormStructure(eventForms);
+        formStructure = createFieldChangeFormStructure(eventForms, defaultEvent);
         break;
       default:
         return null;
@@ -174,7 +181,6 @@ const PipelineActionModal: React.FC<PipelineActionModalProps> = ({
         <div className="modal modal-open">
           <div className="modal-box">
             <h3 className="text-xl font-bold">Add a new {modalType}</h3>
-
             <Select
               field={
                 {
@@ -182,8 +188,10 @@ const PipelineActionModal: React.FC<PipelineActionModalProps> = ({
                   type: "select",
                   key: "type",
                   options: options,
+                  defaultOptions: defaultType ? [defaultType] : undefined,
                 } as FormField
               }
+              defaultOptions={defaultType ? [defaultType] : undefined}
               onChange={(k, v: FieldValue) => {
                 setSelectedType(v as string);
               }}
@@ -191,11 +199,11 @@ const PipelineActionModal: React.FC<PipelineActionModalProps> = ({
               allowArbitraryInput={false}
             />
 
-            {modalType !== null && renderPipelineEventForm(selectedType)}
+            {renderPipelineEventForm(selectedType)}
             <div className="modal-action">
               <button
                 onClick={() => {
-                  setSelectedType(undefined);
+                  setSelectedType(defaultType);
                   onClose();
                 }}
                 className="btn btn-outline"
@@ -215,7 +223,8 @@ export default PipelineActionModal;
 // Helper functions to create form structures for each action type
 const createSendEmailFormStructure = (
   eventForms: FormStructure[] | undefined,
-  eventEmailTemplates: EmailTemplate[] | undefined
+  eventEmailTemplates: EmailTemplate[] | undefined,
+  defaultAction: PipelineAction | undefined
 ): FormStructure => {
   return {
     attrs: [
@@ -224,6 +233,7 @@ const createSendEmailFormStructure = (
         type: "text",
         key: "name",
         required: true,
+        defaultValue: defaultAction?.name,
       },
       {
         question: "Email Template",
@@ -236,6 +246,7 @@ const createSendEmailFormStructure = (
             label: `${template.name} (${template.id})`,
           } as FormOptionCustomLabelValue;
         }),
+        defaultOptions: defaultAction?.sendEmail?.emailTemplateID ? [defaultAction?.sendEmail?.emailTemplateID] : undefined,
       },
       {
         question: "Email Address Field",
@@ -249,6 +260,7 @@ const createSendEmailFormStructure = (
             label: `${attr.question} (${form.name} id: ${form.id})`, // TODO: Conditional options depending on form selected.
           }))
         ),
+        defaultOptions: defaultAction?.sendEmail?.emailFieldID ? [defaultAction?.sendEmail?.emailFieldID] : undefined,
       },
       // Add more fields as needed
     ],
@@ -256,7 +268,7 @@ const createSendEmailFormStructure = (
 };
 
 const createAllowFormAccessFormStructure = (
-  eventForms: FormStructure[] | undefined
+  eventForms: FormStructure[] | undefined, defaultAction: PipelineAction | undefined
 ): FormStructure => {
   return {
     attrs: [
@@ -265,6 +277,7 @@ const createAllowFormAccessFormStructure = (
         type: "text",
         key: "name",
         required: true,
+        defaultValue: defaultAction?.name,
       },
       {
         question: "To Form",
@@ -277,12 +290,14 @@ const createAllowFormAccessFormStructure = (
             label: `${form.name} (${form.id})`,
           } as FormOptionCustomLabelValue;
         }),
+        defaultOptions: defaultAction?.allowFormAccess?.toFormID ? [defaultAction?.allowFormAccess?.toFormID] : undefined,
       },
       {
         question: "Expiration (in hours)",
         type: "number",
         key: "expiration",
         additionalValidation: { min: 1 },
+        defaultValue: defaultAction?.allowFormAccess?.options?.expiration?.inHoursFromPipelineRun,
       },
       // Add more fields as needed
     ],
@@ -290,7 +305,7 @@ const createAllowFormAccessFormStructure = (
 };
 
 const createWebhookFormStructure = (
-  eventForms: FormStructure[] | undefined
+  eventForms: FormStructure[] | undefined, defaultAction: PipelineAction | undefined
 ): FormStructure => {
   return {
     attrs: [
@@ -299,12 +314,14 @@ const createWebhookFormStructure = (
         type: "text",
         key: "name",
         required: true,
+        defaultValue: defaultAction?.name,
       },
       {
         question: "URL",
         type: "text",
         key: "url",
         required: true,
+        defaultValue: defaultAction?.webhook?.url,
       },
       {
         question: "Method",
@@ -312,6 +329,7 @@ const createWebhookFormStructure = (
         key: "method",
         options: ["POST", "GET", "PUT", "DELETE"],
         required: true,
+        defaultValue: defaultAction?.webhook?.method,
       },
       // Add fields for headers and body as necessary
     ],
@@ -319,7 +337,7 @@ const createWebhookFormStructure = (
 };
 
 const createFormSubmissionFormStructure = (
-  eventForms: FormStructure[] | undefined
+  eventForms: FormStructure[] | undefined, defaultEvent: PipelineEvent | undefined
 ): FormStructure => {
   return {
     attrs: [
@@ -328,6 +346,7 @@ const createFormSubmissionFormStructure = (
         type: "text",
         key: "name",
         required: true,
+        defaultValue: defaultEvent?.name,
       },
       {
         question: "On Form",
@@ -340,13 +359,14 @@ const createFormSubmissionFormStructure = (
             label: `${form.name} (${form.id})`,
           } as FormOptionCustomLabelValue;
         }),
+        defaultOptions: defaultEvent?.formSubmission?.onFormID ? [defaultEvent?.formSubmission?.onFormID] : undefined,
       },
     ],
   };
 };
 
 const createFieldChangeFormStructure = (
-  eventForms: FormStructure[] | undefined
+  eventForms: FormStructure[] | undefined, defaultEvent: PipelineEvent | undefined
 ): FormStructure => {
   return {
     attrs: [
@@ -355,6 +375,7 @@ const createFieldChangeFormStructure = (
         type: "text",
         key: "name",
         required: true,
+        defaultValue: defaultEvent?.name,
       },
       {
         question: "On Form",
@@ -367,6 +388,7 @@ const createFieldChangeFormStructure = (
             label: `${form.name} (${form.id})`,
           } as FormOptionCustomLabelValue;
         }),
+        defaultOptions: defaultEvent?.fieldChange?.onFormID ? [defaultEvent?.fieldChange?.onFormID] : undefined,
       },
       {
         question: "On Form Field",
@@ -379,6 +401,7 @@ const createFieldChangeFormStructure = (
             label: `${attr.question} (${form.name} id: ${form.id})`, // TODO: Conditional options depending on form selected.
           }))
         ),
+        defaultOptions: defaultEvent?.fieldChange?.onFieldID ? [defaultEvent?.fieldChange?.onFieldID] : undefined,
       },
       // TODO: Need to do the condition
     ],

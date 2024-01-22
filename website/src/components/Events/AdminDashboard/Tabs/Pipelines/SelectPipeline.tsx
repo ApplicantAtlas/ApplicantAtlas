@@ -1,7 +1,7 @@
 import { eventEmitter } from "@/events/EventEmitter";
 import { useState } from "react";
 import { ToastType, useToast } from "@/components/Toast/ToastContext";
-import { PipelineConfiguration } from "@/types/models/Pipeline";
+import { PipelineAction, PipelineConfiguration } from "@/types/models/Pipeline";
 import { UpdatePipeline } from "@/services/PipelineService";
 import PipelineSettings from "./PipelineSettings";
 import PipelineBuilder from "./PipelineBuilder";
@@ -23,6 +23,7 @@ const SelectPipeline: React.FC<SelectPipelineProps> = ({
   >("view");
   const [pipelineConfig, setPipeline] =
     useState<PipelineConfiguration>(pipeline);
+
   const { showToast } = useToast();
 
   // Edit

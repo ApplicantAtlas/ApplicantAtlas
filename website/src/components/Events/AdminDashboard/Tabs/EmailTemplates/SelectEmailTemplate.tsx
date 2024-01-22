@@ -4,15 +4,18 @@ import { EmailTemplate } from "@/types/models/EmailTemplate";
 import { UpdateEmailTemplate } from "@/services/EmailTemplateService";
 import EmailTemplateEditor from "./EmailTemplateEditor";
 import EmailTemplateSettings from "./EmailTemplateSettings";
+import { EventModel } from "@/types/models/Event";
 
-interface SelectEmailTempalteProps {
+interface SelectEmailTemplateProps {
   template: EmailTemplate;
   onDelete: () => void;
+  eventDetails: EventModel;
 }
 
-const SelectEmailTemplate: React.FC<SelectEmailTempalteProps> = ({
+const SelectEmailTemplate: React.FC<SelectEmailTemplateProps> = ({
   template,
   onDelete,
+  eventDetails
 }) => {
   const [pageSelected, setPageSelected] = useState<
     "edit" | "preview" | "settings"
@@ -84,6 +87,7 @@ const SelectEmailTemplate: React.FC<SelectEmailTempalteProps> = ({
         <EmailTemplateEditor
           template={emailTemplate}
           onSubmit={updateTemplate}
+          eventDetails={eventDetails}
         />
       )}
 
