@@ -195,6 +195,7 @@ const PipelineBuilder: React.FC<PipelineBuilderProps> = ({
       <PipelineActionModal
         isOpen={showModalType === "action"}
         onClose={() => {
+          setEditAction(undefined)  
           setShowModalType(null)
         }}
         onSelect={handleAddAction}
