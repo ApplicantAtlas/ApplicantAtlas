@@ -15,12 +15,13 @@ import (
 
 type MockMongoService struct {
 	mock.Mock
-	data      map[string]models.User // In-memory store
-	events    map[string]models.Event
-	sources   map[string]models.SelectorSource
-	forms     map[string]models.FormStructure
-	pipelines map[string]models.PipelineConfiguration
-	mutex     sync.RWMutex // Mutex for concurrent access
+	data                     map[string]models.User // In-memory store
+	events                   map[string]models.Event
+	sources                  map[string]models.SelectorSource
+	forms                    map[string]models.FormStructure
+	pipelines                map[string]models.PipelineConfiguration
+	eventSecretConfiguration map[string]models.EventSecretConfiguration
+	mutex                    sync.RWMutex // Mutex for concurrent access
 }
 
 func NewMockMongoService() *MockMongoService {
@@ -395,5 +396,21 @@ func (m *MockMongoService) DeleteEmailTemplate(ctx context.Context, templateID p
 }
 
 func (m *MockMongoService) ListEmailTemplates(ctx context.Context, filter bson.M) ([]models.EmailTemplate, error) {
+	return nil, nil
+}
+
+func (m *MockMongoService) ListEventSecretConfigurations(ctx context.Context, filter bson.M, stripSecrets bool) ([]models.EventSecretConfiguration, error) {
+	return nil, nil
+}
+
+func (m *MockMongoService) CreateEventSecret(ctx context.Context, eventID primitive.ObjectID, secret models.EventSecret) (*mongo.UpdateResult, error) {
+	return nil, nil
+}
+
+func (m *MockMongoService) UpdateEventSecret(ctx context.Context, eventID primitive.ObjectID, secret models.EventSecret) (*mongo.UpdateResult, error) {
+	return nil, nil
+}
+
+func (m *MockMongoService) DeleteEventSecret(ctx context.Context, eventID primitive.ObjectID, secretID primitive.ObjectID) (*mongo.DeleteResult, error) {
 	return nil, nil
 }
