@@ -131,7 +131,6 @@ const PipelineActionModal: React.FC<PipelineActionModalProps> = ({
   };
 
   const renderPipelineEventForm = (t: string | undefined) => {
-    console.log('rendering pipeline', t, defaultType)
     if (!t) return null;
 
     let formStructure: FormStructure | null = null;
@@ -191,7 +190,7 @@ const PipelineActionModal: React.FC<PipelineActionModalProps> = ({
                   defaultOptions: defaultType ? [defaultType] : undefined,
                 } as FormField
               }
-              defaultOptions={defaultType ? [defaultType] : undefined}
+              defaultOptions={selectedType ? [selectedType] : undefined}
               onChange={(k, v: FieldValue) => {
                 setSelectedType(v as string);
               }}

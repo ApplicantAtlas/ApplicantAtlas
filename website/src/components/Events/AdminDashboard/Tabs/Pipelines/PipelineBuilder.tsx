@@ -28,6 +28,13 @@ const PipelineBuilder: React.FC<PipelineBuilderProps> = ({
   const [eventEmailTemplates, setEventEmailTemplates] = useState<EmailTemplate[]>();
   const [editAction, setEditAction] = useState<PipelineAction>();
 
+    useEffect(() => {
+      if (editAction) {
+        setShowModalType("action");
+    }
+    }, [editAction]);
+
+
   const handleFormSubmit = () => {
     onSubmit(pipelineConfig);
   };
@@ -142,8 +149,7 @@ const PipelineBuilder: React.FC<PipelineBuilderProps> = ({
                           className="btn btn-primary"
                           onClick={(e) => {
                             e.stopPropagation();
-                            setEditAction(action);
-                            setShowModalType("action");
+                            setEditAction(action)
                           }}
                         >
                           Edit
@@ -189,14 +195,15 @@ const PipelineBuilder: React.FC<PipelineBuilderProps> = ({
       <PipelineActionModal
         isOpen={showModalType === "action"}
         onClose={() => {
+          setEditAction(undefined)  
           setShowModalType(null)
-          setEditAction(undefined)
         }}
         onSelect={handleAddAction}
         modalType="action"
         eventForms={eventForms}
         eventEmailTemplates={eventEmailTemplates}
         defaultAction={editAction}
+        key={editAction?.type} // Force re-render when editing an action
       />
 
       {deleteAction && (
