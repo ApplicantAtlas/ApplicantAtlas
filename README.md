@@ -17,5 +17,5 @@ kafka
 event listener, cd backend/event-listener
 ```KAFKA_BROKER_URL=localhost:9092 go run cmd/main.go```
 
-frontend is just
+For the frontend, make sure that you have Node version >= 21, otherwise Next.JS may run into issues.
 ```cd frontend && npm i && npm run dev```
