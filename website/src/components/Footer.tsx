@@ -9,13 +9,13 @@ const Footer: React.FC = () => {
       <span className="text-sm text-gray-500 mt-2">
         Licensed under
         <a
-          href="https://www.gnu.org/licenses/gpl-3.0.en.html"
+          href="https://www.gnu.org/licenses/agpl-3.0.en.html"
           target="_blank"
           rel="noopener noreferrer"
           className="text-blue-600 hover:underline"
         >
           {" "}
-          GPLv3
+          AGPLv3
         </a>
         .{" "}
         <span>
