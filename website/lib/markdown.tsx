@@ -5,13 +5,14 @@ import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import rehypeStringify from "rehype-stringify";
 import { unified } from "unified";
-import { Node } from "unist";
+import { Node, Parent } from "unist";
 import { visit } from "unist-util-visit";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeSlug from "rehype-slug";
 
 export async function processMarkdown(
-  filePath: string
+  filePath: string,
+  linksBasePath: string = ""
 ): Promise<{ contentHtml: string; toc: TOCItem[] }> {
   const fileContents = fs.readFileSync(filePath, "utf8");
   const { content } = matter(fileContents);
@@ -25,6 +26,22 @@ export async function processMarkdown(
     .use(remarkRehype)
     .use(rehypeSlug)
     //.use(rehypeAutolinkHeadings)
+    .use(() => {
+      return (tree: Node) => {
+        visit(tree, "element", (node: any) => {
+          if (node.tagName === "a" && node.properties && node.properties.href) {
+            const href: string = node.properties.href;
+            if (!href.startsWith("http") && !href.startsWith("#")) {
+              // if it ends in .md remove it, and if it ends in index.md we remove that fully
+              node.properties.href = `${linksBasePath}/${href.replace(
+                /\/index\.md$/,
+                ""
+              ).replace(/\.md$/, "")}`;
+            }
+          }
+        });
+      };
+    })
     .use(rehypeStringify);
 
   const processedContent = await processor.process(content);
@@ -48,7 +65,8 @@ interface TOCItem {
 
 export async function getDocData(
   category: string,
-  slug: string
+  slug: string,
+  linksBasePath: string = ""
 ): Promise<{
   slug: string;
   contentHtml: string;
@@ -60,7 +78,7 @@ export async function getDocData(
     fullPath = path.join(process.cwd(), "docs", `${slug}.md`);
   }
 
-  const { contentHtml, toc } = await processMarkdown(fullPath);
+  const { contentHtml, toc } = await processMarkdown(fullPath, linksBasePath);
 
   return {
     slug,

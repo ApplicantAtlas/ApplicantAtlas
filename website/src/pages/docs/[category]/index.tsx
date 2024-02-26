@@ -42,7 +42,7 @@ export default function CategoryIndexPage({ docData }: Props) {
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { category } = params as { category: string };
-  const docData = await getDocData(category, "index");
+  const docData = await getDocData(category, "index", `${category}`);
   return {
     props: {
       docData,

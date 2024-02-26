@@ -68,7 +68,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     s = "index";
   }
 
-  const docData = await getDocData(category, s);
+  const docData = await getDocData(category, s, s);
   return {
     props: {
       docData,
