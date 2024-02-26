@@ -7,9 +7,8 @@ import rehypeStringify from "rehype-stringify";
 import { unified } from "unified";
 import { Node } from "unist";
 import { visit } from "unist-util-visit";
-import rehypeAutolinkHeadings from 'rehype-autolink-headings';
-import rehypeSlug from 'rehype-slug';
-
+import rehypeAutolinkHeadings from "rehype-autolink-headings";
+import rehypeSlug from "rehype-slug";
 
 export async function processMarkdown(
   filePath: string
@@ -56,7 +55,11 @@ export async function getDocData(
   toc: TOCItem[];
   [key: string]: any;
 }> {
-  const fullPath = path.join(process.cwd(), "docs", category, `${slug}.md`);
+  var fullPath = path.join(process.cwd(), "docs", category, `${slug}.md`);
+  if (category === "") {
+    fullPath = path.join(process.cwd(), "docs", `${slug}.md`);
+  }
+
   const { contentHtml, toc } = await processMarkdown(fullPath);
 
   return {

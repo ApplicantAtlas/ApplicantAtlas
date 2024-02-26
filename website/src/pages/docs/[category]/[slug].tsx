@@ -12,7 +12,6 @@ interface TOCItem {
 }
 
 interface DocData {
-  title: string;
   contentHtml: string;
   toc: TOCItem[];
 }
@@ -48,8 +47,9 @@ export default function DocPage({ docData }: Props) {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const categoriesDir = path.join(process.cwd(), "docs");
-  const categories = fs.readdirSync(categoriesDir);
+    const categoriesDir = path.join(process.cwd(), "docs");
+    const categories = fs.readdirSync(categoriesDir)
+      .filter(item => fs.statSync(path.join(categoriesDir, item)).isDirectory());
 
   const paths = categories.flatMap((category) => {
     const files = fs.readdirSync(path.join(categoriesDir, category));

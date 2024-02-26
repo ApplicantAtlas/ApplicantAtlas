@@ -10,7 +10,12 @@ interface DocLayoutProps {
 const DocLayout: React.FC<DocLayoutProps> = ({ children, toc }) => {
   return (
     <>
-      <Header showUserProfile={true} showShadow={false} customStyles={{header: "border-b border-gray-200"}} menuItems={[]}/>
+      <Header
+        showUserProfile={true}
+        showShadow={false}
+        customStyles={{ header: "border-b border-gray-200" }}
+        menuItems={[]}
+      />
       <div className="flex min-h-screen">
         <aside
           className="relative lg:w-64 lg:max-w-full"
@@ -28,10 +33,18 @@ const DocLayout: React.FC<DocLayoutProps> = ({ children, toc }) => {
         </aside>
 
         <main className="flex-1 w-full p-4">
-          <div className="prose w-full prose-sm sm:prose md:prose-lg">{children}</div>
+          <div className="prose prose-sm sm:prose md:prose-lg">
+            {children}
+          </div>
         </main>
       </div>
       <Footer />
+
+      <style jsx>{`
+      .prose {
+        max-width: none;
+      }
+      `}</style>
     </>
   );
 };

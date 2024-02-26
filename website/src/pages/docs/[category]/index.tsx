@@ -11,7 +11,6 @@ interface TOCItem {
 }
 
 interface DocData {
-  title: string;
   contentHtml: string;
   toc: TOCItem[];
 }
@@ -36,7 +35,7 @@ export default function CategoryIndexPage({ docData }: Props) {
 
   return (
     <DocLayout toc={toc}>
-        <div dangerouslySetInnerHTML={{ __html: docData.contentHtml }} />
+      <div dangerouslySetInnerHTML={{ __html: docData.contentHtml }} />
     </DocLayout>
   );
 }
@@ -53,10 +52,14 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const categoriesDir = path.join(process.cwd(), "docs");
-  const categories = fs.readdirSync(categoriesDir);
+  const categories = fs
+    .readdirSync(categoriesDir)
+    .filter((item) =>
+      fs.statSync(path.join(categoriesDir, item)).isDirectory()
+    );
 
-  const paths = categories.map(category => ({
-    params: { category }
+  const paths = categories.map((category) => ({
+    params: { category },
   }));
 
   return { paths, fallback: false };
