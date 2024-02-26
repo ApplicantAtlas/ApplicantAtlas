@@ -28,6 +28,7 @@ export interface HeaderProps {
   CloseIconComponent?: React.ComponentType;
   primaryButton?: PrimaryButton;
   showUserProfile?: boolean;
+  showShadow?: boolean;
 }
 
 // TODO: Convert to a daisyui drawer for mobile menu hamburger
@@ -40,6 +41,7 @@ export default function Header({
   CloseIconComponent = CloseIcon,
   primaryButton = undefined,
   showUserProfile = false,
+  showShadow = true,
 }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -95,7 +97,7 @@ export default function Header({
       <div
         className={`fixed inset-y-0 left-0 transform ${
           isMenuOpen ? "translate-x-0" : "-translate-x-full"
-        } w-64 z-30 transition duration-300 ease-in-out bg-white shadow-md lg:hidden ${
+        } w-64 z-30 transition duration-300 ease-in-out bg-white ${showShadow ? "shadow-md" : ""} lg:hidden ${
           customStyles.sidebar
         }`}
       >
@@ -164,7 +166,7 @@ export default function Header({
       </div>
 
       {/* Main Header */}
-      <header className={`bg-white shadow-md ${customStyles.header}`}>
+      <header className={`bg-white ${showShadow ? "shadow-md" : ""} ${customStyles.header}`}>
         <nav className="container mx-auto px-6 py-4 flex justify-between items-center">
           {/* Brand Name for Desktop */}
           <Link href="/">
