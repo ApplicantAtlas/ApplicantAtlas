@@ -580,7 +580,26 @@ func (s *Service) CreateEventSecret(ctx context.Context, eventID primitive.Objec
 	secret.ID = primitive.NewObjectID()
 	secret.UpdatedAt = primitive.NewDateTimeFromTime(time.Now())
 	update := bson.M{"$push": bson.M{"secrets": secret}}
-	return s.Database.Collection("event_secrets").UpdateOne(ctx, bson.M{"eventID": eventID}, update)
+
+	// if the event configuration doesn't exist, create it
+	res, err := s.Database.Collection("event_secrets").UpdateOne(ctx, bson.M{"eventID": eventID}, update)
+	if err != nil {
+		// assume the event configuration doesn't exist so create it
+		_, err = s.Database.Collection("event_secrets").InsertOne(ctx, models.EventSecretConfiguration{
+			EventID: eventID,
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		// try to insert the secret again
+		res, err = s.Database.Collection("event_secrets").UpdateOne(ctx, bson.M{"eventID": eventID}, update)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return res, nil
 }
 
 func (s *Service) UpdateEventSecret(ctx context.Context, eventID primitive.ObjectID, secret models.EventSecret) (*mongo.UpdateResult, error) {

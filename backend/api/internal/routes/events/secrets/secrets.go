@@ -145,3 +145,38 @@ func updateSecret(params *types.RouteParams) gin.HandlerFunc {
 		c.JSON(http.StatusOK, gin.H{"message": "Secret updated successfully"})
 	}
 }
+
+func deleteSecret(params *types.RouteParams) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		authUser, ok := utils.GetUserFromContext(c, true)
+		if !ok {
+			return
+		}
+
+		eventID, err := primitive.ObjectIDFromHex(c.Param("event_id"))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid event ID"})
+			return
+		}
+
+		secretID, err := primitive.ObjectIDFromHex(c.Param("secret_id"))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid secret ID"})
+			return
+		}
+
+		if !mongodb.CanUserModifyEvent(c, params.MongoService, authUser, eventID, nil) {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "User not an organizer of this event"})
+			return
+		}
+
+		// Delete the secret from the database
+		err = params.MongoService.DeleteEventSecret(c, eventID, secretID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete secret"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"message": "Secret deleted successfully"})
+	}
+}
