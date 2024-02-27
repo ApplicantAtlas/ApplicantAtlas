@@ -10,6 +10,13 @@ const TOCItemComponent: React.FC<{ item: TOCItem }> = ({ item }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const hasChildren = item.children && item.children.length > 0;
 
+  const arrowWidthHeight = 3;
+  const arrowMargin = 2;
+
+  const arrowWidthHeightClass = `h-${arrowWidthHeight} w-${arrowWidthHeight}`;
+  const arrowMarginClass = `mr-${arrowMargin}`;
+  const nonChildrenMarginClass = `ml-${arrowWidthHeight + arrowMargin}`;
+
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
   };
@@ -26,19 +33,28 @@ const TOCItemComponent: React.FC<{ item: TOCItem }> = ({ item }) => {
 
   return (
     <>
-      <div
-        className={`toc-level-${item.depth}`}
-      >
-        <div className="flex items-center justify-between">
-        {hasChildren && (
-      <span
-        className="text-sm mr-2 hover:text-blue-500 dark:hover:text-blue-400 transition-colors cursor-pointer flex items-center"
-        onClick={toggleExpand}
-      >
-        <ChevronRight className={`h-3 w-3 transform transition-transform ${isExpanded ? 'rotate-90' : 'rotate-0'}`} />
-      </span>
-    )}
-          <span className="hover:text-blue-500 dark:hover:text-blue-400 transition-colors cursor-pointer" onClick={goToSegment}>{item.value}</span>
+      <div className={`toc-level-${item.depth}`}>
+        <div className="flex items-center">
+          {hasChildren && (
+            <span
+              className={`text-sm ${arrowMarginClass} hover:text-blue-500 dark:hover:text-blue-400 transition-colors cursor-pointer flex items-center`}
+              onClick={toggleExpand}
+            >
+              <ChevronRight
+                className={`${arrowWidthHeightClass} transform transition-transform ${
+                  isExpanded ? "rotate-90" : "rotate-0"
+                }`}
+              />
+            </span>
+          )}
+          <span
+            className={`hover:text-blue-500 dark:hover:text-blue-400 transition-colors cursor-pointer ${
+              !hasChildren ? nonChildrenMarginClass : ""
+            }`}
+            onClick={goToSegment}
+          >
+            {item.value}
+          </span>
         </div>
       </div>
       {isExpanded && hasChildren && (
