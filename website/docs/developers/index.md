@@ -49,6 +49,10 @@ For ease of development, we recommend not running everything in docker since it'
 ## Contributing
 We welcome contributions of all forms, from bug fixes to feature additions, and even documentation updates. Please refer to our contribution guidelines for more information on how to submit your contributions effectively.
 
+If you're not sure where to start, if you go to the issues tab on the GitHub repository, you can find issues that are labeled as "good first issue" which are perfect for new contributors to get started with.
+
+If you're looking to find something to contribute to we have a [GitHub project board](https://github.com/users/davidteather/projects/5/views/2) that lists the issues on the repository in a more organized fashion with priorities and statuses.
+
 ## Versioning
 We use semantic versioning for our project releases. Ensure you check our versioning policy and the current project version before making contributions that might affect functionality or compatibility.
 
