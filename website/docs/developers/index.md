@@ -53,10 +53,72 @@ If you're not sure where to start, if you go to the issues tab on the GitHub rep
 
 If you're looking to find something to contribute to we have a [GitHub project board](https://github.com/users/davidteather/projects/5/views/2) that lists the issues on the repository in a more organized fashion with priorities and statuses.
 
-## Versioning
-We use semantic versioning for our project releases. Ensure you check our versioning policy and the current project version before making contributions that might affect functionality or compatibility.
+## Technical Onboarding Information
 
-## Need Help?
-If you have any questions or run into issues while setting up the project or during development, please reach out to our community support channels or file an issue on our GitHub repository.
+This section is for new developers who are looking to get started with the project. Here you will find information on the project's architecture, services, and other technical details.
+
+### Project Service Overview
+
+This project is a mono-repo that contains multiple services, which are listed below:
+* **website** (/website) | *Nextjs, React, TypeScript*  - This is the frontend application for the project.
+* **api** (/backend/api) | *Go* - This is the backend API service for the project. This manages all the data and business logic for the platform.
+* **event-listener** (/backend/event-listener) | *Go* - This service listens to Kafka events and processes them accordingly. Currently events are only used for processing and executing event pipelines, ie: sending emails, allowing access to forms, etc.
+* **kafka** - This is the Kafka service that is used for event processing.
+* **mongo** - This is the MongoDB service that is used for data storage.
+
+### Website Service Overview
+
+The website service is the frontend application for the project. It is built using Next.js, React, and TypeScript. The website is responsible for providing a user interface for managing hackathon events, applicants, and other related data.
+
+#### Important Features
+* **Form Logic** - If you're looking to modify any of the form rendering or creation logic you'll want to look at the `components/Form` directory. It has `FormBuilder` which is responsible for taking in a form structure and rendering it. `components/Form/Creator/FormCreator` is responsible for creating new forms and editing existing forms.
+* **Event Management Dashboard** - These are all located in the `components/Events/AdminDashboard/Tabs` directory and are responsible for creating, managing, deleting: forms, email templates, pipelines, and anything else on the side bar in the admin dashboard.
+* **User Authentication** - We route all of our requests through the `services/AxiosInterceptor.ts` file through the `api` export. This manages adding our JWT token to all requests and logging the user out if the token is invalid. It also will initiate a toast message if the API request fails with the error message returned from the API.
+* **Documentation** - The markdown for the documentation is located at `website/docs` and is rendered using `remark` and `rehype` to parse the markdown and render it as HTML. If you want to modify the styling of the documentation you can do so in the `components/Docs` directory. If you want to change how the markdown is rendered you can do so in the `website/lib/markdown.ts` file.
+
+#### File Structure
+
+```
+/website
+   /public
+   /src
+      /components
+         /Events
+            /AdminDashboard (Admin dashboard for managing events)
+               /Tabs
+                  /Forms
+                  /Pipelines
+                  /EmailTemplates
+                  /...
+         /Form (Form rendering and creation logic)
+            /Creator
+               /FormCreator
+         /Toast (Toast messages for API requests and other user alerts)
+         /User
+            UserSettings.tsx (User settings page)
+      /pages (Next.js pages)
+         /docs (Documentation pages)
+         /events (Event pages)
+         /user (User pages)
+         index.tsx (Homepage)
+         ...
+```
+
+### API Service Overview
+
+#### File Structure
+
+### Event Listener Service Overview
+
+#### File Structure
+
+### Kafka Service Overview
+
+#### File Structure
+
+### MongoDB Service Overview
+
+#### File Structure
+
 
 Thank you for contributing to ApplicantAtlas and helping us make managing hackathon events easier and more efficient!

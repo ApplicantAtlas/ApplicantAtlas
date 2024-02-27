@@ -71,7 +71,7 @@ const TOCItemComponent: React.FC<{ item: TOCItem }> = ({ item }) => {
 // Main TOC component that renders the top-level items
 const TOC: React.FC<TOCProps> = ({ items }) => {
   return (
-    <div className="sticky top-0 min-h-screen py-4 px-3 lg:max-h-screen pt-4">
+    <div className="sticky top-0 scrollbar-hide h-screen py-4 px-3 pt-4 overflow-y-scroll">
       <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
         Table of Contents
       </h2>
