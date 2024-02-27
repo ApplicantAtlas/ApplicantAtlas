@@ -10,12 +10,9 @@ const TOCItemComponent: React.FC<{ item: TOCItem }> = ({ item }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const hasChildren = item.children && item.children.length > 0;
 
-  const arrowWidthHeight = 3;
-  const arrowMargin = 2;
-
-  const arrowWidthHeightClass = `h-${arrowWidthHeight} w-${arrowWidthHeight}`;
-  const arrowMarginClass = `mr-${arrowMargin}`;
-  const nonChildrenMarginClass = `ml-${arrowWidthHeight + arrowMargin}`;
+  const arrowWidthHeightClass = `h-3 w-3`;
+  const arrowMarginClass = `mr-2`;
+  const nonChildrenMarginClass = `ml-5 `; // should sum to above
 
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
