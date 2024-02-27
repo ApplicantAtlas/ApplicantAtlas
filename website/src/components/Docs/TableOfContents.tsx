@@ -10,30 +10,31 @@ const TOCItemComponent: React.FC<{ item: TOCItem }> = ({ item }) => {
   const hasChildren = item.children && item.children.length > 0;
 
   const toggleExpand = () => {
-    if (hasChildren) {
-      setIsExpanded(!isExpanded);
-    } else {
-        // Scroll to the heading
-        const heading = document.getElementById(item.id);
-        if (heading) {
-          heading.scrollIntoView({ behavior: "smooth" });
-          // Add the hash to the URL
-            window.history.pushState({}, "", `#${item.id}`);
-        }
+    setIsExpanded(!isExpanded);
+  };
+
+  const goToSegment = () => {
+    // Scroll to the heading
+    const heading = document.getElementById(item.id);
+    if (heading) {
+      heading.scrollIntoView({ behavior: "smooth" });
+      // Add the hash to the URL
+      window.history.pushState({}, "", `#${item.id}`);
     }
   };
 
   return (
     <>
       <div
-        className={`toc-level-${item.depth} cursor-pointer hover:text-blue-500 dark:hover:text-blue-400 transition-colors`}
-        onClick={toggleExpand}
+        className={`toc-level-${item.depth}`}
       >
         <div className="flex items-center justify-between">
-          <span>{item.value}</span>
           {hasChildren && (
-            <span className="text-xs">{isExpanded ? "-" : "+"}</span>
+            <span className="text-sm mr-2 hover:text-blue-500 dark:hover:text-blue-400 transition-colors cursor-pointer" onClick={toggleExpand}>
+              {isExpanded ? "-" : "+"}
+            </span>
           )}
+          <span className="hover:text-blue-500 dark:hover:text-blue-400 transition-colors cursor-pointer" onClick={goToSegment}>{item.value}</span>
         </div>
       </div>
       {isExpanded && hasChildren && (
