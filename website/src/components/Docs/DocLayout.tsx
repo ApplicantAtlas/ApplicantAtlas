@@ -2,6 +2,7 @@ import React, { ReactNode } from "react";
 import Header from "../Header";
 import Footer from "../Footer";
 import { TOCItem } from "../../../lib/markdown";
+import TableOfContents from "./TableOfContents";
 
 export interface DocLayoutProps {
   children: ReactNode;
@@ -31,19 +32,7 @@ const DocLayout: React.FC<DocLayoutProps> = ({ children, toc }) => {
           className=" bg-gray-50 dark:bg-gray-800 p-2"
           aria-label="Table of Contents"
         >
-          <div className="sticky top-0 min-h-screen py-4 px-3 lg:max-h-screen pt-4">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-              Table of Contents
-            </h2>
-            <ul className="mt-4 space-y-2 prose prose-sm sm:prose dark:prose-dark">
-              {toc &&
-                toc.map((item) => (
-                  <li key={item.id} className={`toc-level-${item.depth}`}>
-                    <a href={`#${item.id}`}>{item.value}</a>
-                  </li>
-                ))}
-            </ul>
-          </div>
+          <TableOfContents items={toc} />
         </aside>
 
         <main className="flex-auto overflow-auto p-4">

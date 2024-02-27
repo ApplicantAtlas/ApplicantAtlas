@@ -21,7 +21,7 @@ export async function processMarkdown(
   const processor = unified()
     .use(remarkParse)
     .use(() => (tree) => {
-      toc = extractTOC()(tree);
+      toc = extractTOC(tree);
     })
     .use(remarkRehype)
     .use(rehypeSlug)
@@ -66,6 +66,7 @@ export interface TOCItem {
   value: string;
   id: string;
   depth: number;
+  children?: TOCItem[];
 }
 
 export async function getDocData(
@@ -93,20 +94,36 @@ export async function getDocData(
 }
 
 // This is a simplified example to extract headings and create a TOC
-function extractTOC(): (tree: Node) => TOCItem[] {
+function extractTOC(tree: Node): TOCItem[] {
   let toc: TOCItem[] = [];
-  return (tree) => {
-    visit(tree, "heading", (node: any) => {
-      const text = node.children
-        .filter((n: any) => n.type === "text")
-        .map((n: any) => n.value)
-        .join("");
-      const id = text
-        .toLowerCase()
-        .replace(/\s+/g, "-")
-        .replace(/[^\w-]+/g, "");
-      toc.push({ value: text, id, depth: node.depth });
-    });
-    return toc;
-  };
+  let stack: Array<TOCItem> = [];
+
+  visit(tree, "heading", (node: any) => {
+    const text = node.children
+      .filter((n: any) => n.type === "text")
+      .map((n: any) => n.value)
+      .join("");
+    const id = text.toLowerCase().replace(/\s+/g, "-").replace(/[^\w-]+/g, "");
+    const newItem: TOCItem = { value: text, id, depth: node.depth, children: [] };
+
+    // Find the correct parent item
+    while (stack.length > 0 && stack[stack.length - 1].depth >= node.depth) {
+      stack.pop();
+    }
+
+    if (stack.length > 0) {
+      if (stack.length > 0) {
+        const lastItem = stack[stack.length - 1];
+        if (lastItem.children) {
+          lastItem.children.push(newItem);
+        }
+      }
+    } else {
+      toc.push(newItem);
+    }
+
+    stack.push(newItem);
+  });
+
+  return toc;
 }
