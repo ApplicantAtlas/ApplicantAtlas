@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { TOCItem } from "../../../lib/markdown";
+import ChevronRight from "../Icons/ChevronRight";
 
 interface TOCProps {
   items: TOCItem[];
@@ -29,11 +30,14 @@ const TOCItemComponent: React.FC<{ item: TOCItem }> = ({ item }) => {
         className={`toc-level-${item.depth}`}
       >
         <div className="flex items-center justify-between">
-          {hasChildren && (
-            <span className="text-sm mr-2 hover:text-blue-500 dark:hover:text-blue-400 transition-colors cursor-pointer" onClick={toggleExpand}>
-              {isExpanded ? "-" : "+"}
-            </span>
-          )}
+        {hasChildren && (
+      <span
+        className="text-sm mr-2 hover:text-blue-500 dark:hover:text-blue-400 transition-colors cursor-pointer flex items-center"
+        onClick={toggleExpand}
+      >
+        <ChevronRight className={`h-3 w-3 transform transition-transform ${isExpanded ? 'rotate-90' : 'rotate-0'}`} />
+      </span>
+    )}
           <span className="hover:text-blue-500 dark:hover:text-blue-400 transition-colors cursor-pointer" onClick={goToSegment}>{item.value}</span>
         </div>
       </div>
