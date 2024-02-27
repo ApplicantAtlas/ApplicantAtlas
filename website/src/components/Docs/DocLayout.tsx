@@ -16,9 +16,9 @@ const DocLayout: React.FC<DocLayoutProps> = ({ children, toc }) => {
         customStyles={{ header: "border-b border-gray-200" }}
         menuItems={[]}
       />
-      <div className="flex min-h-screen">
+      <div className="flex flex-row min-h-screen">
         <aside
-          className="relative lg:w-64 lg:max-w-full"
+          className="relative lg:w-64"
           aria-label="Table of Contents"
         >
           <div className="sticky top-0 min-h-screen py-4 px-3 bg-gray-50 rounded dark:bg-gray-800 lg:max-h-screen pt-4">
@@ -32,8 +32,8 @@ const DocLayout: React.FC<DocLayoutProps> = ({ children, toc }) => {
           </div>
         </aside>
 
-        <main className="flex-1 w-full p-4">
-          <div className="prose prose-sm sm:prose md:prose-lg">
+        <main className="flex-auto overflow-auto p-4">
+          <div className="prose prose-sm sm:prose lg:prose-lg lg:w-4/5">
             {children}
           </div>
         </main>

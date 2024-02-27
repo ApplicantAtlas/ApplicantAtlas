@@ -32,11 +32,16 @@ export async function processMarkdown(
           if (node.tagName === "a" && node.properties && node.properties.href) {
             const href: string = node.properties.href;
             if (!href.startsWith("http") && !href.startsWith("#")) {
-              // if it ends in .md remove it, and if it ends in index.md we remove that fully
-              node.properties.href = `${linksBasePath}/${href.replace(
-                /\/index\.md$/,
-                ""
-              ).replace(/\.md$/, "")}`;
+              const [filePath, anchor] = href.split("#");
+
+              let processedPath = `${linksBasePath}/${filePath
+                .replace(/\/index\.md$/, "")
+                .replace(/\.md$/, "")}`;
+
+              if (anchor) {
+                processedPath += `#${anchor}`;
+              }
+              node.properties.href = processedPath;
             }
           }
         });

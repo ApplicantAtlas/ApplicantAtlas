@@ -218,7 +218,8 @@ export default function Header({
               </div>
             )}
 
-            {showUserProfile && user && (
+            {/* TODO: weird bug with user.firstName being undefined, I was logged in, and ran next on different port */}
+            {showUserProfile && user && user.firstName && (
               <div className="ml-4 relative" ref={dropdownRef}>
                 {/* User Profile Button and Dropdown */}
                 <div
