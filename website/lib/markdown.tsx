@@ -62,7 +62,7 @@ export function getDocPaths(docCategory: string): string[] {
   return fs.readdirSync(docsDirectory);
 }
 
-interface TOCItem {
+export interface TOCItem {
   value: string;
   id: string;
   depth: number;

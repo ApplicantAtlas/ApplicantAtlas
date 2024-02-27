@@ -1,10 +1,20 @@
 import React, { ReactNode } from "react";
 import Header from "../Header";
 import Footer from "../Footer";
+import { TOCItem } from "../../../lib/markdown";
 
-interface DocLayoutProps {
+export interface DocLayoutProps {
   children: ReactNode;
-  toc: ReactNode;
+  toc: TOCItem[];
+}
+
+export interface DocData {
+  contentHtml: string;
+  toc: TOCItem[];
+}
+
+export interface DocProps {
+  docData: DocData;
 }
 
 const DocLayout: React.FC<DocLayoutProps> = ({ children, toc }) => {
@@ -18,16 +28,20 @@ const DocLayout: React.FC<DocLayoutProps> = ({ children, toc }) => {
       />
       <div className="flex flex-row min-h-screen">
         <aside
-          className="relative lg:w-64"
+          className=" bg-gray-50 dark:bg-gray-800 p-2"
           aria-label="Table of Contents"
         >
-          <div className="sticky top-0 min-h-screen py-4 px-3 bg-gray-50 rounded dark:bg-gray-800 lg:max-h-screen pt-4">
+          <div className="sticky top-0 min-h-screen py-4 px-3 lg:max-h-screen pt-4">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
               Table of Contents
             </h2>
             <ul className="mt-4 space-y-2 prose prose-sm sm:prose dark:prose-dark">
-              {/* Dynamic Table of Contents */}
-              {toc}
+              {toc &&
+                toc.map((item) => (
+                  <li key={item.id} className={`toc-level-${item.depth}`}>
+                    <a href={`#${item.id}`}>{item.value}</a>
+                  </li>
+                ))}
             </ul>
           </div>
         </aside>
@@ -41,9 +55,9 @@ const DocLayout: React.FC<DocLayoutProps> = ({ children, toc }) => {
       <Footer />
 
       <style jsx>{`
-      .prose {
-        max-width: none;
-      }
+        .prose {
+          max-width: none;
+        }
       `}</style>
     </>
   );
