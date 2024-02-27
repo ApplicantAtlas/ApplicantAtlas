@@ -27,18 +27,19 @@ For ease of development, we recommend not running everything in docker since it'
    docker compose up kafka mongo zookeeper
    ```
 
-2. **API Service Setup**
-   Open a separate terminal, navigate to the `backend/api` directory, and run the following command to start the API service:
-   ```bash
-   MONGO_URL=localhost:27017 MONGO_USER=admin MONGO_PASSWORD=admin MONGO_DB=app MONGO_AUTH_SOURCE=admin CORS_ALLOW_ORIGINS="*" JWT_SECRET_TOKEN="testtesttesttest" KAFKA_BROKER_URL=localhost:9092 go run cmd/main.go
-   ```
 
-3. **Kafka Event Listener Service**
+2. **Kafka Event Listener Service**
    In a new terminal, go to the `backend/event-listener` folder and execute the command below to launch the Kafka event listener service:
    ```bash
    KAFKA_BROKER_URL=localhost:9092 go run cmd/main.go
    ```
    If you encounter any issues, try running the command from the API service directory.
+
+3. **API Service Setup**
+   Open a separate terminal, navigate to the `backend/api` directory, and run the following command to start the API service:
+   ```bash
+   MONGO_URL=localhost:27017 MONGO_USER=admin MONGO_PASSWORD=admin MONGO_DB=app MONGO_AUTH_SOURCE=admin CORS_ALLOW_ORIGINS="*" JWT_SECRET_TOKEN="testtesttesttest" KAFKA_BROKER_URL=localhost:9092 go run cmd/main.go
+   ```
 
 4. **Frontend Development**
    Ensure you have the correct Node.js version (>= 21) to avoid potential issues with Next.JS. Navigate to the `frontend` directory, install all dependencies with `npm i`, and start the development server using:
@@ -57,7 +58,7 @@ If you're looking to find something to contribute to we have a [GitHub project b
 
 This section is for new developers who are looking to get started with the project. Here you will find information on the project's architecture, services, and other technical details.
 
-### Project Service Overview
+### Project Services Overview
 
 This project is a mono-repo that contains multiple services, which are listed below:
 * **website** (/website) | *Nextjs, React, TypeScript*  - This is the frontend application for the project.
@@ -104,21 +105,69 @@ The website service is the frontend application for the project. It is built usi
          ...
 ```
 
-### API Service Overview
+### Backend Services Overview
 
-#### File Structure
+This section provides an overview of the backend services for this project.
 
-### Event Listener Service Overview
+#### API Service
 
-#### File Structure
+The API service is the backend application for the project. It is built using Go and is responsible for managing all the data and business logic for the platform.
+
+##### File Structure
+
+```
+/backend
+   /api
+      /cmd
+         main.go (Main entry point for the API service)
+      /internal
+         /middlewares (Middleware for handling requests)
+         /routes (API routes)
+            /auth (Authentication logic)
+            /emails (Email Tempalte logic)
+            /events (Event logic)
+            /forms (Form logic)
+            ...
+```
+
+#### Event Listener
+
+This service listens to Kafka events and processes them accordingly. Currently events are only used for processing and executing event pipelines, ie: sending emails, allowing access to forms, etc.
+
+##### File Structure
+
+```
+/backend
+   /event-listener
+      /cmd
+         main.go (Main entry point for the event listener service)
+      /internal
+         /handlers (Handle executing event pipelines different actions)
+         ...
+```
+
+#### Shared Modules
+
+There are some shared modules that are used by both the API and the event listener. These are located in the `/backend/shared` directory.
+
+##### File Structure
+
+```
+/backend
+   /shared
+      /kafka (Kafka helper methods)
+      /models (Shared models for mainly representing mongo documents)
+      /mongodb (MongoDB helper methods)
+      /utils (Shared utility methods)
+```
 
 ### Kafka Service Overview
 
-#### File Structure
+Kafka is used here to process events like sending emails, allowing access to forms, etc. The Kafka service is used for event processing.
 
 ### MongoDB Service Overview
 
-#### File Structure
+MongoDB is our database of choice, and it is used for data storage.
 
 
 Thank you for contributing to ApplicantAtlas and helping us make managing hackathon events easier and more efficient!
