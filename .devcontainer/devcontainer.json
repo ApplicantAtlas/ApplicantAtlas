@@ -1,0 +1,38 @@
+{
+	"name": "Go",
+	"image": "mcr.microsoft.com/devcontainers/go:1-1.22-bookworm",
+	"features": {
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {},
+		"ghcr.io/devcontainers/features/node:1": {}
+	},
+	"containerEnv": {
+		"MONGO_URL": "localhost:27017",
+		"MONGO_USER": "admin",
+		"MONGO_PASSWORD": "admin",
+		"MONGO_DB": "app",
+		"MONGO_AUTH_SOURCE": "admin",
+		"CORS_ALLOW_ORIGINS": "*",
+		"JWT_SECRET_TOKEN": "testtesttesttest",
+		"KAFKA_BROKER_URL": "localhost:9092"
+	},
+	"postStartCommand": "docker compose up mongo zookeeper kafka -d && cd website && npm i",
+	"postAttachCommand": {
+		"website": "cd website && npm run dev",
+		"api": "cd backend/api && go run cmd/main.go",
+		"event_listener": "cd backend/event-listener && go run cmd/main.go"
+	},
+	"portsAttributes": {
+		"3000": {
+			"label": "Website",
+			"onAutoForward": "notify"
+		},
+		"9092": {
+			"label": "MongoDB",
+			"onAutoForward": "ignore"
+		},
+		"8080": {
+			"label": "API",
+			"onAutoForward": "ignore"
+		}
+	}
+}
