@@ -1,0 +1,20 @@
+{
+	"name": "Go",
+	"image": "mcr.microsoft.com/devcontainers/go:1-1.22-bookworm",
+	"features": {
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {},
+		"ghcr.io/devcontainers/features/node:1": {}
+	},
+	"containerEnv": {
+		"MONGO_URL": "localhost:27017",
+		"MONGO_USER": "admin",
+		"MONGO_PASSWORD": "admin",
+		"MONGO_DB": "app",
+		"MONGO_AUTH_SOURCE": "admin",
+		"CORS_ALLOW_ORIGINS": "*",
+		"JWT_SECRET_TOKEN": "testtesttesttest",
+		"KAFKA_BROKER_URL": "localhost:9092"
+	},
+	"postCreateCommand": "docker compose up zookeeper kafka mongo --no-start && cd website && npm i",
+	"postStartCommand": "docker start applicantatlas-zookeeper-1 applicantatlas-mongo-1 && echo waiting 30s to start kafka... && sleep 30 && docker start applicantatlas-kafka-1 && cd website && npm run dev"
+}
