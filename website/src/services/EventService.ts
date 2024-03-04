@@ -2,6 +2,7 @@ import { AxiosResponse } from 'axios';
 import api from './AxiosInterceptor';
 import { EventMetadata, EventModel } from '@/types/models/Event';
 import { FormStructure } from '@/types/models/Form';
+import { EventSecrets } from '@/types/models/EventSecret';
 
 type ListEventsResponse = {
     events: EventModel[];
@@ -56,3 +57,19 @@ export const getEvent = async (eventId: string): Promise<AxiosResponse<{event: E
 export const getEventForms = async (eventId: string): Promise<AxiosResponse<{forms: FormStructure[]}>> => {
     return api.get<{forms: FormStructure[]}>(`/events/${eventId}/forms`)
 }
+
+/*
+  Event Secrets
+*/
+
+export const getEventSecrets = async (eventId: string): Promise<AxiosResponse<{eventSecrets: EventSecrets}>> => {
+    return api.get<{eventSecrets: EventSecrets}>(`/events/${eventId}/secrets`);
+};
+
+export const createOrUpdateEventSecret = async (eventId: string, requestData: EventSecrets): Promise<AxiosResponse<EventSecrets>> => {
+    return api.post<EventSecrets>(`/events/${eventId}/secrets`, requestData);
+};
+
+export const deleteEventSecret = async (eventId: string): Promise<AxiosResponse> => {
+    return api.delete(`/events/${eventId}/secrets`);
+};

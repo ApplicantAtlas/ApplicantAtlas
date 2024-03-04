@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"log"
+	"reflect"
 	"shared/models"
 	"shared/utils"
 	"time"
@@ -53,10 +54,9 @@ type MongoService interface {
 	UpdateEmailTemplate(ctx context.Context, emailTemplate models.EmailTemplate, emailTemplateID primitive.ObjectID) (*mongo.UpdateResult, error)
 	DeleteEmailTemplate(ctx context.Context, emailTemplateID primitive.ObjectID) (*mongo.DeleteResult, error)
 	GetEmailTemplate(ctx context.Context, emailTemplateID primitive.ObjectID) (*models.EmailTemplate, error)
-	ListEventSecretConfigurations(ctx context.Context, filter bson.M, stripSecrets bool) ([]models.EventSecretConfiguration, error)
-	CreateEventSecret(ctx context.Context, eventID primitive.ObjectID, secret models.EventSecret) (*mongo.UpdateResult, error)
-	UpdateEventSecret(ctx context.Context, eventID primitive.ObjectID, secret models.EventSecret) (*mongo.UpdateResult, error)
-	DeleteEventSecret(ctx context.Context, eventID primitive.ObjectID, secretID primitive.ObjectID) (*mongo.DeleteResult, error)
+	GetEventSecrets(ctx context.Context, filter bson.M, stripSecrets bool) (*models.EventSecrets, error)
+	CreateOrUpdateEventSecrets(ctx context.Context, secret models.EventSecrets) (*mongo.UpdateResult, error)
+	DeleteEventSecrets(ctx context.Context, secretID primitive.ObjectID) (*mongo.DeleteResult, error)
 }
 
 // Service implements MongoService with a mongo.Client.
@@ -524,94 +524,76 @@ func (s *Service) GetEmailTemplate(ctx context.Context, emailTemplateID primitiv
 	return &emailTemplate, nil
 }
 
-// ListEventSecretConfigurations retrieves secrets based on a filter
-func (s *Service) ListEventSecretConfigurations(ctx context.Context, filter bson.M, stripSecrets bool) ([]models.EventSecretConfiguration, error) {
-	var data []models.EventSecretConfiguration
+// GetEventSecret retrieves secrets based on a filter
+func (s *Service) GetEventSecrets(ctx context.Context, filter bson.M, stripSecrets bool) (*models.EventSecrets, error) {
+	var data models.EventSecrets
 
-	cursor, err := s.Database.Collection("event_secrets").Find(ctx, filter)
+	err := s.Database.Collection("event_secrets").FindOne(ctx, filter).Decode(&data)
 	if err != nil {
 		return nil, err
 	}
-	defer cursor.Close(ctx)
 
-	for cursor.Next(ctx) {
-		var eventSecrets models.EventSecretConfiguration
-		if err := cursor.Decode(&eventSecrets); err != nil {
-			return nil, err
-		}
-
-		if stripSecrets {
-			var strippedSecrets []models.EventSecret
-
-			// go through each secret and strip the values
-			for _, secret := range eventSecrets.Secrets {
-				strippedSecrets = append(strippedSecrets, models.EventSecret{
-					ID:          secret.ID,
-					Description: secret.Description,
-					UpdatedAt:   secret.UpdatedAt,
-					Type:        secret.Type,
-				})
-			}
-
-			eventSecrets = models.EventSecretConfiguration{
-				ID:      eventSecrets.ID,
-				EventID: eventSecrets.EventID,
-				Secrets: strippedSecrets,
+	if stripSecrets {
+		if data.Email != nil {
+			stripped := data.Email.StripSecret()
+			if strippedEmail, ok := stripped.(*models.EmailSecret); ok {
+				data.Email = strippedEmail
 			}
 		}
-
-		data = append(data, eventSecrets)
 	}
 
-	if err := cursor.Err(); err != nil {
+	return &data, nil
+}
+
+// CreateOrUpdateEventSecrets creates a new event secret
+func (s *Service) CreateOrUpdateEventSecrets(ctx context.Context, newSecret models.EventSecrets) (*mongo.UpdateResult, error) {
+	filter := bson.M{"eventID": newSecret.EventID}
+
+	var existingSecret models.EventSecrets
+	err := s.Database.Collection("event_secrets").FindOne(ctx, filter).Decode(&existingSecret)
+	if err != nil && err != mongo.ErrNoDocuments {
 		return nil, err
 	}
 
-	// If secrets is null then return an empty slice instead
-	if data == nil {
-		return []models.EventSecretConfiguration{}, nil
+	// Prepare the update document based on non-nil and changed fields in newSecret
+	updateDoc := bson.M{}
+	val := reflect.ValueOf(newSecret)
+	typ := val.Type()
+	for i := 0; i < val.NumField(); i++ {
+		field := val.Field(i)
+		fieldType := typ.Field(i)
+
+		// Check if the field is a pointer to a struct and not nil
+		if field.Kind() == reflect.Ptr && !field.IsNil() {
+			fieldName := fieldType.Tag.Get("bson")
+
+			// Get the corresponding field in the existing document
+			existingField := reflect.ValueOf(existingSecret).Field(i)
+
+			// If the fields are not deeply equal, add them to the update document
+			if !reflect.DeepEqual(field.Interface(), existingField.Interface()) {
+				updateDoc[fieldName] = field.Interface()
+			}
+		}
 	}
 
-	return data, nil
-}
+	if len(updateDoc) == 0 {
+		// No updates necessary
+		return &mongo.UpdateResult{}, nil
+	}
 
-// CreateEventSecret creates a new secret for an event
-func (s *Service) CreateEventSecret(ctx context.Context, eventID primitive.ObjectID, secret models.EventSecret) (*mongo.UpdateResult, error) {
-	secret.ID = primitive.NewObjectID()
-	secret.UpdatedAt = primitive.NewDateTimeFromTime(time.Now())
-	update := bson.M{"$push": bson.M{"secrets": secret}}
-
-	// if the event configuration doesn't exist, create it
-	res, err := s.Database.Collection("event_secrets").UpdateOne(ctx, bson.M{"eventID": eventID}, update)
+	// Perform the update with upsert true to handle cases where the document doesn't exist
+	opts := options.Update().SetUpsert(true)
+	result, err := s.Database.Collection("event_secrets").UpdateOne(ctx, filter, bson.M{"$set": updateDoc}, opts)
 	if err != nil {
-		// assume the event configuration doesn't exist so create it
-		_, err = s.Database.Collection("event_secrets").InsertOne(ctx, models.EventSecretConfiguration{
-			EventID: eventID,
-		})
-		if err != nil {
-			return nil, err
-		}
-
-		// try to insert the secret again
-		res, err = s.Database.Collection("event_secrets").UpdateOne(ctx, bson.M{"eventID": eventID}, update)
-		if err != nil {
-			return nil, err
-		}
+		return nil, err
 	}
 
-	return res, nil
+	return result, nil
 }
 
-func (s *Service) UpdateEventSecret(ctx context.Context, eventID primitive.ObjectID, secret models.EventSecret) (*mongo.UpdateResult, error) {
-	secret.UpdatedAt = primitive.NewDateTimeFromTime(time.Now())
-	update := bson.M{"$set": bson.M{"secrets.$[secret]": secret}}
+// DeleteEventSecrets
+func (s *Service) DeleteEventSecrets(ctx context.Context, eventID primitive.ObjectID) (*mongo.DeleteResult, error) {
 	filter := bson.M{"eventID": eventID}
-	arrayFilters := options.ArrayFilters{
-		Filters: []interface{}{bson.M{"secret.id": secret.ID}},
-	}
-	return s.Database.Collection("event_secrets").UpdateOne(ctx, filter, update, &options.UpdateOptions{ArrayFilters: &arrayFilters})
-}
-
-func (s *Service) DeleteEventSecret(ctx context.Context, eventID primitive.ObjectID, secretID primitive.ObjectID) (*mongo.DeleteResult, error) {
-	return s.Database.Collection("event_secrets").DeleteOne(ctx, bson.M{"eventID": eventID, "secrets.id": secretID})
+	return s.Database.Collection("event_secrets").DeleteOne(ctx, filter)
 }

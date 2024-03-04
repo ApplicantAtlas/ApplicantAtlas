@@ -20,7 +20,7 @@ type MockMongoService struct {
 	sources                  map[string]models.SelectorSource
 	forms                    map[string]models.FormStructure
 	pipelines                map[string]models.PipelineConfiguration
-	eventSecretConfiguration map[string]models.EventSecretConfiguration
+	eventSecretConfiguration map[string]models.EventSecrets
 	mutex                    sync.RWMutex // Mutex for concurrent access
 }
 
@@ -399,15 +399,15 @@ func (m *MockMongoService) ListEmailTemplates(ctx context.Context, filter bson.M
 	return nil, nil
 }
 
-func (m *MockMongoService) ListEventSecretConfigurations(ctx context.Context, filter bson.M, stripSecrets bool) ([]models.EventSecretConfiguration, error) {
+func (m *MockMongoService) GetEventSecrets(ctx context.Context, filter bson.M, stripSecrets bool) (*models.EventSecrets, error) {
 	return nil, nil
 }
 
-func (m *MockMongoService) CreateEventSecret(ctx context.Context, eventID primitive.ObjectID, secret models.EventSecret) (*mongo.UpdateResult, error) {
+func (m *MockMongoService) CreateOrUpdateEventSecrets(ctx context.Context, secret models.EventSecrets) (*mongo.UpdateResult, error) {
 	return nil, nil
 }
 
-func (m *MockMongoService) UpdateEventSecret(ctx context.Context, eventID primitive.ObjectID, secret models.EventSecret) (*mongo.UpdateResult, error) {
+func (m *MockMongoService) DeleteEventSecrets(ctx context.Context, secretID primitive.ObjectID) (*mongo.DeleteResult, error) {
 	return nil, nil
 }
 

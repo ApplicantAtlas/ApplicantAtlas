@@ -45,3 +45,4 @@ export function isAddress(value: any): value is Address {
     typeof value.zipCode === "string"
   );
 }
+

@@ -29,5 +29,6 @@ func init() {
 }
 
 func getMongoClient() (*mongo.Client, error) {
+	fmt.Println("Connecting to MongoDB with URI: ", mongoURI)
 	return mongo.Connect(context.TODO(), options.Client().ApplyURI(mongoURI))
 }

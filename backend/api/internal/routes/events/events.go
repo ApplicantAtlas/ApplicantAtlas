@@ -2,6 +2,7 @@ package events
 
 import (
 	"api/internal/middlewares"
+	"api/internal/routes/events/secrets"
 	"api/internal/types"
 	"log"
 	"net/http"
@@ -26,6 +27,9 @@ func RegisterRoutes(r *gin.RouterGroup, params *types.RouteParams) {
 	r.GET(":event_id/forms", middlewares.JWTAuthMiddleware(), getEventFormsHandler(params))
 	r.GET(":event_id/pipelines", middlewares.JWTAuthMiddleware(), getEventPipelinesHandler(params))
 	r.GET(":event_id/email_templates", middlewares.JWTAuthMiddleware(), getEventEmailTemplatesHandler(params))
+
+	// Register the secrets routes
+	secrets.RegisterRoutes(r.Group(":event_id/secrets"), params)
 }
 
 func listEventsHandler(params *types.RouteParams) gin.HandlerFunc {

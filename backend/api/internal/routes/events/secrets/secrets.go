@@ -11,6 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 /*
@@ -24,8 +25,8 @@ Secret API Operations:
 func RegisterRoutes(r *gin.RouterGroup, params *types.RouteParams) {
 	r.GET("", middlewares.JWTAuthMiddleware(), listSecrets(params))
 	r.POST("", middlewares.JWTAuthMiddleware(), createSecret(params))
-	r.PUT(":secret_id", middlewares.JWTAuthMiddleware(), updateSecret(params))
-	r.DELETE(":secret_id", middlewares.JWTAuthMiddleware(), deleteSecret(params))
+	r.PUT("", middlewares.JWTAuthMiddleware(), updateSecret(params))
+	r.DELETE("", middlewares.JWTAuthMiddleware(), deleteSecret(params))
 }
 
 func listSecrets(params *types.RouteParams) gin.HandlerFunc {
@@ -53,13 +54,17 @@ func listSecrets(params *types.RouteParams) gin.HandlerFunc {
 		}
 
 		// List all secrets for the event
-		secrets, err := params.MongoService.ListEventSecretConfigurations(c, bson.M{"eventID": eventID}, true)
+		secrets, err := params.MongoService.GetEventSecrets(c, bson.M{"eventID": eventID}, true)
 		if err != nil {
+			if err == mongo.ErrNoDocuments {
+				c.JSON(http.StatusOK, gin.H{"eventSecrets": models.EventSecrets{}})
+				return
+			}
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to list secrets"})
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"secrets": secrets})
+		c.JSON(http.StatusOK, gin.H{"eventSecrets": secrets})
 	}
 }
 
@@ -82,13 +87,13 @@ func createSecret(params *types.RouteParams) gin.HandlerFunc {
 		}
 
 		// Parse Request Body
-		var newSecret models.EventSecret
+		var newSecret models.EventSecrets
 		if err := c.BindJSON(&newSecret); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
 			return
 		}
 
-		_, err = params.MongoService.CreateEventSecret(c, eventID, newSecret)
+		_, err = params.MongoService.CreateOrUpdateEventSecrets(c, newSecret)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create secret"})
 			return
@@ -112,14 +117,8 @@ func updateSecret(params *types.RouteParams) gin.HandlerFunc {
 			return
 		}
 
-		secretID, err := primitive.ObjectIDFromHex(c.Param("secret_id"))
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid secret ID"})
-			return
-		}
-
 		// Parse Request Body
-		var updatedSecret models.EventSecret
+		var updatedSecret models.EventSecrets
 		if err := c.BindJSON(&updatedSecret); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
 			return
@@ -130,13 +129,8 @@ func updateSecret(params *types.RouteParams) gin.HandlerFunc {
 			return
 		}
 
-		if secretID != updatedSecret.ID {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Secret ID in URL does not match secret ID in request body"})
-			return
-		}
-
 		// Update the secret in the database
-		_, err = params.MongoService.UpdateEventSecret(c, eventID, updatedSecret)
+		_, err = params.MongoService.CreateOrUpdateEventSecrets(c, updatedSecret)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update secret"})
 			return
@@ -159,24 +153,18 @@ func deleteSecret(params *types.RouteParams) gin.HandlerFunc {
 			return
 		}
 
-		secretID, err := primitive.ObjectIDFromHex(c.Param("secret_id"))
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid secret ID"})
-			return
-		}
-
 		if !mongodb.CanUserModifyEvent(c, params.MongoService, authUser, eventID, nil) {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "User not an organizer of this event"})
 			return
 		}
 
 		// Delete the secret from the database
-		err = params.MongoService.DeleteEventSecret(c, eventID, secretID)
+		_, err = params.MongoService.DeleteEventSecrets(c, eventID)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete secret"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete secrets"})
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"message": "Secret deleted successfully"})
+		c.JSON(http.StatusOK, gin.H{"message": "Event Secrets deleted successfully"})
 	}
 }

@@ -1,21 +1,12 @@
-export type EventSecrets = {
-    id: string;
-    eventID: string;
-    secrets?: EventSecret[];
+export interface EventSecrets {
+  eventID: string;
+  email?: EmailSecret;
 }
 
-export type EventSecret = {
-    id: string;
-    description: string;
-    type: string;
-    updatedAt: Date;
-
-    email?: EmailSecret;
-}
-
-export type EmailSecret = {
-    smtpServer: string;
-    smtpPort: number;
-    smtpUsername: string;
-    smtpPassword: string;
+export interface EmailSecret {
+  smtpServer?: string;
+  port?: number;
+  username?: string;
+  password?: string;
+  updatedAt?: string;
 }

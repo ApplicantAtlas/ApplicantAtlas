@@ -2,25 +2,33 @@ package models
 
 import "go.mongodb.org/mongo-driver/bson/primitive"
 
-type EventSecretConfiguration struct {
-	ID      primitive.ObjectID `bson:"_id,omitempty"`
-	EventID primitive.ObjectID `bson:"eventID,omitempty" json:"eventID,omitempty"`
-	Secrets []EventSecret      `bson:"secrets,omitempty" json:"secrets,omitempty"`
+type StripableSecret interface {
+	StripSecret() interface{}
 }
 
-type EventSecret struct {
-	ID          primitive.ObjectID `bson:"_id,omitempty"`
-	Description string             `bson:"description,omitempty" json:"description,omitempty"`
-	UpdatedAt   primitive.DateTime `bson:"updatedAt,omitempty" json:"updatedAt,omitempty"`
-	Type        string             `bson:"type,omitempty" json:"type,omitempty"`
+type EventSecrets struct {
+	EventID primitive.ObjectID `bson:"eventID" json:"eventID,omitempty"`
 
 	// Embed each specific secret type
-	Email *EmailSecret `bson:"email,omitempty" json:"email,omitempty"`
+	// Each secret type should implement the StripableSecret interface
+	// Update the service.go GetEventSecret() method to handle any additional secret types
+	Email *EmailSecret `bson:"email" json:"email,omitempty"`
 }
 
 type EmailSecret struct {
-	SMTPServer string `bson:"smtpServer,omitempty" json:"smtpServer,omitempty"`
-	Port       int    `bson:"port,omitempty" json:"port,omitempty"`
-	Username   string `bson:"username,omitempty" json:"username,omitempty"`
-	Password   string `bson:"password,omitempty" json:"password,omitempty"`
+	SMTPServer string             `bson:"smtpServer" json:"smtpServer,omitempty"`
+	Port       int                `bson:"port" json:"port,omitempty"`
+	Username   string             `bson:"username" json:"username,omitempty"`
+	Password   string             `bson:"password" json:"password,omitempty"`
+	UpdatedAt  primitive.DateTime `bson:"updatedAt" json:"updatedAt,omitempty"`
+}
+
+func (e *EmailSecret) StripSecret() interface{} {
+	return &EmailSecret{
+		SMTPServer: "",
+		Port:       0,
+		Username:   "",
+		Password:   "",
+		UpdatedAt:  e.UpdatedAt,
+	}
 }
