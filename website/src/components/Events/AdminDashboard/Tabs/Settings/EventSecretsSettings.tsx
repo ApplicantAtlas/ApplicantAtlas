@@ -17,6 +17,7 @@ interface EventSecretsSettings {
   onDone: () => void;
 }
 
+// Note: when we add multiple types of secrets we should refactor to be more like a switch statement
 const EventSecretsSettings: React.FC<EventSecretsSettings> = ({
   eventDetails,
   onDone,

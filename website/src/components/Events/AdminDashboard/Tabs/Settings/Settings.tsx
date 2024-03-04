@@ -64,7 +64,7 @@ const Settings: React.FC<SettingsProps> = ({ eventDetails }) => {
 
       {!editingSecret && (
         <div>
-          <h2 className="text-2xl font-semibold mb-4">Email Secret</h2>
+          <h2 className="text-2xl font-semibold mb-4">Event Secrets</h2>
           <div className="overflow-x-auto">
             <table className="table w-full">
               {/* Table Head */}
