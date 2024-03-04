@@ -15,6 +15,24 @@
 		"JWT_SECRET_TOKEN": "testtesttesttest",
 		"KAFKA_BROKER_URL": "localhost:9092"
 	},
-	"postCreateCommand": "docker compose up zookeeper kafka mongo --no-start && cd website && npm i",
-	"postStartCommand": "docker start applicantatlas-zookeeper-1 applicantatlas-mongo-1 && echo waiting 30s to start kafka... && sleep 30 && docker start applicantatlas-kafka-1 && cd website && npm run dev"
+	"postStartCommand": "docker compose up mongo zookeeper kafka -d && cd website && npm i",
+	"postAttachCommand": {
+		"website": "cd website && npm run dev",
+		"api": "cd backend/api && go run cmd/main.go",
+		"event_listener": "cd backend/event-listener && go run cmd/main.go"
+	},
+	"portsAttributes": {
+		"3000": {
+			"label": "Website",
+			"onAutoForward": "notify"
+		},
+		"9092": {
+			"label": "MongoDB",
+			"onAutoForward": "ignore"
+		},
+		"8080": {
+			"label": "API",
+			"onAutoForward": "ignore"
+		}
+	}
 }
