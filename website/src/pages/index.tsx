@@ -13,7 +13,6 @@ export default function Component() {
   const menuItems: MenuItem[] = [
     { label: "Home", href: "/" },
     { label: "Features", href: "#features" },
-    { label: "Pricing", href: "#pricing" },
     { label: "About", href: "#about" },
     { label: "Contact", href: "#contact" },
   ];
@@ -57,60 +56,7 @@ export default function Component() {
               </div>
             </div>
           </section>
-
-          {/* Pricing Section */}
-          <section id="pricing" className="py-12 md:py-24 lg:py-32 bg-gray-100">
-            <div className="text-center">
-              <h2 className="text-3xl font-bold">Pricing</h2>
-              <p className="py-6">A pricing plan for every event</p>
-            </div>
-            <div className="container mx-auto px-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {/* Free Plan */}
-                <div className="card bg-base-100 shadow-xl hover:bg-base-500 hover:shadow-2xl transform hover:scale-105 transition duration-300">
-                  <div className="card-body">
-                    <h3 className="card-title">Free Plan</h3>
-                    <p>
-                      Get started with our basic features at no cost. Ideal for
-                      small events and new organizers.
-                    </p>
-                    <div className="card-actions justify-end">
-                      <button className="btn btn-primary">Choose Plan</button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Pro Plan */}
-                <div className="card bg-base-100 shadow-xl hover:bg-base-500 hover:shadow-2xl transform hover:scale-105 transition duration-300">
-                  <div className="card-body">
-                    <h3 className="card-title">Pro Plan</h3>
-                    <p>
-                      Enhanced features and support for growing events.
-                      $14.99/month.
-                    </p>
-                    <div className="card-actions justify-end">
-                      <button className="btn btn-primary">Choose Plan</button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Enterprise Plan */}
-                <div className="card bg-base-100 shadow-xl hover:bg-base-500 hover:shadow-2xl transform hover:scale-105 transition duration-300">
-                  <div className="card-body">
-                    <h3 className="card-title">Enterprise Plan</h3>
-                    <p>
-                      Our full suite of features and premium support for
-                      large-scale events. Custom pricing.
-                    </p>
-                    <div className="card-actions justify-end">
-                      <button className="btn btn-primary">Contact Us</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
+          
           {/* About Section */}
           <section id="about" className="py-12 md:py-24 lg:py-32">
             <div className="container mx-auto px-4">
