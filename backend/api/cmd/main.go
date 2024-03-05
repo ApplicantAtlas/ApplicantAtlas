@@ -4,8 +4,10 @@ import (
 	"api/internal/routes"
 	"api/internal/types"
 	"context"
+	"fmt"
 	"log"
 	"net/http"
+	"os/exec"
 	"os/signal"
 	"shared/kafka"
 	"shared/mongodb"
@@ -31,6 +33,32 @@ func main() {
 	// Split the origins into a slice, assuming they are comma-separated
 	allowedOrigins := strings.Split(corsAllowedOrigins, ",")
 
+	// If we're on a Codespace add that
+	if os.Getenv("CODESPACES") == "true" {
+		// Lets run command to set the port visibility to public
+		// Note: There's probably a better way to do this.
+		cmdName := "gh"
+		cmdArgs := []string{"codespace", "ports", "visibility", "8080:public", "-c"}
+
+		// Append the actual CODESPACE_NAME environment variable value
+		codespaceName := os.Getenv("CODESPACE_NAME")
+		if codespaceName == "" {
+			log.Fatal("CODESPACE_NAME environment variable is not set")
+		}
+		cmdArgs = append(cmdArgs, codespaceName)
+
+		// Execute the command
+		cmd := exec.Command(cmdName, cmdArgs...)
+
+		if err := cmd.Run(); err != nil {
+			log.Fatalf("Failed to set port visibility to public: %v", err)
+		}
+
+		// Add the domain to valid
+		codespaceURL := fmt.Sprintf("https://%s-8080.%s", os.Getenv("CODESPACE_NAME"), os.Getenv("GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN"))
+		allowedOrigins = append(allowedOrigins, codespaceURL)
+	}
+
 	// If no origins are specified, error out
 	if len(allowedOrigins) == 0 {
 		log.Fatal("CORS: No allowed origins specified, please specify with CORS_ALLOW_ORIGINS environment variable")
@@ -40,6 +68,7 @@ func main() {
 	corsConfig.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}
 	corsConfig.AllowHeaders = []string{"Origin", "Content-Type", "Accept", "Authorization"}
 	corsConfig.AllowCredentials = true
+
 	r.Use(cors.New(corsConfig))
 
 	mongoService, cleanup, err := mongodb.NewService()

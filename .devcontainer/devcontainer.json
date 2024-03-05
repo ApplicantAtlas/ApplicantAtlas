@@ -3,7 +3,8 @@
 	"image": "mcr.microsoft.com/devcontainers/go:1-1.22-bookworm",
 	"features": {
 		"ghcr.io/devcontainers/features/docker-in-docker:2": {},
-		"ghcr.io/devcontainers/features/node:1": {}
+		"ghcr.io/devcontainers/features/node:1": {},
+		"ghcr.io/devcontainers/features/github-cli": {}
 	},
 	"containerEnv": {
 		"MONGO_URL": "localhost:27017",
@@ -21,18 +22,19 @@
 		"api": "cd backend/api && go run cmd/main.go",
 		"event_listener": "cd backend/event-listener && go run cmd/main.go"
 	},
+	"forwardPorts": [3000, 9092, 8080],
 	"portsAttributes": {
 		"3000": {
 			"label": "Website",
-			"onAutoForward": "notify"
+			"onAutoForward": "openPreview"
 		},
 		"9092": {
 			"label": "MongoDB",
-			"onAutoForward": "ignore"
+			"onAutoForward": "silent"
 		},
 		"8080": {
 			"label": "API",
-			"onAutoForward": "ignore"
+			"onAutoForward": "silent"
 		}
 	}
 }
