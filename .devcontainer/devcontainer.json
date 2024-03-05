@@ -16,7 +16,7 @@
 		"KAFKA_BROKER_URL": "localhost:9092"
 	},
 	"postCreateCommand": "docker compose up zookeeper kafka mongo --no-start && cd website && npm i",
-	"postStartCommand": "docker start applicantatlas-zookeeper-1 applicantatlas-mongo-1 && echo waiting 20s to start kafka... && sleep 20 && docker start applicantatlas-kafka-1 && cd website && npm run dev",
+	"postStartCommand": "docker start applicantatlas-zookeeper-1 applicantatlas-mongo-1 && echo waiting 20s to start kafka... && sleep 20 && docker start applicantatlas-kafka-1",
 	"portsAttributes": {
 		"3000": {
 			"label": "Website",
