@@ -93,16 +93,27 @@ export async function getDocData(
   };
 }
 
+
 // This is a simplified example to extract headings and create a TOC
 function extractTOC(tree: Node): TOCItem[] {
   let toc: TOCItem[] = [];
   let stack: Array<TOCItem> = [];
 
+  // Recursively extract text from the node and its children
+  // This handles the case where a heading contains inline elements like **bold**
+  function extractText(node: any) {
+    if (node.type === "text") {
+        return node.value;
+    }
+    // If the node has children, recursively extract text from each child
+    else if (node.children && node.children.length) {
+        return node.children.map(extractText).join("");
+    }
+    return '';
+  }
+
   visit(tree, "heading", (node: any) => {
-    const text = node.children
-      .filter((n: any) => n.type === "text")
-      .map((n: any) => n.value)
-      .join("");
+    const text = extractText(node);
     const id = text.toLowerCase().replace(/\s+/g, "-").replace(/[^\w-]+/g, "");
     const newItem: TOCItem = { value: text, id, depth: node.depth, children: [] };
 

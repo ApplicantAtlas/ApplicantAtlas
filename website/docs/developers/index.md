@@ -19,11 +19,36 @@ Before you begin, ensure you have the following installed:
 ### Running the Project For Development
 The project is composed of multiple services, including backend APIs, Kafka event listeners, and a frontend application. Follow these steps to get the project up and running:
 
-#### Using a GitHub Codespace
+#### Using The Dev Container
 
-The easiest way to just get set up with the project and start developing is to use a GitHub Codespace. This will automatically set up the project for you and you can start developing right away.
+We've created a dev container that has all the required dependencies and tools to get started with this project. This is the easiest way to get started developing on the project so this is a great place to start.
 
-#### Running Locally
+If you later on decide you want to run the project without the dev container you can do so by following the instructions in the "Running Without a Dev Container" section.
+
+##### **With GitHub Codespaces**
+
+The easiest way to just get set up with the project and start developing is to use a GitHub Codespace. This is a cloud based development environment so you can just create a codespace and start developing without having to install anything on your local machine.
+
+[**Create a Codespace**](https://github.com/codespaces/new?repo=724855356) then click create, and after a few minutes of basic setup it should be ready to go.
+
+**Note:** GitHub Codespaces does cost money to use, but you get 50 hours a month for free as of the time of writing this. So if you're just doing some light development you should be able to use it for free.
+
+<!--
+*psst: if you're new to GitHub Codespaces feel free to check out my [LinkedIn Learning course](https://www.linkedin.com/learning-login/share?forceAccount=false&redirect=https%3A%2F%2Fwww.linkedin.com%2Flearning%2Fgithub-codespaces-for-students%3Ftrk%3Dshare_ent_url%26shareId%3DTA%252FPxpwASCePFoBLiSfvWw%253D%253D) on it you should be able to get free access [through my LinkedIn post](https://www.linkedin.com/posts/davidteather_linkedinlearning-education-technology-activity-7069391759281147905-o4yZ?utm_source=share&utm_medium=member_desktop)*
+-->
+
+##### **In Visual Studio Code**
+
+If you're using Visual Studio Code, you can use the dev container to get started with the project. To do this, follow the steps below:
+
+1. **Install the Remote - Containers Extension**
+   If you haven't already, install the [Remote - Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) for Visual Studio Code.
+2. **Open the Project in a Dev Container**
+   Open the project in Visual Studio Code and click on the green "Open a Remote Window" button in the bottom left corner of the window. Then select "Reopen in Container" from the dropdown menu. This will open the project in a dev container with all the required dependencies and tools.
+
+This should open the project in a dev container with all the required dependencies and tools to get started with the project. Although the way it handles running multiple commands is different so you might find it more convienent to development to cancel the running commands, then run them separately following the instructions below. [Here's an issue about the difference](https://github.com/microsoft/vscode-remote-release/issues/9634)
+
+#### Running Without a Dev Container
 
 For ease of development, we recommend not running everything in docker since it's easier to debug and develop and restart the component you're working on without having to restart and rebuild the entire stack. So here's what we personally do:
 
