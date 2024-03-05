@@ -19,6 +19,12 @@ Before you begin, ensure you have the following installed:
 ### Running the Project For Development
 The project is composed of multiple services, including backend APIs, Kafka event listeners, and a frontend application. Follow these steps to get the project up and running:
 
+#### Using a GitHub Codespace
+
+The easiest way to just get set up with the project and start developing is to use a GitHub Codespace. This will automatically set up the project for you and you can start developing right away.
+
+#### Running Locally
+
 For ease of development, we recommend not running everything in docker since it's easier to debug and develop and restart the component you're working on without having to restart and rebuild the entire stack. So here's what we personally do:
 
 1. **Start Docker Services**

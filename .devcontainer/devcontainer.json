@@ -1,5 +1,5 @@
 {
-	"name": "Go",
+	"name": "ApplicantAtlas Developer",
 	"image": "mcr.microsoft.com/devcontainers/go:1-1.22-bookworm",
 	"features": {
 		"ghcr.io/devcontainers/features/docker-in-docker:2": {},
