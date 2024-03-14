@@ -13,6 +13,7 @@ type EmailTemplate struct {
 	Name           string             `bson:"name" json:"name" validate:"required"`
 	Body           string             `bson:"body" json:"body"`
 	Subject        string             `bson:"subject" json:"subject"`
+	From           string             `bson:"from" json:"from" validate:"required"`
 	CC             []string           `bson:"cc" json:"cc"`
 	BCC            []string           `bson:"bcc" json:"bcc"`
 	ReplyTo        string             `bson:"replyTo" json:"replyTo"`

@@ -57,6 +57,18 @@ const EmailTemplateEditor = ({
         defaultValue: templateData.description,
       },
       {
+        key: "from",
+        question: "Email Address To Send From",
+        type: "text",
+        defaultValue: templateData.from,
+        required: true,
+        additionalValidation: {
+          isEmail: {
+            isEmail: true,
+          },
+        }
+      },
+      {
         key: "subject",
         question: "Subject",
         type: "text",

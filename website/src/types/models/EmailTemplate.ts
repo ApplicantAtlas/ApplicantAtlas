@@ -2,6 +2,7 @@ export type EmailTemplate = {
     id?: string;
     eventID: string;
     dataFromFormID?: string;
+    from: string;
     name: string;
     body?: string;
     subject?: string;

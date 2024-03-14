@@ -9,16 +9,13 @@ import (
 	"fmt"
 	"log"
 	"shared/kafka"
+	"shared/mongodb"
 	"shared/utils"
 
 	"github.com/IBM/sarama"
 )
 
-var actionHandlers = map[string]types.EventHandler{
-	"SendEmail":       handlers.SendEmailHandler{},
-	"AllowFormAccess": handlers.AllowFormAccessHandler{},
-	"Webhook":         handlers.WebhookHandler{},
-}
+var actionHandlers = map[string]types.EventHandler{}
 
 type consumerGroupHandler struct{}
 
@@ -90,6 +87,18 @@ func (h consumerGroupHandler) ConsumeClaim(sess sarama.ConsumerGroupSession, cla
 }
 
 func main() {
+	// Start mongo
+	mongoService, cleanup, err := mongodb.NewService()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	actionHandlers = map[string]types.EventHandler{
+		"SendEmail":       handlers.NewSendEmailHandler(mongoService),
+		"AllowFormAccess": handlers.NewAllowFormAccessHandler(mongoService),
+		"Webhook":         handlers.NewWebhookHandler(mongoService),
+	}
+
 	if utils.RunningInAWSLambda() {
 		// Lambda start logic if applicable
 	} else {
@@ -110,8 +119,11 @@ func main() {
 
 			// Check if context was canceled
 			if ctx.Err() != nil {
-				return
+				break
 			}
 		}
 	}
+
+	// Cleanup Mongo
+	cleanup()
 }
