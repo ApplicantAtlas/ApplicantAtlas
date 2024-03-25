@@ -4,6 +4,12 @@ A platform made for managing Hackathon applicants &amp; RSVPs and other communic
 Note: This is an ongoing project and some features may not be fully implemented yet.
 but if you want to contribute to this project please do :D and if you have any questions feel free to contact me
 
+### Demo
+
+[Demo from March 25th 2024](https://www.youtube.com/watch?v=3shgQ5AY8Zs)
+
+[![ApplicantAtlas](./readme-imgs/thumbnail.png)](https://www.youtube.com/watch?v=3shgQ5AY8Zs)
+
 ### How to Support The Project
 * Star the repo 😎
 * Consider [sponsoring](https://github.com/sponsors/davidteather) me on GitHub
