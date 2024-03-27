@@ -9,6 +9,7 @@ Thank you for your interest in contributing to ApplicantAtlas! This document out
 - [Contributing Guidelines](#contributing-guidelines)
 - [Finding Things to Work On](#finding-things-to-work-on)
 - [Making a Contribution](#making-a-contribution)
+- [Code of Conduct](#code-of-conduct)
 
 ## Getting Started
 
@@ -53,3 +54,7 @@ Additionally, our [GitHub project board](https://github.com/users/davidteather/p
 If you have questions or suggestions, please open an issue on our GitHub repository. We're always looking for ways to improve the contribution process.
 
 Thank you for contributing to ApplicantAtlas. Together, we can make managing hackathon events easier and more efficient!
+
+## Code of Conduct
+
+Please review our [Code of Conduct](./code_of_conduct.md) before contributing to ApplicantAtlas. We expect all contributors to adhere to these guidelines to ensure a welcoming and inclusive environment for everyone.
