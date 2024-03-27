@@ -202,3 +202,11 @@ MongoDB is our database of choice, and it is used for data storage.
 
 
 Thank you for contributing to ApplicantAtlas and helping us make managing hackathon events easier and more efficient!
+
+## Getting Help
+
+If you have any questions or need assistance, we have these resources available:
+1. **GitHub Issues** - If you encounter any bugs or issues, please search for existing issues then open a GitHub issue on the repository if you can't find a solution.
+2. **GitHub Discussions** - For general questions or discussions, you can use the GitHub Discussions feature.
+3. **Discord Server** - Join our [Discord server](https://discord.gg/yyPhbfma6f) to chat with other contributors and maintainers.
+4. **Email** - You can reach out to me directly through any of the contact methods on my [GitHub profile](https://github.com/davidteather)

@@ -23,3 +23,7 @@ The documentation is available [as markdown](./website/docs/index.md)
 - for self-hosters [here](./website/docs/self-hosters/index.md)
 - for event organizers [here](./website/docs/event-organizers/index.md)
 - for participants [here](./website/docs/participants/index.md)
+
+### Getting Help
+
+If you have any questions or need help, feel free to open an issue or contact me on [LinkedIn](https://www.linkedin.com/in/davidteather/) or join our [Discord](https://discord.gg/yyPhbfma6f)
