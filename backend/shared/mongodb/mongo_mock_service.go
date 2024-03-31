@@ -367,11 +367,15 @@ func (m *MockMongoService) CreatePipelineRun(ctx context.Context, run models.Pip
 	return nil, nil
 }
 
-func (m *MockMongoService) ListPipelineRuns(ctx context.Context, filter bson.M) ([]models.PipelineRun, error) {
+func (m *MockMongoService) GetPipelineRun(ctx context.Context, filter bson.M) (*models.PipelineRun, error) {
 	return nil, nil
 }
 
 func (m *MockMongoService) UpdatePipelineRun(ctx context.Context, run models.PipelineRun, runID primitive.ObjectID) (*mongo.UpdateResult, error) {
+	return nil, nil
+}
+
+func (m *MockMongoService) ListPipelineRuns(ctx context.Context, filter bson.M) ([]models.PipelineRun, error) {
 	return nil, nil
 }
 
