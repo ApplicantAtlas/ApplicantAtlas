@@ -29,8 +29,11 @@ const FormSubmission = () => {
       .then((r) => {
         setEvent(r.data.event);
       })
-      .catch(() => {
-        let msg = "Could not retrieve this event, is it a valid?";
+      .catch((e) => {
+        let msg = "Could not retrieve this form, is it a valid?";
+        if (e.response?.data?.error) {
+          msg = e.response.data.error;
+        }
         setErr(msg);
       });
 
@@ -45,8 +48,11 @@ const FormSubmission = () => {
           setFormStructure(r);
         }
       })
-      .catch(() => {
+      .catch((e) => {
         let msg = "Could not retrieve this form, is it a valid?";
+        if (e.response?.data?.error) {
+          msg = e.response.data.error;
+        }
         setErr(msg);
       });
   }, [eventId, formId]);
@@ -60,7 +66,12 @@ const FormSubmission = () => {
     return (
       <>
         <Header />
-        <p className="p-4">{err}</p>
+        <div className="p-4">
+          <p>{err}</p>
+          <small>
+            Please contact the event organizers if you believe this is an error.
+          </small>
+        </div>
       </>
     );
   }
