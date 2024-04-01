@@ -51,7 +51,7 @@ type MongoService interface {
 	CreatePipelineRun(ctx context.Context, pipelineRun models.PipelineRun) (*mongo.InsertOneResult, error)
 	GetPipelineRun(ctx context.Context, filter bson.M) (*models.PipelineRun, error)
 	UpdatePipelineRun(ctx context.Context, pipelineRun models.PipelineRun, pipelineRunID primitive.ObjectID) (*mongo.UpdateResult, error)
-	ListPipelineRuns(ctx context.Context, filter bson.M) ([]models.PipelineRun, error)
+	ListPipelineRuns(ctx context.Context, filter bson.M, options *options.FindOptions) ([]models.PipelineRun, error)
 	ListEmailTemplates(ctx context.Context, filter bson.M) ([]models.EmailTemplate, error)
 	CreateEmailTemplate(ctx context.Context, emailTemplate models.EmailTemplate) (*mongo.InsertOneResult, error)
 	UpdateEmailTemplate(ctx context.Context, emailTemplate models.EmailTemplate, emailTemplateID primitive.ObjectID) (*mongo.UpdateResult, error)
@@ -498,10 +498,10 @@ func (s *Service) UpdatePipelineRun(ctx context.Context, pipelineRun models.Pipe
 	return s.Database.Collection("pipeline_runs").UpdateOne(ctx, filter, update)
 }
 
-func (s *Service) ListPipelineRuns(ctx context.Context, filter bson.M) ([]models.PipelineRun, error) {
+func (s *Service) ListPipelineRuns(ctx context.Context, filter bson.M, options *options.FindOptions) ([]models.PipelineRun, error) {
 	var pipelineRuns []models.PipelineRun
 
-	cursor, err := s.Database.Collection("pipeline_runs").Find(ctx, filter)
+	cursor, err := s.Database.Collection("pipeline_runs").Find(ctx, filter, options)
 	if err != nil {
 		return nil, err
 	}

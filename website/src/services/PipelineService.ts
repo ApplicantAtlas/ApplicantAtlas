@@ -1,6 +1,7 @@
 import { PipelineConfiguration } from "@/types/models/Pipeline";
 import api from "./AxiosInterceptor";
 import { AxiosResponse } from "axios";
+import { PipelineRun } from "@/types/models/PipelineRun";
 
 export const CreatePipeline = async (
   pipeline: PipelineConfiguration
@@ -33,3 +34,16 @@ export const DeletePipeline = async (
 ): Promise<AxiosResponse> => {
   return api.delete(`/pipelines/${pipelineID}`);
 };
+
+// Pipeline Runs
+export const GetPipelineRuns = async (
+  pipelineID: string
+): Promise<
+  AxiosResponse<{
+    runs: PipelineRun[];
+    page: number;
+    pageSize: number;
+  }>
+> => {
+  return api.get(`/pipelines/${pipelineID}/runs`);
+}

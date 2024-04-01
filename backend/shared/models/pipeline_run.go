@@ -24,11 +24,11 @@ type PipelineActionStatus struct {
 }
 
 type PipelineRun struct {
-	ID             primitive.ObjectID     `bson:"_id,omitempty" json:"_id,omitempty"`
+	ID             primitive.ObjectID     `bson:"_id,omitempty" json:"id,omitempty"`
 	PipelineID     primitive.ObjectID     `bson:"pipelineID" json:"pipelineID" validate:"required"`
 	TriggeredAt    time.Time              `bson:"triggeredAt" json:"triggeredAt" validate:"required"`
 	RanAt          time.Time              `bson:"ranAt" json:"ranAt"`
 	CompletedAt    time.Time              `bson:"completedAt" json:"completedAt"`
 	Status         PipelineRunStatus      `bson:"status" json:"status" validate:"required"`
-	ActionStatuses []PipelineActionStatus `bson:"actions" json:"actions" validate:"required"`
+	ActionStatuses []PipelineActionStatus `bson:"actionStatuses" json:"actionStatuses" validate:"required"`
 }
