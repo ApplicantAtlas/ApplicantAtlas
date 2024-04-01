@@ -37,14 +37,23 @@ api.interceptors.response.use(
     if (
       error.response &&
       error.response.data &&
-      error.response.data.error == "Invalid or expired token" &&
+      (error.response.data.error == "Invalid or expired token" ||
+        error.response.data.error == "Authorization token required") &&
       error.response.status == 401
     ) {
-      eventEmitter.emit(
-        "apiError",
-        "You have been logged out. Please log in again."
-      );
-      window.location.href = "/logout"; // Redirect to logout if not already on login page
+      if (error.response.data.error == "Authorization token required") {
+        // The user is not logged in
+        eventEmitter.emit(
+          "apiError",
+          "You must be logged in to access this page."
+        );
+      } else {
+        eventEmitter.emit(
+          "apiError",
+          "You have been logged out. Please log in again."
+        );
+        window.location.href = "/logout"; // Redirect to logout if not already on login page
+      }
     } else if (
       error.response &&
       error.response.data &&
