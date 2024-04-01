@@ -57,6 +57,18 @@ const PipelineRuns: React.FC<PipelineRunsProps> = ({ pipeline }) => {
 
   return (
     <div className="p-4">
+      {!pipeline.enabled && (
+        <div
+          className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4"
+          role="alert"
+        >
+          <strong className="font-bold">Pipeline is disabled</strong>
+          <span className="block sm:inline">
+            {" "}
+            - Enable the pipeline in settings to start seeing runs.
+          </span>
+        </div>
+      )}
       <div className="mx-auto max-w-4x1">
         {pipelineRuns.length > 0 && (
           <table className="table bg-white w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -137,11 +149,13 @@ const PipelineRuns: React.FC<PipelineRunsProps> = ({ pipeline }) => {
                                   </div>
                                 </div>
                                 <div className="flex items-center space-x-2">
-                                  <span className="font-semibold">
-                                    Action:
-                                  </span>
+                                  <span className="font-semibold">Action:</span>
                                   <span className="text-gray-600">
-                                    {pipeline.actions?.find(action_local => action_local.id === action.actionID)?.name || 'Name not found'} ({action.actionID})
+                                    {pipeline.actions?.find(
+                                      (action_local) =>
+                                        action_local.id === action.actionID
+                                    )?.name || "Name not found"}{" "}
+                                    ({action.actionID})
                                   </span>
                                 </div>
                               </div>
