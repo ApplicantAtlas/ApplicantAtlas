@@ -6,18 +6,22 @@ import CircularArrowIcon from "./CircularArrowIcon";
 
 interface StatusIconProps {
     status: string;
+    className?: string;
 }
 
-const StatusIcon: React.FC<StatusIconProps> = ({ status }) => {
+const StatusIcon: React.FC<StatusIconProps> = ({ status, className }) => {
+    const defaultClassName = "w-6 h-6";
+    const iconClassName = className ? defaultClassName + " " + className : defaultClassName;
+
     switch (status) {
         case "Pending":
-            return <ElipsesIcon />;
+            return <ElipsesIcon className={iconClassName} />;
         case "Running":
-            return <CircularArrowIcon className="w-6 h-6 animate-spin duration-500" />; 
+            return <CircularArrowIcon className={iconClassName + " animate-spin duration-500"} />; 
         case "Failure":
-            return <XMarkIcon />;
+            return <XMarkIcon className={iconClassName} />;
         case "Success":
-            return <CheckMarkIcon />;
+            return <CheckMarkIcon className={iconClassName} />;
         default:
             return null;
     }

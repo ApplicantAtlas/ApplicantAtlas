@@ -37,7 +37,9 @@ export const DeletePipeline = async (
 
 // Pipeline Runs
 export const GetPipelineRuns = async (
-  pipelineID: string
+  pipelineID: string,
+  page?: number,
+  pageSize?: number
 ): Promise<
   AxiosResponse<{
     runs: PipelineRun[];
@@ -45,5 +47,5 @@ export const GetPipelineRuns = async (
     pageSize: number;
   }>
 > => {
-  return api.get(`/pipelines/${pipelineID}/runs`);
+  return api.get(`/pipelines/${pipelineID}/runs?page=${page}&pageSize=${pageSize}`);
 }
