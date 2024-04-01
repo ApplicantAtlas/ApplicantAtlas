@@ -65,7 +65,7 @@ const PipelineRuns: React.FC<PipelineRunsProps> = ({ pipeline }) => {
           <strong className="font-bold">Pipeline is disabled</strong>
           <span className="block sm:inline">
             {" "}
-            - Enable the pipeline in settings to start seeing runs.
+            - Enable the pipeline in settings to resume pipeline runs.
           </span>
         </div>
       )}
