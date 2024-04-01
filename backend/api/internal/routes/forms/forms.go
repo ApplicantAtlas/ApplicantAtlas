@@ -4,7 +4,6 @@ import (
 	"api/internal/middlewares"
 	"api/internal/routes/forms/responses"
 	"api/internal/types"
-	"fmt"
 	"log"
 	"net/http"
 	"shared/models"
@@ -57,7 +56,6 @@ func getFormDataHandler(params *types.RouteParams) gin.HandlerFunc {
 		if form.IsRestricted {
 			allowed, restrictMessage := IsUserEmailInWhitelist(c, form.AllowedSubmitters)
 			if !allowed {
-				fmt.Println(restrictMessage)
 				c.JSON(http.StatusUnauthorized, gin.H{"error": restrictMessage})
 				return
 			}

@@ -31,7 +31,6 @@ const FormSubmission = () => {
       })
       .catch(() => {
         let msg = "Could not retrieve this event, is it a valid?";
-        showToast(msg, ToastType.Error);
         setErr(msg);
       });
 
@@ -48,7 +47,6 @@ const FormSubmission = () => {
       })
       .catch(() => {
         let msg = "Could not retrieve this form, is it a valid?";
-        showToast(msg, ToastType.Error);
         setErr(msg);
       });
   }, [eventId, formId]);
@@ -62,7 +60,7 @@ const FormSubmission = () => {
     return (
       <>
         <Header />
-        <p>{err}</p>
+        <p className="p-4">{err}</p>
       </>
     );
   }

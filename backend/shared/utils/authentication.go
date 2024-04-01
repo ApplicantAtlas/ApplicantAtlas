@@ -73,6 +73,7 @@ func VerifyJWT(tokenString string) (*models.User, error) {
 
 // GetUserFromContext retrieves the authenticated user from the Gin context
 func GetUserFromContext(c *gin.Context, writeResponse bool) (*models.User, bool) {
+	badTokenString := "Invalid or expired token"
 	var user interface{}
 	user, exists := c.Get("user")
 	if !exists {
@@ -80,7 +81,7 @@ func GetUserFromContext(c *gin.Context, writeResponse bool) (*models.User, bool)
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
 			if writeResponse {
-				c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+				c.JSON(http.StatusUnauthorized, gin.H{"error": badTokenString})
 			}
 			return nil, false
 		}
@@ -90,7 +91,7 @@ func GetUserFromContext(c *gin.Context, writeResponse bool) (*models.User, bool)
 		user, err = VerifyJWT(authHeader)
 		if err != nil {
 			if writeResponse {
-				c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+				c.JSON(http.StatusUnauthorized, gin.H{"error": badTokenString})
 			}
 			return nil, false
 		}

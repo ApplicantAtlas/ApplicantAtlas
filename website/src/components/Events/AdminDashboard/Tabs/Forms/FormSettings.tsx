@@ -114,10 +114,17 @@ const FormSettings: React.FC<FormSettingsProps> = ({
         required: false,
         defaultValue: form.allowedSubmitters
           ?.map((submitter) => {
-            console.log(submitter.expiresAt, typeof submitter.expiresAt )
+            // TODO: This is a bit hacky, but it works for now
+            // Convert expiresAt to a Date object if it's not already one and check the timestamp
+            if (!submitter.expiresAt) return `${submitter.email}`;
+
+            const expiresAtDate = new Date(submitter.expiresAt);
+            const isZeroDate = expiresAtDate.getTime() < 0; // Check if the date is before Jan 1, 1970
             return (
               `${submitter.email}` +
-              (submitter.expiresAt ? `,expiresAt:${submitter.expiresAt}` : "")
+              (submitter.expiresAt && !isZeroDate
+                ? `,expiresAt:${submitter.expiresAt}`
+                : "")
             );
           })
           .join("\n"),
