@@ -219,7 +219,7 @@ func (m *MockMongoService) CreateForm(ctx context.Context, form models.FormStruc
 	return &mongo.InsertOneResult{}, nil
 }
 
-func (m *MockMongoService) GetForm(ctx context.Context, formID primitive.ObjectID) (*models.FormStructure, error) {
+func (m *MockMongoService) GetForm(ctx context.Context, formID primitive.ObjectID, stripSecrets bool) (*models.FormStructure, error) {
 	m.mutex.RLock()
 	defer m.mutex.RUnlock()
 

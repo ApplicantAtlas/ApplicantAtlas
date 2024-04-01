@@ -50,7 +50,7 @@ func CanUserModifyForm(c *gin.Context, m MongoService, u *models.User, formID pr
 
 	form := formObject
 	if form == nil {
-		f, err := m.GetForm(c, formID)
+		f, err := m.GetForm(c, formID, true)
 		if err != nil {
 			return false
 		}

@@ -69,6 +69,11 @@ export type FormField = {
   additionalOptions?: AdditionalOptions;
 };
 
+export type FormAllowedSubmitter = {
+  email: string;
+  expiresAt?: Date;
+}
+
 // We have a lot of optional fields here because we want to be able to use FormStructure as a way to define our own forms like login/register
 // without having to define every single field
 export type FormStructure = {
@@ -86,4 +91,6 @@ export type FormStructure = {
   eventID?: string;
   maxSubmissions?: number; // could be useful for rsvp forms
   submissionMessage?: string;
+  isRestricted?: boolean;
+  allowedSubmitters?: FormAllowedSubmitter[];
 };
