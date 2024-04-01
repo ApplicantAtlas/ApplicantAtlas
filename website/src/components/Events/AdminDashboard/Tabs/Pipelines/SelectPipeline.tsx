@@ -6,6 +6,7 @@ import { UpdatePipeline } from "@/services/PipelineService";
 import PipelineSettings from "./PipelineSettings";
 import PipelineBuilder from "./PipelineBuilder";
 import { EventModel } from "@/types/models/Event";
+import PipelineRuns from "./PipelineRuns";
 
 interface SelectPipelineProps {
   pipeline: PipelineConfiguration;
@@ -90,7 +91,7 @@ const SelectPipeline: React.FC<SelectPipelineProps> = ({
         />
       )}
 
-      {pageSelected === "runs" && <p>Runs</p>}
+      {pageSelected === "runs" && <PipelineRuns pipeline={pipeline} />}
 
       {pageSelected !== "edit" &&
         pageSelected !== "runs" &&

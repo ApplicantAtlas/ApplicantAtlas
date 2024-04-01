@@ -49,6 +49,9 @@ type MongoService interface {
 	UpdateResponse(ctx context.Context, response models.FormResponse, responseID primitive.ObjectID) (*mongo.UpdateResult, error)
 	DeleteResponse(ctx context.Context, responseID primitive.ObjectID) (*mongo.DeleteResult, error)
 	CreatePipelineRun(ctx context.Context, pipelineRun models.PipelineRun) (*mongo.InsertOneResult, error)
+	GetPipelineRun(ctx context.Context, filter bson.M) (*models.PipelineRun, error)
+	UpdatePipelineRun(ctx context.Context, pipelineRun models.PipelineRun, pipelineRunID primitive.ObjectID) (*mongo.UpdateResult, error)
+	ListPipelineRuns(ctx context.Context, filter bson.M, options *options.FindOptions) ([]models.PipelineRun, error)
 	ListEmailTemplates(ctx context.Context, filter bson.M) ([]models.EmailTemplate, error)
 	CreateEmailTemplate(ctx context.Context, emailTemplate models.EmailTemplate) (*mongo.InsertOneResult, error)
 	UpdateEmailTemplate(ctx context.Context, emailTemplate models.EmailTemplate, emailTemplateID primitive.ObjectID) (*mongo.UpdateResult, error)
@@ -353,12 +356,28 @@ func (s *Service) DeleteForm(ctx context.Context, formID primitive.ObjectID) (*m
 // CreatePipeline creates a new pipeline
 func (s *Service) CreatePipeline(ctx context.Context, pipeline models.PipelineConfiguration) (*mongo.InsertOneResult, error) {
 	pipeline.UpdatedAt = time.Now()
+
+	// Generate each action an ID
+	for i := range pipeline.Actions {
+		if pipeline.Actions[i].ID.IsZero() {
+			pipeline.Actions[i].ID = primitive.NewObjectID()
+		}
+	}
+
 	return s.Database.Collection("pipeline_configs").InsertOne(ctx, pipeline)
 }
 
 // UpdatePipeline updates a pipeline by its ID
 func (s *Service) UpdatePipeline(ctx context.Context, pipeline models.PipelineConfiguration, pipelineID primitive.ObjectID) (*mongo.UpdateResult, error) {
 	pipeline.UpdatedAt = time.Now()
+
+	// Generate each action an ID
+	for i := range pipeline.Actions {
+		if pipeline.Actions[i].ID.IsZero() {
+			pipeline.Actions[i].ID = primitive.NewObjectID()
+		}
+	}
+
 	update := bson.M{"$set": pipeline}
 	filter := bson.M{"_id": pipelineID}
 	return s.Database.Collection("pipeline_configs").UpdateOne(ctx, filter, update)
@@ -462,6 +481,51 @@ func (s *Service) DeleteResponse(ctx context.Context, responseID primitive.Objec
 
 func (s *Service) CreatePipelineRun(ctx context.Context, pipelineRun models.PipelineRun) (*mongo.InsertOneResult, error) {
 	return s.Database.Collection("pipeline_runs").InsertOne(ctx, pipelineRun)
+}
+
+func (s *Service) GetPipelineRun(ctx context.Context, filter bson.M) (*models.PipelineRun, error) {
+	var pipelineRun models.PipelineRun
+	err := s.Database.Collection("pipeline_runs").FindOne(ctx, filter).Decode(&pipelineRun)
+	if err != nil {
+		return nil, err
+	}
+	return &pipelineRun, nil
+}
+
+func (s *Service) UpdatePipelineRun(ctx context.Context, pipelineRun models.PipelineRun, pipelineRunID primitive.ObjectID) (*mongo.UpdateResult, error) {
+	update := bson.M{"$set": pipelineRun}
+	filter := bson.M{"_id": pipelineRunID}
+	return s.Database.Collection("pipeline_runs").UpdateOne(ctx, filter, update)
+}
+
+func (s *Service) ListPipelineRuns(ctx context.Context, filter bson.M, options *options.FindOptions) ([]models.PipelineRun, error) {
+	var pipelineRuns []models.PipelineRun
+
+	cursor, err := s.Database.Collection("pipeline_runs").Find(ctx, filter, options)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx) {
+		var pipelineRun models.PipelineRun
+		if err := cursor.Decode(&pipelineRun); err != nil {
+			return nil, err
+		}
+
+		pipelineRuns = append(pipelineRuns, pipelineRun)
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	// If pipelineRuns is null then return an empty slice instead
+	if pipelineRuns == nil {
+		return []models.PipelineRun{}, nil
+	}
+
+	return pipelineRuns, nil
 }
 
 // ListEmailTemplates retrieves email templates based on a filter

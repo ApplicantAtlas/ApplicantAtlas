@@ -11,6 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type MockMongoService struct {
@@ -367,11 +368,15 @@ func (m *MockMongoService) CreatePipelineRun(ctx context.Context, run models.Pip
 	return nil, nil
 }
 
-func (m *MockMongoService) ListPipelineRuns(ctx context.Context, filter bson.M) ([]models.PipelineRun, error) {
+func (m *MockMongoService) GetPipelineRun(ctx context.Context, filter bson.M) (*models.PipelineRun, error) {
 	return nil, nil
 }
 
 func (m *MockMongoService) UpdatePipelineRun(ctx context.Context, run models.PipelineRun, runID primitive.ObjectID) (*mongo.UpdateResult, error) {
+	return nil, nil
+}
+
+func (m *MockMongoService) ListPipelineRuns(ctx context.Context, filter bson.M, options *options.FindOptions) ([]models.PipelineRun, error) {
 	return nil, nil
 }
 

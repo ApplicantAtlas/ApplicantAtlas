@@ -8,6 +8,7 @@ import (
 	"shared/kafka"
 	"shared/mongodb"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
@@ -88,7 +89,7 @@ func (s SendEmailHandler) HandleAction(action kafka.PipelineActionMessage) error
 		replyTo = "Reply-To: " + emailTemplate.From + "\r\n"
 	}
 
-	dateHeader := "Date: " + emailTemplate.UpdatedAt.Format("Mon, 02 Jan 2006 15:04:05 -0700") + "\r\n"
+	dateHeader := "Date: " + time.Now().Format("Mon, 02 Jan 2006 15:04:05 -0700") + "\r\n"
 	messageID := fmt.Sprintf("Message-ID: <%s@%s>\r\n", uuid.NewString(), smtpConfig.SMTPServer)
 
 	var body string = emailTemplate.Body
@@ -116,6 +117,5 @@ func (s SendEmailHandler) HandleAction(action kafka.PipelineActionMessage) error
 		return err
 	}
 
-	fmt.Println("Email sent successfully!")
 	return nil
 }

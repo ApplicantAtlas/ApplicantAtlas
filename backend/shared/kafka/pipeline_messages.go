@@ -15,6 +15,8 @@ type PipelineActionMessage interface {
 // SendEmailMessage requires either an email field ID or an email address.
 // SendEmailMessage represents a send email message
 type SendEmailMessage struct {
+	ActionID        primitive.ObjectID     `bson:"actionID" json:"actionID" validate:"required"`
+	PipelineID      primitive.ObjectID     `bson:"pipelineID" json:"pipelineID" validate:"required"`
 	Name            string                 `bson:"_id,omitempty" json:"_id,omitempty"`
 	PipelineRunID   primitive.ObjectID     `bson:"pipelineRunID" json:"pipelineRunID" validate:"required"`
 	Type            string                 `json:"type" bson:"type" validate:"required,eq=SendEmail"`
@@ -32,9 +34,11 @@ func (s SendEmailMessage) GetName() string {
 	return s.Name
 }
 
-func NewSendEmailMessage(name string, pipelineRunID primitive.ObjectID, emailTemplate primitive.ObjectID, eventID primitive.ObjectID, data map[string]interface{}, emailFieldID string) *SendEmailMessage {
+func NewSendEmailMessage(name string, actionID primitive.ObjectID, pipelineID primitive.ObjectID, pipelineRunID primitive.ObjectID, emailTemplate primitive.ObjectID, eventID primitive.ObjectID, data map[string]interface{}, emailFieldID string) *SendEmailMessage {
 	return &SendEmailMessage{
 		Name:            name,
+		ActionID:        actionID,
+		PipelineID:      pipelineID,
 		PipelineRunID:   pipelineRunID,
 		Type:            "SendEmail",
 		EmailTemplateID: emailTemplate,
@@ -46,6 +50,8 @@ func NewSendEmailMessage(name string, pipelineRunID primitive.ObjectID, emailTem
 
 // AllowFormAccessMessage represents an allow form access message
 type AllowFormAccessMessage struct {
+	ActionID      primitive.ObjectID       `bson:"actionID" json:"actionID" validate:"required"`
+	PipelineID    primitive.ObjectID       `bson:"pipelineID" json:"pipelineID" validate:"required"`
 	Name          string                   `bson:"_id,omitempty" json:"_id,omitempty"`
 	PipelineRunID primitive.ObjectID       `bson:"pipelineRunID" json:"pipelineRunID" validate:"required"`
 	Type          string                   `json:"type" bson:"type" validate:"required,eq=AllowFormAccess"`
@@ -61,9 +67,11 @@ func (s AllowFormAccessMessage) GetName() string {
 	return s.Name
 }
 
-func NewAllowFormAccessMessage(name string, pipelineRunID primitive.ObjectID, toFormID string, options models.FormAccessOptions) *AllowFormAccessMessage {
+func NewAllowFormAccessMessage(name string, actionID primitive.ObjectID, pipelineID primitive.ObjectID, pipelineRunID primitive.ObjectID, toFormID string, options models.FormAccessOptions) *AllowFormAccessMessage {
 	return &AllowFormAccessMessage{
+		ActionID:      actionID,
 		Name:          name,
+		PipelineID:    pipelineID,
 		PipelineRunID: pipelineRunID,
 		Type:          "AllowFormAccess",
 		ToFormID:      toFormID,
@@ -73,6 +81,8 @@ func NewAllowFormAccessMessage(name string, pipelineRunID primitive.ObjectID, to
 
 // WebhookMessage represents a webhook message
 type WebhookMessage struct {
+	ActionID      primitive.ObjectID     `bson:"actionID" json:"actionID" validate:"required"`
+	PipelineID    primitive.ObjectID     `bson:"pipelineID" json:"pipelineID" validate:"required"`
 	Name          string                 `bson:"_id,omitempty" json:"_id,omitempty"`
 	PipelineRunID primitive.ObjectID     `bson:"pipelineRunID" json:"pipelineRunID" validate:"required"`
 	Type          string                 `json:"type" bson:"type" validate:"required,eq=Webhook"`
@@ -90,9 +100,11 @@ func (s WebhookMessage) GetName() string {
 	return s.Name
 }
 
-func NewWebhookMessage(name string, pipelineRunID primitive.ObjectID, endpoint string, method string, headers map[string]interface{}, body map[string]interface{}) *WebhookMessage {
+func NewWebhookMessage(name string, actionID primitive.ObjectID, pipelineID primitive.ObjectID, pipelineRunID primitive.ObjectID, endpoint string, method string, headers map[string]interface{}, body map[string]interface{}) *WebhookMessage {
 	return &WebhookMessage{
+		ActionID:      actionID,
 		Name:          name,
+		PipelineID:    pipelineID,
 		PipelineRunID: pipelineRunID,
 		Type:          "Webhook",
 		Endpoint:      endpoint,

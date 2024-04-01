@@ -17,11 +17,20 @@ func TriggerPipeline(c context.Context, producer sarama.SyncProducer, mongo mong
 		return nil
 	}
 
+	// Form an array of PipelineActionStatus for each action in the pipeline
+	var actionsStatus []models.PipelineActionStatus
+	for _, action := range pipeline.Actions {
+		actionsStatus = append(actionsStatus, models.PipelineActionStatus{
+			ActionID: action.ID,
+			Status:   models.PipelineRunPending,
+		})
+	}
+
 	pipelineRun := models.PipelineRun{
-		PipelineID:  pipeline.ID,
-		TriggeredAt: time.Now(),
-		Actions:     []models.PipelineAction{},
-		Status:      "pending",
+		PipelineID:     pipeline.ID,
+		TriggeredAt:    time.Now(),
+		ActionStatuses: actionsStatus,
+		Status:         models.PipelineRunPending,
 	}
 
 	newPipeline, err := mongo.CreatePipelineRun(c, pipelineRun)
@@ -34,7 +43,7 @@ func TriggerPipeline(c context.Context, producer sarama.SyncProducer, mongo mong
 		var actionMessage kafka.PipelineActionMessage
 		switch action.Type {
 		case "SendEmail":
-			actionMessage = kafka.NewSendEmailMessage("email-action", runID, action.SendEmail.EmailTemplateID, pipeline.EventID, actionData, action.SendEmail.EmailFieldID)
+			actionMessage = kafka.NewSendEmailMessage("email-action", action.ID, pipeline.ID, runID, action.SendEmail.EmailTemplateID, pipeline.EventID, actionData, action.SendEmail.EmailFieldID)
 		default:
 			return errors.New("action type not implemented")
 		}

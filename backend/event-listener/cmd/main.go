@@ -3,21 +3,26 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"event-listener/internal/handlers"
 	"event-listener/internal/types"
 	"fmt"
 	"log"
 	"shared/kafka"
+	"shared/models"
 	"shared/mongodb"
 	"shared/utils"
+	"time"
 
 	"github.com/IBM/sarama"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 var actionHandlers = map[string]types.EventHandler{}
 
-type consumerGroupHandler struct{}
+type consumerGroupHandler struct {
+	mongoService *mongodb.Service
+}
 
 /*
   TODO: We should consider adding like Metadata to this message that's on the PipelineConfiguration
@@ -25,6 +30,9 @@ type consumerGroupHandler struct{}
   We could just consume the entire PipelineConfiguration and then just process the actions in
   order.
   TODO: Lets add logging in a collection like `pipeline_runs` that tracks the status of the pipeline and report any errors
+
+  TODO: Make this more robust
+    * retry logic for failed messages
 */
 
 func (h consumerGroupHandler) Setup(_ sarama.ConsumerGroupSession) error {
@@ -34,54 +42,150 @@ func (h consumerGroupHandler) Setup(_ sarama.ConsumerGroupSession) error {
 func (h consumerGroupHandler) Cleanup(_ sarama.ConsumerGroupSession) error { return nil }
 func (h consumerGroupHandler) ConsumeClaim(sess sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
 	for msg := range claim.Messages() {
-		var actionTypeMap map[string]any
-		err := json.Unmarshal(msg.Value, &actionTypeMap)
-		if err != nil {
-			log.Printf("Error unmarshalling action type: %v", err)
-			continue
-		}
-
-		actionType, ok := actionTypeMap["type"]
-		if !ok {
-			log.Println("Message does not contain an action type")
-			continue
-		}
-
-		actionTypeStr, ok := actionType.(string)
-		if !ok {
-			log.Println("Action type is not a string")
-			return errors.New("action type is not a string")
-		}
-
-		if handler, ok := actionHandlers[actionTypeStr]; ok {
-			var action kafka.PipelineActionMessage
-			switch actionType {
-			case "SendEmail":
-				action = new(kafka.SendEmailMessage)
-			case "AllowFormAccess":
-				action = new(kafka.AllowFormAccessMessage)
-			case "Webhook":
-				action = new(kafka.WebhookMessage)
-			default:
-				log.Fatalf("No object found for action type: %s", actionType)
-			}
-
-			err = json.Unmarshal(msg.Value, &action)
+		errMsg := func(msg *sarama.ConsumerMessage) string {
+			var actionTypeMap map[string]any
+			err := json.Unmarshal(msg.Value, &actionTypeMap)
 			if err != nil {
-				log.Printf("Error unmarshalling %s action: %v", actionType, err)
-				continue
+				return fmt.Sprintf("Error unmarshalling action type: %v", err)
 			}
 
-			err = handler.HandleAction(action)
-			if err != nil {
-				log.Printf("Error handling %s action: %v", actionType, err)
-				continue
+			// Get Type
+			actionType, ok := actionTypeMap["type"]
+			if !ok {
+				return "message does not contain an action type"
 			}
+
+			actionTypeStr, ok := actionType.(string)
+			if !ok {
+				return "action type is not a string"
+			}
+
+			// Get the pipeline run ID
+			pipelineRunIDAny, ok := actionTypeMap["pipelineRunID"]
+			if !ok {
+				return "message does not contain a pipeline run ID"
+			}
+
+			pipelineRunIDStr, ok := pipelineRunIDAny.(string)
+			if !ok {
+				return "pipeline run ID is not a string"
+			}
+
+			pipelineRunID, err := primitive.ObjectIDFromHex(pipelineRunIDStr)
+			if err != nil {
+				return fmt.Sprintf("Error converting pipeline run ID to ObjectID: %v", err)
+			}
+
+			if pipelineRunID.IsZero() {
+				return "pipeline run ID is zero"
+			}
+
+			// Get the action's ID
+			actionIDAny, ok := actionTypeMap["actionID"]
+			if !ok {
+				return "message does not contain an action ID"
+			}
+
+			actionIDStr, ok := actionIDAny.(string)
+			if !ok {
+				return "action ID is not a string"
+			}
+
+			actionID, err := primitive.ObjectIDFromHex(actionIDStr)
+			if err != nil {
+				return fmt.Sprintf("Error converting action ID to ObjectID: %v", err)
+			}
+
+			if actionID.IsZero() {
+				return "action ID is zero"
+			}
+
+			// Get pipelineID
+			pipelineIDAny, ok := actionTypeMap["pipelineID"]
+			if !ok {
+				return "message does not contain a pipeline ID"
+			}
+
+			pipelineIDStr, ok := pipelineIDAny.(string)
+			if !ok {
+				return "pipeline ID is not a string"
+			}
+
+			pipelineID, err := primitive.ObjectIDFromHex(pipelineIDStr)
+			if err != nil {
+				return fmt.Sprintf("Error converting pipeline ID to ObjectID: %v", err)
+			}
+
+			if pipelineID.IsZero() {
+				return "pipeline ID is zero"
+			}
+
+			// Pipeline Run
+			pipelineRun := models.PipelineRun{
+				ID:         pipelineRunID,
+				PipelineID: pipelineID,
+				RanAt:      time.Now(),
+				Status:     models.PipelineRunRunning,
+			}
+
+			var action kafka.PipelineActionMessage = nil
+			var errMsg string = ""
+			if handler, ok := actionHandlers[actionTypeStr]; ok {
+				errMsg = func(handler types.EventHandler) string {
+					switch actionType {
+					case "SendEmail":
+						action = new(kafka.SendEmailMessage)
+					case "AllowFormAccess":
+						action = new(kafka.AllowFormAccessMessage)
+					case "Webhook":
+						action = new(kafka.WebhookMessage)
+					default:
+						return fmt.Sprintf("No object found for action type: %s\n", actionType)
+					}
+
+					err = json.Unmarshal(msg.Value, &action)
+					if err != nil {
+						return fmt.Sprintf("Error unmarshalling %s action: %v\n", actionType, err)
+					}
+
+					err = handler.HandleAction(action)
+					if err != nil {
+						return fmt.Sprintf("Error handling %s action: %v\n", actionType, err)
+					}
+
+					return ""
+				}(handler)
+
+				if errMsg != "" {
+					log.Println(errMsg)
+				}
+			} else {
+				errMsg = fmt.Sprintf("No handler found for action type: %s\n", actionType)
+				log.Println(errMsg)
+			}
+
+			if errMsg != "" {
+				// Mark message as failed
+				pipelineRun.Status = models.PipelineRunFailure
+			} else {
+				// Mark message as successful
+				pipelineRun.Status = models.PipelineRunSuccess
+			}
+
+			// Mark message as processed
+			err = writePipelineActionMessageProcessed(context.Background(), h.mongoService, &pipelineRun, actionID, errMsg)
+			if err != nil {
+				return fmt.Sprintf("Error writing pipeline action message processed: %v", err)
+			}
+			return ""
+		}(msg)
+
+		if errMsg != "" {
+			log.Printf("Error processing message: %s", errMsg)
+			sess.MarkMessage(msg, fmt.Sprintf("failed: %s", errMsg))
 		} else {
-			log.Fatalf("No handler found for action type: %s", actionType)
+			sess.MarkMessage(msg, "success")
 		}
-
-		sess.MarkMessage(msg, "")
 	}
 	return nil
 }
@@ -110,7 +214,9 @@ func main() {
 		// List of topics to subscribe to
 		topics := []string{kafka.PipelineActionTopic}
 
-		handler := consumerGroupHandler{}
+		handler := consumerGroupHandler{
+			mongoService: mongoService,
+		}
 		ctx := context.Background()
 		for {
 			if err := consumer.Consume(ctx, topics, handler); err != nil {
@@ -126,4 +232,71 @@ func main() {
 
 	// Cleanup Mongo
 	cleanup()
+}
+
+// Helper function to manage some of the logic around writing the status of a pipeline action
+func writePipelineActionMessageProcessed(ctx context.Context, mongoService *mongodb.Service, pipelineRun *models.PipelineRun, actionID primitive.ObjectID, errMsg string) error {
+	// Note: this is a pretty messy function
+	// Retrieve the pipeline run from the database
+	existingPipelineRun, err := mongoService.GetPipelineRun(ctx, bson.M{"_id": pipelineRun.ID})
+	if err != nil {
+		return err
+	}
+
+	isLastActionToComplete := true
+	for _, actionStatus := range existingPipelineRun.ActionStatuses {
+		if actionStatus.ActionID != actionID {
+			if actionStatus.Status != models.PipelineRunSuccess && actionStatus.Status != models.PipelineRunFailure {
+				isLastActionToComplete = false
+				break
+			}
+		}
+	}
+
+	var newStatus models.PipelineRunStatus
+	if isLastActionToComplete {
+		newStatus = pipelineRun.Status
+	} else {
+		newStatus = models.PipelineRunRunning
+	}
+
+	// If our status is failure, we know the pipeline has failed and update the status to be that
+	if pipelineRun.Status == models.PipelineRunFailure {
+		newStatus = models.PipelineRunFailure
+	}
+
+	// We need our new Action Statuses to be updated, we only want to update the one where the actionID matches
+	// the actionID we are processing
+	for i, actionStatus := range existingPipelineRun.ActionStatuses {
+		if actionStatus.ActionID == actionID {
+			existingPipelineRun.ActionStatuses[i].Status = pipelineRun.Status
+			existingPipelineRun.ActionStatuses[i].CompletedAt = time.Now()
+			if errMsg != "" {
+				existingPipelineRun.ActionStatuses[i].ErrorMsg = errMsg
+			}
+		}
+	}
+
+	updatedPipelineRun := models.PipelineRun{
+		ID:          existingPipelineRun.ID,
+		PipelineID:  existingPipelineRun.PipelineID,
+		TriggeredAt: existingPipelineRun.TriggeredAt,
+		RanAt: func() time.Time {
+			if existingPipelineRun.RanAt.IsZero() {
+				return time.Now()
+			}
+			return existingPipelineRun.RanAt
+		}(),
+		CompletedAt:    time.Now(),
+		Status:         newStatus,
+		ActionStatuses: existingPipelineRun.ActionStatuses,
+	}
+
+	// TODO: Fix the race condition on updating the pipeline run.
+	_, err = mongoService.UpdatePipelineRun(ctx, updatedPipelineRun, updatedPipelineRun.ID)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
