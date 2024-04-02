@@ -187,6 +187,7 @@ func getPipelineRunsHandler(params *types.RouteParams) gin.HandlerFunc {
 		options := options.Find()
 		options.SetLimit(int64(pageSize))
 		options.SetSkip(int64(skip))
+		options.SetSort(bson.D{{"triggeredAt", -1}})
 
 		pipelineRuns, err := params.MongoService.ListPipelineRuns(c, bson.M{"pipelineID": pipelineID}, options)
 		if err != nil {
