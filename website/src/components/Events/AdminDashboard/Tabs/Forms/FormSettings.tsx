@@ -10,7 +10,11 @@ interface FormSettingsProps {
   changeForm: (form: FormStructure) => void;
 }
 
-const FormSettings: React.FC<FormSettingsProps> = ({ form, onDelete, changeForm }) => {
+const FormSettings: React.FC<FormSettingsProps> = ({
+  form,
+  onDelete,
+  changeForm,
+}) => {
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const { showToast } = useToast();
 
@@ -29,26 +33,26 @@ const FormSettings: React.FC<FormSettingsProps> = ({ form, onDelete, changeForm 
   const formSettingStructure: FormStructure = {
     attrs: [
       {
-        question: 'Form Name',
-        description: 'The name of the form',
-        type: 'text',
-        key: 'name',
+        question: "Form Name",
+        description: "The name of the form",
+        type: "text",
+        key: "name",
         required: true,
         defaultValue: form.name,
       },
       {
-        question: 'Form Description',
-        description: 'The description of the form',
-        type: 'textarea',
-        key: 'description',
+        question: "Form Description",
+        description: "The description of the form",
+        type: "textarea",
+        key: "description",
         required: false,
         defaultValue: form.description,
       },
       {
-        question: 'Allow Multiple Submissions',
-        description: 'Allow users to submit the form multiple times',
-        type: 'checkbox',
-        key: 'allowMultipleSubmissions',
+        question: "Allow Multiple Submissions",
+        description: "Allow users to submit the form multiple times",
+        type: "checkbox",
+        key: "allowMultipleSubmissions",
         required: false,
         defaultValue: form.allowMultipleSubmissions,
       },
@@ -61,10 +65,10 @@ const FormSettings: React.FC<FormSettingsProps> = ({ form, onDelete, changeForm 
         defaultValue: form.maxSubmissions,
       },
       {
-        question: 'Form Status',
-        description: 'The status of the form',
-        type: 'radio',
-        key: 'status',
+        question: "Form Status",
+        description: "The status of the form",
+        type: "radio",
+        key: "status",
         required: true,
         options: ["draft", "published", "closed", "archived"],
         defaultOptions: [form.status ? form.status : "draft"],
@@ -92,12 +96,43 @@ const FormSettings: React.FC<FormSettingsProps> = ({ form, onDelete, changeForm 
         key: "submissionMessage",
         required: false,
         defaultValue: form.submissionMessage,
-      }
+      },
+      {
+        question: "Restrict This Form",
+        description: "Restrict who can submit the form",
+        type: "checkbox",
+        key: "isRestricted",
+        required: false,
+        defaultValue: form.isRestricted,
+      },
+      {
+        question: "Allowed Submitters",
+        description:
+          "The emails of users allowed to submit the form, this is only applicable if the form is restricted",
+        type: "textarea",
+        key: "allowedSubmitters",
+        required: false,
+        defaultValue: Array.isArray(form.allowedSubmitters) ? form.allowedSubmitters?.map((submitter) => {
+            // TODO: This is a bit hacky, but it works for now
+            // Convert expiresAt to a Date object if it's not already one and check the timestamp
+            if (!submitter.expiresAt) return `${submitter.email}`;
+
+            const expiresAtDate = new Date(submitter.expiresAt);
+            const isZeroDate = expiresAtDate.getTime() < 0; // Check if the date is before Jan 1, 1970
+            return (
+              `${submitter.email}` +
+              (submitter.expiresAt && !isZeroDate
+                ? `,expiresAt:${submitter.expiresAt}`
+                : "")
+            );
+          })
+          .join("\n") : "",
+      },
     ],
   };
 
   const handleSubmit = (formData: Record<string, any>) => {
-    const {
+    var {
       status,
       allowMultipleSubmissions,
       openSubmissionsAt,
@@ -106,8 +141,31 @@ const FormSettings: React.FC<FormSettingsProps> = ({ form, onDelete, changeForm 
       submissionMessage,
       name,
       description,
+      isRestricted,
+      allowedSubmitters,
     } = formData;
-  
+
+    // Parse out allowed submitters
+    // TODO: I'd like a better way to format the allowed submitters
+    if (allowedSubmitters) {
+    allowedSubmitters = allowedSubmitters
+      .split("\n")
+      .map((submitter: string) => {
+        const [email, expiresAtPart] = submitter.split(",");
+        const expiresAt = expiresAtPart
+          ? expiresAtPart.split("expiresAt:")[1]
+          : undefined;
+        return {
+          email,
+          expiresAt: expiresAt ? new Date(expiresAt) : undefined,
+        };
+      });
+
+      
+    }
+
+    if (allowedSubmitters.length === 0) allowedSubmitters = [];
+
     Object.assign(form, {
       status,
       allowMultipleSubmissions,
@@ -117,17 +175,25 @@ const FormSettings: React.FC<FormSettingsProps> = ({ form, onDelete, changeForm 
       submissionMessage,
       name,
       description,
+      isRestricted,
+      allowedSubmitters,
     });
 
-    updateForm(form.id || "", form).then(() => {
+    updateForm(form.id || "", form)
+      .then(() => {
         showToast("Successfully updated form!", ToastType.Success);
         changeForm(form); // idk if needed or not
-    }).catch((err) => {});
+      })
+      .catch((err) => {});
   };
 
   return (
     <>
-      <FormBuilder formStructure={formSettingStructure} submissionFunction={handleSubmit} buttonText='Save' />
+      <FormBuilder
+        formStructure={formSettingStructure}
+        submissionFunction={handleSubmit}
+        buttonText="Save"
+      />
 
       <p>
         <button

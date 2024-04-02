@@ -53,7 +53,7 @@ func submitFormHandler(params *types.RouteParams) gin.HandlerFunc {
 			return
 		}
 
-		form, err := params.MongoService.GetForm(c, formID)
+		form, err := params.MongoService.GetForm(c, formID, true)
 		if err != nil && form != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Form does not exist"})
 			return
@@ -194,7 +194,7 @@ func listFormResponsesHandler(params *types.RouteParams) gin.HandlerFunc {
 			return
 		}
 
-		form, err := params.MongoService.GetForm(c, formID)
+		form, err := params.MongoService.GetForm(c, formID, true)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Form does not exist"})
 			return
@@ -231,7 +231,7 @@ func downloadFormResponsesAsCSVHandler(params *types.RouteParams) gin.HandlerFun
 		}
 
 		// Fetch form and responses similar to your existing logic
-		form, err := params.MongoService.GetForm(c, formID)
+		form, err := params.MongoService.GetForm(c, formID, true)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Form does not exist"})
 			return

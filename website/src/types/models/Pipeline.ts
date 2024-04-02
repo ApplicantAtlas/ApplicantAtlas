@@ -1,3 +1,5 @@
+import { FormAllowedSubmitter } from "./Form";
+
 export type comparison = "eq" | "neq";
 
 export type PipelineEvent = {
@@ -39,13 +41,14 @@ export type SendEmail = {
   emailFieldID: string;
 };
 
+export type AllowFormAccessOptions = {
+  expiresInHours?: number;
+}
+
 export type AllowFormAccess = {
   toFormID: string;
-  options: {
-    expiration: {
-      inHoursFromPipelineRun: number;
-    };
-  };
+  options?: AllowFormAccessOptions;
+  emailFieldID: string;
 };
 
 export type Webhook = {

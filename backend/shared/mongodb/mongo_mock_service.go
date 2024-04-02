@@ -219,7 +219,7 @@ func (m *MockMongoService) CreateForm(ctx context.Context, form models.FormStruc
 	return &mongo.InsertOneResult{}, nil
 }
 
-func (m *MockMongoService) GetForm(ctx context.Context, formID primitive.ObjectID) (*models.FormStructure, error) {
+func (m *MockMongoService) GetForm(ctx context.Context, formID primitive.ObjectID, stripSecrets bool) (*models.FormStructure, error) {
 	m.mutex.RLock()
 	defer m.mutex.RUnlock()
 
@@ -244,6 +244,10 @@ func (m *MockMongoService) UpdateForm(ctx context.Context, form models.FormStruc
 	// Update form
 	m.forms[id] = form
 	return &mongo.UpdateResult{ModifiedCount: 1}, nil
+}
+
+func (m *MockMongoService) AddAllowedSubmitter(ctx context.Context, formID primitive.ObjectID, submitter models.FormAllowedSubmitter) (*mongo.UpdateResult, error) {
+	return nil, nil
 }
 
 func (m *MockMongoService) DeleteForm(ctx context.Context, formID primitive.ObjectID) (*mongo.DeleteResult, error) {

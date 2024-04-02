@@ -90,7 +90,7 @@ const PipelineRuns: React.FC<PipelineRunsProps> = ({ pipeline }) => {
             </thead>
             <tbody>
               {pipelineRuns.map((run) => (
-                <>
+                  <React.Fragment key={run.id}>
                   <tr
                     key={run.id}
                     className="border-b hover:bg-gray-50 cursor-pointer"
@@ -176,7 +176,7 @@ const PipelineRuns: React.FC<PipelineRunsProps> = ({ pipeline }) => {
                       </td>
                     </tr>
                   )}
-                </>
+                </React.Fragment>
               ))}
             </tbody>
           </table>

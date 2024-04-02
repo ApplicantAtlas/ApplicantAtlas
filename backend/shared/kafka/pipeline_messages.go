@@ -50,13 +50,15 @@ func NewSendEmailMessage(name string, actionID primitive.ObjectID, pipelineID pr
 
 // AllowFormAccessMessage represents an allow form access message
 type AllowFormAccessMessage struct {
-	ActionID      primitive.ObjectID       `bson:"actionID" json:"actionID" validate:"required"`
-	PipelineID    primitive.ObjectID       `bson:"pipelineID" json:"pipelineID" validate:"required"`
-	Name          string                   `bson:"_id,omitempty" json:"_id,omitempty"`
-	PipelineRunID primitive.ObjectID       `bson:"pipelineRunID" json:"pipelineRunID" validate:"required"`
-	Type          string                   `json:"type" bson:"type" validate:"required,eq=AllowFormAccess"`
-	ToFormID      string                   `bson:"toFormID" json:"toFormID" validate:"required"`
-	Options       models.FormAccessOptions `bson:"options" json:"options" validate:"required"`
+	ActionID      primitive.ObjectID              `bson:"actionID" json:"actionID" validate:"required"`
+	PipelineID    primitive.ObjectID              `bson:"pipelineID" json:"pipelineID" validate:"required"`
+	Name          string                          `bson:"_id,omitempty" json:"_id,omitempty"`
+	PipelineRunID primitive.ObjectID              `bson:"pipelineRunID" json:"pipelineRunID" validate:"required"`
+	Type          string                          `json:"type" bson:"type" validate:"required,eq=AllowFormAccess"`
+	ToFormID      primitive.ObjectID              `bson:"toFormID" json:"toFormID" validate:"required"`
+	Options       models.FormAllowedAccessOptions `bson:"formAllowSubmitter" json:"formAllowSubmitter" validate:"required"`
+	Data          map[string]interface{}          `bson:"data" json:"data" validate:"required"`
+	EmailFieldID  string                          `bson:"emailFieldID" json:"emailFieldID"`
 }
 
 func (s AllowFormAccessMessage) MessageType() string {
@@ -67,7 +69,7 @@ func (s AllowFormAccessMessage) GetName() string {
 	return s.Name
 }
 
-func NewAllowFormAccessMessage(name string, actionID primitive.ObjectID, pipelineID primitive.ObjectID, pipelineRunID primitive.ObjectID, toFormID string, options models.FormAccessOptions) *AllowFormAccessMessage {
+func NewAllowFormAccessMessage(name string, actionID primitive.ObjectID, pipelineID primitive.ObjectID, pipelineRunID primitive.ObjectID, toFormID primitive.ObjectID, options models.FormAllowedAccessOptions, data map[string]interface{}, emailFieldID string) *AllowFormAccessMessage {
 	return &AllowFormAccessMessage{
 		ActionID:      actionID,
 		Name:          name,
@@ -76,6 +78,8 @@ func NewAllowFormAccessMessage(name string, actionID primitive.ObjectID, pipelin
 		Type:          "AllowFormAccess",
 		ToFormID:      toFormID,
 		Options:       options,
+		Data:          data,
+		EmailFieldID:  emailFieldID,
 	}
 }
 

@@ -4,12 +4,14 @@ import (
 	"api/internal/middlewares"
 	"api/internal/routes/forms/responses"
 	"api/internal/types"
+	"fmt"
 	"log"
 	"net/http"
 	"shared/models"
 	"shared/mongodb"
 	"shared/utils"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -27,14 +29,13 @@ func RegisterRoutes(r *gin.RouterGroup, params *types.RouteParams) {
 
 func getFormDataHandler(params *types.RouteParams) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// TODO: Restrict to approved users for like rsvp forms and such
 		formID, err := primitive.ObjectIDFromHex(c.Param("form_id"))
 		if err != nil {
 			c.JSON(400, gin.H{"error": "Invalid form ID"})
 			return
 		}
 
-		form, err := params.MongoService.GetForm(c, formID)
+		form, err := params.MongoService.GetForm(c, formID, false)
 		if err != nil {
 			c.JSON(404, gin.H{"error": "Form not found"})
 			return
@@ -52,6 +53,16 @@ func getFormDataHandler(params *types.RouteParams) gin.HandlerFunc {
 			}
 		}
 
+		// Check if the authenticated user's emails are in the form's whitelist, if it exists
+		if form.IsRestricted {
+			allowed, restrictMessage := IsUserEmailInWhitelist(c, form.AllowedSubmitters)
+			if !allowed {
+				c.JSON(http.StatusUnauthorized, gin.H{"error": restrictMessage})
+				return
+			}
+		}
+
+		form.StripSecrets()
 		c.JSON(http.StatusOK, gin.H{"form": form})
 	}
 }
@@ -163,6 +174,8 @@ func updateFormHandler(params *types.RouteParams) gin.HandlerFunc {
 			return
 		}
 
+		fmt.Println(req.AllowedSubmitters)
+
 		_, err = params.MongoService.UpdateForm(c, req, formID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update form"})
@@ -172,4 +185,29 @@ func updateFormHandler(params *types.RouteParams) gin.HandlerFunc {
 
 		c.JSON(http.StatusOK, gin.H{"message": "Form updated successfully"})
 	}
+}
+
+func IsUserEmailInWhitelist(c *gin.Context, whitelist []models.FormAllowedSubmitter) (bool, string) {
+	authenticatedUser, ok := utils.GetUserFromContext(c, true)
+	if !ok {
+		return false, "You must be logged in to view this form"
+	}
+
+	hasExpired := false
+	for _, allowedSubmitter := range whitelist {
+		if allowedSubmitter.Email == authenticatedUser.Email || authenticatedUser.SchoolEmail == allowedSubmitter.Email {
+			if allowedSubmitter.ExpiresAt.IsZero() || allowedSubmitter.ExpiresAt.After(time.Now()) {
+				return true, ""
+			} else {
+				hasExpired = true
+			}
+		}
+	}
+
+	if hasExpired {
+		// We're doing the check here incase the user has multiple emails in the whitelist and not all have expired
+		return false, "Your access to this form has expired"
+	}
+
+	return false, "You are not authorized to view this form"
 }
