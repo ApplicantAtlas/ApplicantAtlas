@@ -89,10 +89,9 @@ const PipelineActionModal: React.FC<PipelineActionModalProps> = ({
           allowFormAccess: {
             toFormID: formData.toFormID,
             options: {
-              expiration: {
-                inHoursFromPipelineRun: formData.expiration,
-              },
+              expiresInHours: formData.expiration,
             },
+            emailFieldID: formData.emailFieldID,
           },
         };
       case "Webhook":
@@ -293,12 +292,26 @@ const createAllowFormAccessFormStructure = (
       },
       {
         question: "Expiration (in hours)",
+        description: "How long should the form be accessible for? A value of 0 means indefinite access.",
         type: "number",
         key: "expiration",
-        additionalValidation: { min: 1 },
-        defaultValue: defaultAction?.allowFormAccess?.options?.expiration?.inHoursFromPipelineRun,
+        additionalValidation: { min: 0 },
+        defaultValue: defaultAction?.allowFormAccess?.options?.expiresInHours,
       },
-      // Add more fields as needed
+      {
+        question: "Email Address Field",
+        description: "What field contains the email address, that should be granted access to the form?",
+        type: "select",
+        key: "emailFieldID",
+        required: true,
+        options: eventForms?.flatMap((form) =>
+          form.attrs.map((attr) => ({
+            value: `${attr.key}`,
+            label: `${attr.question} (${form.name} id: ${form.id})`, // TODO: Conditional options depending on form selected.
+          }))
+        ),
+        defaultOptions: defaultAction?.allowFormAccess?.emailFieldID ? [defaultAction?.allowFormAccess?.emailFieldID] : undefined,
+      }
     ],
   };
 };

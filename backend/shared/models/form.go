@@ -11,7 +11,7 @@ This section is for modeling the default values for Selectors when we fetch data
 Like MLH's School List
 */
 type SelectorSource struct {
-	ID          primitive.ObjectID `bson:"_id,omitempty"`
+	ID          primitive.ObjectID `bson:"_id"`
 	SourceName  string             `bson:"sourceName" json:"sourceName"`
 	LastUpdated time.Time          `bson:"lastUpdated" json:"lastUpdated"`
 	Options     []string           `bson:"options" json:"options"`
@@ -19,34 +19,34 @@ type SelectorSource struct {
 
 // Address represents a physical address
 type Address struct {
-	StreetAddress string `json:"streetAddress,omitempty" bson:"streetAddress,omitempty"`
-	City          string `json:"city,omitempty" bson:"city,omitempty"`
-	Region        string `json:"region,omitempty" bson:"region,omitempty"`
-	ZipCode       string `json:"zipCode,omitempty" bson:"zipCode,omitempty"`
-	Country       string `json:"country,omitempty" bson:"country,omitempty"`
+	StreetAddress string `json:"streetAddress,omitempty" bson:"streetAddress"`
+	City          string `json:"city,omitempty" bson:"city"`
+	Region        string `json:"region,omitempty" bson:"region"`
+	ZipCode       string `json:"zipCode,omitempty" bson:"zipCode"`
+	Country       string `json:"country,omitempty" bson:"country"`
 }
 
 // EmailValidationOptions for validating email fields
 type EmailValidationOptions struct {
-	IsEmail         bool     `json:"isEmail,omitempty" bson:"isEmail,omitempty"`
-	RequireDomain   []string `json:"requireDomain,omitempty" bson:"requireDomain,omitempty"`
-	AllowSubdomains bool     `json:"allowSubdomains,omitempty" bson:"allowSubdomains,omitempty"`
-	AllowTLDs       []string `json:"allowTLDs,omitempty" bson:"allowTLDs,omitempty"`
+	IsEmail         bool     `json:"isEmail,omitempty" bson:"isEmail"`
+	RequireDomain   []string `json:"requireDomain,omitempty" bson:"requireDomain"`
+	AllowSubdomains bool     `json:"allowSubdomains,omitempty" bson:"allowSubdomains"`
+	AllowTLDs       []string `json:"allowTLDs,omitempty" bson:"allowTLDs"`
 }
 
 // FieldValidation for additional validation rules
 type FieldValidation struct {
-	Min     int                    `json:"min,omitempty" bson:"min,omitempty"`
-	Max     int                    `json:"max,omitempty" bson:"max,omitempty"`
-	IsEmail EmailValidationOptions `json:"isEmail,omitempty" bson:"isEmail,omitempty"`
+	Min     int                    `json:"min,omitempty" bson:"min"`
+	Max     int                    `json:"max,omitempty" bson:"max"`
+	IsEmail EmailValidationOptions `json:"isEmail,omitempty" bson:"isEmail"`
 }
 
 // AdditionalOptions for extra field-specific settings
 type AdditionalOptions struct {
-	DefaultTimezone      string `json:"defaultTimezone,omitempty" bson:"defaultTimezone,omitempty"`
-	ShowTimezone         bool   `json:"showTimezone,omitempty" bson:"showTimezone,omitempty"`
-	IsPassword           bool   `json:"isPassword,omitempty" bson:"isPassword,omitempty"`
-	UseDefaultValuesFrom string `json:"useDefaultValuesFrom,omitempty" bson:"useDefaultValuesFrom,omitempty"`
+	DefaultTimezone      string `json:"defaultTimezone,omitempty" bson:"defaultTimezone"`
+	ShowTimezone         bool   `json:"showTimezone,omitempty" bson:"showTimezone"`
+	IsPassword           bool   `json:"isPassword,omitempty" bson:"isPassword"`
+	UseDefaultValuesFrom string `json:"useDefaultValuesFrom,omitempty" bson:"useDefaultValuesFrom"`
 }
 
 // FormFieldType for defining the type of a form field
@@ -65,8 +65,8 @@ type FormField struct {
 	DefaultValue         FieldValue        `json:"defaultValue,omitempty" bson:"defaultValue,omitempty"`
 	Options              []string          `json:"options,omitempty" bson:"options,omitempty"`
 	DefaultOptions       []string          `json:"defaultOptions,omitempty" bson:"defaultOptions,omitempty"`
-	Required             bool              `json:"required,omitempty" bson:"required,omitempty"`
-	Disabled             bool              `json:"disabled,omitempty" bson:"disabled,omitempty"`
+	Required             bool              `json:"required,omitempty" bson:"required"`
+	Disabled             bool              `json:"disabled,omitempty" bson:"disabled"`
 	AdditionalOptions    AdditionalOptions `json:"additionalOptions,omitempty" bson:"additionalOptions,omitempty"`
 }
 
@@ -79,21 +79,21 @@ type FormAllowedSubmitter struct {
 // FormStructure represents the overall structure of a form
 type FormStructure struct {
 	Attrs                    []FormField            `json:"attrs" bson:"attrs"`
-	ID                       primitive.ObjectID     `json:"id,omitempty" bson:"_id,omitempty"`
-	AllowMultipleSubmissions bool                   `json:"allowMultipleSubmissions,omitempty" bson:"allowMultipleSubmissions,omitempty"`
-	CloseSubmissionsAt       time.Time              `json:"closeSubmissionsAt,omitempty" bson:"closeSubmissionsAt,omitempty"`
-	OpenSubmissionsAt        time.Time              `json:"openSubmissionsAt,omitempty" bson:"openSubmissionsAt,omitempty"`
-	Name                     string                 `json:"name,omitempty" bson:"name,omitempty"`
-	Description              string                 `json:"description,omitempty" bson:"description,omitempty"`
-	CreatedAt                time.Time              `json:"createdAt,omitempty" bson:"createdAt,omitempty"`
-	UpdatedAt                time.Time              `json:"updatedAt,omitempty" bson:"updatedAt,omitempty"`
-	Status                   string                 `json:"status,omitempty" bson:"status,omitempty"`
-	IsDeleted                bool                   `json:"isDeleted,omitempty" bson:"isDeleted,omitempty"`
-	EventID                  primitive.ObjectID     `json:"eventID,omitempty" bson:"eventID,omitempty"`
-	MaxSubmissions           int                    `json:"maxSubmissions,omitempty" bson:"maxSubmissions,omitempty"`
-	SubmissionMessage        string                 `json:"submissionMessage,omitempty" bson:"submissionMessage,omitempty"`
-	IsRestricted             bool                   `json:"isRestricted,omitempty" bson:"isRestricted,omitempty"`
-	AllowedSubmitters        []FormAllowedSubmitter `json:"allowedSubmitters,omitempty" bson:"allowedSubmitters,omitempty"`
+	ID                       primitive.ObjectID     `json:"id,omitempty" bson:"_id"`
+	AllowMultipleSubmissions bool                   `json:"allowMultipleSubmissions,omitempty" bson:"allowMultipleSubmissions"`
+	CloseSubmissionsAt       time.Time              `json:"closeSubmissionsAt,omitempty" bson:"closeSubmissionsAt"`
+	OpenSubmissionsAt        time.Time              `json:"openSubmissionsAt,omitempty" bson:"openSubmissionsAt"`
+	Name                     string                 `json:"name,omitempty" bson:"name"`
+	Description              string                 `json:"description,omitempty" bson:"description"`
+	CreatedAt                time.Time              `json:"createdAt,omitempty" bson:"createdAt"`
+	UpdatedAt                time.Time              `json:"updatedAt,omitempty" bson:"updatedAt"`
+	Status                   string                 `json:"status,omitempty" bson:"status"`
+	IsDeleted                bool                   `json:"isDeleted,omitempty" bson:"isDeleted"`
+	EventID                  primitive.ObjectID     `json:"eventID,omitempty" bson:"eventID"`
+	MaxSubmissions           int                    `json:"maxSubmissions,omitempty" bson:"maxSubmissions"`
+	SubmissionMessage        string                 `json:"submissionMessage,omitempty" bson:"submissionMessage"`
+	IsRestricted             bool                   `json:"isRestricted,omitempty" bson:"isRestricted"`
+	AllowedSubmitters        []FormAllowedSubmitter `json:"allowedSubmitters,omitempty" bson:"allowedSubmitters"`
 }
 
 // StripSecrets removes any sensitive information from the form

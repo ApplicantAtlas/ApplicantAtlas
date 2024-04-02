@@ -246,6 +246,10 @@ func (m *MockMongoService) UpdateForm(ctx context.Context, form models.FormStruc
 	return &mongo.UpdateResult{ModifiedCount: 1}, nil
 }
 
+func (m *MockMongoService) AddAllowedSubmitter(ctx context.Context, formID primitive.ObjectID, submitter models.FormAllowedSubmitter) (*mongo.UpdateResult, error) {
+	return nil, nil
+}
+
 func (m *MockMongoService) DeleteForm(ctx context.Context, formID primitive.ObjectID) (*mongo.DeleteResult, error) {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()

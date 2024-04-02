@@ -38,6 +38,7 @@ type MongoService interface {
 	ListForms(ctx context.Context, filter bson.M) ([]models.FormStructure, error)
 	CreateForm(ctx context.Context, form models.FormStructure) (*mongo.InsertOneResult, error)
 	UpdateForm(ctx context.Context, form models.FormStructure, formID primitive.ObjectID) (*mongo.UpdateResult, error)
+	AddAllowedSubmitter(ctx context.Context, formID primitive.ObjectID, submitter models.FormAllowedSubmitter) (*mongo.UpdateResult, error)
 	DeleteForm(ctx context.Context, formID primitive.ObjectID) (*mongo.DeleteResult, error)
 	CreatePipeline(ctx context.Context, pipeline models.PipelineConfiguration) (*mongo.InsertOneResult, error)
 	UpdatePipeline(ctx context.Context, pipeline models.PipelineConfiguration, pipelineID primitive.ObjectID) (*mongo.UpdateResult, error)
@@ -349,6 +350,22 @@ func (s *Service) UpdateForm(ctx context.Context, form models.FormStructure, for
 	update := bson.M{"$set": form}
 	filter := bson.M{"_id": formID}
 	return s.Database.Collection("forms").UpdateOne(ctx, filter, update)
+}
+
+// AddAllowedSubmitter adds a new allowed submitter to a form
+func (s *Service) AddAllowedSubmitter(ctx context.Context, formID primitive.ObjectID, submitter models.FormAllowedSubmitter) (*mongo.UpdateResult, error) {
+	// Prepare the update
+	update := bson.M{
+		"$push": bson.M{"allowedSubmitters": submitter},
+	}
+
+	// Execute the update operation
+	result, err := s.Database.Collection("forms").UpdateByID(ctx, formID, update)
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }
 
 // DeleteForm deletes a form by its ID

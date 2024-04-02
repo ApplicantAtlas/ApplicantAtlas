@@ -112,8 +112,7 @@ const FormSettings: React.FC<FormSettingsProps> = ({
         type: "textarea",
         key: "allowedSubmitters",
         required: false,
-        defaultValue: form.allowedSubmitters
-          ?.map((submitter) => {
+        defaultValue: Array.isArray(form.allowedSubmitters) ? form.allowedSubmitters?.map((submitter) => {
             // TODO: This is a bit hacky, but it works for now
             // Convert expiresAt to a Date object if it's not already one and check the timestamp
             if (!submitter.expiresAt) return `${submitter.email}`;
@@ -127,7 +126,7 @@ const FormSettings: React.FC<FormSettingsProps> = ({
                 : "")
             );
           })
-          .join("\n"),
+          .join("\n") : "",
       },
     ],
   };
@@ -148,6 +147,7 @@ const FormSettings: React.FC<FormSettingsProps> = ({
 
     // Parse out allowed submitters
     // TODO: I'd like a better way to format the allowed submitters
+    if (allowedSubmitters) {
     allowedSubmitters = allowedSubmitters
       .split("\n")
       .map((submitter: string) => {
@@ -160,6 +160,11 @@ const FormSettings: React.FC<FormSettingsProps> = ({
           expiresAt: expiresAt ? new Date(expiresAt) : undefined,
         };
       });
+
+      
+    }
+
+    if (allowedSubmitters.length === 0) allowedSubmitters = [];
 
     Object.assign(form, {
       status,

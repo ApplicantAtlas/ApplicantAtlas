@@ -70,21 +70,15 @@ type SendEmail struct {
 	EmailFieldID    string             `bson:"emailFieldID" json:"emailFieldID"`
 }
 
+type FormAllowedAccessOptions struct {
+	ExpiresInHours int `bson:"expiresInHours" json:"expiresInHours" validate:"required"`
+}
+
 // AllowFormAccess represents the action to allow access to a form
 type AllowFormAccess struct {
-	Type     string            `json:"type" bson:"type" validate:"required,eq=AllowFormAccess"`
-	ToFormID string            `bson:"toFormID" json:"toFormID" validate:"required"`
-	Options  FormAccessOptions `bson:"options" json:"options" validate:"required"`
-}
-
-// FormAccessOptions represents options for form access
-type FormAccessOptions struct {
-	Expiration ExpirationOptions `bson:"expiration" json:"expiration" validate:"required"`
-}
-
-// ExpirationOptions represents expiration options for form access
-type ExpirationOptions struct {
-	InHoursFromPipelineRun int `bson:"inHoursFromPipelineRun" json:"inHoursFromPipelineRun" validate:"required,gt=0"`
+	ToFormID     primitive.ObjectID       `bson:"toFormID" json:"toFormID" validate:"required"`
+	Options      FormAllowedAccessOptions `bson:"options" json:"options" validate:"required"`
+	EmailFieldID string                   `bson:"emailFieldID" json:"emailFieldID" validate:"required"`
 }
 
 // Webhook represents a webhook action

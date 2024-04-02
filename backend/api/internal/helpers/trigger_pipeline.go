@@ -44,6 +44,8 @@ func TriggerPipeline(c context.Context, producer sarama.SyncProducer, mongo mong
 		switch action.Type {
 		case "SendEmail":
 			actionMessage = kafka.NewSendEmailMessage("email-action", action.ID, pipeline.ID, runID, action.SendEmail.EmailTemplateID, pipeline.EventID, actionData, action.SendEmail.EmailFieldID)
+		case "AllowFormAccess":
+			actionMessage = kafka.NewAllowFormAccessMessage("allow-form-access-action", action.ID, pipeline.ID, runID, action.AllowFormAccess.ToFormID, action.AllowFormAccess.Options, actionData, action.AllowFormAccess.EmailFieldID)
 		default:
 			return errors.New("action type not implemented")
 		}
