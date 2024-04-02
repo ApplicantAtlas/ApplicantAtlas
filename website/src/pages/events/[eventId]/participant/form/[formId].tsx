@@ -45,6 +45,9 @@ const FormSubmission = () => {
           showToast(msg, ToastType.Error);
           setErr(msg);
         } else {
+          // Remove internal fields from the form
+          r.attrs = r.attrs.filter((field) => !field.isInternal);
+
           setFormStructure(r);
         }
       })

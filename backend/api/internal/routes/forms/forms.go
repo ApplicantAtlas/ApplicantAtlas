@@ -4,7 +4,6 @@ import (
 	"api/internal/middlewares"
 	"api/internal/routes/forms/responses"
 	"api/internal/types"
-	"fmt"
 	"log"
 	"net/http"
 	"shared/models"
@@ -173,8 +172,6 @@ func updateFormHandler(params *types.RouteParams) gin.HandlerFunc {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "You are not authorized to update this form"})
 			return
 		}
-
-		fmt.Println(req.AllowedSubmitters)
 
 		_, err = params.MongoService.UpdateForm(c, req, formID)
 		if err != nil {

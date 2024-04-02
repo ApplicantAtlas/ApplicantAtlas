@@ -81,6 +81,16 @@ const FieldAttributesForm: React.FC<FieldAttributesFormProps> = ({
       required: false,
       defaultValue: initialAttributes?.required,
     });
+
+    attrs.push({
+      key: "isInternal",
+      question: "Is this an internal field?",
+      description: "Internal fields are not shown to the user, and only appear in the form submission data.",
+      type: "checkbox",
+      required: false,
+      defaultValue: initialAttributes?.isInternal,
+    });
+
     return { attrs: attrs };
   };
 

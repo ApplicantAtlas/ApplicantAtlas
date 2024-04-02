@@ -68,6 +68,7 @@ type FormField struct {
 	Required             bool              `json:"required,omitempty" bson:"required"`
 	Disabled             bool              `json:"disabled,omitempty" bson:"disabled"`
 	AdditionalOptions    AdditionalOptions `json:"additionalOptions,omitempty" bson:"additionalOptions,omitempty"`
+	IsInternal           bool              `json:"isInternal" bson:"isInternal" validate:"required"`
 }
 
 // FormAllowedSubmitter represents a user who is allowed to submit a form with additional options
