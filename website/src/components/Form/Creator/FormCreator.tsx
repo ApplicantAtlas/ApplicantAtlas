@@ -3,6 +3,7 @@ import { FormStructure, FormField, FormFieldType } from "@/types/models/Form";
 import FormFieldModal from "./FormFieldModal";
 import FieldAttributesForm from "./FieldAttributesForm";
 import { v4 as uuidv4 } from "uuid";
+import InformationIcon from "@/components/Icons/InformationIcon";
 
 type FormCreatorProps = {
   submissionFunction: (formStructure: FormStructure) => void;
@@ -13,7 +14,7 @@ type FormCreatorProps = {
 const FormCreator: React.FC<FormCreatorProps> = ({
   defaultFormStructure,
   submissionFunction,
-  submissionButtonText
+  submissionButtonText,
 }) => {
   const [userFormStructure, setUserFormStructure] = useState<FormStructure>(
     defaultFormStructure || { attrs: [] }
@@ -27,12 +28,12 @@ const FormCreator: React.FC<FormCreatorProps> = ({
 
   const handleFieldSelect = (fieldType: string) => {
     // TODO: We need to map human readable like "email" to actual type like text with validations on it
-    setSelectedFieldType(fieldType as FormFieldType); 
+    setSelectedFieldType(fieldType as FormFieldType);
     setModalOpen(false);
   };
 
   const handleAddField = (field: FormField) => {
-    console.log(field)
+    console.log(field);
     if (editingFieldIndex !== null) {
       // Edit existing field
       const updatedFields = [...userFormStructure.attrs];
@@ -90,7 +91,7 @@ const FormCreator: React.FC<FormCreatorProps> = ({
           {userFormStructure.attrs.map((field, index) => (
             <div key={index} className="my-2 p-2 border rounded">
               <p>
-                <strong>Question:</strong> {field.question} {field.isInternal && " (Internal)"}
+                <strong>Question:</strong> {field.question}
               </p>
               <p>
                 <strong>Type:</strong> {field.type}
@@ -107,6 +108,20 @@ const FormCreator: React.FC<FormCreatorProps> = ({
               {field.options && (
                 <p>
                   <strong>Options:</strong> {field.options.join(", ")}
+                </p>
+              )}
+              {field.isInternal && (
+                <p>
+                  <strong>Internal Field: </strong>
+                  Yes
+                  <div
+                    className="tooltip"
+                    data-tip={
+                      "This is an internal field, it will not be shown to users submitting the form."
+                    }
+                  >
+                    <InformationIcon className="h-3 w-3" />
+                  </div>
                 </p>
               )}
               <button
