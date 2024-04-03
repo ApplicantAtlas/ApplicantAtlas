@@ -28,6 +28,7 @@ const FieldAttributesForm: React.FC<FieldAttributesFormProps> = ({
       defaultValue: formData.defaultValue,
       options: formData.options,
       required: formData.required === true,
+      isInternal: formData.isInternal === true,
     };
 
     // Call the onAddField function passed from FormCreator
@@ -90,6 +91,8 @@ const FieldAttributesForm: React.FC<FieldAttributesFormProps> = ({
       required: false,
       defaultValue: initialAttributes?.isInternal,
     });
+
+    console.log(attrs)
 
     return { attrs: attrs };
   };

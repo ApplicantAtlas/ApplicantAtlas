@@ -179,7 +179,7 @@ const FormSettings: React.FC<FormSettingsProps> = ({
       allowedSubmitters,
     });
 
-    updateForm(form.id || "", form)
+    updateForm(form.id || "t", form)
       .then(() => {
         showToast("Successfully updated form!", ToastType.Success);
         changeForm(form); // idk if needed or not

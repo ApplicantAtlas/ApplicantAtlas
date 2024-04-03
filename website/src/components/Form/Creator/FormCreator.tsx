@@ -32,6 +32,7 @@ const FormCreator: React.FC<FormCreatorProps> = ({
   };
 
   const handleAddField = (field: FormField) => {
+    console.log(field)
     if (editingFieldIndex !== null) {
       // Edit existing field
       const updatedFields = [...userFormStructure.attrs];
@@ -89,7 +90,7 @@ const FormCreator: React.FC<FormCreatorProps> = ({
           {userFormStructure.attrs.map((field, index) => (
             <div key={index} className="my-2 p-2 border rounded">
               <p>
-                <strong>Question:</strong> {field.question}
+                <strong>Question:</strong> {field.question} {field.isInternal && " (Internal)"}
               </p>
               <p>
                 <strong>Type:</strong> {field.type}

@@ -30,6 +30,7 @@ type FormBuilderProps = {
   formStructure: FormStructure;
   submissionFunction: (formJSON: Record<string, any>) => void;
   buttonText?: string;
+  showInternalFields?: boolean;
 };
 
 // TODO: Maybe add a way to customize the submit button (optionally abstract it out of the form builder)
@@ -39,6 +40,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   formStructure,
   submissionFunction,
   buttonText = "Submit",
+  showInternalFields = false,
 }) => {
   const [formData, setFormData] = useState<Record<string, any>>({});
   const [invalidInputs, setInvalidInputs] = useState<
@@ -95,24 +97,25 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
 
   useEffect(() => {
     if (formStructure.attrs !== undefined) {
-      formStructure.attrs.forEach((field) => {
-        if (field.additionalOptions?.useDefaultValuesFrom) {
-          const defaultValuesFrom =
-            field.additionalOptions.useDefaultValuesFrom;
+      formStructure.attrs
+        .forEach((field) => {
+          if (field.additionalOptions?.useDefaultValuesFrom) {
+            const defaultValuesFrom =
+              field.additionalOptions.useDefaultValuesFrom;
 
-          // Check if the options have already been fetched
-          if (!fetchedOptions[defaultValuesFrom]) {
-            getSelectorOptions(defaultValuesFrom)
-              .then((options) => {
-                setFetchedOptions((prevOptions) => ({
-                  ...prevOptions,
-                  [defaultValuesFrom]: options,
-                }));
-              })
-              .catch((error) => console.error(error));
+            // Check if the options have already been fetched
+            if (!fetchedOptions[defaultValuesFrom]) {
+              getSelectorOptions(defaultValuesFrom)
+                .then((options) => {
+                  setFetchedOptions((prevOptions) => ({
+                    ...prevOptions,
+                    [defaultValuesFrom]: options,
+                  }));
+                })
+                .catch((error) => console.error(error));
+            }
           }
-        }
-      });
+        });
     }
   }, [formStructure.attrs]);
 
@@ -288,13 +291,18 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   };
 
   if (formStructure.attrs === undefined || formStructure.attrs.length === 0) {
-    return <p>This form has no fields. Please contact the event organizers if you believe this is an error.</p>;
+    return (
+      <p>
+        This form has no fields. Please contact the event organizers if you
+        believe this is an error.
+      </p>
+    );
   }
 
   return (
     <>
       <form onSubmit={handleSubmit}>
-        {formStructure.attrs.map((field, index) => (
+        {formStructure.attrs.filter((field) => showInternalFields ? true : !field.isInternal).map((field, index) => (
           <div key={index}>{renderFormField(field)}</div>
         ))}
         <span className="flex items-center mt-4">

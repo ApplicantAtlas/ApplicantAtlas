@@ -34,6 +34,11 @@ func getFormDataHandler(params *types.RouteParams) gin.HandlerFunc {
 			return
 		}
 
+		if formID.IsZero() {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid form ID, must not be zero value"})
+			return
+		}
+
 		form, err := params.MongoService.GetForm(c, formID, false)
 		if err != nil {
 			c.JSON(404, gin.H{"error": "Form not found"})
@@ -128,6 +133,11 @@ func deleteFormHandler(params *types.RouteParams) gin.HandlerFunc {
 			return
 		}
 
+		if formID.IsZero() {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid form ID, must not be zero value"})
+			return
+		}
+
 		if !mongodb.CanUserModifyForm(c, params.MongoService, authenticatedUser, formID, nil) {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "You are not authorized to delete this form"})
 			return
@@ -165,6 +175,11 @@ func updateFormHandler(params *types.RouteParams) gin.HandlerFunc {
 		formID, err := primitive.ObjectIDFromHex(c.Param("form_id"))
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid form ID"})
+			return
+		}
+
+		if formID.IsZero() {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid form ID, must not be zero value"})
 			return
 		}
 

@@ -80,7 +80,7 @@ type FormAllowedSubmitter struct {
 // FormStructure represents the overall structure of a form
 type FormStructure struct {
 	Attrs                    []FormField            `json:"attrs" bson:"attrs"`
-	ID                       primitive.ObjectID     `json:"id,omitempty" bson:"_id"`
+	ID                       primitive.ObjectID     `json:"id,omitempty" bson:"_id,omitempty"`
 	AllowMultipleSubmissions bool                   `json:"allowMultipleSubmissions,omitempty" bson:"allowMultipleSubmissions"`
 	CloseSubmissionsAt       time.Time              `json:"closeSubmissionsAt,omitempty" bson:"closeSubmissionsAt"`
 	OpenSubmissionsAt        time.Time              `json:"openSubmissionsAt,omitempty" bson:"openSubmissionsAt"`
