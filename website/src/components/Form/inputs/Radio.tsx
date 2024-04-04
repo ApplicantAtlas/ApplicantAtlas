@@ -28,6 +28,7 @@ const Radio: React.FC<RadioProps> = ({ field, onChange }) => {
 
   return (
     <div className="form-control">
+      {field.question !== "" && (
       <label className="label">
         <span className="label-text">
           {field.question}{" "}
@@ -36,7 +37,7 @@ const Radio: React.FC<RadioProps> = ({ field, onChange }) => {
               <InformationIcon className="h-4 w-4" />
             </div>)}
         </span>
-      </label>
+      </label>)}
       <div className="flex flex-col space-y-2">
         {field.options?.map((option, index) => (
           <label key={index} className="label cursor-pointer">

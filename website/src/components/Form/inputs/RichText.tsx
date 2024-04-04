@@ -53,17 +53,19 @@ const RichText: React.FC<RichTextProps> = ({
         />
       ) : (
         <>
-          <label className="label">
-            <span className="label-text">
-              {field.question}{" "}
-              {field.required && <span className="text-error">*</span>}
-              {field.description && (
-                <div className="tooltip" data-tip={field.description}>
-                  <InformationIcon className="h-4 w-4" />
-                </div>
-              )}
-            </span>
-          </label>
+          {field.question !== "" && (
+            <label className="label">
+              <span className="label-text">
+                {field.question}{" "}
+                {field.required && <span className="text-error">*</span>}
+                {field.description && (
+                  <div className="tooltip" data-tip={field.description}>
+                    <InformationIcon className="h-4 w-4" />
+                  </div>
+                )}
+              </span>
+            </label>
+          )}
           <ReactQuill
             ref={quillRef}
             theme="snow"

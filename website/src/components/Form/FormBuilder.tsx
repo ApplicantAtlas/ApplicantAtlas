@@ -97,198 +97,26 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
 
   useEffect(() => {
     if (formStructure.attrs !== undefined) {
-      formStructure.attrs
-        .forEach((field) => {
-          if (field.additionalOptions?.useDefaultValuesFrom) {
-            const defaultValuesFrom =
-              field.additionalOptions.useDefaultValuesFrom;
+      formStructure.attrs.forEach((field) => {
+        if (field.additionalOptions?.useDefaultValuesFrom) {
+          const defaultValuesFrom =
+            field.additionalOptions.useDefaultValuesFrom;
 
-            // Check if the options have already been fetched
-            if (!fetchedOptions[defaultValuesFrom]) {
-              getSelectorOptions(defaultValuesFrom)
-                .then((options) => {
-                  setFetchedOptions((prevOptions) => ({
-                    ...prevOptions,
-                    [defaultValuesFrom]: options,
-                  }));
-                })
-                .catch((error) => console.error(error));
-            }
+          // Check if the options have already been fetched
+          if (!fetchedOptions[defaultValuesFrom]) {
+            getSelectorOptions(defaultValuesFrom)
+              .then((options) => {
+                setFetchedOptions((prevOptions) => ({
+                  ...prevOptions,
+                  [defaultValuesFrom]: options,
+                }));
+              })
+              .catch((error) => console.error(error));
           }
-        });
+        }
+      });
     }
   }, [formStructure.attrs]);
-
-  const renderFormField = (field: FormStructure["attrs"][number]) => {
-    // Handle additionalOptions
-    if (field.additionalOptions?.useDefaultValuesFrom) {
-      field.options =
-        fetchedOptions[field.additionalOptions.useDefaultValuesFrom];
-    }
-
-    switch (field.type) {
-      case "number":
-        let defaultNumber: number | undefined;
-        switch (typeof field.defaultValue) {
-          case "number":
-            defaultNumber = field.defaultValue;
-            break;
-          case "string":
-            defaultNumber = parseInt(field.defaultValue);
-            break;
-          default:
-            defaultNumber = undefined;
-        }
-        return (
-          <Number
-            field={field}
-            onChange={handleInputChange}
-            defaultValue={defaultNumber}
-          />
-        );
-      case "date":
-        let defaultDate: Date | undefined;
-        if (typeof field.defaultValue === "string") {
-          defaultDate = new Date(field.defaultValue);
-        } else if (field.defaultValue instanceof Date) {
-          defaultDate = field.defaultValue as Date;
-        }
-
-        // Handle invalid dates
-        if (defaultDate && isNaN(defaultDate.getTime())) {
-          defaultDate = undefined;
-        }
-
-        return (
-          <DateInput
-            field={field}
-            onChange={handleInputChange}
-            defaultValue={defaultDate}
-          />
-        );
-      case "text":
-        return (
-          <Text
-            field={field}
-            onChange={handleInputChange}
-            defaultValue={field.defaultValue as string}
-          />
-        );
-      case "textarea":
-        return (
-          <TextArea
-            field={field}
-            onChange={handleInputChange}
-            defaultValue={field.defaultValue as string}
-          />
-        );
-      case "checkbox":
-        return (
-          <Checkbox
-            field={field}
-            onChange={handleInputChange}
-            defaultValue={field.defaultValue as boolean}
-          />
-        );
-      case "radio":
-        return <Radio field={field} onChange={handleInputChange} />;
-      case "select":
-        return (
-          <SelectDynamic
-            field={field}
-            onChange={handleInputChange}
-            isMultiSelect={false}
-            defaultOptions={field.defaultOptions}
-          />
-        );
-      case "multiselect":
-        return (
-          <SelectDynamic
-            field={field}
-            onChange={handleInputChange}
-            isMultiSelect={true}
-            defaultOptions={field.defaultOptions}
-          />
-        );
-      case "customselect":
-        return (
-          <SelectDynamic
-            field={field}
-            onChange={handleInputChange}
-            isMultiSelect={false}
-            allowArbitraryInput={true}
-            defaultOptions={field.defaultOptions}
-          />
-        );
-      case "custommultiselect":
-        return (
-          <SelectDynamic
-            field={field}
-            onChange={handleInputChange}
-            isMultiSelect={true}
-            allowArbitraryInput={true}
-            defaultOptions={field.defaultOptions}
-          />
-        );
-      case "telephone":
-        return (
-          <Telephone
-            field={field}
-            onChange={handleInputChange}
-            defaultValue={field.defaultValue as string}
-          />
-        );
-      case "timestamp":
-        let defaultTimestamp: Date | undefined;
-        if (typeof field.defaultValue === "string") {
-          defaultTimestamp = new Date(field.defaultValue);
-        } else if (field.defaultValue instanceof Date) {
-          defaultTimestamp = field.defaultValue as Date;
-        }
-
-        // Handle invalid dates
-        if (defaultTimestamp && isNaN(defaultTimestamp.getTime())) {
-          defaultTimestamp = undefined;
-        }
-
-        /*if (defaultTimestamp) {
-          handleInputChange(field.key, defaultTimestamp);
-        }*/
-        return (
-          <TimestampDynamic
-            field={field}
-            onChange={handleInputChange}
-            defaultValue={defaultTimestamp}
-          />
-        );
-      case "address":
-        return (
-          <AddressInput
-            field={field}
-            onChange={handleInputChange}
-            defaultValue={field.defaultValue as Address}
-          />
-        );
-      case "colorpicker":
-        return (
-          <ColorPicker
-            field={field}
-            onChange={handleInputChange}
-            defaultValue={field.defaultValue as string}
-          />
-        );
-      case "richtext":
-        return (
-          <RichTextDynamic
-            field={field}
-            onChange={handleInputChange}
-            defaultValue={field.defaultValue as string}
-          />
-        );
-      default:
-        return null;
-    }
-  };
 
   if (formStructure.attrs === undefined || formStructure.attrs.length === 0) {
     return (
@@ -302,9 +130,13 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   return (
     <>
       <form onSubmit={handleSubmit}>
-        {formStructure.attrs.filter((field) => showInternalFields ? true : !field.isInternal).map((field, index) => (
-          <div key={index}>{renderFormField(field)}</div>
-        ))}
+        {formStructure.attrs
+          .filter((field) => (showInternalFields ? true : !field.isInternal))
+          .map((field, index) => (
+            <div key={index}>
+              {RenderFormField(field, fetchedOptions, handleInputChange)}
+            </div>
+          ))}
         <span className="flex items-center mt-4">
           <button type="submit" className="btn mr-2 btn-primary">
             {buttonText}
@@ -316,4 +148,184 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   );
 };
 
+const RenderFormField = (
+  field: FormStructure["attrs"][number],
+  fetchedOptions: Record<string, any>,
+  handleInputChange: (
+    key: string,
+    value: FieldValue,
+    errorString?: string | undefined
+  ) => void
+) => {
+  // Handle additionalOptions
+  if (field.additionalOptions?.useDefaultValuesFrom) {
+    field.options =
+      fetchedOptions[field.additionalOptions.useDefaultValuesFrom];
+  }
+
+  switch (field.type) {
+    case "number":
+      let defaultNumber: number | undefined;
+      switch (typeof field.defaultValue) {
+        case "number":
+          defaultNumber = field.defaultValue;
+          break;
+        case "string":
+          defaultNumber = parseInt(field.defaultValue);
+          break;
+        default:
+          defaultNumber = undefined;
+      }
+      return (
+        <Number
+          field={field}
+          onChange={handleInputChange}
+          defaultValue={defaultNumber}
+        />
+      );
+    case "date":
+      let defaultDate: Date | undefined;
+      if (typeof field.defaultValue === "string") {
+        defaultDate = new Date(field.defaultValue);
+      } else if (field.defaultValue instanceof Date) {
+        defaultDate = field.defaultValue as Date;
+      }
+
+      // Handle invalid dates
+      if (defaultDate && isNaN(defaultDate.getTime())) {
+        defaultDate = undefined;
+      }
+
+      return (
+        <DateInput
+          field={field}
+          onChange={handleInputChange}
+          defaultValue={defaultDate}
+        />
+      );
+    case "text":
+      return (
+        <Text
+          field={field}
+          onChange={handleInputChange}
+          defaultValue={field.defaultValue as string}
+        />
+      );
+    case "textarea":
+      return (
+        <TextArea
+          field={field}
+          onChange={handleInputChange}
+          defaultValue={field.defaultValue as string}
+        />
+      );
+    case "checkbox":
+      return (
+        <Checkbox
+          field={field}
+          onChange={handleInputChange}
+          defaultValue={field.defaultValue as boolean}
+        />
+      );
+    case "radio":
+      return <Radio field={field} onChange={handleInputChange} />;
+    case "select":
+      return (
+        <SelectDynamic
+          field={field}
+          onChange={handleInputChange}
+          isMultiSelect={false}
+          defaultOptions={field.defaultOptions}
+        />
+      );
+    case "multiselect":
+      return (
+        <SelectDynamic
+          field={field}
+          onChange={handleInputChange}
+          isMultiSelect={true}
+          defaultOptions={field.defaultOptions}
+        />
+      );
+    case "customselect":
+      return (
+        <SelectDynamic
+          field={field}
+          onChange={handleInputChange}
+          isMultiSelect={false}
+          allowArbitraryInput={true}
+          defaultOptions={field.defaultOptions}
+        />
+      );
+    case "custommultiselect":
+      return (
+        <SelectDynamic
+          field={field}
+          onChange={handleInputChange}
+          isMultiSelect={true}
+          allowArbitraryInput={true}
+          defaultOptions={field.defaultOptions}
+        />
+      );
+    case "telephone":
+      return (
+        <Telephone
+          field={field}
+          onChange={handleInputChange}
+          defaultValue={field.defaultValue as string}
+        />
+      );
+    case "timestamp":
+      let defaultTimestamp: Date | undefined;
+      if (typeof field.defaultValue === "string") {
+        defaultTimestamp = new Date(field.defaultValue);
+      } else if (field.defaultValue instanceof Date) {
+        defaultTimestamp = field.defaultValue as Date;
+      }
+
+      // Handle invalid dates
+      if (defaultTimestamp && isNaN(defaultTimestamp.getTime())) {
+        defaultTimestamp = undefined;
+      }
+
+      /*if (defaultTimestamp) {
+        handleInputChange(field.key, defaultTimestamp);
+      }*/
+      return (
+        <TimestampDynamic
+          field={field}
+          onChange={handleInputChange}
+          defaultValue={defaultTimestamp}
+        />
+      );
+    case "address":
+      return (
+        <AddressInput
+          field={field}
+          onChange={handleInputChange}
+          defaultValue={field.defaultValue as Address}
+        />
+      );
+    case "colorpicker":
+      return (
+        <ColorPicker
+          field={field}
+          onChange={handleInputChange}
+          defaultValue={field.defaultValue as string}
+        />
+      );
+    case "richtext":
+      return (
+        <RichTextDynamic
+          field={field}
+          onChange={handleInputChange}
+          defaultValue={field.defaultValue as string}
+        />
+      );
+    default:
+      return null;
+  }
+};
+
 export default FormBuilder;
+export { RenderFormField }

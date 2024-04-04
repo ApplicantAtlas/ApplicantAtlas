@@ -110,7 +110,7 @@ const FormCreator: React.FC<FormCreatorProps> = ({
                   <strong>Options:</strong> {field.options.join(", ")}
                 </p>
               )}
-              {field.isInternal && (
+              {field.isInternal && (  
                 <p>
                   <strong>Internal Field: </strong>
                   Yes

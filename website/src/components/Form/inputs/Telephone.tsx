@@ -41,12 +41,14 @@ const Telephone: React.FC<TelephoneInputProps> = ({
 
   return (
     <div className="form-control">
-      <label className="label">
-        <span className="label-text">
-          {field.question}{" "}
-          {field.required && <span className="text-error">*</span>}
-        </span>
-      </label>
+      {field.question !== "" && (
+        <label className="label">
+          <span className="label-text">
+            {field.question}{" "}
+            {field.required && <span className="text-error">*</span>}
+          </span>
+        </label>
+      )}
       <div className="telephone-input">
         <PhoneInput
           // @ts-ignore

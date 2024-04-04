@@ -124,17 +124,19 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
   // TODO: I want to make the timezone more pretty and inline with the rest of the form
   return (
     <div className="form-control">
-      <label className="label">
-        <span className="label-text">
-          {field.question}{" "}
-          {field.required && <span className="text-error">*</span>}
-          {field.description && (
-            <div className="tooltip" data-tip={field.description}>
-              <InformationIcon className="h-4 w-4" />
-            </div>
-          )}
-        </span>
-      </label>
+      {field.question !== "" && (
+        <label className="label">
+          <span className="label-text">
+            {field.question}{" "}
+            {field.required && <span className="text-error">*</span>}
+            {field.description && (
+              <div className="tooltip" data-tip={field.description}>
+                <InformationIcon className="h-4 w-4" />
+              </div>
+            )}
+          </span>
+        </label>
+      )}
       <input
         id={field.key + "-date-tz"}
         type="datetime-local"

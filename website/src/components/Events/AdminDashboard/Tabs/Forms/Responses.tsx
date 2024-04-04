@@ -1,10 +1,12 @@
 import LoadingSpinner from "@/components/Loading/LoadingSpinner";
 import { DownloadResponses, GetResponses } from "@/services/ResponsesService";
-import { FormStructure } from "@/types/models/Form";
+import { FieldValue, FormField, FormStructure } from "@/types/models/Form";
 import { useEffect, useState } from "react";
 import moment from "moment";
 import { split } from "lodash";
 import ArrowDownTray from "@/components/Icons/ArrowDownTray";
+import { RenderFormField } from "@/components/Form/FormBuilder";
+import EditIcon from "@/components/Icons/EditIcon";
 
 interface ResponsesProps {
   form: FormStructure;
@@ -12,8 +14,11 @@ interface ResponsesProps {
 
 const Responses = ({ form }: ResponsesProps) => {
   const [responses, setResponses] = useState<Record<string, any>[]>([]);
-  const [columnOrder, setColumnOrder] = useState<string[]>();
+  const [columnOrder, setColumnOrder] = useState<
+    Record<string, FormField | undefined>[]
+  >([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     GetResponses(form.id || "")
@@ -34,7 +39,22 @@ const Responses = ({ form }: ResponsesProps) => {
         );
 
         setResponses(cleanedResponses);
-        setColumnOrder(r.data.columnOrder);
+
+        // Iterate over column order and match against form fields
+        let columnOrder: Record<string, FormField | undefined>[] = [];
+        if (r.data.columnOrder) {
+          columnOrder = r.data.columnOrder.map((key: string) => {
+            let [displayKey, id_val] = key.split("_attr_key:");
+            const field = form.attrs.find((f) => {
+              return f.key === id_val;
+            });
+            console.log(displayKey, field);
+
+            return { [displayKey]: field };
+          });
+
+          setColumnOrder(columnOrder);
+        }
         setIsLoading(false);
       })
       .catch((err) => {
@@ -70,13 +90,17 @@ const Responses = ({ form }: ResponsesProps) => {
       .catch((err) => {});
   };
 
-  const headers = columnOrder
-    ? columnOrder.map((key) => split(key, "_attr_key:")[0])
-    : [];
-
   return (
     <div>
       <div className="text-right mb-3 mt-[-3rem]">
+        <button
+          onClick={() => setIsEditing(!isEditing)}
+          className="btn btn-primary mr-2"
+        >
+          <EditIcon className="w-6 h-6" />
+          {isEditing ? "Stop Editing & Save" : "Edit Fields"}
+        </button>
+
         <button onClick={handleExportCSV} className="btn btn-primary">
           <ArrowDownTray className="w-6 h-6" /> Export as CSV
         </button>
@@ -85,8 +109,8 @@ const Responses = ({ form }: ResponsesProps) => {
         <table className="table table-sm table-pin-rows table-pin-cols bg-white">
           <thead>
             <tr>
-              {headers.map((header) => (
-                <th key={header}>{header}</th>
+              {columnOrder.map((header) => (
+                <th key={Object.keys(header)[0]}>{Object.keys(header)[0]}</th>
               ))}
             </tr>
           </thead>
@@ -96,7 +120,8 @@ const Responses = ({ form }: ResponsesProps) => {
 
               return (
                 <tr key={response["Response ID"] || index} className="hover">
-                  {headers.map((header) => {
+                  {columnOrder.map((columnHeaderAttrMap) => {
+                    let header = Object.keys(columnHeaderAttrMap)[0];
                     const value = response[header];
                     let displayValue;
 
@@ -106,7 +131,29 @@ const Responses = ({ form }: ResponsesProps) => {
                       displayValue = value;
                     }
 
-                    return <td key={`${header}-${index}`}>{displayValue}</td>;
+                    let field = columnHeaderAttrMap[header];
+                    if (!isEditing || !field) {
+                      return <td key={`${header}-${index}`}>{displayValue}</td>;
+                    }
+
+                    field.defaultValue = value;
+                    field.question = ""
+
+                    return (
+                      <td key={`${header}-${index}`}>
+                        {RenderFormField(
+                          field,
+                          {},
+                          (
+                            key: string,
+                            value: FieldValue,
+                            errorStr: string | undefined
+                          ) => {
+                            console.log(key, value, errorStr);
+                          }
+                        )}
+                      </td>
+                    );
                   })}
                 </tr>
               );

@@ -20,7 +20,7 @@ const EventAdminDashboard: React.FC<{
   return (
     <>
       <Header menuItems={menuItems} showUserProfile={true} />
-      <div className="flex flex-col min-h-screen bg-gray-100 text-gray-900">
+      <div className="flex flex-col min-h-screen bg-gray-100 text-gray-900" style={{ maxWidth: '100vw' }}>
         <EventProvider eventId={eventId}>
           <ContentWithLoading
             activeSection={activeSection}
