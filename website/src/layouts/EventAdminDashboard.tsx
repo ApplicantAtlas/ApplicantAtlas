@@ -51,7 +51,7 @@ const ContentWithLoading: React.FC<{
           activeSection={activeSection}
           setActiveSection={setActiveSection}
         />
-        <main className="w-full flex-grow p-4">
+        <main className="w-full flex-grow p-4 overflow-x-auto">
           {isLoading ? <LoadingSpinner /> : children(eventDetails)}
         </main>
       </div>

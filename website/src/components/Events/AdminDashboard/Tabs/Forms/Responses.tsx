@@ -107,7 +107,7 @@ const Responses = ({ form }: ResponsesProps) => {
       </div>
       <div className="overflow-x-auto">
         <table className="table table-sm table-pin-rows table-pin-cols bg-white">
-          <thead>
+          <thead className="bg-white">
             <tr>
               {columnOrder.map((header) => (
                 <th key={Object.keys(header)[0]}>{Object.keys(header)[0]}</th>
@@ -136,13 +136,15 @@ const Responses = ({ form }: ResponsesProps) => {
                       return <td key={`${header}-${index}`}>{displayValue}</td>;
                     }
 
-                    field.defaultValue = value;
-                    field.question = ""
+                    // Deep copy field to avoid mutating original form structure
+                    let newField = JSON.parse(JSON.stringify(field));
+                    newField.defaultValue = value;
+                    newField.question = "";
 
                     return (
                       <td key={`${header}-${index}`}>
                         {RenderFormField(
-                          field,
+                          newField,
                           {},
                           (
                             key: string,
