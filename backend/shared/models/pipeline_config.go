@@ -30,12 +30,12 @@ type PipelineEvent struct {
 
 // FormSubmission represents a form submission event
 type FormSubmission struct {
-	OnFormID string `bson:"onFormID" json:"onFormID" validate:"required"`
+	OnFormID primitive.ObjectID `bson:"onFormID" json:"onFormID" validate:"required"`
 }
 
 // FieldChange represents a field change event
 type FieldChange struct {
-	OnFormID  string               `bson:"onFormID" json:"onFormID" validate:"required"`
+	OnFormID  primitive.ObjectID   `bson:"onFormID" json:"onFormID" validate:"required"`
 	OnFieldID string               `bson:"onFieldID" json:"onFieldID" validate:"required"`
 	Condition FieldChangeCondition `bson:"condition" json:"condition" validate:"required"`
 }

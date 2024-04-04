@@ -1,5 +1,5 @@
 import LoadingSpinner from "@/components/Loading/LoadingSpinner";
-import { DownloadResponses, GetResponses } from "@/services/ResponsesService";
+import { DownloadResponses, GetResponses, UpdateResponse } from "@/services/ResponsesService";
 import { FieldValue, FormField, FormStructure } from "@/types/models/Form";
 import { useEffect, useState } from "react";
 import moment from "moment";
@@ -7,6 +7,7 @@ import { split } from "lodash";
 import ArrowDownTray from "@/components/Icons/ArrowDownTray";
 import { RenderFormField } from "@/components/Form/FormBuilder";
 import EditIcon from "@/components/Icons/EditIcon";
+import { ToastType, useToast } from "@/components/Toast/ToastContext";
 
 interface ResponsesProps {
   form: FormStructure;
@@ -19,6 +20,7 @@ const Responses = ({ form }: ResponsesProps) => {
   >([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
+  const { showToast } = useToast();
 
   useEffect(() => {
     GetResponses(form.id || "")
@@ -90,6 +92,23 @@ const Responses = ({ form }: ResponsesProps) => {
       .catch((err) => {});
   };
 
+  const updateResponse = (reponseId: string, questionKey: string, value: FieldValue) => {
+    // Update response in state
+    const updatedResponses = responses.map((response) => {
+      if (response["Response ID"] === reponseId) {
+        response[questionKey] = value;
+      }
+
+      UpdateResponse(form.id || "", reponseId, response).then(() => {
+        showToast("Successfully updated reponse", ToastType.Success);
+      }).catch(() => {})
+
+      return response;
+    });
+
+    setResponses(updatedResponses);
+  }
+
   return (
     <div>
       <div className="text-right mb-3 mt-[-3rem]">
@@ -98,7 +117,7 @@ const Responses = ({ form }: ResponsesProps) => {
           className="btn btn-primary mr-2"
         >
           <EditIcon className="w-6 h-6" />
-          {isEditing ? "Stop Editing & Save" : "Edit Fields"}
+          {isEditing ? "Stop Editing" : "Edit Fields"}
         </button>
 
         <button onClick={handleExportCSV} className="btn btn-primary">
@@ -151,7 +170,9 @@ const Responses = ({ form }: ResponsesProps) => {
                             value: FieldValue,
                             errorStr: string | undefined
                           ) => {
-                            console.log(key, value, errorStr);
+                            // TODO: maintain a state of the values and a higher functin to do this
+                            console.log(`key: ${key}, value: ${value}, error: ${errorStr}`);
+                            updateResponse(response["Response ID"], key, value);
                           }
                         )}
                       </td>
