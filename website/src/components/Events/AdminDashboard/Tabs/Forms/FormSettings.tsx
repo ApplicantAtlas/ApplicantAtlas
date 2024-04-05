@@ -164,7 +164,7 @@ const FormSettings: React.FC<FormSettingsProps> = ({
       
     }
 
-    if (allowedSubmitters.length === 0) allowedSubmitters = [];
+    if (allowedSubmitters == undefined || allowedSubmitters.length === 0) allowedSubmitters = [];
 
     Object.assign(form, {
       status,

@@ -37,7 +37,7 @@ const Responses = ({ form }: ResponsesProps) => {
           let submissionId = keyMap.submission_id;
           let question = keyMap.question;
           let attrKey = keyMap.attr_key;
-          let fullKey = `${question}_attr_key:${attrKey}`
+          let fullKey = `${question}_attr_key:${attrKey}`;
 
           if (errorStr !== undefined) {
             showToast(
@@ -51,8 +51,9 @@ const Responses = ({ form }: ResponsesProps) => {
           // Go through responses to find the correct response and update it
           const updatedResponses = responses.map((response) => {
             if (response["Response ID"] === submissionId) {
+              const oldValue = response[fullKey];
+              const newValue = value;
               response[fullKey] = value;
-              console.log(response)
 
               // Deep copy response to avoid mutating original form structure
               let newResponse = JSON.parse(JSON.stringify(response));
@@ -63,51 +64,54 @@ const Responses = ({ form }: ResponsesProps) => {
               });
 
               // For each key remove the _attr_key: and replace with the actual key which follows it
+              var shouldUpdate = false;
               Object.keys(newResponse).forEach((key) => {
                 let [_, id_val] = key.split("_attr_key:");
+
+                if (oldValue !== newValue) {
+                  shouldUpdate = true;
+                }
+
                 newResponse[id_val] = newResponse[key];
                 delete newResponse[key];
               });
 
-              console.log(newResponse)
-
-              UpdateResponse(form.id || "", submissionId, newResponse)
-              .then(() => {
-                showToast("Successfully updated reponse", ToastType.Success);
-              })
-              .catch(() => {});
-              
+              if (shouldUpdate) {
+                UpdateResponse(form.id || "", submissionId, newResponse)
+                  .then(() => {
+                    showToast(
+                      "Successfully updated reponse",
+                      ToastType.Success
+                    );
+                  })
+                  .catch(() => {});
+              }
             }
-
-            
-
-        
 
             return response;
           });
 
           //setResponses(updatedResponses);
-
-          console.log(
-            `submissionID ${submissionId}, attrKey ${attrKey}, value: ${value}, error: ${errorStr}`
-          );
         }, 500)
       );
     }
     return debouncersRef.current.get(key);
   };
 
-  const onSubmissionFieldChange = (key: string, value: FieldValue, errorStr: string | undefined) => {
+  const onSubmissionFieldChange = (
+    key: string,
+    value: FieldValue,
+    errorStr: string | undefined
+  ) => {
     const debouncedOnChange = getDebouncedOnSubmissionFieldChange(key);
     debouncedOnChange(value, errorStr);
   };
 
   useEffect(() => {
     return () => {
-      debouncersRef.current.forEach(debouncer => debouncer.cancel());
+      debouncersRef.current.forEach((debouncer) => debouncer.cancel());
     };
   }, []);
-  
 
   useEffect(() => {
     GetResponses(form.id || "")
@@ -195,7 +199,9 @@ const Responses = ({ form }: ResponsesProps) => {
           <thead>
             <tr>
               {columnOrder.map((header) => (
-                <th key={Object.keys(header)[0]}>{Object.keys(header)[0].split("_attr_key:")[0]}</th>
+                <th key={Object.keys(header)[0]}>
+                  {Object.keys(header)[0].split("_attr_key:")[0]}
+                </th>
               ))}
             </tr>
           </thead>
@@ -207,8 +213,6 @@ const Responses = ({ form }: ResponsesProps) => {
                 <tr key={response["Response ID"] || index} className="hover">
                   {columnOrder.map((columnHeaderAttrMap) => {
                     let header = Object.keys(columnHeaderAttrMap)[0];
-                    console.log(header)
-                    console.log(response)
                     const value = response[header];
                     let displayValue;
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { PipelineAction, PipelineEvent } from "@/types/models/Pipeline";
+import { COMPARISON_VALUES, PipelineAction, PipelineEvent } from "@/types/models/Pipeline";
 import {
   FieldValue,
   FormField,
@@ -59,8 +59,8 @@ const PipelineActionModal: React.FC<PipelineActionModalProps> = ({
             onFormID: formData.onFormID,
             onFieldID: formData.onFieldID,
             condition: {
-              comparison: "eq", // dropdown
-              value: "accepted", // todo: make these out
+              comparison: formData.comparison,
+              value: formData.value,
             },
           },
         };
@@ -416,6 +416,20 @@ const createFieldChangeFormStructure = (
         defaultOptions: defaultEvent?.fieldChange?.onFieldID ? [defaultEvent?.fieldChange?.onFieldID] : undefined,
       },
       // TODO: Need to do the condition
+      {
+        question: "With Condition",
+        type: "select",
+        key: "comparison",
+        options: Object.entries(COMPARISON_VALUES).map(([value, label]) => ({ value, label })),
+        defaultOptions: defaultEvent?.fieldChange?.condition.comparison ? [defaultEvent?.fieldChange?.condition.comparison] : undefined,
+      },
+      {
+        question: "Value",
+        type: "text",
+        key: "value",
+        required: true,
+        defaultValue: defaultEvent?.fieldChange?.condition.value,
+      }
     ],
   };
 };
