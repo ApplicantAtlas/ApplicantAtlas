@@ -20,6 +20,7 @@ const Responses = ({ form }: ResponsesProps) => {
   >([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
+  const [submissionFields, setSubmissionFields] = useState<Record<string, Record<string, FieldValue>>>();
   const { showToast } = useToast();
 
   useEffect(() => {
@@ -109,6 +110,13 @@ const Responses = ({ form }: ResponsesProps) => {
     setResponses(updatedResponses);
   }
 
+  
+  const onSubmissionFieldChange = (key: string, value: FieldValue, errorStr: string | undefined) => {
+    
+
+    console.log(`key: ${key}, value: ${value}, error: ${errorStr}`);
+  }
+
   return (
     <div>
       <div className="text-right mb-3 mt-[-3rem]">
@@ -124,9 +132,9 @@ const Responses = ({ form }: ResponsesProps) => {
           <ArrowDownTray className="w-6 h-6" /> Export as CSV
         </button>
       </div>
-      <div className="overflow-x-auto">
-        <table className="table table-sm table-pin-rows table-pin-cols bg-white">
-          <thead className="bg-white">
+      <div className="overflow-x-auto" style={{height: "70vh"}}>
+        <table className="table table-sm table-pin-rows bg-white">
+          <thead>
             <tr>
               {columnOrder.map((header) => (
                 <th key={Object.keys(header)[0]}>{Object.keys(header)[0]}</th>
@@ -159,21 +167,14 @@ const Responses = ({ form }: ResponsesProps) => {
                     let newField = JSON.parse(JSON.stringify(field));
                     newField.defaultValue = value;
                     newField.question = "";
+                    newField.key = `submission_id:${response["Response ID"]}_attr_key:${field.key}`
 
                     return (
                       <td key={`${header}-${index}`}>
                         {RenderFormField(
                           newField,
                           {},
-                          (
-                            key: string,
-                            value: FieldValue,
-                            errorStr: string | undefined
-                          ) => {
-                            // TODO: maintain a state of the values and a higher functin to do this
-                            console.log(`key: ${key}, value: ${value}, error: ${errorStr}`);
-                            updateResponse(response["Response ID"], key, value);
-                          }
+                          onSubmissionFieldChange,
                         )}
                       </td>
                     );

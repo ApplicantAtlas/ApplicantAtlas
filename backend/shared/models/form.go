@@ -61,14 +61,14 @@ type FormField struct {
 	Type                 FormFieldType     `json:"type" bson:"type" validate:"required"`
 	Description          string            `json:"description,omitempty" bson:"description,omitempty" validate:"max=1000"`
 	AdditionalValidation FieldValidation   `json:"additionalValidation,omitempty" bson:"additionalValidation,omitempty"`
-	Key                  string            `json:"key" bson:"key" validate:"required"`
+	Key                  string            `json:"key" bson:"key" validate:"required,uuidv4"`
 	DefaultValue         FieldValue        `json:"defaultValue,omitempty" bson:"defaultValue,omitempty"`
 	Options              []string          `json:"options,omitempty" bson:"options,omitempty"`
 	DefaultOptions       []string          `json:"defaultOptions,omitempty" bson:"defaultOptions,omitempty"`
 	Required             bool              `json:"required,omitempty" bson:"required"`
 	Disabled             bool              `json:"disabled,omitempty" bson:"disabled"`
 	AdditionalOptions    AdditionalOptions `json:"additionalOptions,omitempty" bson:"additionalOptions,omitempty"`
-	IsInternal           bool              `json:"isInternal" bson:"isInternal" validate:"required"`
+	IsInternal           bool              `json:"isInternal" bson:"isInternal"`
 }
 
 // FormAllowedSubmitter represents a user who is allowed to submit a form with additional options
@@ -79,7 +79,7 @@ type FormAllowedSubmitter struct {
 
 // FormStructure represents the overall structure of a form
 type FormStructure struct {
-	Attrs                    []FormField            `json:"attrs" bson:"attrs"`
+	Attrs                    []FormField            `json:"attrs" bson:"attrs" validate:"dive"`
 	ID                       primitive.ObjectID     `json:"id,omitempty" bson:"_id,omitempty"`
 	AllowMultipleSubmissions bool                   `json:"allowMultipleSubmissions,omitempty" bson:"allowMultipleSubmissions"`
 	CloseSubmissionsAt       time.Time              `json:"closeSubmissionsAt,omitempty" bson:"closeSubmissionsAt"`
@@ -94,7 +94,7 @@ type FormStructure struct {
 	MaxSubmissions           int                    `json:"maxSubmissions,omitempty" bson:"maxSubmissions"`
 	SubmissionMessage        string                 `json:"submissionMessage,omitempty" bson:"submissionMessage"`
 	IsRestricted             bool                   `json:"isRestricted,omitempty" bson:"isRestricted"`
-	AllowedSubmitters        []FormAllowedSubmitter `json:"allowedSubmitters,omitempty" bson:"allowedSubmitters"`
+	AllowedSubmitters        []FormAllowedSubmitter `json:"allowedSubmitters,omitempty" bson:"allowedSubmitters" validate:"dive"`
 }
 
 // StripSecrets removes any sensitive information from the form

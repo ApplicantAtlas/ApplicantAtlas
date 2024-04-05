@@ -160,6 +160,7 @@ func updateFormHandler(params *types.RouteParams) gin.HandlerFunc {
 			return
 		}
 
+		// TODO: validation of uuiv4 on form attr key is not working :(
 		if errors := utils.ValidateStruct(utils.Validator, req); len(errors) > 0 {
 			c.JSON(http.StatusBadRequest, gin.H{"error": strings.Join(errors, "\n")})
 			return

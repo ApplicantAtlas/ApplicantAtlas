@@ -30,5 +30,5 @@ type PipelineRun struct {
 	RanAt          time.Time              `bson:"ranAt" json:"ranAt"`
 	CompletedAt    time.Time              `bson:"completedAt" json:"completedAt"`
 	Status         PipelineRunStatus      `bson:"status" json:"status" validate:"required"`
-	ActionStatuses []PipelineActionStatus `bson:"actionStatuses" json:"actionStatuses" validate:"required"`
+	ActionStatuses []PipelineActionStatus `bson:"actionStatuses" json:"actionStatuses" validate:"required,dive"`
 }
