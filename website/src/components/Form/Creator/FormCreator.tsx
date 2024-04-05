@@ -114,14 +114,14 @@ const FormCreator: React.FC<FormCreatorProps> = ({
                 <p>
                   <strong>Internal Field: </strong>
                   Yes
-                  <div
+                  <span
                     className="tooltip"
                     data-tip={
                       "This is an internal field, it will not be shown to users submitting the form."
                     }
                   >
                     <InformationIcon className="h-3 w-3" />
-                  </div>
+                  </span>
                 </p>
               )}
               <button

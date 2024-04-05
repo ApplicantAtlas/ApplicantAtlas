@@ -1,13 +1,16 @@
 import LoadingSpinner from "@/components/Loading/LoadingSpinner";
-import { DownloadResponses, GetResponses, UpdateResponse } from "@/services/ResponsesService";
+import {
+  DownloadResponses,
+  GetResponses,
+  UpdateResponse,
+} from "@/services/ResponsesService";
 import { FieldValue, FormField, FormStructure } from "@/types/models/Form";
-import { useEffect, useState } from "react";
-import moment from "moment";
-import { split } from "lodash";
+import { useEffect, useRef, useState } from "react";
 import ArrowDownTray from "@/components/Icons/ArrowDownTray";
 import { RenderFormField } from "@/components/Form/FormBuilder";
 import EditIcon from "@/components/Icons/EditIcon";
 import { ToastType, useToast } from "@/components/Toast/ToastContext";
+import debounce from "lodash/debounce";
 
 interface ResponsesProps {
   form: FormStructure;
@@ -20,8 +23,77 @@ const Responses = ({ form }: ResponsesProps) => {
   >([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
-  const [submissionFields, setSubmissionFields] = useState<Record<string, Record<string, FieldValue>>>();
   const { showToast } = useToast();
+
+  const debouncersRef = useRef(new Map());
+  const defaultFormColumns = ["Response ID", "Submitted At", "User ID"];
+
+  const getDebouncedOnSubmissionFieldChange = (key: string) => {
+    if (!debouncersRef.current.has(key)) {
+      debouncersRef.current.set(
+        key,
+        debounce((value, errorStr) => {
+          let keyMap = JSON.parse(key);
+          let submissionId = keyMap.submission_id;
+          let question = keyMap.question;
+          let attrKey = keyMap.attr_key;
+          let fullKey = `${question}_attr_key:${attrKey}`
+
+          if (errorStr !== undefined) {
+            showToast(
+              `Error updating response: ${errorStr}
+        Response ID: ${submissionId}`,
+              ToastType.Error
+            );
+            return;
+          }
+
+          // Go through responses to find the correct response and update it
+          const updatedResponses = responses.map((response) => {
+            if (response["Response ID"] === submissionId) {
+              response[fullKey] = value;
+              console.log(response)
+
+              // Deep copy response to avoid mutating original form structure
+              let newResponse = JSON.parse(JSON.stringify(response));
+
+              // Drop the defaultFormColumns from the new response
+              defaultFormColumns.forEach((column) => {
+                delete newResponse[column];
+              });
+
+              console.log(newResponse)
+
+              /*UpdateResponse(form.id || "", submissionId, newResponse)
+              .then(() => {
+                showToast("Successfully updated reponse", ToastType.Success);
+              })
+              .catch(() => {});*/
+              
+            }
+
+            
+
+        
+
+            return response;
+          });
+
+          //setResponses(updatedResponses);
+
+          console.log(
+            `submissionID ${submissionId}, attrKey ${attrKey}, value: ${value}, error: ${errorStr}`
+          );
+        }, 500)
+      );
+    }
+    return debouncersRef.current.get(key);
+  };
+
+  const onSubmissionFieldChange = (key: string, value: FieldValue, errorStr: string | undefined) => {
+    const debouncedOnChange = getDebouncedOnSubmissionFieldChange(key);
+    debouncedOnChange(value, errorStr);
+  };
 
   useEffect(() => {
     GetResponses(form.id || "")
@@ -31,10 +103,7 @@ const Responses = ({ form }: ResponsesProps) => {
             const cleanedResponse: Record<string, any> = {};
 
             Object.entries(response).forEach(([key, value]) => {
-              const splitKey = key.includes("_attr_key:")
-                ? split(key, "_attr_key:")[0]
-                : key;
-              cleanedResponse[splitKey] = value;
+              cleanedResponse[key] = value;
             });
 
             return cleanedResponse;
@@ -47,13 +116,12 @@ const Responses = ({ form }: ResponsesProps) => {
         let columnOrder: Record<string, FormField | undefined>[] = [];
         if (r.data.columnOrder) {
           columnOrder = r.data.columnOrder.map((key: string) => {
-            let [displayKey, id_val] = key.split("_attr_key:");
+            let [_, id_val] = key.split("_attr_key:");
             const field = form.attrs.find((f) => {
               return f.key === id_val;
             });
-            console.log(displayKey, field);
 
-            return { [displayKey]: field };
+            return { [key]: field };
           });
 
           setColumnOrder(columnOrder);
@@ -93,30 +161,6 @@ const Responses = ({ form }: ResponsesProps) => {
       .catch((err) => {});
   };
 
-  const updateResponse = (reponseId: string, questionKey: string, value: FieldValue) => {
-    // Update response in state
-    const updatedResponses = responses.map((response) => {
-      if (response["Response ID"] === reponseId) {
-        response[questionKey] = value;
-      }
-
-      UpdateResponse(form.id || "", reponseId, response).then(() => {
-        showToast("Successfully updated reponse", ToastType.Success);
-      }).catch(() => {})
-
-      return response;
-    });
-
-    setResponses(updatedResponses);
-  }
-
-  
-  const onSubmissionFieldChange = (key: string, value: FieldValue, errorStr: string | undefined) => {
-    
-
-    console.log(`key: ${key}, value: ${value}, error: ${errorStr}`);
-  }
-
   return (
     <div>
       <div className="text-right mb-3 mt-[-3rem]">
@@ -132,12 +176,12 @@ const Responses = ({ form }: ResponsesProps) => {
           <ArrowDownTray className="w-6 h-6" /> Export as CSV
         </button>
       </div>
-      <div className="overflow-x-auto" style={{height: "70vh"}}>
+      <div className="overflow-x-auto" style={{ height: "70vh" }}>
         <table className="table table-sm table-pin-rows bg-white">
           <thead>
             <tr>
               {columnOrder.map((header) => (
-                <th key={Object.keys(header)[0]}>{Object.keys(header)[0]}</th>
+                <th key={Object.keys(header)[0]}>{Object.keys(header)[0].split("_attr_key:")[0]}</th>
               ))}
             </tr>
           </thead>
@@ -149,6 +193,8 @@ const Responses = ({ form }: ResponsesProps) => {
                 <tr key={response["Response ID"] || index} className="hover">
                   {columnOrder.map((columnHeaderAttrMap) => {
                     let header = Object.keys(columnHeaderAttrMap)[0];
+                    console.log(header)
+                    console.log(response)
                     const value = response[header];
                     let displayValue;
 
@@ -167,15 +213,15 @@ const Responses = ({ form }: ResponsesProps) => {
                     let newField = JSON.parse(JSON.stringify(field));
                     newField.defaultValue = value;
                     newField.question = "";
-                    newField.key = `submission_id:${response["Response ID"]}_attr_key:${field.key}`
+                    newField.key = JSON.stringify({
+                      submission_id: response["Response ID"],
+                      attr_key: field.key,
+                      question: field.question,
+                    });
 
                     return (
                       <td key={`${header}-${index}`}>
-                        {RenderFormField(
-                          newField,
-                          {},
-                          onSubmissionFieldChange,
-                        )}
+                        {RenderFormField(newField, {}, onSubmissionFieldChange)}
                       </td>
                     );
                   })}
