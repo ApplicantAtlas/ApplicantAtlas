@@ -62,13 +62,20 @@ const Responses = ({ form }: ResponsesProps) => {
                 delete newResponse[column];
               });
 
+              // For each key remove the _attr_key: and replace with the actual key which follows it
+              Object.keys(newResponse).forEach((key) => {
+                let [_, id_val] = key.split("_attr_key:");
+                newResponse[id_val] = newResponse[key];
+                delete newResponse[key];
+              });
+
               console.log(newResponse)
 
-              /*UpdateResponse(form.id || "", submissionId, newResponse)
+              UpdateResponse(form.id || "", submissionId, newResponse)
               .then(() => {
                 showToast("Successfully updated reponse", ToastType.Success);
               })
-              .catch(() => {});*/
+              .catch(() => {});
               
             }
 
@@ -94,6 +101,13 @@ const Responses = ({ form }: ResponsesProps) => {
     const debouncedOnChange = getDebouncedOnSubmissionFieldChange(key);
     debouncedOnChange(value, errorStr);
   };
+
+  useEffect(() => {
+    return () => {
+      debouncersRef.current.forEach(debouncer => debouncer.cancel());
+    };
+  }, []);
+  
 
   useEffect(() => {
     GetResponses(form.id || "")
