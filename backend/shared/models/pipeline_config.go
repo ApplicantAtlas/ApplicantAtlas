@@ -30,12 +30,12 @@ type PipelineEvent struct {
 
 // FormSubmission represents a form submission event
 type FormSubmission struct {
-	OnFormID string `bson:"onFormID" json:"onFormID" validate:"required"`
+	OnFormID primitive.ObjectID `bson:"onFormID" json:"onFormID" validate:"required"`
 }
 
 // FieldChange represents a field change event
 type FieldChange struct {
-	OnFormID  string               `bson:"onFormID" json:"onFormID" validate:"required"`
+	OnFormID  primitive.ObjectID   `bson:"onFormID" json:"onFormID" validate:"required"`
 	OnFieldID string               `bson:"onFieldID" json:"onFieldID" validate:"required"`
 	Condition FieldChangeCondition `bson:"condition" json:"condition" validate:"required"`
 }
@@ -52,7 +52,7 @@ type FieldChangeCondition struct {
 
 // PipelineAction represents a pipeline action
 type PipelineAction struct {
-	Type string             `bson:"type" json:"type" validate:"required"`
+	Type string             `bson:"type" json:"type" validate:"required,pipelineactiontype"`
 	ID   primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
 	Name string             `bson:"name" json:"name" validate:"required"`
 
@@ -98,7 +98,7 @@ type PipelineConfiguration struct {
 	ID        primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
 	Name      string             `bson:"name" json:"name" validate:"required"`
 	Event     PipelineEvent      `bson:"event,omitempty" json:"event,omitempty" validate:"pipelineevent"`
-	Actions   []PipelineAction   `bson:"actions,omitempty" json:"actions,omitempty" validate:"dive,pipelineaction"`
+	Actions   []PipelineAction   `bson:"actions,omitempty" json:"actions,omitempty" validate:"dive"`
 	EventID   primitive.ObjectID `bson:"eventID" json:"eventID" validate:"required"`
 	UpdatedAt time.Time          `bson:"updatedAt" json:"updatedAt" validate:"required"`
 	Enabled   bool               `bson:"enabled" json:"enabled" validate:"required"`

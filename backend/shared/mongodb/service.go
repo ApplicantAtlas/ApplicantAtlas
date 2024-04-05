@@ -490,6 +490,7 @@ func (s *Service) CreateResponse(ctx context.Context, response models.FormRespon
 
 // UpdateResponse updates a response by its ID
 func (s *Service) UpdateResponse(ctx context.Context, response models.FormResponse, responseID primitive.ObjectID) (*mongo.UpdateResult, error) {
+	response.UpdatedAt = time.Now()
 	update := bson.M{"$set": response}
 	filter := bson.M{"_id": responseID}
 	return s.Database.Collection("responses").UpdateOne(ctx, filter, update)

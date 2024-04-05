@@ -20,7 +20,7 @@ const EventAdminDashboard: React.FC<{
   return (
     <>
       <Header menuItems={menuItems} showUserProfile={true} />
-      <div className="flex flex-col min-h-screen bg-gray-100 text-gray-900">
+      <div className="flex flex-col min-h-screen bg-gray-100 text-gray-900" style={{ maxWidth: '100vw' }}>
         <EventProvider eventId={eventId}>
           <ContentWithLoading
             activeSection={activeSection}
@@ -51,7 +51,7 @@ const ContentWithLoading: React.FC<{
           activeSection={activeSection}
           setActiveSection={setActiveSection}
         />
-        <main className="w-full flex-grow p-4">
+        <main className="w-full flex-grow p-4 overflow-x-auto">
           {isLoading ? <LoadingSpinner /> : children(eventDetails)}
         </main>
       </div>

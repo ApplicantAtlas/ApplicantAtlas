@@ -21,6 +21,14 @@ export const SubmitResponse = async (
   return api.post(`/forms/${formID}/responses`, data);
 };
 
+export const UpdateResponse = async (
+  formID: string,
+  responseID: string,
+  data: Record<string, any>,
+): Promise<AxiosResponse<{ id: string }>> => {
+  return api.put(`/forms/${formID}/responses/${responseID}`, data);
+}
+
 export const DownloadResponses = async (
     formID: string,
     ): Promise<AxiosResponse<Blob>> => {

@@ -1,6 +1,11 @@
 import { FormAllowedSubmitter } from "./Form";
 
-export type comparison = "eq" | "neq";
+export type Comparison = "eq" | "neq";
+
+export const COMPARISON_VALUES: Record<Comparison, string> = {
+  eq: "Equals",
+  neq: "Not Equals",
+}
 
 export type PipelineEvent = {
     id?: string;
@@ -20,7 +25,7 @@ export type FieldChange = {
   onFormID: string;
   onFieldID: string;
   condition: {
-    comparison: comparison;
+    comparison: Comparison;
     value: string;
   };
 };

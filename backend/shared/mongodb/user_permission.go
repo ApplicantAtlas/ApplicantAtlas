@@ -3,6 +3,8 @@ package mongodb
 
 import (
 	"shared/models"
+	"shared/utils"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -87,4 +89,29 @@ func CanUserModifyEvent(c *gin.Context, m MongoService, u *models.User, eventID 
 	}
 
 	return found
+}
+
+func IsUserEmailInWhitelist(c *gin.Context, whitelist []models.FormAllowedSubmitter) (bool, string) {
+	authenticatedUser, ok := utils.GetUserFromContext(c, true)
+	if !ok {
+		return false, "You must be logged in to view this form"
+	}
+
+	hasExpired := false
+	for _, allowedSubmitter := range whitelist {
+		if allowedSubmitter.Email == authenticatedUser.Email || authenticatedUser.SchoolEmail == allowedSubmitter.Email {
+			if allowedSubmitter.ExpiresAt.IsZero() || allowedSubmitter.ExpiresAt.After(time.Now()) {
+				return true, ""
+			} else {
+				hasExpired = true
+			}
+		}
+	}
+
+	if hasExpired {
+		// We're doing the check here incase the user has multiple emails in the whitelist and not all have expired
+		return false, "Your access to this form has expired"
+	}
+
+	return false, "You are not authorized to view this form"
 }

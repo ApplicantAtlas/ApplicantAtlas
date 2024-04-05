@@ -72,17 +72,19 @@ const Select: React.FC<SelectProps> = ({
 
   return (
     <div className="form-control">
-      <label className="label">
-        <span className="label-text">
-          {field.question}{" "}
-          {field.required && <span className="text-error">*</span>}
-          {field.description && (
-            <div className="tooltip" data-tip={field.description}>
-              <InformationIcon className="h-4 w-4" />
-            </div>
-          )}
-        </span>
-      </label>
+      {field.question !== "" && (
+        <label className="label">
+          <span className="label-text">
+            {field.question}{" "}
+            {field.required && <span className="text-error">*</span>}
+            {field.description && (
+              <div className="tooltip" data-tip={field.description}>
+                <InformationIcon className="h-4 w-4" />
+              </div>
+            )}
+          </span>
+        </label>
+      )}
       <SelectComponent
         id={field.key}
         isMulti={isMultiSelect}

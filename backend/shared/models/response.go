@@ -13,4 +13,5 @@ type FormResponse struct {
 	Data      map[string]interface{} `bson:"data" json:"data" validate:"required"`
 	UserID    primitive.ObjectID     `bson:"userID" json:"userID"`
 	CreatedAt time.Time              `bson:"createdAt" json:"createdAt" validate:"required"`
+	UpdatedAt time.Time              `bson:"updatedAt" json:"updatedAt"`
 }

@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/google/uuid"
 )
 
 // Validator is the global validator instance.
@@ -30,7 +31,8 @@ func registerCustomValidations(v *validator.Validate) {
 	v.RegisterValidation("requireExistsIf", requireExistsIf)
 	v.RegisterValidation("comparison", validateComparison)
 	v.RegisterValidation("pipelineevent", validateEventType)
-	v.RegisterValidation("pipelineaction", validateActionType)
+	v.RegisterValidation("pipelineactiontype", validateActionType)
+	v.RegisterValidation("uuidv4", validateUUIDv4)
 }
 
 func validateComparison(fl validator.FieldLevel) bool {
@@ -162,15 +164,27 @@ func validateEventType(fl validator.FieldLevel) bool {
 }
 
 func validateActionType(fl validator.FieldLevel) bool {
-	if action, ok := fl.Field().Interface().(models.PipelineAction); ok {
-		switch action.Type {
-		case "SendEmail", "AllowFormAccess", "Webhook":
-			return true
-		default:
-			return false
-		}
+	val := fl.Field().String()
+	switch val {
+	case "SendEmail", "AllowFormAccess", "Webhook":
+		return true
+	default:
+		return false
 	}
-	return false
+}
+
+// UUIDv4
+func validateUUIDv4(fl validator.FieldLevel) bool {
+	val := fl.Field().String()
+	if val == "" {
+		return false
+	}
+
+	u, err := uuid.Parse(val)
+	if err != nil {
+		return false
+	}
+	return u.Version() == uuid.Version(4)
 }
 
 func isZeroOfUnderlyingType(x interface{}) bool {

@@ -111,13 +111,6 @@ const Dashboard: React.FC = () => {
               key={event.ID}
               className="card card-compact bg-base-100 shadow-xl hover:shadow-2xl transition-shadow"
             >
-              <figure className="px-4 pt-4">
-                <img
-                  src="path_to_event_image.jpg"
-                  alt="Event"
-                  className="rounded-xl"
-                />{" "}
-              </figure>
               <div className="card-body">
                 <h3 className="card-title text-lg">{event.metadata.name}</h3>
                 <p className="text-sm text-gray-600">

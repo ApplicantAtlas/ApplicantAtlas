@@ -164,7 +164,7 @@ const FormSettings: React.FC<FormSettingsProps> = ({
       
     }
 
-    if (allowedSubmitters.length === 0) allowedSubmitters = [];
+    if (allowedSubmitters == undefined || allowedSubmitters.length === 0) allowedSubmitters = [];
 
     Object.assign(form, {
       status,
@@ -179,7 +179,7 @@ const FormSettings: React.FC<FormSettingsProps> = ({
       allowedSubmitters,
     });
 
-    updateForm(form.id || "", form)
+    updateForm(form.id || "t", form)
       .then(() => {
         showToast("Successfully updated form!", ToastType.Success);
         changeForm(form); // idk if needed or not

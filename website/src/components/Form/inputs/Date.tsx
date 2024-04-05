@@ -7,12 +7,18 @@ type DateInputProps = {
   defaultValue?: Date;
 };
 
-const DateInput: React.FC<DateInputProps> = ({ field, onChange, defaultValue }) => {
+const DateInput: React.FC<DateInputProps> = ({
+  field,
+  onChange,
+  defaultValue,
+}) => {
   const formatDateToUTC = (date: Date) => {
-    return date.toISOString().split('T')[0];
+    return date.toISOString().split("T")[0];
   };
 
-  const [value, setValue] = useState<string>(defaultValue ? formatDateToUTC(defaultValue) : '');
+  const [value, setValue] = useState<string>(
+    defaultValue ? formatDateToUTC(defaultValue) : ""
+  );
 
   useEffect(() => {
     if (defaultValue) {
@@ -34,12 +40,14 @@ const DateInput: React.FC<DateInputProps> = ({ field, onChange, defaultValue }) 
 
   return (
     <div className="form-control">
-      <label className="label">
-        <span className="label-text">
-          {field.question}{" "}
-          {field.required && <span className="text-error">*</span>}
-        </span>
-      </label>
+      {field.question !== "" && (
+        <label className="label">
+          <span className="label-text">
+            {field.question}{" "}
+            {field.required && <span className="text-error">*</span>}
+          </span>
+        </label>
+      )}
       <input
         id={field.key}
         type="date"

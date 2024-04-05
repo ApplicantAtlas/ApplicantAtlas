@@ -67,6 +67,7 @@ export type FormField = {
   required?: boolean;
   disabled?: boolean; // TODO: implement
   additionalOptions?: AdditionalOptions;
+  isInternal?: boolean;
 };
 
 export type FormAllowedSubmitter = {

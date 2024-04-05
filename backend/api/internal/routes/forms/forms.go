@@ -4,14 +4,12 @@ import (
 	"api/internal/middlewares"
 	"api/internal/routes/forms/responses"
 	"api/internal/types"
-	"fmt"
 	"log"
 	"net/http"
 	"shared/models"
 	"shared/mongodb"
 	"shared/utils"
 	"strings"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -35,6 +33,11 @@ func getFormDataHandler(params *types.RouteParams) gin.HandlerFunc {
 			return
 		}
 
+		if formID.IsZero() {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid form ID, must not be zero value"})
+			return
+		}
+
 		form, err := params.MongoService.GetForm(c, formID, false)
 		if err != nil {
 			c.JSON(404, gin.H{"error": "Form not found"})
@@ -55,7 +58,7 @@ func getFormDataHandler(params *types.RouteParams) gin.HandlerFunc {
 
 		// Check if the authenticated user's emails are in the form's whitelist, if it exists
 		if form.IsRestricted {
-			allowed, restrictMessage := IsUserEmailInWhitelist(c, form.AllowedSubmitters)
+			allowed, restrictMessage := mongodb.IsUserEmailInWhitelist(c, form.AllowedSubmitters)
 			if !allowed {
 				c.JSON(http.StatusUnauthorized, gin.H{"error": restrictMessage})
 				return
@@ -129,6 +132,11 @@ func deleteFormHandler(params *types.RouteParams) gin.HandlerFunc {
 			return
 		}
 
+		if formID.IsZero() {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid form ID, must not be zero value"})
+			return
+		}
+
 		if !mongodb.CanUserModifyForm(c, params.MongoService, authenticatedUser, formID, nil) {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "You are not authorized to delete this form"})
 			return
@@ -152,6 +160,7 @@ func updateFormHandler(params *types.RouteParams) gin.HandlerFunc {
 			return
 		}
 
+		// TODO: validation of uuiv4 on form attr key is not working :(
 		if errors := utils.ValidateStruct(utils.Validator, req); len(errors) > 0 {
 			c.JSON(http.StatusBadRequest, gin.H{"error": strings.Join(errors, "\n")})
 			return
@@ -169,12 +178,15 @@ func updateFormHandler(params *types.RouteParams) gin.HandlerFunc {
 			return
 		}
 
+		if formID.IsZero() {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid form ID, must not be zero value"})
+			return
+		}
+
 		if !mongodb.CanUserModifyForm(c, params.MongoService, authenticatedUser, formID, nil) {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "You are not authorized to update this form"})
 			return
 		}
-
-		fmt.Println(req.AllowedSubmitters)
 
 		_, err = params.MongoService.UpdateForm(c, req, formID)
 		if err != nil {
@@ -185,29 +197,4 @@ func updateFormHandler(params *types.RouteParams) gin.HandlerFunc {
 
 		c.JSON(http.StatusOK, gin.H{"message": "Form updated successfully"})
 	}
-}
-
-func IsUserEmailInWhitelist(c *gin.Context, whitelist []models.FormAllowedSubmitter) (bool, string) {
-	authenticatedUser, ok := utils.GetUserFromContext(c, true)
-	if !ok {
-		return false, "You must be logged in to view this form"
-	}
-
-	hasExpired := false
-	for _, allowedSubmitter := range whitelist {
-		if allowedSubmitter.Email == authenticatedUser.Email || authenticatedUser.SchoolEmail == allowedSubmitter.Email {
-			if allowedSubmitter.ExpiresAt.IsZero() || allowedSubmitter.ExpiresAt.After(time.Now()) {
-				return true, ""
-			} else {
-				hasExpired = true
-			}
-		}
-	}
-
-	if hasExpired {
-		// We're doing the check here incase the user has multiple emails in the whitelist and not all have expired
-		return false, "Your access to this form has expired"
-	}
-
-	return false, "You are not authorized to view this form"
 }

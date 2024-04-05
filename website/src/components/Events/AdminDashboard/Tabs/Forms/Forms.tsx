@@ -35,6 +35,7 @@ const Forms: React.FC<FormProps> = ({ eventDetails }) => {
       getEventForms(eventDetails.ID)
         .then((f) => {
           setForms(f.data.forms);
+          console.log(f.data.forms)
         })
         .catch(() => {});
     }
