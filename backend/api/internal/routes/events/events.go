@@ -4,6 +4,7 @@ import (
 	"api/internal/middlewares"
 	"api/internal/routes/events/secrets"
 	"api/internal/types"
+	"fmt"
 	"log"
 	"net/http"
 	"shared/models"
@@ -231,6 +232,8 @@ func getEventFormsHandler(params *types.RouteParams) gin.HandlerFunc {
 		forms, err := params.MongoService.ListForms(c, bson.M{"eventID": eventID})
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving event forms"})
+			fmt.Println(err)
+			return
 		}
 
 		c.JSON(http.StatusOK, gin.H{"forms": forms})

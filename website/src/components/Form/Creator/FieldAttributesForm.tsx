@@ -24,7 +24,7 @@ const FieldAttributesForm: React.FC<FieldAttributesFormProps> = ({
     const newField: FormField = {
       question: formData.question,
       type: fieldType as FormFieldType,
-      key: "", // filled out with uuid in FormCreator
+      key: initialAttributes?.key || "",
       defaultValue: formData.defaultValue,
       options: formData.options,
       required: formData.required === true,

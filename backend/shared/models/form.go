@@ -53,7 +53,7 @@ type AdditionalOptions struct {
 type FormFieldType string
 
 // FieldValue represents the value a field can hold
-type FieldValue interface{}
+type FieldValue string // TODO: maybe should union type
 
 // FormField represents a single field in a form
 type FormField struct {
