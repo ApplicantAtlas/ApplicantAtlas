@@ -8,6 +8,11 @@ export const getUserFull = async (): Promise<User> => {
   return response.data;
 };
 
+export const getUser = async (userId: string): Promise<User> => {
+  const response = await api.get<User>(`/users/${userId}`);
+  return response.data;
+}
+
 // pulls from localstorage
 export const getJWTUser = async (): Promise<User> => {
   const user = JSON.parse(localStorage.getItem("user") || "{}");

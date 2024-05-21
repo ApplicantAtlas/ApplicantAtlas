@@ -28,6 +28,8 @@ func RegisterRoutes(r *gin.RouterGroup, params *types.RouteParams) {
 	r.GET(":event_id/forms", middlewares.JWTAuthMiddleware(), getEventFormsHandler(params))
 	r.GET(":event_id/pipelines", middlewares.JWTAuthMiddleware(), getEventPipelinesHandler(params))
 	r.GET(":event_id/email_templates", middlewares.JWTAuthMiddleware(), getEventEmailTemplatesHandler(params))
+	r.POST(":event_id/organizers/:user_email", middlewares.JWTAuthMiddleware(), addOrganizerHandler(params))
+	r.DELETE(":event_id/organizers/:user_id", middlewares.JWTAuthMiddleware(), removeOrganizerHandler(params))
 
 	// Register the secrets routes
 	secrets.RegisterRoutes(r.Group(":event_id/secrets"), params)
@@ -297,5 +299,102 @@ func getEventEmailTemplatesHandler(params *types.RouteParams) gin.HandlerFunc {
 		}
 
 		c.JSON(http.StatusOK, gin.H{"email_templates": emailTemplates})
+	}
+}
+
+// Add organizer to event
+func addOrganizerHandler(params *types.RouteParams) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		eventID := c.Param("event_id")
+		userEmail := c.Param("user_email")
+
+		// Convert eventID to ObjectID
+		objID, err := primitive.ObjectIDFromHex(eventID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid event ID"})
+			return
+		}
+
+		authenticatedUser, ok := utils.GetUserFromContext(c, true)
+		if !ok {
+			return
+		}
+
+		if !mongodb.CanUserModifyEvent(c, params.MongoService, authenticatedUser, objID, nil) {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "You are not allowed to modify this event"})
+			return
+		}
+
+		// Get user by email
+		user, err := params.MongoService.FindUserByEmail(c, userEmail)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to find a user with that email"})
+			return
+		}
+
+		if user == nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "User not found, please ensure that user has an account"})
+			return
+		}
+
+		_, err = params.MongoService.AddOrganizerToEvent(c, objID, user.ID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to add organizer to event"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"userID": user.ID, "message": "Organizer added to event successfully"})
+	}
+}
+
+// Remove organizer from event
+func removeOrganizerHandler(params *types.RouteParams) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		eventID := c.Param("event_id")
+		userID := c.Param("user_id")
+
+		// Convert eventID to ObjectID
+		objID, err := primitive.ObjectIDFromHex(eventID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid event ID"})
+			return
+		}
+
+		authenticatedUser, ok := utils.GetUserFromContext(c, true)
+		if !ok {
+			return
+		}
+
+		if !mongodb.CanUserModifyEvent(c, params.MongoService, authenticatedUser, objID, nil) {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "You are not allowed to modify this event"})
+			return
+		}
+
+		// Convert userID to ObjectID
+		userObjID, err := primitive.ObjectIDFromHex(userID)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+			return
+		}
+
+		// Get the event to make sure there are still > 1 organizers
+		event, err := params.MongoService.GetEvent(c, objID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get event"})
+			return
+		}
+
+		if len(event.OrganizerIDs) <= 1 {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Cannot remove the last organizer from an event, you must delete the event instead"})
+			return
+		}
+
+		_, err = params.MongoService.RemoveOrganizerFromEvent(c, objID, userObjID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to remove organizer from event"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"message": "Organizer removed from event successfully"})
 	}
 }

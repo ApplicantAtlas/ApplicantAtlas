@@ -6,6 +6,7 @@ import EventSecretsSettings from "./EventSecretsSettings";
 import { EventModel } from "@/types/models/Event";
 import { EventSecrets } from "@/types/models/EventSecret";
 import { IsObjectIDNotNull } from "@/utils/conversions";
+import ManageEventAdmins from "./ManageEventAdmins";
 
 interface SettingsProps {
   eventDetails: EventModel | null;
@@ -14,6 +15,7 @@ interface SettingsProps {
 const Settings: React.FC<SettingsProps> = ({ eventDetails }) => {
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [editingSecret, setEditingSecret] = useState(false);
+  const [editingEventAdmins, setEditingEventAdmins] = useState(false);
   const [eventSecrets, setEventSecrets] = useState<EventSecrets | undefined>();
   const { showToast } = useToast();
   const router = useRouter();
@@ -111,6 +113,21 @@ const Settings: React.FC<SettingsProps> = ({ eventDetails }) => {
           />
         </>
       )}
+      
+      <h2 className="mt-4">Event Admins</h2>
+      {!editingEventAdmins && (
+        <button
+          className="btn btn-primary"
+          onClick={() => setEditingEventAdmins(true)}
+        >
+          Manage Event Admins
+        </button>
+      )}
+
+      {editingEventAdmins && (
+        <ManageEventAdmins eventDetails={eventDetails} onDone={() => setEditingEventAdmins(false)} />
+      )}
+
 
       <h2 className="mt-4">Danger!</h2>
 

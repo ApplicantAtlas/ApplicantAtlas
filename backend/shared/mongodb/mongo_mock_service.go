@@ -58,6 +58,19 @@ func (m *MockMongoService) InsertUser(ctx context.Context, user models.User) (*m
 	return &mongo.InsertOneResult{}, nil // Mock result
 }
 
+func (m *MockMongoService) GetUserDetails(ctx context.Context, userId primitive.ObjectID) (*models.User, error) {
+	m.mutex.RLock()
+	defer m.mutex.RUnlock()
+
+	id := userId.Hex()
+	user, exists := m.data[id]
+	if !exists {
+		return nil, mongo.ErrNoDocuments
+	}
+
+	return &user, nil
+}
+
 func (m *MockMongoService) DeleteUserByEmail(ctx context.Context, email string) (*mongo.DeleteResult, error) {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
@@ -113,6 +126,43 @@ func (m *MockMongoService) ListEventsMetadata(ctx context.Context, filter bson.M
 		}
 	}
 	return events, nil
+}
+
+func (m *MockMongoService) AddOrganizerToEvent(ctx context.Context, eventID primitive.ObjectID, organizerID primitive.ObjectID) (*mongo.UpdateResult, error) {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	id := eventID.Hex()
+	event, exists := m.events[id]
+	if !exists {
+		return nil, mongo.ErrNoDocuments
+	}
+
+	// Add organizer
+	event.OrganizerIDs = append(event.OrganizerIDs, organizerID)
+	m.events[id] = event
+	return &mongo.UpdateResult{ModifiedCount: 1}, nil
+}
+func (m *MockMongoService) RemoveOrganizerFromEvent(ctx context.Context, eventID primitive.ObjectID, organizerID primitive.ObjectID) (*mongo.UpdateResult, error) {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	id := eventID.Hex()
+	event, exists := m.events[id]
+	if !exists {
+		return nil, mongo.ErrNoDocuments
+	}
+
+	// Remove organizer
+	for i, id := range event.OrganizerIDs {
+		if id == organizerID {
+			event.OrganizerIDs = append(event.OrganizerIDs[:i], event.OrganizerIDs[i+1:]...)
+			break
+		}
+	}
+
+	m.events[id] = event
+	return &mongo.UpdateResult{ModifiedCount: 1}, nil
 }
 
 func (m *MockMongoService) DeleteEvent(ctx *gin.Context, eventID primitive.ObjectID) (*mongo.DeleteResult, error) {

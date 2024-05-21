@@ -24,6 +24,7 @@ import (
 type MongoService interface {
 	FindUserByEmail(ctx context.Context, email string) (*models.User, error)
 	InsertUser(ctx context.Context, user models.User) (*mongo.InsertOneResult, error)
+	GetUserDetails(ctx context.Context, userId primitive.ObjectID) (*models.User, error)
 	DeleteUserByEmail(ctx context.Context, email string) (*mongo.DeleteResult, error)
 	UpdateUserDetails(ctx context.Context, userId primitive.ObjectID, updatedUserDetails models.User) error
 	CreateEvent(ctx context.Context, event models.Event) (*mongo.InsertOneResult, error)
@@ -31,6 +32,8 @@ type MongoService interface {
 	GetEvent(ctx *gin.Context, eventID primitive.ObjectID) (*models.Event, error)
 	UpdateEventMetadata(ctx *gin.Context, eventID primitive.ObjectID, metadata models.EventMetadata) (*mongo.UpdateResult, error)
 	ListEventsMetadata(ctx context.Context, filter bson.M) ([]models.Event, error)
+	AddOrganizerToEvent(ctx context.Context, eventID primitive.ObjectID, organizerID primitive.ObjectID) (*mongo.UpdateResult, error)
+	RemoveOrganizerFromEvent(ctx context.Context, eventID primitive.ObjectID, organizerID primitive.ObjectID) (*mongo.UpdateResult, error)
 	CreateSource(ctx context.Context, source models.SelectorSource) (*mongo.InsertOneResult, error)
 	UpdateSource(ctx context.Context, source models.SelectorSource, sourceID primitive.ObjectID) (*mongo.UpdateResult, error)
 	GetSourceByName(ctx context.Context, name string) (*models.SelectorSource, error)
@@ -106,6 +109,18 @@ func (s *Service) InsertUser(ctx context.Context, user models.User) (*mongo.Inse
 		return nil, ErrUserAlreadyExists
 	}
 	return s.Database.Collection("users").InsertOne(ctx, user)
+}
+
+func (s *Service) GetUserDetails(ctx context.Context, userId primitive.ObjectID) (*models.User, error) {
+	var user models.User
+	err := s.Database.Collection("users").FindOne(ctx, bson.M{"_id": userId}).Decode(&user)
+	if err != nil {
+		return nil, err
+	}
+	user.Birthday = time.Time{}
+	user.PasswordHash = ""
+
+	return &user, nil
 }
 
 // DeleteUserByEmail deletes a user by their email.
@@ -186,6 +201,22 @@ func (s *Service) ListEventsMetadata(ctx context.Context, filter bson.M) ([]mode
 	}
 
 	return events, nil
+}
+
+func (s *Service) AddOrganizerToEvent(ctx context.Context, eventID primitive.ObjectID, organizerID primitive.ObjectID) (*mongo.UpdateResult, error) {
+	update := bson.M{
+		"$addToSet": bson.M{"organizerIDs": organizerID},
+	}
+
+	return s.Database.Collection("events").UpdateByID(ctx, eventID, update)
+}
+
+func (s *Service) RemoveOrganizerFromEvent(ctx context.Context, eventID primitive.ObjectID, organizerID primitive.ObjectID) (*mongo.UpdateResult, error) {
+	update := bson.M{
+		"$pull": bson.M{"organizerIDs": organizerID},
+	}
+
+	return s.Database.Collection("events").UpdateByID(ctx, eventID, update)
 }
 
 // DeleteEvent deletes an event by its ID

@@ -9,12 +9,14 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // RegisterRoutes sets up the routes for user management
 func RegisterRoutes(r *gin.RouterGroup, params *types.RouteParams) {
 	r.GET("/me", middlewares.JWTAuthMiddleware(), getUserMyself(params))
 	r.PUT("/me", middlewares.JWTAuthMiddleware(), updateUserMyself(params))
+	r.GET("/:id", getUserDetails(params))
 }
 
 func getUserMyself(params *types.RouteParams) gin.HandlerFunc {
@@ -76,5 +78,25 @@ func updateUserMyself(params *types.RouteParams) gin.HandlerFunc {
 		}
 
 		c.JSON(http.StatusOK, gin.H{"message": "User details updated successfully"})
+	}
+}
+
+// get user details
+func getUserDetails(params *types.RouteParams) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		userIdStr := c.Param("id")
+		userId, err := primitive.ObjectIDFromHex(userIdStr)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+			return
+		}
+
+		user, err := params.MongoService.GetUserDetails(c, userId)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve user details"})
+			return
+		}
+
+		c.JSON(http.StatusOK, user)
 	}
 }

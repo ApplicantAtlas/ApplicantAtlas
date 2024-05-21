@@ -73,3 +73,17 @@ export const createOrUpdateEventSecret = async (eventId: string, requestData: Ev
 export const deleteEventSecret = async (eventId: string): Promise<AxiosResponse> => {
     return api.delete(`/events/${eventId}/secrets`);
 };
+
+export const addEventAdmin = async (eventId: string, userEmail: string): Promise<AxiosResponse<{
+    userID: string;
+    message: string;
+}>> => {
+    return api.post<{
+        userID: string;
+        message: string;
+    }>(`/events/${eventId}/organizers/${userEmail}`);
+}
+
+export const removeEventAdmin = async (eventId: string, userId: string): Promise<AxiosResponse> => {
+    return api.delete(`/events/${eventId}/organizers/${userId}`);
+}

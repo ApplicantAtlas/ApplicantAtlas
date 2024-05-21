@@ -254,7 +254,7 @@ const createSendEmailFormStructure = (
         required: true,
         options: eventForms?.flatMap((form) =>
           form.attrs.map((attr) => ({
-            value: `${attr.key}`,
+            value: attr.key,
             label: `${attr.question} (${form.name} id: ${form.id})`, // TODO: Conditional options depending on form selected.
           }))
         ),
