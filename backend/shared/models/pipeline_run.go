@@ -24,7 +24,7 @@ type PipelineActionStatus struct {
 }
 
 type PipelineRun struct {
-	ID             primitive.ObjectID     `bson:"_id,omitempty" json:"id,omitempty"`
+	ID             primitive.ObjectID     `bson:"_id,omitempty" json:"id,omitempty" mongoPreventOverride:"true"`
 	PipelineID     primitive.ObjectID     `bson:"pipelineID" json:"pipelineID" validate:"required"`
 	TriggeredAt    time.Time              `bson:"triggeredAt" json:"triggeredAt" validate:"required"`
 	RanAt          time.Time              `bson:"ranAt" json:"ranAt"`

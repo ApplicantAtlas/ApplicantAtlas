@@ -11,7 +11,7 @@ This section is for modeling the default values for Selectors when we fetch data
 Like MLH's School List
 */
 type SelectorSource struct {
-	ID          primitive.ObjectID `bson:"_id"`
+	ID          primitive.ObjectID `bson:"_id" mongoPreventOverride:"true"`
 	SourceName  string             `bson:"sourceName" json:"sourceName"`
 	LastUpdated time.Time          `bson:"lastUpdated" json:"lastUpdated"`
 	Options     []string           `bson:"options" json:"options"`
@@ -80,7 +80,7 @@ type FormAllowedSubmitter struct {
 // FormStructure represents the overall structure of a form
 type FormStructure struct {
 	Attrs                    []FormField            `json:"attrs" bson:"attrs" validate:"dive"`
-	ID                       primitive.ObjectID     `json:"id,omitempty" bson:"_id,omitempty"`
+	ID                       primitive.ObjectID     `json:"id,omitempty" bson:"_id,omitempty" mongoPreventOverride:"true"`
 	AllowMultipleSubmissions bool                   `json:"allowMultipleSubmissions,omitempty" bson:"allowMultipleSubmissions"`
 	CloseSubmissionsAt       time.Time              `json:"closeSubmissionsAt,omitempty" bson:"closeSubmissionsAt"`
 	OpenSubmissionsAt        time.Time              `json:"openSubmissionsAt,omitempty" bson:"openSubmissionsAt"`
@@ -90,7 +90,7 @@ type FormStructure struct {
 	UpdatedAt                time.Time              `json:"updatedAt,omitempty" bson:"updatedAt"`
 	Status                   string                 `json:"status,omitempty" bson:"status"`
 	IsDeleted                bool                   `json:"isDeleted,omitempty" bson:"isDeleted"`
-	EventID                  primitive.ObjectID     `json:"eventID,omitempty" bson:"eventID"`
+	EventID                  primitive.ObjectID     `json:"eventID,omitempty" bson:"eventID" mongoPreventOverride:"true"`
 	MaxSubmissions           int                    `json:"maxSubmissions,omitempty" bson:"maxSubmissions"`
 	SubmissionMessage        string                 `json:"submissionMessage,omitempty" bson:"submissionMessage"`
 	IsRestricted             bool                   `json:"isRestricted,omitempty" bson:"isRestricted"`

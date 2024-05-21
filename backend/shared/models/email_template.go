@@ -7,8 +7,8 @@ import (
 )
 
 type EmailTemplate struct {
-	ID             primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
-	EventID        primitive.ObjectID `bson:"eventID" json:"eventID" validate:"required"`
+	ID             primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty" mongoPreventOverride:"true"`
+	EventID        primitive.ObjectID `bson:"eventID" json:"eventID" validate:"required" mongoPreventOverride:"true"`
 	DataFromFormID primitive.ObjectID `bson:"dataFromFormID" json:"dataFromFormID"`
 	Name           string             `bson:"name" json:"name" validate:"required"`
 	Body           string             `bson:"body" json:"body"`

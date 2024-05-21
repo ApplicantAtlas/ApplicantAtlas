@@ -53,7 +53,7 @@ type FieldChangeCondition struct {
 // PipelineAction represents a pipeline action
 type PipelineAction struct {
 	Type string             `bson:"type" json:"type" validate:"required,pipelineactiontype"`
-	ID   primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
+	ID   primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty" mongoPreventOverride:"true"`
 	Name string             `bson:"name" json:"name" validate:"required"`
 
 	// Embed each specific action type
@@ -95,11 +95,11 @@ type Webhook struct {
 
 // PipelineConfiguration represents the configuration of a pipeline
 type PipelineConfiguration struct {
-	ID        primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
+	ID        primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty" mongoPreventOverride:"true"`
 	Name      string             `bson:"name" json:"name" validate:"required"`
 	Event     PipelineEvent      `bson:"event,omitempty" json:"event,omitempty" validate:"pipelineevent"`
 	Actions   []PipelineAction   `bson:"actions,omitempty" json:"actions,omitempty" validate:"dive"`
-	EventID   primitive.ObjectID `bson:"eventID" json:"eventID" validate:"required"`
+	EventID   primitive.ObjectID `bson:"eventID" json:"eventID" validate:"required" mongoPreventOverride:"true"`
 	UpdatedAt time.Time          `bson:"updatedAt" json:"updatedAt" validate:"required"`
 	Enabled   bool               `bson:"enabled" json:"enabled" validate:"required"`
 }

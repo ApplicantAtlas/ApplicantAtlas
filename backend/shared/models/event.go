@@ -10,7 +10,7 @@ import (
 
 // Event represents an event in the database
 type Event struct {
-	ID           primitive.ObjectID   `bson:"_id,omitempty"`
+	ID           primitive.ObjectID   `bson:"_id,omitempty" mongoPreventOverride:"true"`
 	OrganizerIDs []primitive.ObjectID `bson:"organizerIDs" json:"organizerIDs"`
 	Metadata     EventMetadata        `bson:"metadata" json:"metadata"`
 }

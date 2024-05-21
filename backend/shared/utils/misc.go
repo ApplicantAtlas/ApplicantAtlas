@@ -5,6 +5,8 @@ import (
 	"os"
 	"reflect"
 	"strings"
+
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 func RunningInAWSLambda() bool {
@@ -47,4 +49,33 @@ func StringInSlice(str string, slice []string) bool {
 		}
 	}
 	return false
+}
+
+// StructToBsonM converts a struct to bson.M
+func StructToBsonM(model interface{}) bson.M {
+	val := reflect.ValueOf(model)
+	typ := val.Type()
+
+	result := bson.M{}
+	for i := 0; i < val.NumField(); i++ {
+		field := val.Field(i)
+		fieldType := typ.Field(i)
+		bsonTag := fieldType.Tag.Get("bson")
+
+		// Split the bson tag to get the field name
+		bsonFieldName := bsonTag
+		if commaIndex := len(bsonTag); commaIndex > 0 {
+			bsonFieldName = bsonTag[:commaIndex]
+		}
+
+		// Skip empty or omitted bson field names
+		if bsonFieldName == "-" || bsonFieldName == "" {
+			continue
+		}
+
+		// Add to result
+		result[bsonFieldName] = field.Interface()
+	}
+
+	return result
 }

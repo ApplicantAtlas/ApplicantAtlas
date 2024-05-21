@@ -344,10 +344,11 @@ func (s *Service) CreateForm(ctx context.Context, form models.FormStructure) (*m
 
 // UpdateForm updates a form by its ID
 func (s *Service) UpdateForm(ctx context.Context, form models.FormStructure, formID primitive.ObjectID) (*mongo.UpdateResult, error) {
-	// TODO: Using $set causes an issue, because of omitempty it will remove fields that are not present in the form on the struct
-	// but when updating it'll keep these fields even if they've been intentionally removed
 	form.UpdatedAt = time.Now()
-	update := bson.M{"$set": form}
+	updatePayload := utils.StructToBsonM(form)
+	cleanUpdatePayload := RemoveNonOverridableFields(updatePayload, form)
+
+	update := bson.M{"$set": cleanUpdatePayload}
 	filter := bson.M{"_id": formID}
 	return s.Database.Collection("forms").UpdateOne(ctx, filter, update)
 }
@@ -400,7 +401,10 @@ func (s *Service) UpdatePipeline(ctx context.Context, pipeline models.PipelineCo
 		}
 	}
 
-	update := bson.M{"$set": pipeline}
+	updatePayload := utils.StructToBsonM(pipeline)
+	cleanUpdatePayload := RemoveNonOverridableFields(updatePayload, pipeline)
+
+	update := bson.M{"$set": cleanUpdatePayload}
 	filter := bson.M{"_id": pipelineID}
 	return s.Database.Collection("pipeline_configs").UpdateOne(ctx, filter, update)
 }
@@ -491,7 +495,10 @@ func (s *Service) CreateResponse(ctx context.Context, response models.FormRespon
 // UpdateResponse updates a response by its ID
 func (s *Service) UpdateResponse(ctx context.Context, response models.FormResponse, responseID primitive.ObjectID) (*mongo.UpdateResult, error) {
 	response.UpdatedAt = time.Now()
-	update := bson.M{"$set": response}
+
+	cleanUpdatePayload := RemoveNonOverridableFields(utils.StructToBsonM(response), response)
+
+	update := bson.M{"$set": cleanUpdatePayload}
 	filter := bson.M{"_id": responseID}
 	return s.Database.Collection("responses").UpdateOne(ctx, filter, update)
 }
@@ -516,7 +523,9 @@ func (s *Service) GetPipelineRun(ctx context.Context, filter bson.M) (*models.Pi
 }
 
 func (s *Service) UpdatePipelineRun(ctx context.Context, pipelineRun models.PipelineRun, pipelineRunID primitive.ObjectID) (*mongo.UpdateResult, error) {
-	update := bson.M{"$set": pipelineRun}
+	cleanUpdatePayload := RemoveNonOverridableFields(utils.StructToBsonM(pipelineRun), pipelineRun)
+
+	update := bson.M{"$set": cleanUpdatePayload}
 	filter := bson.M{"_id": pipelineRunID}
 	return s.Database.Collection("pipeline_runs").UpdateOne(ctx, filter, update)
 }
@@ -589,7 +598,9 @@ func (s *Service) CreateEmailTemplate(ctx context.Context, emailTemplate models.
 
 // UpdateEmailTemplate updates an email template by its ID
 func (s *Service) UpdateEmailTemplate(ctx context.Context, emailTemplate models.EmailTemplate, emailTemplateID primitive.ObjectID) (*mongo.UpdateResult, error) {
-	update := bson.M{"$set": emailTemplate}
+	cleanUpdatePayload := RemoveNonOverridableFields(utils.StructToBsonM(emailTemplate), emailTemplate)
+
+	update := bson.M{"$set": cleanUpdatePayload}
 	filter := bson.M{"_id": emailTemplateID}
 	return s.Database.Collection("email_templates").UpdateOne(ctx, filter, update)
 }
@@ -669,9 +680,11 @@ func (s *Service) CreateOrUpdateEventSecrets(ctx context.Context, newSecret mode
 		return &mongo.UpdateResult{}, nil
 	}
 
+	cleanUpdatePayload := RemoveNonOverridableFields(utils.StructToBsonM(updateDoc), updateDoc)
+
 	// Perform the update with upsert true to handle cases where the document doesn't exist
 	opts := options.Update().SetUpsert(true)
-	result, err := s.Database.Collection("event_secrets").UpdateOne(ctx, filter, bson.M{"$set": updateDoc}, opts)
+	result, err := s.Database.Collection("event_secrets").UpdateOne(ctx, filter, bson.M{"$set": cleanUpdatePayload}, opts)
 	if err != nil {
 		return nil, err
 	}

@@ -8,7 +8,7 @@ import (
 
 // User represents a user in the database.
 type User struct {
-	ID           primitive.ObjectID `bson:"_id,omitempty"`
+	ID           primitive.ObjectID `bson:"_id,omitempty" mongoPreventOverride:"true"`
 	FirstName    string             `bson:"firstName" json:"firstName"`
 	LastName     string             `bson:"lastName" json:"lastName"`
 	Email        string             `bson:"email" json:"email"`

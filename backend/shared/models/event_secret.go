@@ -7,7 +7,7 @@ type StripableSecret interface {
 }
 
 type EventSecrets struct {
-	EventID primitive.ObjectID `bson:"eventID" json:"eventID,omitempty"`
+	EventID primitive.ObjectID `bson:"eventID" json:"eventID,omitempty" mongoPreventOverride:"true"`
 
 	// Embed each specific secret type
 	// Each secret type should implement the StripableSecret interface

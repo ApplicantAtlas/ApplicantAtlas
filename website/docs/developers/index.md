@@ -62,7 +62,7 @@ For ease of development, we recommend not running everything in docker since it'
 2. **Kafka Event Listener Service**
    In a new terminal, go to the `backend/event-listener` folder and execute the command below to launch the Kafka event listener service:
    ```bash
-   KAFKA_BROKER_URL=localhost:9092 go run cmd/main.go
+   MONGO_URL=localhost:27017 MONGO_USER=admin MONGO_PASSWORD=admin MONGO_DB=app MONGO_AUTH_SOURCE=admin KAFKA_BROKER_URL=localhost:9092 go run cmd/main.go
    ```
    If you encounter any issues, try running the command from the API service directory.
 
@@ -75,7 +75,7 @@ For ease of development, we recommend not running everything in docker since it'
 4. **Frontend Development**
    Ensure you have the correct Node.js version (>= 21) to avoid potential issues with Next.JS. Navigate to the `frontend` directory, install all dependencies with `npm i`, and start the development server using:
    ```bash
-   cd frontend && npm i && npm run dev
+   cd website && npm i && npm run dev
    ```
 
 ## Contributing
