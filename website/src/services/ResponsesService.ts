@@ -5,13 +5,18 @@ import { FormResponse } from "@/types/models/Response";
 
 export const GetResponses = async (
   formID: string,
+  getDeletedColumnData: boolean = false,
 ): Promise<
   AxiosResponse<{
     responses: Record<string, any>;
     columnOrder: string[];
   }>
 > => {
-  return api.get(`/forms/${formID}/responses`);
+  return api.get(`/forms/${formID}/responses`, {
+    params: {
+      getDeletedColumnData: getDeletedColumnData.toString(),
+    },
+  });
 };
 
 export const SubmitResponse = async (
@@ -31,8 +36,12 @@ export const UpdateResponse = async (
 
 export const DownloadResponses = async (
     formID: string,
+    getDeletedColumnData: boolean = false,
     ): Promise<AxiosResponse<Blob>> => {
     return api.get(`/forms/${formID}/responses/csv`, {
         responseType: "blob",
+        params: {
+          getDeletedColumnData: getDeletedColumnData.toString(),
+        },
     });
 }

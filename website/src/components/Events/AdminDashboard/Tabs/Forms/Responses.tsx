@@ -11,6 +11,7 @@ import { RenderFormField } from "@/components/Form/FormBuilder";
 import EditIcon from "@/components/Icons/EditIcon";
 import { ToastType, useToast } from "@/components/Toast/ToastContext";
 import debounce from "lodash/debounce";
+import Checkbox from "@/components/Form/inputs/Checkbox";
 
 interface ResponsesProps {
   form: FormStructure;
@@ -23,6 +24,7 @@ const Responses = ({ form }: ResponsesProps) => {
   >([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
+  const [showDeletedColumns, setShowDeletedColumns] = useState(false);
   const { showToast } = useToast();
 
   const debouncersRef = useRef(new Map());
@@ -114,7 +116,7 @@ const Responses = ({ form }: ResponsesProps) => {
   }, []);
 
   useEffect(() => {
-    GetResponses(form.id || "")
+    GetResponses(form.id || "", showDeletedColumns)
       .then((r) => {
         const cleanedResponses = r.data.responses.map(
           (response: Record<string, any>) => {
@@ -150,7 +152,7 @@ const Responses = ({ form }: ResponsesProps) => {
         console.error(err);
         setIsLoading(false);
       });
-  }, [form.id]);
+  }, [form.id, showDeletedColumns]);
 
   if (isLoading) {
     return <LoadingSpinner />;
@@ -161,7 +163,7 @@ const Responses = ({ form }: ResponsesProps) => {
   }
 
   const handleExportCSV = () => {
-    DownloadResponses(form.id || "")
+    DownloadResponses(form.id || "", showDeletedColumns)
       .then((r) => {
         const blob = new Blob([r.data], { type: "text/csv" });
         const url = window.URL.createObjectURL(blob);
@@ -194,6 +196,21 @@ const Responses = ({ form }: ResponsesProps) => {
           <ArrowDownTray className="w-6 h-6" /> Export as CSV
         </button>
       </div>
+      <Checkbox
+        field={{
+          key: "showDeletedColumns",
+          question: "Show Deleted Columns",
+          description:
+            "Show responses to deleted columns, this happens if you modify the form structure after some responses have been submitted.",
+          type: "checkbox",
+          required: false,
+        }}
+        inline={true}
+        onChange={(k, v) => {
+          setShowDeletedColumns(v as boolean);
+        }}
+        defaultValue={false}
+      />
       <div className="overflow-x-auto" style={{ height: "70vh" }}>
         <table className="table table-sm table-pin-rows bg-white">
           <thead>

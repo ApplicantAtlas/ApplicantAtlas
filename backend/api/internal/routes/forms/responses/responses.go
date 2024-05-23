@@ -157,13 +157,29 @@ func submitFormHandler(params *types.RouteParams) gin.HandlerFunc {
 	}
 }
 
-func processResponses(form *models.FormStructure, responses *[]models.FormResponse) ([]map[string]interface{}, []string) {
+func processResponses(form *models.FormStructure, responses *[]models.FormResponse, getDeletedColumnData bool) ([]map[string]interface{}, []string) {
 	var processedResponses []map[string]interface{}
 
 	// Define the order of columns
 	columnOrder := []string{"Response ID", "User ID", "Submitted At"}
+	colKeyMap := make(map[string]struct{})
 	for _, attr := range form.Attrs {
 		columnOrder = append(columnOrder, attr.Question+"_attr_key:"+attr.Key)
+		colKeyMap[attr.Key] = struct{}{}
+	}
+
+	if getDeletedColumnData {
+		// Go through all responses and add any deleted column data to the column order
+		for _, response := range *responses {
+			for key := range response.Data {
+				if _, exists := colKeyMap[key]; !exists {
+					// Add column
+					newColumn := fmt.Sprintf("deleted column_attr_key:%s", key)
+					columnOrder = append(columnOrder, newColumn)
+					colKeyMap[key] = struct{}{}
+				}
+			}
+		}
 	}
 
 	// Create header row based on column order
@@ -181,13 +197,15 @@ func processResponses(form *models.FormStructure, responses *[]models.FormRespon
 		processedResponse["Submitted At"] = response.CreatedAt.Format(time.RFC3339)
 
 		// Add other attributes
-		for _, attr := range form.Attrs {
-			uniqueKey := attr.Question + "_attr_key:" + attr.Key
-			value, exists := response.Data[attr.Key]
+		for _, fullKeyName := range columnOrder[3:] {
+			split := strings.Split(fullKeyName, "_attr_key:")
+			uniqueKey := split[len(split)-1]
+
+			value, exists := response.Data[uniqueKey]
 			if exists {
-				processedResponse[uniqueKey] = value
+				processedResponse[fullKeyName] = value
 			} else {
-				processedResponse[uniqueKey] = ""
+				processedResponse[fullKeyName] = ""
 			}
 		}
 
@@ -199,6 +217,9 @@ func processResponses(form *models.FormStructure, responses *[]models.FormRespon
 
 func listFormResponsesHandler(params *types.RouteParams) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		getDeletedColumnData := c.DefaultQuery("getDeletedColumnData", "false")
+		getDeletedColumnDataBool := (getDeletedColumnData == "true")
+
 		authenticatedUser, ok := utils.GetUserFromContext(c, true)
 		if !ok {
 			return
@@ -227,14 +248,26 @@ func listFormResponsesHandler(params *types.RouteParams) gin.HandlerFunc {
 			return
 		}
 
-		processedResponses, columnOrder := processResponses(form, &responses)
+		processedResponses, columnOrder := processResponses(form, &responses, getDeletedColumnDataBool)
 
 		c.JSON(http.StatusOK, gin.H{"responses": processedResponses, "columnOrder": columnOrder})
 	}
 }
 
+/*
+Download form responses as CSV
+
+params:
+  - form_id: ID of the form
+
+query params:
+  - getDeletedColumnData: whether to include deleted column data in the CSV (default: false)
+*/
 func downloadFormResponsesAsCSVHandler(params *types.RouteParams) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		getDeletedColumnData := c.DefaultQuery("getDeletedColumnData", "false")
+		getDeletedColumnDataBool := (getDeletedColumnData == "true")
+
 		authenticatedUser, ok := utils.GetUserFromContext(c, true)
 		if !ok {
 			return
@@ -263,7 +296,7 @@ func downloadFormResponsesAsCSVHandler(params *types.RouteParams) gin.HandlerFun
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
 			return
 		}
-		processedResponses, columnOrder := processResponses(form, &responses)
+		processedResponses, columnOrder := processResponses(form, &responses, getDeletedColumnDataBool)
 
 		c.Writer.Header().Set("Content-Type", "text/csv")
 		c.Writer.Header().Set("Content-Disposition", "attachment;filename=form_responses.csv")
