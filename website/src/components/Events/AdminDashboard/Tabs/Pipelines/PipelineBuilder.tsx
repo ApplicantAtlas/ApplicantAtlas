@@ -56,11 +56,29 @@ const PipelineBuilder: React.FC<PipelineBuilderProps> = ({
   }, [eventDetails])
 
   const handleAddAction = (action: PipelineAction | PipelineEvent) => {
-    setPipelineConfig((prevConfig) => ({
-      ...prevConfig,
-      actions: [...(prevConfig.actions || []), action as PipelineAction],
-    }));
+    setPipelineConfig((prevConfig) => {
+      const safePrevConfig = prevConfig ?? { actions: [] };
+  
+      // Check if the action already exists in the list
+      const existingIndex = safePrevConfig.actions?.findIndex((a) => a.id === action.id);
+  
+      // If the action exists, replace it with the new action, otherwise add the new action
+      let updatedActions;
+      if (existingIndex && existingIndex >= 0) {
+        updatedActions = safePrevConfig.actions?.map((a, index) =>
+          index === existingIndex ? (action as PipelineAction) : a
+        );
+      } else {
+        updatedActions = [...(safePrevConfig.actions || []), action as PipelineAction];
+      }
+  
+      return {
+        ...safePrevConfig,
+        actions: updatedActions,
+      };
+    });
   };
+  
 
   const handleRemoveAction = (action: PipelineAction) => {
     setDeleteAction(undefined);

@@ -112,7 +112,12 @@ const PipelineActionModal: React.FC<PipelineActionModalProps> = ({
   const handleAddAction = (formData: Record<string, any>) => {
     if (selectedType) {
       const action = createActionObject(formData);
+
       if (action) {
+        if (defaultAction) {
+          action.id = defaultAction.id; // preserve id
+        }
+
         onSelect(action);
         onClose();
       }
@@ -165,7 +170,7 @@ const PipelineActionModal: React.FC<PipelineActionModalProps> = ({
           submissionFunction={
             modalType === "action" ? handleAddAction : handleAddEvent
           }
-          buttonText={modalType === "action" ? "Add Action" : "Set Event"}
+          buttonText={modalType === "action" ? (defaultAction ? "Update Action" : "Add Action") : "Set Event"}
         />
       );
     }
@@ -341,9 +346,9 @@ const createWebhookFormStructure = (
         key: "method",
         options: ["POST", "GET", "PUT", "DELETE"],
         required: true,
-        defaultValue: defaultAction?.webhook?.method,
+        defaultOptions: defaultAction?.webhook?.method ? [defaultAction?.webhook?.method] : undefined,
       },
-      // Add fields for headers and body as necessary
+      // TODO: Add field for headers
     ],
   };
 };
