@@ -6,6 +6,7 @@ import (
 	"shared/kafka"
 	"shared/models"
 	"shared/mongodb"
+	"shared/utils"
 	"time"
 
 	"github.com/IBM/sarama"
@@ -46,6 +47,8 @@ func TriggerPipeline(c context.Context, producer sarama.SyncProducer, mongo mong
 			actionMessage = kafka.NewSendEmailMessage("email-action", action.ID, pipeline.ID, runID, action.SendEmail.EmailTemplateID, pipeline.EventID, actionData, action.SendEmail.EmailFieldID)
 		case "AllowFormAccess":
 			actionMessage = kafka.NewAllowFormAccessMessage("allow-form-access-action", action.ID, pipeline.ID, runID, action.AllowFormAccess.ToFormID, action.AllowFormAccess.Options, actionData, action.AllowFormAccess.EmailFieldID)
+		case "Webhook":
+			actionMessage = kafka.NewWebhookMessage("webhook-action", action.ID, pipeline.ID, runID, action.Webhook.URL, action.Webhook.Method, utils.ConvertMapStringToMapInterface(action.Webhook.Headers), actionData)
 		default:
 			return errors.New("action type not implemented")
 		}

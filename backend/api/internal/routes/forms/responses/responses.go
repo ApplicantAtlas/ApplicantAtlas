@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"shared/kafka"
+	"shared/logger"
 	"shared/models"
 	"shared/mongodb"
 	"shared/utils"
@@ -83,6 +84,7 @@ func submitFormHandler(params *types.RouteParams) gin.HandlerFunc {
 			submissions, err = params.MongoService.ListResponses(c, bson.M{"formID": formID})
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+				logger.Error("Failed to list form responses", err)
 				return
 			}
 
@@ -97,6 +99,7 @@ func submitFormHandler(params *types.RouteParams) gin.HandlerFunc {
 				submissions, err = params.MongoService.ListResponses(c, bson.M{"formID": formID, "userID": authenticatedUser.ID})
 				if err != nil {
 					c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+					logger.Error("Failed to list form responses for duplicate submission check", err)
 					return
 				}
 			}
@@ -127,6 +130,7 @@ func submitFormHandler(params *types.RouteParams) gin.HandlerFunc {
 		pipelines, err := params.MongoService.ListPipelines(c, bson.M{"eventID": form.EventID})
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+			logger.Error("Failed to list pipelines for this event", err)
 			return
 		}
 
@@ -141,6 +145,7 @@ func submitFormHandler(params *types.RouteParams) gin.HandlerFunc {
 
 				if err != nil {
 					c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+					logger.Error("Failed to trigger pipeline", err)
 					return
 				}
 			}
@@ -150,6 +155,7 @@ func submitFormHandler(params *types.RouteParams) gin.HandlerFunc {
 		req.UserID = authenticatedUser.ID
 		if _, err := params.MongoService.CreateResponse(c, req); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+			logger.Error("Failed to create form response", err)
 			return
 		}
 
@@ -245,6 +251,7 @@ func listFormResponsesHandler(params *types.RouteParams) gin.HandlerFunc {
 		responses, err := params.MongoService.ListResponses(c, bson.M{"formID": formID})
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+			logger.Error("Failed to list form responses", err)
 			return
 		}
 
@@ -294,6 +301,7 @@ func downloadFormResponsesAsCSVHandler(params *types.RouteParams) gin.HandlerFun
 		responses, err := params.MongoService.ListResponses(c, bson.M{"formID": formID})
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+			logger.Error("Failed to list form responses", err)
 			return
 		}
 		processedResponses, columnOrder := processResponses(form, &responses, getDeletedColumnDataBool)
@@ -377,6 +385,7 @@ func updateFormResponseHandler(params *types.RouteParams) gin.HandlerFunc {
 		pipelines, err := params.MongoService.ListPipelines(c, bson.M{"eventID": form.EventID})
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+			logger.Error("Failed to list pipelines for this event", err)
 			return
 		}
 
@@ -395,6 +404,7 @@ func updateFormResponseHandler(params *types.RouteParams) gin.HandlerFunc {
 
 				if err != nil {
 					c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+					logger.Error("Failed to trigger pipeline", err)
 					return
 				}
 			}
@@ -403,6 +413,7 @@ func updateFormResponseHandler(params *types.RouteParams) gin.HandlerFunc {
 		_, err = params.MongoService.UpdateResponse(c, response, responseID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+			logger.Error("Failed to update form response", err)
 			return
 		}
 

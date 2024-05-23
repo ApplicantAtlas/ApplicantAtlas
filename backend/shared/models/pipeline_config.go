@@ -24,8 +24,8 @@ type PipelineEvent struct {
 	Name string `bson:"name" json:"name" validate:"required"`
 
 	// Embed each specific event type
-	FormSubmission *FormSubmission `bson:"formSubmission,omitempty" json:"formSubmission,omitempty"`
-	FieldChange    *FieldChange    `bson:"fieldChange,omitempty" json:"fieldChange,omitempty"`
+	FormSubmission *FormSubmission `bson:"formSubmission" json:"formSubmission"`
+	FieldChange    *FieldChange    `bson:"fieldChange" json:"fieldChange"`
 }
 
 // FormSubmission represents a form submission event
@@ -57,9 +57,9 @@ type PipelineAction struct {
 	Name string             `bson:"name" json:"name" validate:"required"`
 
 	// Embed each specific action type
-	SendEmail       *SendEmail       `bson:"sendEmail,omitempty" json:"sendEmail,omitempty"`
-	AllowFormAccess *AllowFormAccess `bson:"allowFormAccess,omitempty" json:"allowFormAccess,omitempty"`
-	Webhook         *Webhook         `bson:"webhook,omitempty" json:"webhook,omitempty"`
+	SendEmail       *SendEmail       `bson:"sendEmail" json:"sendEmail,omitempty"`
+	AllowFormAccess *AllowFormAccess `bson:"allowFormAccess" json:"allowFormAccess,omitempty"`
+	Webhook         *Webhook         `bson:"webhook" json:"webhook,omitempty"`
 }
 
 // SendEmail requires either an email field ID or an email address.
@@ -97,8 +97,8 @@ type Webhook struct {
 type PipelineConfiguration struct {
 	ID        primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty" mongoPreventOverride:"true"`
 	Name      string             `bson:"name" json:"name" validate:"required"`
-	Event     PipelineEvent      `bson:"event,omitempty" json:"event,omitempty" validate:"pipelineevent"`
-	Actions   []PipelineAction   `bson:"actions,omitempty" json:"actions,omitempty" validate:"dive"`
+	Event     PipelineEvent      `bson:"event" json:"event,omitempty" validate:"pipelineevent"`
+	Actions   []PipelineAction   `bson:"actions" json:"actions,omitempty" validate:"dive"`
 	EventID   primitive.ObjectID `bson:"eventID" json:"eventID" validate:"required" mongoPreventOverride:"true"`
 	UpdatedAt time.Time          `bson:"updatedAt" json:"updatedAt" validate:"required"`
 	Enabled   bool               `bson:"enabled" json:"enabled" validate:"required"`

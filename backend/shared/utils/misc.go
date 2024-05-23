@@ -60,22 +60,36 @@ func StructToBsonM(model interface{}) bson.M {
 	for i := 0; i < val.NumField(); i++ {
 		field := val.Field(i)
 		fieldType := typ.Field(i)
-		bsonTag := fieldType.Tag.Get("bson")
 
-		// Split the bson tag to get the field name
-		bsonFieldName := bsonTag
-		if commaIndex := len(bsonTag); commaIndex > 0 {
-			bsonFieldName = bsonTag[:commaIndex]
-		}
-
-		// Skip empty or omitted bson field names
-		if bsonFieldName == "-" || bsonFieldName == "" {
+		if !fieldType.IsExported() {
 			continue
 		}
 
-		// Add to result
+		bsonTag := fieldType.Tag.Get("bson")
+		if bsonTag == "" || bsonTag == "-" {
+			continue
+		}
+
+		// Split the bson tag to get the field name
+		bsonTagParts := strings.Split(bsonTag, ",")
+		bsonFieldName := bsonTagParts[0]
+
+		// Skip zero values if omitempty is present
+		if len(bsonTagParts) > 1 && bsonTagParts[1] == "omitempty" && reflect.DeepEqual(field.Interface(), reflect.Zero(field.Type()).Interface()) {
+			continue
+		}
+
 		result[bsonFieldName] = field.Interface()
 	}
 
 	return result
+}
+
+// ConvertMapStringToMapInterface converts a map[string]string to a map[string]interface{}
+func ConvertMapStringToMapInterface(input map[string]string) map[string]interface{} {
+	output := make(map[string]interface{})
+	for key, value := range input {
+		output[key] = value
+	}
+	return output
 }
