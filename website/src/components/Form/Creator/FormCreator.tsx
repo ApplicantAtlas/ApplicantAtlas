@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FormStructure, FormField, FormFieldType } from "@/types/models/Form";
+import { FormStructure, FormField, FormFieldType, FieldValidation, EmailValidationOptions } from "@/types/models/Form";
 import FormFieldModal from "./FormFieldModal";
 import FieldAttributesForm from "./FieldAttributesForm";
 import { v4 as uuidv4 } from "uuid";
@@ -79,7 +79,20 @@ const FormCreator: React.FC<FormCreatorProps> = ({
     setUserFormStructure({ ...userFormStructure, attrs: newFields });
   };
 
+  const humanReadableFieldTypeToDatabaseFormat = (attr: FormField): FormField => {
+    switch (attr.type as string) {
+      case "email":
+        // TODO: we can add additional validation to this
+        return { ...attr, type: "text", additionalValidation: { isEmail: 
+          { isEmail: true } as EmailValidationOptions
+        } as FieldValidation };
+      default:
+        return attr;
+    }
+  }
+
   const handleSubmit = () => {
+    userFormStructure.attrs = userFormStructure.attrs.map(humanReadableFieldTypeToDatabaseFormat);
     submissionFunction(userFormStructure);
   };
 

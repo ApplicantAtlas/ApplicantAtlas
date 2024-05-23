@@ -8,7 +8,6 @@ export const humanFormTypes: string[] = [
   "telephone",
   "textarea",
   "radio",
-  "url",
   "colorpicker"
 ];
 

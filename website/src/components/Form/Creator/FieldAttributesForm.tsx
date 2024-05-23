@@ -25,8 +25,12 @@ const FieldAttributesForm: React.FC<FieldAttributesFormProps> = ({
       question: formData.question,
       type: fieldType as FormFieldType,
       key: initialAttributes?.key || "",
-      defaultValue: formData.defaultValue,
+      defaultValue: formData.defaultValue ? String(formData.defaultValue) : undefined,
       options: formData.options,
+      additionalValidation: {
+        min: formData.min,
+        max: formData.max,
+      },
       required: formData.required === true,
       isInternal: formData.isInternal === true,
     };
@@ -54,6 +58,7 @@ const FieldAttributesForm: React.FC<FieldAttributesFormProps> = ({
         case "multiselect":
         case "customselect":
         case "custommultiselect":
+        case "radio":
             attrs.push({
                 key: "options",
                 question: "Options",
@@ -63,11 +68,30 @@ const FieldAttributesForm: React.FC<FieldAttributesFormProps> = ({
                 defaultOptions: initialAttributes?.options,
             });
             break;
+        case "date":
+        case "timestamp":
+        case "number":
+            attrs.push({
+              key: "min",
+              question: "Minimum value/age",
+              type: "number",
+              required: false,
+              defaultValue: initialAttributes?.additionalValidation?.min,
+              description: "The minimum value that this form will accept. Either a number for type number, or age in years for date and timestamp"
+            })
+            attrs.push({
+              key: "max",
+              question: "Maximum value/age",
+              type: "number",
+              required: false,
+              defaultValue: initialAttributes?.additionalValidation?.max,
+              description: "The maximum value that this form will accept. Either a number for type number, or age in years for date and timestamp"
+            })
+            break;
         default:
             break;
     }
     
-
     attrs.push({
       key: "defaultValue",
       question: "Default Value",
