@@ -4,9 +4,13 @@ import (
 	"fmt"
 	"regexp"
 	"shared/models"
+	"time"
+
+	"github.com/nyaruka/phonenumbers"
 )
 
 const emailPattern = `^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$`
+const dateFormat = "2006-01-02T15:04:05.000Z"
 
 var (
 	emailRegex = regexp.MustCompile(emailPattern)
@@ -60,21 +64,42 @@ func ValidateResponse(attrValue interface{}, attr models.FormField) error {
 				return fmt.Errorf("field %s is greater than the maximum value allowed", attr.Question)
 			}
 		}
-	case "date":
+	case "date", "timestamp":
 		// min max
-		// todo: check format that's passed in
+		dateStr := attrValue.(string)
+		date, err := time.Parse(dateFormat, dateStr)
+		if err != nil {
+			return fmt.Errorf("field %s has an invalid date format", attr.Question)
+		}
 
-		break
-	case "timestamp":
-		// min max
-		// todo: we might be able to consolidate this with date
-		break
+		now := time.Now()
+
+		if attr.AdditionalValidation.Min != 0 {
+			minDate := now.AddDate(-attr.AdditionalValidation.Min, 0, 0)
+			if date.After(minDate) {
+				return fmt.Errorf("field %s is not older than the minimum age allowed of %b", attr.Question, attr.AdditionalValidation.Min)
+			}
+		}
+
+		if attr.AdditionalValidation.Max != 0 {
+			maxDate := now.AddDate(-attr.AdditionalValidation.Max, 0, 0)
+			if date.Before(maxDate) {
+				return fmt.Errorf("field %s is not younger than the maximum age allowed of %b", attr.Question, attr.AdditionalValidation.Max)
+			}
+		}
 	case "telephone":
-		// verify it's also in our expected format
-		// todo: use same library as frontend hopefulyl
-		break
-	case "select":
-	case "radio":
+		phoneStr := attrValue.(string)
+		fmt.Println(phoneStr)
+		// Blank region tells the library to figure it out
+		phoneNumber, err := phonenumbers.Parse(phoneStr, "")
+		if err != nil {
+			return fmt.Errorf("field %s has an invalid phone number", attr.Question)
+		}
+
+		if !phonenumbers.IsValidNumber(phoneNumber) {
+			return fmt.Errorf("field %s has an invalid phone number", attr.Question)
+		}
+	case "select", "radio":
 		// check if it's in the options
 		if attr.Options != nil {
 			options := attr.Options

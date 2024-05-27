@@ -10,6 +10,7 @@ type TimestampInputProps = {
   defaultValue?: Date;
 };
 
+// TODO: add validation for the min & max values (years)
 const TimestampInput: React.FC<TimestampInputProps> = ({
   field,
   onChange,
