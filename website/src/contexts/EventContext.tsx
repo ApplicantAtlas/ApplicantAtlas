@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { getEvent } from '@/services/EventService';
+import { EventModel } from '@/types/models/Event';
 
 const EventContext = createContext<{ eventDetails: EventModel | null; isLoading: boolean }>({ eventDetails: null, isLoading: true });
 
