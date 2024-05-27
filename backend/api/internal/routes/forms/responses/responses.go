@@ -124,6 +124,36 @@ func submitFormHandler(params *types.RouteParams) gin.HandlerFunc {
 			}
 		}
 
+		// Build map of field id to field
+		fieldMap := make(map[string]models.FormField)
+		for _, field := range form.Attrs {
+			fieldMap[field.Key] = field
+		}
+
+		// Validate form data itself and the additional validators on it and such
+		for key, value := range formData {
+			field := fieldMap[key]
+			if field.Key == "" {
+				c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid field key, form may have just changed"})
+			}
+
+			err = ValidateResponse(value, field)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+		}
+
+		// Validate required fields again, to cover the case of the data doesnt even have that key
+		for _, field := range form.Attrs {
+			if field.Required {
+				if _, exists := formData[field.Key]; !exists {
+					c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("field %s is required", field.Question)})
+					return
+				}
+			}
+		}
+
 		// TODO: We should do this in a transaction
 
 		// Check pipeline

@@ -30,6 +30,7 @@ const FieldAttributesForm: React.FC<FieldAttributesFormProps> = ({
       additionalValidation: {
         min: formData.min,
         max: formData.max,
+        dateAndTimestampFromTimeField: formData.dateAndTimestampFromTimeField,
       },
       required: formData.required === true,
       isInternal: formData.isInternal === true,
@@ -87,6 +88,16 @@ const FieldAttributesForm: React.FC<FieldAttributesFormProps> = ({
               defaultValue: initialAttributes?.additionalValidation?.max,
               description: "The maximum value that this form will accept. Either a number for type number, or age in years for date and timestamp"
             })
+            if (fieldType === "date" || fieldType === "timestamp") {
+              attrs.push({
+                key: "dateAndTimestampFromTimeField",
+                question: "From when should the age be calculated?",
+                type: "date",
+                required: false,
+                defaultValue: initialAttributes?.additionalValidation?.dateAndTimestampFromTimeField,
+                description: "If the age should be calculated from a specific date, such as the start of your hackathon enter that date here. If your event starts on 1/2/2022 and you want 18+ enter 1/2/2004."
+              })
+            }
             break;
         default:
             break;

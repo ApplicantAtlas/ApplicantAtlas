@@ -6,7 +6,7 @@ import InformationIcon from "@/components/Icons/InformationIcon";
 
 type TimestampInputProps = {
   field: FormField;
-  onChange: (key: string, value: FieldValue) => void;
+  onChange: (key: string, value: FieldValue, errorString?: string) => void;
   defaultValue?: Date;
 };
 
@@ -17,6 +17,7 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
 }) => {
   const askTimezone = field.additionalOptions?.showTimezone || false;
   const [timezone, setTimezone] = useState<string>("");
+  const [error, setError] = useState<string | undefined>();
   const [guessedTz, setGuessedTz] = useState<string>((): string => {
     if (
       field.additionalOptions?.defaultTimezone &&
@@ -76,20 +77,48 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
     }
   }, [defaultValue, timezone]);
 
+  const calculateAge = (date: Date) => {
+    var againstDate = Date.now();
+    if (field.additionalValidation?.dateAndTimestampFromTimeField) {
+      againstDate = new Date(field.additionalValidation.dateAndTimestampFromTimeField).getTime();
+    }
+
+    const diff = againstDate - date.getTime();
+    const ageDate = new Date(diff);
+    return Math.abs(ageDate.getUTCFullYear() - 1970);
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     setLocalDateTime(newValue);
 
-    // Delay the onChange to ensure state is updated
-    setTimeout(() => {
-      if (newValue && moment(newValue, "YYYY-MM-DDTHH:mm", true).isValid()) {
-        const timestampValue = moment
-          .tz(newValue, "YYYY-MM-DDTHH:mm", timezone)
-          .toDate();
-        onChange(field.key, timestampValue);
+    if (newValue && moment(newValue, "YYYY-MM-DDTHH:mm", true).isValid()) {
+      const timestampValue = moment
+        .tz(newValue, "YYYY-MM-DDTHH:mm", timezone)
+        .toDate();
+      const age = calculateAge(timestampValue);
+
+      let foundError = false;
+
+      if (field.additionalValidation?.min !== undefined && age < field.additionalValidation.min) {
+        const minAgeError = `Age must be at least ${field.additionalValidation.min} years`;
+        setError(minAgeError);
+        e.target.setCustomValidity(minAgeError);
+        foundError = true;
+      } else if (field.additionalValidation?.max !== undefined && age > field.additionalValidation.max) {
+        const maxAgeError = `Age must be at most ${field.additionalValidation.max} years`;
+        setError(maxAgeError);
+        e.target.setCustomValidity(maxAgeError);
+        foundError = true;
+      } else {
+        setError(undefined);
+        e.target.setCustomValidity("");
       }
-    }, 0);
+
+      onChange(field.key, timestampValue, foundError ? error : undefined);
+    }
   };
+
 
   const handleTimezoneChange = (k: string, selectedOption: any) => {
     if (
@@ -158,6 +187,7 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
           onChange={(k, value) => handleTimezoneChange(k, value)}
         />
       )}
+      {error && <p className="text-error pl-2">{error}</p>}
     </div>
   );
 };

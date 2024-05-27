@@ -36,9 +36,10 @@ type EmailValidationOptions struct {
 
 // FieldValidation for additional validation rules
 type FieldValidation struct {
-	Min     int                    `json:"min,omitempty" bson:"min"`
-	Max     int                    `json:"max,omitempty" bson:"max"`
-	IsEmail EmailValidationOptions `json:"isEmail,omitempty" bson:"isEmail"`
+	Min                           int                    `json:"min,omitempty" bson:"min"`
+	Max                           int                    `json:"max,omitempty" bson:"max"`
+	DateAndTimestampFromTimeField time.Time              `json:"dateAndTimestampFromTimeField,omitempty" bson:"dateAndTimestampFromTimeField"` // used for min & max age validation around a given timestamp
+	IsEmail                       EmailValidationOptions `json:"isEmail,omitempty" bson:"isEmail"`
 }
 
 // AdditionalOptions for extra field-specific settings
