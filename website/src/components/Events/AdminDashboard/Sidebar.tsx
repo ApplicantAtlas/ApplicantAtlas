@@ -1,8 +1,8 @@
-import { EventModel } from '@/types/models/Event';
+import { RootState, resetTabs } from '@/store';
 import React, { memo } from 'react';
+import { useSelector } from 'react-redux';
 
 interface SidebarProps {
-    eventDetails?: EventModel | null;
     activeSection: string;
     setActiveSection: (section: string) => void;
 }
@@ -12,7 +12,9 @@ interface SidebarLink {
     sectionName: string;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ eventDetails, activeSection, setActiveSection }) => {
+const Sidebar: React.FC<SidebarProps> = ({ activeSection, setActiveSection }) => {
+    const eventDetails = useSelector((state: RootState) => state.event.eventDetails);
+
     const links: SidebarLink[] = [
         { title: 'Dashboard', sectionName: 'dashboard' },
         { title: 'Forms', sectionName: 'forms' },
@@ -24,6 +26,9 @@ const Sidebar: React.FC<SidebarProps> = ({ eventDetails, activeSection, setActiv
     ];
 
     const handleLinkClick = (sectionName: string) => {
+        // reset any of the tabs held state for tabs
+        resetTabs();
+
         setActiveSection(sectionName);
     };
 

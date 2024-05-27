@@ -11,17 +11,22 @@ import {
 import { EventModel } from "@/types/models/Event";
 import { FormField, FormStructure } from "@/types/models/Form";
 import { IsObjectIDNotNull } from "@/utils/conversions";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
 
 interface EventSecretsSettings {
-  eventDetails: EventModel;
   onDone: () => void;
 }
 
 // Note: when we add multiple types of secrets we should refactor to be more like a switch statement
 const EventSecretsSettings: React.FC<EventSecretsSettings> = ({
-  eventDetails,
   onDone,
 }) => {
+  const eventDetails = useSelector((state: RootState) => state.event.eventDetails);
+  if (eventDetails == null) {
+    return <p>Event details not found in state</p>;
+  }
+
   const [eventSecrets, setEventSecrets] = useState<EventSecrets | undefined>();
   const router = useRouter();
   const { showToast } = useToast();

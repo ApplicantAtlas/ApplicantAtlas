@@ -1,10 +1,12 @@
+import { RootState } from "@/store";
 import React from "react";
+import { useSelector } from "react-redux";
 
-interface DashboardProps {
-  eventDetails: EventModel | null;
-}
+interface DashboardProps {}
 
-const Dashboard: React.FC<DashboardProps> = ({ eventDetails }) => {
+const Dashboard: React.FC<DashboardProps> = ({ }) => {
+  const eventDetails = useSelector((state: RootState) => state.event.eventDetails);
+
   return (
     <div>
       <h1>Dashboard</h1>

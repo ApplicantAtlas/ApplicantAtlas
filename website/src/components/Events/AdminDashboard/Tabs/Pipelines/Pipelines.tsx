@@ -6,16 +6,21 @@ import React, { useEffect, useState } from "react";
 import CreateNewPipeline from "./CreateNewPipeline";
 import SelectPipeline from "./SelectPipeline";
 import ListPipelines from "./ListPipelines";
+import { AppDispatch, RootState } from "@/store";
+import { useDispatch, useSelector } from "react-redux";
+import { resetPipelineState, setPipelineConfiguration } from "@/store/slices/pipelineSlice";
 
-interface PipelinesProps {
-  eventDetails: EventModel | null;
-}
+interface PipelinesProps { }
 
-const Pipelines: React.FC<PipelinesProps> = ({ eventDetails }) => {
+const Pipelines: React.FC<PipelinesProps> = ({ }) => {
+  const dispatch: AppDispatch = useDispatch();
+  const selectedPipeline = useSelector((state: RootState) => state.pipeline.pipelineState);
+  const eventDetails = useSelector((state: RootState) => state.event.eventDetails);
+
   const [pipelines, setPipelines] = useState<PipelineConfiguration[] | undefined>();
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [refresh, setRefresh] = useState(false);
-  const [selectedPipeline, setSelectedPipeline] = useState<PipelineConfiguration | null>(null);
+
 
   useEffect(() => {
     if (eventDetails !== null) {
@@ -74,21 +79,20 @@ const Pipelines: React.FC<PipelinesProps> = ({ eventDetails }) => {
 
   const onDeletedForm = () => {
     setRefresh(true);
-    setSelectedPipeline(null);
+    dispatch(resetPipelineState());
   }
 
   if (selectedPipeline !== null) {
     return (
       <>
         <SelectPipeline
-          pipeline={selectedPipeline}
           eventDetails={eventDetails}
           onDelete={onDeletedForm}
         />
         <button
           className="btn btn-error mt-4"
           onClick={() => {
-            setSelectedPipeline(null);
+            dispatch(resetPipelineState());
           }}
         >
           Go Back
@@ -106,14 +110,11 @@ const Pipelines: React.FC<PipelinesProps> = ({ eventDetails }) => {
     );
   }
 
-  const selectPipeline = (pipeline: PipelineConfiguration) => {
-    setSelectedPipeline(pipeline);
-  };
 
   return (
     <>
       {NewPipelineButton}
-      <ListPipelines pipelines={pipelines} selectPipeline={selectPipeline} />
+      <ListPipelines pipelines={pipelines} />
     </>
   );
 };

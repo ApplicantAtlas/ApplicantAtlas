@@ -1,15 +1,23 @@
 import { ToastType, useToast } from "@/components/Toast/ToastContext";
 import { DeleteEmailTemplate } from "@/services/EmailTemplateService";
+import { AppDispatch, RootState } from "@/store";
+import { resetEmailTemplateState } from "@/store/slices/emailTemplateSlice";
 import { EmailTemplate } from "@/types/models/EmailTemplate";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 interface EmailTemplateSettingsProps {
-  template: EmailTemplate;
   onDelete: () => void;
-  changeTemplate: (template: EmailTemplate) => void;
 }
 
-const EmailTemplateSettings: React.FC<EmailTemplateSettingsProps> = ({ template, onDelete, changeTemplate }) => {
+const EmailTemplateSettings: React.FC<EmailTemplateSettingsProps> = ({ onDelete }) => {
+  const dispatch: AppDispatch = useDispatch();
+  const template = useSelector((state: RootState) => state.emailTemplate.emailTemplateState);
+
+  if (template == null) {
+    return <p>No email template found in state</p>;
+  }
+  
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const { showToast } = useToast();
 
@@ -20,6 +28,7 @@ const EmailTemplateSettings: React.FC<EmailTemplateSettingsProps> = ({ template,
       .then(() => {
         showToast("Email template deleted successfully", ToastType.Success);
         onDelete();
+        dispatch(resetEmailTemplateState());
       })
       .catch(() => {});
   };

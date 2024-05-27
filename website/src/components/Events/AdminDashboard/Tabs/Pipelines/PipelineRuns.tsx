@@ -5,10 +5,10 @@ import { ToastType, useToast } from "@/components/Toast/ToastContext";
 import { PipelineConfiguration } from "@/types/models/Pipeline";
 import StatusIcon from "@/components/Icons/StatusIcon";
 import MagnifyingGlassIcon from "@/components/Icons/MagnifyingGlassIcon";
+import { AppDispatch, RootState } from "@/store";
+import { useDispatch, useSelector } from "react-redux";
 
-interface PipelineRunsProps {
-  pipeline: PipelineConfiguration;
-}
+interface PipelineRunsProps {}
 
 const statusColors = {
   Pending: "bg-yellow-500",
@@ -17,7 +17,13 @@ const statusColors = {
   Success: "bg-green-500",
 };
 
-const PipelineRuns: React.FC<PipelineRunsProps> = ({ pipeline }) => {
+const PipelineRuns: React.FC<PipelineRunsProps> = ({ }) => {
+  const pipeline = useSelector((state: RootState) => state.pipeline.pipelineState);
+  
+  if (pipeline === null) {
+    return <p>Error selected pipeline null</p>
+  }
+
   const [pipelineRuns, setPipelineRuns] = useState<PipelineRun[]>([]);
   const [expandedRows, setExpandedRows] = useState<string[]>([]);
   const [pageNumber, setPageNumber] = useState(1);

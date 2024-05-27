@@ -2,46 +2,42 @@ import FormCreator from "@/components/Form/Creator/FormCreator";
 import FormBuilder from "@/components/Form/FormBuilder";
 import { eventEmitter } from "@/events/EventEmitter";
 import { updateForm } from "@/services/FormService";
-import { EventModel } from "@/types/models/Event";
 import { FormStructure } from "@/types/models/Form";
 import { useState } from "react";
 import FormSettings from "./FormSettings";
 import { ToastType, useToast } from "@/components/Toast/ToastContext";
 import LinkIcon from "@/components/Icons/LinkIcon";
 import Responses from "./Responses";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState, AppDispatch } from "@/store";
+import { updateFormDetails } from "@/store/slices/formSlice";
 
 interface SelectFormProps {
-  form: FormStructure;
   action: "responses" | "edit";
   onDelete: () => void;
 }
 
-const SelectForm: React.FC<SelectFormProps> = ({ form, action, onDelete }) => {
+const SelectForm: React.FC<SelectFormProps> = ({ action, onDelete }) => {
+  const dispatch: AppDispatch = useDispatch();
+  const formStructure = useSelector((state: RootState) => state.form.formDetails);
   const [pageSelected, setPageSelected] = useState<
     "edit" | "responses" | "preview" | "settings"
   >(action);
-  const [formStructure, setFormStructure] = useState<FormStructure>(form);
   const { showToast } = useToast();
 
-  // Edit
   const onFormStructureChange = (newFormStructure: FormStructure) => {
     updateForm(newFormStructure.id || "", newFormStructure)
       .then(() => {
         eventEmitter.emit("success", "Successfully updated form!");
-        setFormStructure(newFormStructure);
+        dispatch(updateFormDetails(newFormStructure));
       })
       .catch((err) => {});
   };
 
-  const changeForm = (form: FormStructure) => {
-    setFormStructure(form);
-  }
-
-  const isActive = (page: string) =>
-    page === pageSelected ? "btn-active" : "";
+  const isActive = (page: string) => (page === pageSelected ? "btn-active" : "");
 
   const onShareClick = () => {
-    if (!formStructure.eventID || !formStructure.id) {
+    if (!formStructure?.eventID || !formStructure?.id) {
       showToast("Could not share form.", ToastType.Error);
       return;
     }
@@ -65,7 +61,7 @@ const SelectForm: React.FC<SelectFormProps> = ({ form, action, onDelete }) => {
   return (
     <>
       <div className="flex space-x-2 bg-gray-100 p-2 rounded">
-      <button
+        <button
           className={`btn ${isActive("responses")}`}
           onClick={() => setPageSelected("responses")}
         >
@@ -89,19 +85,16 @@ const SelectForm: React.FC<SelectFormProps> = ({ form, action, onDelete }) => {
         >
           Settings
         </button>
-        <button
-          className={`btn`}
-          onClick={onShareClick}
-        >
-           <LinkIcon  /> Share
+        <button className="btn" onClick={onShareClick}>
+          <LinkIcon /> Share
         </button>
       </div>
 
       <h2 className="text-2xl font-semibold text-gray-800 mt-4 mb-2">
-        {formStructure.name}
+        {formStructure?.name}
       </h2>
 
-      {pageSelected === "edit" && (
+      {pageSelected === "edit" && formStructure && (
         <FormCreator
           submissionFunction={onFormStructureChange}
           defaultFormStructure={formStructure}
@@ -109,9 +102,11 @@ const SelectForm: React.FC<SelectFormProps> = ({ form, action, onDelete }) => {
         />
       )}
 
-      {pageSelected === "responses" && <Responses form={formStructure} />}
+      {pageSelected === "responses" && formStructure && (
+        <Responses />
+      )}
 
-      {pageSelected === "preview" && (
+      {pageSelected === "preview" && formStructure && (
         <FormBuilder
           formStructure={formStructure}
           submissionFunction={(formData) => {
@@ -121,8 +116,8 @@ const SelectForm: React.FC<SelectFormProps> = ({ form, action, onDelete }) => {
         />
       )}
 
-      {pageSelected === "settings" && (
-        <FormSettings form={formStructure} onDelete={onDelete} changeForm={changeForm} />
+      {pageSelected === "settings" && formStructure && (
+        <FormSettings onDelete={onDelete} />
       )}
 
       {pageSelected !== "edit" &&

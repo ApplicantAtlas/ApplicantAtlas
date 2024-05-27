@@ -1,17 +1,25 @@
 import FormBuilder from "@/components/Form/FormBuilder";
 import { ToastType, useToast } from "@/components/Toast/ToastContext";
 import { DeletePipeline, UpdatePipeline } from "@/services/PipelineService";
+import { AppDispatch, RootState } from "@/store";
+import { setPipelineConfiguration, updatePipelineConfiguration } from "@/store/slices/pipelineSlice";
 import { FormStructure } from "@/types/models/Form";
 import { PipelineConfiguration } from "@/types/models/Pipeline";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 interface PipelineSettingsProps {
-  pipeline: PipelineConfiguration;
   onDelete: () => void;
-  changePipeline: (pipeline: PipelineConfiguration) => void;
 }
 
-const PipelineSettings: React.FC<PipelineSettingsProps> = ({ pipeline, onDelete, changePipeline }) => {
+const PipelineSettings: React.FC<PipelineSettingsProps> = ({ onDelete }) => {
+  const dispatch: AppDispatch = useDispatch();
+  const pipeline = useSelector((state: RootState) => state.pipeline.pipelineState);
+  
+  if (pipeline === null) {
+    return <p>Error selected pipeline null</p>
+  }
+
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const { showToast } = useToast();
 
@@ -26,7 +34,6 @@ const PipelineSettings: React.FC<PipelineSettingsProps> = ({ pipeline, onDelete,
       .catch(() => {});
   };
 
-  // TODO: Handle when a default value is provided, but we want to clear it to be undefined
   const pipelineSettingstructure: FormStructure = {
     attrs: [
       {
@@ -49,20 +56,20 @@ const PipelineSettings: React.FC<PipelineSettingsProps> = ({ pipeline, onDelete,
   };
 
   const handleSubmit = (formData: Record<string, any>) => {
-    const {
-      name,
-      enabled,
-    } = formData;
-  
-    Object.assign(pipeline, {
-      name,
-      enabled,
-    });
+    const { name, enabled } = formData;
 
-    UpdatePipeline(pipeline).then(() => {
-        showToast("Successfully updated pipeline!", ToastType.Success);
-        changePipeline(pipeline); // idk if needed or not
-    }).catch((err) => {});
+    dispatch(updatePipelineConfiguration({ name, enabled }));
+
+    if (pipeline) {
+      const updatedPipeline = { ...pipeline, name, enabled };
+
+      UpdatePipeline(updatedPipeline)
+        .then(() => {
+          showToast("Successfully updated pipeline!", ToastType.Success);
+          dispatch(setPipelineConfiguration(updatedPipeline));
+        })
+        .catch((err) => {});
+    }
   };
 
   return (

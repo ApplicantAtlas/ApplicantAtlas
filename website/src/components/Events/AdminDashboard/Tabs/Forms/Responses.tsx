@@ -12,12 +12,14 @@ import EditIcon from "@/components/Icons/EditIcon";
 import { ToastType, useToast } from "@/components/Toast/ToastContext";
 import debounce from "lodash/debounce";
 import Checkbox from "@/components/Form/inputs/Checkbox";
+import { AppDispatch, RootState } from "@/store";
+import { useDispatch, useSelector } from "react-redux";
 
-interface ResponsesProps {
-  form: FormStructure;
-}
+interface ResponsesProps {}
 
-const Responses = ({ form }: ResponsesProps) => {
+const Responses = ({}: ResponsesProps) => {
+  const form = useSelector((state: RootState) => state.form.formDetails);
+
   const [responses, setResponses] = useState<Record<string, any>[]>([]);
   const [columnOrder, setColumnOrder] = useState<
     Record<string, FormField | undefined>[]
@@ -79,7 +81,7 @@ const Responses = ({ form }: ResponsesProps) => {
               });
 
               if (shouldUpdate) {
-                UpdateResponse(form.id || "", submissionId, newResponse)
+                UpdateResponse(form?.id || "", submissionId, newResponse)
                   .then(() => {
                     showToast(
                       "Successfully updated reponse",
@@ -116,7 +118,7 @@ const Responses = ({ form }: ResponsesProps) => {
   }, []);
 
   useEffect(() => {
-    GetResponses(form.id || "", showDeletedColumns)
+    GetResponses(form?.id || "", showDeletedColumns)
       .then((r) => {
         const cleanedResponses = r.data.responses.map(
           (response: Record<string, any>) => {
@@ -137,7 +139,7 @@ const Responses = ({ form }: ResponsesProps) => {
         if (r.data.columnOrder) {
           columnOrder = r.data.columnOrder.map((key: string) => {
             let [_, id_val] = key.split("_attr_key:");
-            const field = form.attrs.find((f) => {
+            const field = form?.attrs.find((f) => {
               return f.key === id_val;
             });
 
@@ -152,7 +154,7 @@ const Responses = ({ form }: ResponsesProps) => {
         console.error(err);
         setIsLoading(false);
       });
-  }, [form.id, showDeletedColumns]);
+  }, [form?.id, showDeletedColumns]);
 
   if (isLoading) {
     return <LoadingSpinner />;
@@ -163,7 +165,7 @@ const Responses = ({ form }: ResponsesProps) => {
   }
 
   const handleExportCSV = () => {
-    DownloadResponses(form.id || "", showDeletedColumns)
+    DownloadResponses(form?.id || "", showDeletedColumns)
       .then((r) => {
         const blob = new Blob([r.data], { type: "text/csv" });
         const url = window.URL.createObjectURL(blob);
@@ -171,7 +173,7 @@ const Responses = ({ form }: ResponsesProps) => {
         link.href = url;
 
         const currentISO = new Date().toISOString();
-        link.download = `${form.name}-${currentISO}-${form.id}.csv`;
+        link.download = `${form?.name}-${currentISO}-${form?.id}.csv`;
 
         document.body.appendChild(link);
         link.click();

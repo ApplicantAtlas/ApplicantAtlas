@@ -1,11 +1,13 @@
+import { RootState } from '@/store';
 import { EventModel } from '@/types/models/Event';
 import React from 'react';
+import { useSelector } from 'react-redux';
 
-interface AnnouncementsProps {
-  eventDetails: EventModel | null;
-}
+interface AnnouncementsProps { }
 
-const Announcements: React.FC<AnnouncementsProps> = ({ eventDetails }) => {
+const Announcements: React.FC<AnnouncementsProps> = ({ }) => {
+  const eventDetails = useSelector((state: RootState) => state.event.eventDetails);
+
   return (
     <div>
         <h1>Announcements</h1>

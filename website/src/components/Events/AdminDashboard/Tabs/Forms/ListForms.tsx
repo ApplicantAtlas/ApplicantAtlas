@@ -1,15 +1,23 @@
 import { FormStructure } from "@/types/models/Form";
 import moment from "moment";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/store";
+import { setFormDetails } from "@/store/slices/formSlice";
 
 interface ListFormsProps {
   forms: FormStructure[];
-  selectForm: (form: FormStructure, action?: "responses" | "edit") => void;
 }
 
-const ListForms = ({ forms, selectForm }: ListFormsProps) => {
+const ListForms: React.FC<ListFormsProps> = ({ forms }) => {
+  const dispatch: AppDispatch = useDispatch();
+  
   const formatDate = (date: Date | undefined) => {
     if (!date) return "";
     return date ? moment(date).format("MMMM Do, YYYY") : "";
+  };
+
+  const handleSelectForm = (form: FormStructure) => {
+    dispatch(setFormDetails(form));
   };
 
   return (
@@ -29,9 +37,7 @@ const ListForms = ({ forms, selectForm }: ListFormsProps) => {
               <tr
                 key={form.id}
                 className="hover cursor-pointer"
-                onClick={() => {
-                  selectForm(form);
-                }}
+                onClick={() => handleSelectForm(form)}
               >
                 <td>{form.name}</td>
                 <td>{form.status}</td>
@@ -41,7 +47,7 @@ const ListForms = ({ forms, selectForm }: ListFormsProps) => {
                     className="btn btn-outline btn-secondary"
                     onClick={(e) => {
                       e.stopPropagation();
-                      selectForm(form, "edit");
+                      handleSelectForm(form);
                     }}
                   >
                     edit

@@ -2,21 +2,24 @@ import FormBuilder from "@/components/Form/FormBuilder";
 import { ToastType, useToast } from "@/components/Toast/ToastContext";
 import { deleteForm, updateForm } from "@/services/FormService";
 import { FormStructure } from "@/types/models/Form";
-import { useState } from "react";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState, AppDispatch } from "@/store";
+import { updateFormDetails, setFormDetails } from "@/store/slices/formSlice";
 
 interface FormSettingsProps {
-  form: FormStructure;
   onDelete: () => void;
-  changeForm: (form: FormStructure) => void;
 }
 
-const FormSettings: React.FC<FormSettingsProps> = ({
-  form,
-  onDelete,
-  changeForm,
-}) => {
+const FormSettings: React.FC<FormSettingsProps> = ({ onDelete }) => {
+  const dispatch: AppDispatch = useDispatch();
+  const form = useSelector((state: RootState) => state.form.formDetails);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const { showToast } = useToast();
+
+  if (!form) {
+    return <p>No form selected</p>;
+  }
 
   const handleDeleteForm = async (formID: string | undefined) => {
     if (!formID) return;
@@ -25,11 +28,11 @@ const FormSettings: React.FC<FormSettingsProps> = ({
       .then(() => {
         showToast("Form deleted successfully", ToastType.Success);
         onDelete();
+        dispatch(setFormDetails(null)); // Clear the form details from Redux
       })
       .catch(() => {});
   };
 
-  // TODO: Handle when a default value is provided, but we want to clear it to be undefined
   const formSettingStructure: FormStructure = {
     attrs: [
       {
@@ -112,27 +115,27 @@ const FormSettings: React.FC<FormSettingsProps> = ({
         type: "textarea",
         key: "allowedSubmitters",
         required: false,
-        defaultValue: Array.isArray(form.allowedSubmitters) ? form.allowedSubmitters?.map((submitter) => {
-            // TODO: This is a bit hacky, but it works for now
-            // Convert expiresAt to a Date object if it's not already one and check the timestamp
-            if (!submitter.expiresAt) return `${submitter.email}`;
-
-            const expiresAtDate = new Date(submitter.expiresAt);
-            const isZeroDate = expiresAtDate.getTime() < 0; // Check if the date is before Jan 1, 1970
-            return (
-              `${submitter.email}` +
-              (submitter.expiresAt && !isZeroDate
-                ? `,expiresAt:${submitter.expiresAt}`
-                : "")
-            );
-          })
-          .join("\n") : "",
+        defaultValue: Array.isArray(form.allowedSubmitters)
+          ? form.allowedSubmitters
+              ?.map((submitter) => {
+                if (!submitter.expiresAt) return `${submitter.email}`;
+                const expiresAtDate = new Date(submitter.expiresAt);
+                const isZeroDate = expiresAtDate.getTime() < 0;
+                return (
+                  `${submitter.email}` +
+                  (submitter.expiresAt && !isZeroDate
+                    ? `,expiresAt:${submitter.expiresAt}`
+                    : "")
+                );
+              })
+              .join("\n")
+          : "",
       },
     ],
   };
 
   const handleSubmit = (formData: Record<string, any>) => {
-    var {
+    let {
       status,
       allowMultipleSubmissions,
       openSubmissionsAt,
@@ -145,12 +148,8 @@ const FormSettings: React.FC<FormSettingsProps> = ({
       allowedSubmitters,
     } = formData;
 
-    // Parse out allowed submitters
-    // TODO: I'd like a better way to format the allowed submitters
     if (allowedSubmitters) {
-    allowedSubmitters = allowedSubmitters
-      .split("\n")
-      .map((submitter: string) => {
+      allowedSubmitters = allowedSubmitters.split("\n").map((submitter: string) => {
         const [email, expiresAtPart] = submitter.split(",");
         const expiresAt = expiresAtPart
           ? expiresAtPart.split("expiresAt:")[1]
@@ -160,13 +159,13 @@ const FormSettings: React.FC<FormSettingsProps> = ({
           expiresAt: expiresAt ? new Date(expiresAt) : undefined,
         };
       });
-
-      
     }
 
-    if (allowedSubmitters == undefined || allowedSubmitters.length === 0) allowedSubmitters = [];
+    if (allowedSubmitters == undefined || allowedSubmitters.length === 0)
+      allowedSubmitters = [];
 
-    Object.assign(form, {
+    const updatedForm = {
+      ...form,
       status,
       allowMultipleSubmissions,
       openSubmissionsAt,
@@ -177,12 +176,12 @@ const FormSettings: React.FC<FormSettingsProps> = ({
       description,
       isRestricted,
       allowedSubmitters,
-    });
+    };
 
-    updateForm(form.id || "t", form)
+    updateForm(form.id || "t", updatedForm)
       .then(() => {
         showToast("Successfully updated form!", ToastType.Success);
-        changeForm(form); // idk if needed or not
+        dispatch(updateFormDetails(updatedForm));
       })
       .catch((err) => {});
   };
