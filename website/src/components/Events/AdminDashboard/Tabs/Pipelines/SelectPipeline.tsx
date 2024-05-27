@@ -7,42 +7,53 @@ import PipelineSettings from "./PipelineSettings";
 import PipelineBuilder from "./PipelineBuilder";
 import { EventModel } from "@/types/models/Event";
 import PipelineRuns from "./PipelineRuns";
+import { AppDispatch, RootState } from "@/store";
+import { useDispatch, useSelector } from "react-redux";
+import { setPipelineConfiguration } from "@/store/slices/pipelineSlice";
 
 interface SelectPipelineProps {
-  pipeline: PipelineConfiguration;
   onDelete: () => void;
   eventDetails: EventModel;
 }
 
 const SelectPipeline: React.FC<SelectPipelineProps> = ({
-  pipeline,
   onDelete,
   eventDetails
 }) => {
+  const dispatch: AppDispatch = useDispatch();
+  const pipelineConfig = useSelector((state: RootState) => state.pipeline.pipelineState);
+  
   const [pageSelected, setPageSelected] = useState<
     "view" | "edit" | "settings" | "runs"
   >("view");
-  const [pipelineConfig, setPipeline] =
-    useState<PipelineConfiguration>(pipeline);
 
   const { showToast } = useToast();
 
   // Edit
   const changePipeline = (pipeline: PipelineConfiguration) => {
-    setPipeline(pipeline);
+    dispatch(setPipelineConfiguration(pipeline));
   };
 
-  const updatePipeline = (pipeline: PipelineConfiguration) => {
-    UpdatePipeline(pipeline)
+  const updatePipeline = () => {
+    if (pipelineConfig === null) {
+      showToast("Pipeline not found in state", ToastType.Error);
+      return;
+    }
+
+    UpdatePipeline(pipelineConfig)
       .then(() => {
         showToast("Successfully updated pipeline!", ToastType.Success);
-        changePipeline(pipeline);
+        changePipeline(pipelineConfig);
       })
       .catch((err) => {});
   };
 
   const isActive = (page: string) =>
     page === pageSelected ? "btn-active" : "";
+
+  if (pipelineConfig === null) {
+    return <p>Loading...</p>;
+  }
 
   return (
     <>
@@ -74,24 +85,22 @@ const SelectPipeline: React.FC<SelectPipelineProps> = ({
       </div>
 
       <h2 className="text-2xl font-semibold text-gray-800 mt-4 mb-2">
-        {pipeline.name}
+        {pipelineConfig?.name}
       </h2>
 
       {pageSelected === "edit" && (
-        <PipelineBuilder pipeline={pipeline} onSubmit={updatePipeline} eventDetails={eventDetails} />
+        <PipelineBuilder onSubmit={updatePipeline} eventDetails={eventDetails} />
       )}
 
-      {pageSelected === "view" && <p>{JSON.stringify(pipeline)}</p>}
+      {pageSelected === "view" && <p>{JSON.stringify(pipelineConfig)}</p>}
 
       {pageSelected === "settings" && (
         <PipelineSettings
-          pipeline={pipeline}
           onDelete={onDelete}
-          changePipeline={changePipeline}
         />
       )}
 
-      {pageSelected === "runs" && <PipelineRuns pipeline={pipeline} />}
+      {pageSelected === "runs" && <PipelineRuns />}
 
       {pageSelected !== "edit" &&
         pageSelected !== "runs" &&

@@ -19,8 +19,11 @@ const formSlice = createSlice({
     updateFormDetails(state, action: PayloadAction<any>) {
       state.formDetails = { ...state.formDetails, ...action.payload };
     },
+    resetFormState(state) {
+      state.formDetails = null;
+    },
   },
 });
 
-export const { setFormDetails, updateFormDetails } = formSlice.actions;
+export const { setFormDetails, updateFormDetails, resetFormState } = formSlice.actions;
 export default formSlice.reducer;

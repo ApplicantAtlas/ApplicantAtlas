@@ -1,5 +1,10 @@
+import { AppDispatch } from '@/store';
+import { resetEventState } from '@/store/slices/eventSlice';
+import { resetFormState } from '@/store/slices/formSlice';
+import { resetPipelineState } from '@/store/slices/pipelineSlice';
 import { EventModel } from '@/types/models/Event';
 import React, { memo } from 'react';
+import { useDispatch } from 'react-redux';
 
 interface SidebarProps {
     eventDetails?: EventModel | null;
@@ -13,6 +18,8 @@ interface SidebarLink {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ eventDetails, activeSection, setActiveSection }) => {
+    const dispatch: AppDispatch = useDispatch();
+
     const links: SidebarLink[] = [
         { title: 'Dashboard', sectionName: 'dashboard' },
         { title: 'Forms', sectionName: 'forms' },
@@ -24,6 +31,12 @@ const Sidebar: React.FC<SidebarProps> = ({ eventDetails, activeSection, setActiv
     ];
 
     const handleLinkClick = (sectionName: string) => {
+        // reset any of the tabs held state for tabs
+        dispatch(resetEventState());
+        dispatch(resetFormState());
+        dispatch(resetPipelineState());
+
+
         setActiveSection(sectionName);
     };
 

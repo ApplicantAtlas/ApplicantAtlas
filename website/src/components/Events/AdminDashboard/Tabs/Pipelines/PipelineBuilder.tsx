@@ -6,20 +6,26 @@ import { FormStructure } from "@/types/models/Form";
 import { getEventForms } from "@/services/EventService";
 import { EmailTemplate } from "@/types/models/EmailTemplate";
 import { GetEmailTemplates } from "@/services/EmailTemplateService";
+import { AppDispatch, RootState } from "@/store";
+import { useDispatch, useSelector } from "react-redux";
+import { addOrUpdateAction, removeAction, setEvent, setPipelineConfiguration } from "@/store/slices/pipelineSlice";
 
 interface PipelineBuilderProps {
-  pipeline: PipelineConfiguration;
-  onSubmit: (pipeline: PipelineConfiguration) => void;
+  onSubmit: () => void;
   eventDetails: EventModel;
 }
 
 const PipelineBuilder: React.FC<PipelineBuilderProps> = ({
-  pipeline,
   onSubmit,
   eventDetails,
 }) => {
-  const [pipelineConfig, setPipelineConfig] =
-    useState<PipelineConfiguration>(pipeline);
+  const dispatch: AppDispatch = useDispatch();
+  const pipelineConfig = useSelector((state: RootState) => state.pipeline.pipelineState);
+  
+  if (pipelineConfig === null) {
+    return <p>Error selected pipeline null</p>
+  }
+  
   const [showModalType, setShowModalType] = useState<"action" | "event" | null>(
     null
   );
@@ -36,7 +42,8 @@ const PipelineBuilder: React.FC<PipelineBuilderProps> = ({
 
 
   const handleFormSubmit = () => {
-    onSubmit(pipelineConfig);
+    dispatch(setPipelineConfiguration(pipelineConfig));
+    onSubmit();
   };
 
   useEffect(() => {
@@ -56,43 +63,17 @@ const PipelineBuilder: React.FC<PipelineBuilderProps> = ({
   }, [eventDetails])
 
   const handleAddAction = (action: PipelineAction | PipelineEvent) => {
-    setPipelineConfig((prevConfig) => {
-      const safePrevConfig = prevConfig ?? { actions: [] };
-  
-      // Check if the action already exists in the list
-      const existingIndex = safePrevConfig.actions?.findIndex((a) => a.id === action.id);
-  
-      // If the action exists, replace it with the new action, otherwise add the new action
-      let updatedActions;
-      if (existingIndex && existingIndex >= 0) {
-        updatedActions = safePrevConfig.actions?.map((a, index) =>
-          index === existingIndex ? (action as PipelineAction) : a
-        );
-      } else {
-        updatedActions = [...(safePrevConfig.actions || []), action as PipelineAction];
-      }
-  
-      return {
-        ...safePrevConfig,
-        actions: updatedActions,
-      };
-    });
+    dispatch(addOrUpdateAction(action))
   };
   
 
   const handleRemoveAction = (action: PipelineAction) => {
     setDeleteAction(undefined);
-    setPipelineConfig((prevConfig) => ({
-      ...prevConfig,
-      actions: prevConfig.actions?.filter((a) => a !== action),
-    }));
+    dispatch(removeAction({ id: action?.id || "" }))
   };
 
   const handleSetEvent = (event: PipelineEvent | PipelineAction) => {
-    setPipelineConfig((prevConfig) => ({
-      ...prevConfig,
-      event: event as PipelineEvent,
-    }))
+    dispatch(setEvent(event as PipelineEvent))
   };
 
   // TODO: Pre-populate the email action & form id to be a selector 

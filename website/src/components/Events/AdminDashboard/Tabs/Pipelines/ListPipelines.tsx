@@ -1,14 +1,18 @@
+import { AppDispatch, RootState } from "@/store";
+import { setPipelineConfiguration } from "@/store/slices/pipelineSlice";
 import { FormStructure } from "@/types/models/Form";
 import { PipelineConfiguration } from "@/types/models/Pipeline";
 import moment from "moment";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 interface ListPipelinesProps {
   pipelines: PipelineConfiguration[];
-  selectPipeline: (form: PipelineConfiguration) => void;
 }
 
-const ListPipelines = ({ pipelines, selectPipeline }: ListPipelinesProps) => {
+const ListPipelines = ({ pipelines }: ListPipelinesProps) => {
+  const dispatch: AppDispatch = useDispatch();
+
   const formatDate = (date: Date | undefined) => {
     if (!date) return "";
     return date ? moment(date).format("MMMM Do, YYYY") : "";
@@ -30,7 +34,7 @@ const ListPipelines = ({ pipelines, selectPipeline }: ListPipelinesProps) => {
                 key={pipeline.id}
                 className="hover cursor-pointer"
                 onClick={() => {
-                  selectPipeline(pipeline);
+                  dispatch(setPipelineConfiguration(pipeline));
                 }}
               >
                 <td>{pipeline.name}</td>

@@ -77,10 +77,20 @@ const Forms: React.FC<FormProps> = ({ eventDetails }) => {
   if (selectedForm) {
     return (
       (
+        <>
         <SelectForm
           action={selectedFormAction}
           onDelete={onDeletedForm}
         />
+        <button
+          className="btn btn-error"
+          onClick={() => {
+            dispatch(setFormDetails(null));
+          }}
+        >
+          Go Back
+        </button>
+        </>
       )
     )
   }
