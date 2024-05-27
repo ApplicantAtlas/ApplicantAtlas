@@ -10,13 +10,12 @@ import { AppDispatch, RootState } from "@/store";
 import { useDispatch, useSelector } from "react-redux";
 import { resetPipelineState, setPipelineConfiguration } from "@/store/slices/pipelineSlice";
 
-interface PipelinesProps {
-  eventDetails: EventModel | null;
-}
+interface PipelinesProps { }
 
-const Pipelines: React.FC<PipelinesProps> = ({ eventDetails }) => {
+const Pipelines: React.FC<PipelinesProps> = ({ }) => {
   const dispatch: AppDispatch = useDispatch();
   const selectedPipeline = useSelector((state: RootState) => state.pipeline.pipelineState);
+  const eventDetails = useSelector((state: RootState) => state.event.eventDetails);
 
   const [pipelines, setPipelines] = useState<PipelineConfiguration[] | undefined>();
   const [showCreateForm, setShowCreateForm] = useState(false);

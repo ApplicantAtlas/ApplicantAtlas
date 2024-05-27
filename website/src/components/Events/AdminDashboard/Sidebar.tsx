@@ -1,13 +1,8 @@
-import { AppDispatch, resetTabs } from '@/store';
-import { resetEventState } from '@/store/slices/eventSlice';
-import { resetFormState } from '@/store/slices/formSlice';
-import { resetPipelineState } from '@/store/slices/pipelineSlice';
-import { EventModel } from '@/types/models/Event';
+import { RootState, resetTabs } from '@/store';
 import React, { memo } from 'react';
-import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 interface SidebarProps {
-    eventDetails?: EventModel | null;
     activeSection: string;
     setActiveSection: (section: string) => void;
 }
@@ -17,8 +12,8 @@ interface SidebarLink {
     sectionName: string;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ eventDetails, activeSection, setActiveSection }) => {
-    const dispatch: AppDispatch = useDispatch();
+const Sidebar: React.FC<SidebarProps> = ({ activeSection, setActiveSection }) => {
+    const eventDetails = useSelector((state: RootState) => state.event.eventDetails);
 
     const links: SidebarLink[] = [
         { title: 'Dashboard', sectionName: 'dashboard' },

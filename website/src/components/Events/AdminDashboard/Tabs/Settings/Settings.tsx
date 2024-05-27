@@ -7,12 +7,14 @@ import { EventModel } from "@/types/models/Event";
 import { EventSecrets } from "@/types/models/EventSecret";
 import { IsObjectIDNotNull } from "@/utils/conversions";
 import ManageEventAdmins from "./ManageEventAdmins";
+import { RootState } from "@/store";
+import { useSelector } from "react-redux";
 
-interface SettingsProps {
-  eventDetails: EventModel | null;
-}
+interface SettingsProps { }
 
-const Settings: React.FC<SettingsProps> = ({ eventDetails }) => {
+const Settings: React.FC<SettingsProps> = ({ }) => {
+  const eventDetails = useSelector((state: RootState) => state.event.eventDetails);
+
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [editingSecret, setEditingSecret] = useState(false);
   const [editingEventAdmins, setEditingEventAdmins] = useState(false);
@@ -104,7 +106,6 @@ const Settings: React.FC<SettingsProps> = ({ eventDetails }) => {
         <>
           <p className="mt-2">Update SMTP Settings</p>
           <EventSecretsSettings
-            eventDetails={eventDetails}
             onDone={() => {
               setEditingSecret(false);
               // force a refresh of the event secrets
@@ -125,7 +126,7 @@ const Settings: React.FC<SettingsProps> = ({ eventDetails }) => {
       )}
 
       {editingEventAdmins && (
-        <ManageEventAdmins eventDetails={eventDetails} onDone={() => setEditingEventAdmins(false)} />
+        <ManageEventAdmins onDone={() => setEditingEventAdmins(false)} />
       )}
 
 

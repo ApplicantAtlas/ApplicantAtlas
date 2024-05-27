@@ -10,13 +10,18 @@ import ListForms from "./ListForms";
 import CreateNewForm from "./CreateNewForm";
 import SelectForm from "./SelectForm";
 
-interface FormProps {
-  eventDetails: EventModel | null;
-}
+interface FormProps { }
 
-const Forms: React.FC<FormProps> = ({ eventDetails }) => {
+const Forms: React.FC<FormProps> = ({ }) => {
   const dispatch: AppDispatch = useDispatch();
   const selectedForm = useSelector((state: RootState) => state.form.formDetails);
+  const eventDetails = useSelector((state: RootState) => state.event.eventDetails);
+
+  if (eventDetails === null) {
+    return (
+      <p>No event data found in state</p>
+    );
+  }
 
   const [forms, setForms] = useState<FormStructure[] | undefined>();
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -59,7 +64,6 @@ const Forms: React.FC<FormProps> = ({ eventDetails }) => {
     return (
       <>
         <CreateNewForm
-          eventDetails={eventDetails}
           onSubmit={onNewFormCreated}
         />
         <button

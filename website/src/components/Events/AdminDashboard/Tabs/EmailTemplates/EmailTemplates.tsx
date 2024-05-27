@@ -10,13 +10,12 @@ import { AppDispatch, RootState } from "@/store";
 import { useDispatch, useSelector } from "react-redux";
 import { resetEmailTemplateState } from "@/store/slices/emailTemplateSlice";
 
-interface EmailTemplatesProps {
-  eventDetails: EventModel | null;
-}
+interface EmailTemplatesProps {}
 
-const EmailTemplates: React.FC<EmailTemplatesProps> = ({ eventDetails }) => {
+const EmailTemplates: React.FC<EmailTemplatesProps> = ({ }) => {
   const dispatch: AppDispatch = useDispatch();
   const selectedEmailTemplate = useSelector((state: RootState) => state.emailTemplate.emailTemplateState);
+  const eventDetails = useSelector((state: RootState) => state.event.eventDetails);
 
   const [emailTemplates, setEmailTemplates] = useState<EmailTemplate[] | undefined>();
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -62,7 +61,6 @@ const EmailTemplates: React.FC<EmailTemplatesProps> = ({ eventDetails }) => {
     return (
       <>
         <CreateNewEmailTemplate
-          eventDetails={eventDetails}
           onSubmit={onNewEmailTemplateCreated}
         />
         <button
@@ -87,7 +85,6 @@ const EmailTemplates: React.FC<EmailTemplatesProps> = ({ eventDetails }) => {
       <>
         <SelectEmailTemplate
           onDelete={onDeletedTemplate}
-          eventDetails={eventDetails}
         />
         <button
           className="btn btn-error mt-4"

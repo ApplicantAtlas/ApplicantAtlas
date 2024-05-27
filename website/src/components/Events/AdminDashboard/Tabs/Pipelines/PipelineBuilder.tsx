@@ -12,15 +12,14 @@ import { addOrUpdateAction, removeAction, setEvent, setPipelineConfiguration } f
 
 interface PipelineBuilderProps {
   onSubmit: () => void;
-  eventDetails: EventModel;
 }
 
 const PipelineBuilder: React.FC<PipelineBuilderProps> = ({
   onSubmit,
-  eventDetails,
 }) => {
   const dispatch: AppDispatch = useDispatch();
   const pipelineConfig = useSelector((state: RootState) => state.pipeline.pipelineState);
+  const eventDetails = useSelector((state: RootState) => state.event.eventDetails);
   
   if (pipelineConfig === null) {
     return <p>Error selected pipeline null</p>

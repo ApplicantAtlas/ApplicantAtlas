@@ -1,58 +1,75 @@
-// layouts/EventAdminDashboard.tsx
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Sidebar from "@/components/Events/AdminDashboard/Sidebar";
 import Footer from "@/components/Footer";
-import { EventProvider, useEventContext } from "@/contexts/EventContext";
 import LoadingSpinner from "@/components/Loading/LoadingSpinner";
 import Header from "@/components/Header";
+import { AppDispatch, RootState } from "@/store";
+import { useDispatch, useSelector } from "react-redux";
+import { getEvent } from "@/services/EventService";
+import {
+  setEventDetails,
+  setEventStateIsLoading,
+} from "@/store/slices/eventSlice";
 
 const EventAdminDashboard: React.FC<{
-  children: (eventDetails: any) => React.ReactNode;
+  children: () => React.ReactNode;
   activeSection: string;
   setActiveSection: (section: string) => void;
 }> = ({ children, activeSection, setActiveSection }) => {
   const router = useRouter();
   const eventId = router.query.eventId as string;
+  const dispatch: AppDispatch = useDispatch();
+
+  useEffect(() => {
+    if (eventId) {
+      dispatch(setEventStateIsLoading(true));
+      getEvent(eventId)
+        .then((details) => {
+          dispatch(setEventDetails(details.data.event));
+          dispatch(setEventStateIsLoading(false));
+        })
+        .catch((error) => {
+          dispatch(setEventStateIsLoading(false));
+        });
+    }
+  }, [eventId]);
 
   const menuItems = [{ label: "My Events", href: "/user/dashboard" }];
 
   return (
     <>
       <Header menuItems={menuItems} showUserProfile={true} />
-      <div className="flex flex-col min-h-screen bg-gray-100 text-gray-900" style={{ maxWidth: '100vw' }}>
-        <EventProvider eventId={eventId}>
-          <ContentWithLoading
-            activeSection={activeSection}
-            setActiveSection={setActiveSection}
-          >
-            {children}
-          </ContentWithLoading>
-        </EventProvider>
+      <div
+        className="flex flex-col min-h-screen bg-gray-100 text-gray-900"
+        style={{ maxWidth: "100vw" }}
+      >
+        <ContentWithLoading
+          activeSection={activeSection}
+          setActiveSection={setActiveSection}
+        >
+          {children}
+        </ContentWithLoading>
       </div>
     </>
   );
 };
 
 const ContentWithLoading: React.FC<{
-  children: (eventDetails: any) => React.ReactNode;
+  children: () => React.ReactNode;
   activeSection: string;
   setActiveSection: (section: string) => void;
 }> = ({ children, activeSection, setActiveSection }) => {
-  const { eventDetails, isLoading } = useEventContext();
-
-  // TODO: we can probably cache with TanQuery in the provider or layout here.
-  // So that each tab we click doesn't have to re-fetch the event details.
+  const isLoading = useSelector((state: RootState) => state.event.loading);
   return (
     <>
       <div className="flex flex-1 min-h-screen overflow-x-auto">
         <Sidebar
-          eventDetails={eventDetails}
           activeSection={activeSection}
           setActiveSection={setActiveSection}
         />
         <main className="w-full flex-grow p-4 overflow-x-auto">
-          {isLoading ? <LoadingSpinner /> : children(eventDetails)}
+          {isLoading ? <LoadingSpinner /> : children()}
         </main>
       </div>
       <Footer />

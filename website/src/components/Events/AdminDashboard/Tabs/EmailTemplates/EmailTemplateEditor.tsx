@@ -16,15 +16,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { setEmailTemplateState } from "@/store/slices/emailTemplateSlice";
 import { UpdateEmailTemplate } from "@/services/EmailTemplateService";
 
-interface EmailTemplateEditorProps {
-  eventDetails: EventModel;
-}
+interface EmailTemplateEditorProps { }
 
 const EmailTemplateEditor = ({
-  eventDetails,
 }: EmailTemplateEditorProps) => {
   const dispatch: AppDispatch = useDispatch();
   const templateData = useSelector((state: RootState) => state.emailTemplate.emailTemplateState);
+  const eventDetails = useSelector((state: RootState) => state.event.eventDetails);
 
   if (templateData === null) {
     return <p>No email template found in state</p>;

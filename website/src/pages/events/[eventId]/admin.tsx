@@ -13,22 +13,22 @@ const AdminDashboard: React.FC = () => {
 
     return (
         <EventAdminDashboard activeSection={activeSection} setActiveSection={setActiveSection}>
-            {(eventDetails) => {
+            {() => {
                 switch (activeSection) {
                     case 'dashboard':
-                        return <Dashboard eventDetails={eventDetails} />
+                        return <Dashboard />
                     case 'announcements':
-                        return <Announcements eventDetails={eventDetails} />
+                        return <Announcements />
                     case 'settings':
-                        return <Settings eventDetails={eventDetails} />
+                        return <Settings />
                     case 'event-details':
-                        return <EventDetails eventDetails={eventDetails} />
+                        return <EventDetails />
                     case 'pipelines':
-                        return <Pipelines eventDetails={eventDetails} />
+                        return <Pipelines />
                     case 'email-templates':
-                        return <EmailTemplates eventDetails={eventDetails} />
+                        return <EmailTemplates />
                     case 'forms':
-                        return <Forms eventDetails={eventDetails} />
+                        return <Forms />
                     default:
                         return <p>Page not found!</p>
                 }

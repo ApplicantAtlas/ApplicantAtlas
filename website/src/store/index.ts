@@ -15,7 +15,6 @@ const store = configureStore({
 
 // Used to clear out all tab state when switching between tabs
 export const resetTabs = () => {
-  store.dispatch(resetEventState());
   store.dispatch(resetFormState());
   store.dispatch(resetPipelineState());
   store.dispatch(resetEmailTemplateState());

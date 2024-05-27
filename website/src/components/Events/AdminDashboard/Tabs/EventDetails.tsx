@@ -5,12 +5,13 @@ import FormBuilder from '@/components/Form/FormBuilder';
 import { FormField, FieldValue } from '@/types/models/Form';
 import { EventModel, EventMetadata } from '@/types/models/Event';
 import moment from 'moment-timezone';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
 
-interface EventDetailsProps {
-  eventDetails: EventModel | null;
-}
+interface EventDetailsProps {}
 
-const EventDetails: React.FC<EventDetailsProps> = ({ eventDetails }) => {
+const EventDetails: React.FC<EventDetailsProps> = ({ }) => {
+  const eventDetails = useSelector((state: RootState) => state.event.eventDetails);
   const { showToast } = useToast();
 
   const handleFormSubmission = async (formData: Record<string, any>) => {

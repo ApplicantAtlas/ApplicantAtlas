@@ -3,10 +3,12 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface EventState {
   eventDetails: EventModel | null;
+  loading: boolean;
 }
 
 const initialState: EventState = {
   eventDetails: null,
+  loading: false,
 };
 
 const eventSlice = createSlice({
@@ -22,8 +24,11 @@ const eventSlice = createSlice({
     resetEventState(state) {
       state.eventDetails = null;
     },
+    setEventStateIsLoading(state, action: PayloadAction<boolean>) {
+      state.loading = action.payload;
+    }
   },
 });
 
-export const { setEventDetails, updateEventDetails, resetEventState } = eventSlice.actions;
+export const { setEventDetails, updateEventDetails, resetEventState, setEventStateIsLoading } = eventSlice.actions;
 export default eventSlice.reducer;

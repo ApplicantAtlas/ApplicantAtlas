@@ -6,16 +6,21 @@ import { getUser } from "@/services/UserService";
 import { EventModel } from "@/types/models/Event";
 import { User } from "@/types/models/User";
 import { addEventAdmin, removeEventAdmin } from "@/services/EventService";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
 
 interface ManageEventAdminsProps {
-  eventDetails: EventModel;
   onDone: () => void;
 }
 
 const ManageEventAdmins: React.FC<ManageEventAdminsProps> = ({
-  eventDetails,
   onDone,
 }) => {
+  const eventDetails = useSelector((state: RootState) => state.event.eventDetails);
+  if (eventDetails == null) {
+    return <p>Event details not found in state</p>
+  }
+
   const router = useRouter();
   const { showToast } = useToast();
   const [eventAdminsIDs, setEventAdminsIDs] = useState<string[] | undefined>(

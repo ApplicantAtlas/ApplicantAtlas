@@ -8,15 +8,16 @@ import { useDispatch, useSelector } from "react-redux";
 
 interface SelectEmailTemplateProps {
   onDelete: () => void;
-  eventDetails: EventModel;
 }
 
 const SelectEmailTemplate: React.FC<SelectEmailTemplateProps> = ({
   onDelete,
-  eventDetails
 }) => {
-  const dispatch: AppDispatch = useDispatch();
   const emailTemplate = useSelector((state: RootState) => state.emailTemplate.emailTemplateState);
+  const eventDetails = useSelector((state: RootState) => state.event.eventDetails);
+  if (eventDetails == null) {
+    return <p>No event details found in state</p>
+  }
 
   if (emailTemplate == null) {
     return <p>No email template found in state</p>

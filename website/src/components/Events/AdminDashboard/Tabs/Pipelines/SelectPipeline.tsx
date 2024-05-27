@@ -13,12 +13,10 @@ import { setPipelineConfiguration } from "@/store/slices/pipelineSlice";
 
 interface SelectPipelineProps {
   onDelete: () => void;
-  eventDetails: EventModel;
 }
 
 const SelectPipeline: React.FC<SelectPipelineProps> = ({
   onDelete,
-  eventDetails
 }) => {
   const dispatch: AppDispatch = useDispatch();
   const pipelineConfig = useSelector((state: RootState) => state.pipeline.pipelineState);
@@ -89,7 +87,7 @@ const SelectPipeline: React.FC<SelectPipelineProps> = ({
       </h2>
 
       {pageSelected === "edit" && (
-        <PipelineBuilder onSubmit={updatePipeline} eventDetails={eventDetails} />
+        <PipelineBuilder onSubmit={updatePipeline} />
       )}
 
       {pageSelected === "view" && <p>{JSON.stringify(pipelineConfig)}</p>}
