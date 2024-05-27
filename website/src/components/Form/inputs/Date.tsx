@@ -24,13 +24,20 @@ const DateInput: React.FC<DateInputProps> = ({
   useEffect(() => {
     if (defaultValue) {
       const formattedDate = formatDateToUTC(defaultValue);
-      setValue(formattedDate);
-      onChange(field.key, defaultValue);
+      if (formattedDate !== value) {
+        setValue(formattedDate);
+        onChange(field.key, defaultValue);
+      }
     }
   }, [defaultValue]);
 
   const calculateAge = (date: Date) => {
-    const diff = Date.now() - date.getTime();
+    var againstDate = Date.now();
+    if (field.additionalValidation?.dateAndTimestampFromTimeField) {
+      againstDate = new Date(field.additionalValidation.dateAndTimestampFromTimeField).getTime();
+    }
+
+    const diff = againstDate - date.getTime();
     const ageDate = new Date(diff);
     return Math.abs(ageDate.getUTCFullYear() - 1970);
   };

@@ -72,17 +72,22 @@ func ValidateResponse(attrValue interface{}, attr models.FormField) error {
 			return fmt.Errorf("field %s has an invalid date format", attr.Question)
 		}
 
-		now := time.Now()
+		var againstDate time.Time
+		if attr.AdditionalValidation.DateAndTimestampFromTimeField.IsZero() {
+			againstDate = time.Now()
+		} else {
+			againstDate = attr.AdditionalValidation.DateAndTimestampFromTimeField
+		}
 
 		if attr.AdditionalValidation.Min != 0 {
-			minDate := now.AddDate(-attr.AdditionalValidation.Min, 0, 0)
+			minDate := againstDate.AddDate(-attr.AdditionalValidation.Min, 0, 0)
 			if date.After(minDate) {
 				return fmt.Errorf("field %s is not older than the minimum age allowed of %b", attr.Question, attr.AdditionalValidation.Min)
 			}
 		}
 
 		if attr.AdditionalValidation.Max != 0 {
-			maxDate := now.AddDate(-attr.AdditionalValidation.Max, 0, 0)
+			maxDate := againstDate.AddDate(-attr.AdditionalValidation.Max, 0, 0)
 			if date.Before(maxDate) {
 				return fmt.Errorf("field %s is not younger than the maximum age allowed of %b", attr.Question, attr.AdditionalValidation.Max)
 			}

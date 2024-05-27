@@ -78,7 +78,12 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
   }, [defaultValue, timezone]);
 
   const calculateAge = (date: Date) => {
-    const diff = Date.now() - date.getTime();
+    var againstDate = Date.now();
+    if (field.additionalValidation?.dateAndTimestampFromTimeField) {
+      againstDate = new Date(field.additionalValidation.dateAndTimestampFromTimeField).getTime();
+    }
+
+    const diff = againstDate - date.getTime();
     const ageDate = new Date(diff);
     return Math.abs(ageDate.getUTCFullYear() - 1970);
   };

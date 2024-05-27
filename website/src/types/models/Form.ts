@@ -10,6 +10,7 @@ export type EmailValidationOptions = {
 export type FieldValidation = {
   min?: number;
   max?: number;
+  dateAndTimestampFromTimeField?: Date;
   isEmail?: EmailValidationOptions;
 };
 
