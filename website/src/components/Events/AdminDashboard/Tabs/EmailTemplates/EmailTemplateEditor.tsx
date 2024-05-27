@@ -11,19 +11,25 @@ import { IsObjectIDNotNull } from "@/utils/conversions";
 import { EventModel } from "@/types/models/Event";
 import { getEventForms } from "@/services/EventService";
 import { ToastType, useToast } from "@/components/Toast/ToastContext";
+import { AppDispatch, RootState } from "@/store";
+import { useDispatch, useSelector } from "react-redux";
+import { setEmailTemplateState } from "@/store/slices/emailTemplateSlice";
+import { UpdateEmailTemplate } from "@/services/EmailTemplateService";
 
 interface EmailTemplateEditorProps {
-  template: EmailTemplate;
-  onSubmit: (template: EmailTemplate) => void;
   eventDetails: EventModel;
 }
 
 const EmailTemplateEditor = ({
-  template,
-  onSubmit,
   eventDetails,
 }: EmailTemplateEditorProps) => {
-  const [templateData, setTemplateData] = useState<EmailTemplate>(template);
+  const dispatch: AppDispatch = useDispatch();
+  const templateData = useSelector((state: RootState) => state.emailTemplate.emailTemplateState);
+
+  if (templateData === null) {
+    return <p>No email template found in state</p>;
+  }
+
   const [eventForms, setEventForms] = useState<FormStructure[]>();
   const { showToast } = useToast();
 
@@ -122,9 +128,11 @@ const EmailTemplateEditor = ({
       ...templateData,
       ...formData,
       isHTML: true,
-    };
-    setTemplateData(updatedTemplate);
-    onSubmit(updatedTemplate);
+    } as EmailTemplate;
+    UpdateEmailTemplate(updatedTemplate).then(() => {
+      showToast("Email template updated successfully", ToastType.Success);
+      dispatch(setEmailTemplateState(updatedTemplate));
+    })
   };
 
   return (

@@ -1,4 +1,4 @@
-import { AppDispatch } from '@/store';
+import { AppDispatch, resetTabs } from '@/store';
 import { resetEventState } from '@/store/slices/eventSlice';
 import { resetFormState } from '@/store/slices/formSlice';
 import { resetPipelineState } from '@/store/slices/pipelineSlice';
@@ -32,10 +32,7 @@ const Sidebar: React.FC<SidebarProps> = ({ eventDetails, activeSection, setActiv
 
     const handleLinkClick = (sectionName: string) => {
         // reset any of the tabs held state for tabs
-        dispatch(resetEventState());
-        dispatch(resetFormState());
-        dispatch(resetPipelineState());
-
+        resetTabs();
 
         setActiveSection(sectionName);
     };

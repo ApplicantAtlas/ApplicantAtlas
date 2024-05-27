@@ -5,7 +5,7 @@ import { FormStructure } from "@/types/models/Form";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "@/store";
-import { setFormDetails } from "@/store/slices/formSlice";
+import { resetFormState, setFormDetails } from "@/store/slices/formSlice";
 import ListForms from "./ListForms";
 import CreateNewForm from "./CreateNewForm";
 import SelectForm from "./SelectForm";
@@ -43,7 +43,7 @@ const Forms: React.FC<FormProps> = ({ eventDetails }) => {
 
   const onDeletedForm = () => {
     setRefresh(!refresh);
-    dispatch(setFormDetails(null));
+    dispatch(resetFormState());
   };
 
   if (forms === undefined || eventDetails === null) {
@@ -85,7 +85,7 @@ const Forms: React.FC<FormProps> = ({ eventDetails }) => {
         <button
           className="btn btn-error"
           onClick={() => {
-            dispatch(setFormDetails(null));
+            dispatch(resetFormState());
           }}
         >
           Go Back

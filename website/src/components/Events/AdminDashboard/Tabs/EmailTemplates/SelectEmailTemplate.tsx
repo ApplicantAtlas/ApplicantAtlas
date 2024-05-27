@@ -1,41 +1,31 @@
 import { useState } from "react";
 import { ToastType, useToast } from "@/components/Toast/ToastContext";
-import { EmailTemplate } from "@/types/models/EmailTemplate";
-import { UpdateEmailTemplate } from "@/services/EmailTemplateService";
 import EmailTemplateEditor from "./EmailTemplateEditor";
 import EmailTemplateSettings from "./EmailTemplateSettings";
 import { EventModel } from "@/types/models/Event";
+import { AppDispatch, RootState } from "@/store";
+import { useDispatch, useSelector } from "react-redux";
 
 interface SelectEmailTemplateProps {
-  template: EmailTemplate;
   onDelete: () => void;
   eventDetails: EventModel;
 }
 
 const SelectEmailTemplate: React.FC<SelectEmailTemplateProps> = ({
-  template,
   onDelete,
   eventDetails
 }) => {
+  const dispatch: AppDispatch = useDispatch();
+  const emailTemplate = useSelector((state: RootState) => state.emailTemplate.emailTemplateState);
+
+  if (emailTemplate == null) {
+    return <p>No email template found in state</p>
+  }
+
   const [pageSelected, setPageSelected] = useState<
     "edit" | "preview" | "settings"
   >("edit");
-  const [emailTemplate, setEmailTemplate] = useState<EmailTemplate>(template);
   const { showToast } = useToast();
-
-  // Edit
-  const changeTemplate = (template: EmailTemplate) => {
-    setEmailTemplate(template);
-  };
-
-  const updateTemplate = (template: EmailTemplate) => {
-    UpdateEmailTemplate(template)
-      .then(() => {
-        showToast("Successfully updated email template!", ToastType.Success);
-        setEmailTemplate(template);
-      })
-      .catch((err) => {});
-  };
 
   const onCopyHTML = () => {
     if (!emailTemplate.body) {
@@ -80,13 +70,11 @@ const SelectEmailTemplate: React.FC<SelectEmailTemplateProps> = ({
       </div>
 
       <h2 className="text-2xl font-semibold text-gray-800 mt-4 mb-2">
-        {template.name}
+        {emailTemplate.name}
       </h2>
 
       {pageSelected === "edit" && (
         <EmailTemplateEditor
-          template={emailTemplate}
-          onSubmit={updateTemplate}
           eventDetails={eventDetails}
         />
       )}
@@ -128,9 +116,7 @@ const SelectEmailTemplate: React.FC<SelectEmailTemplateProps> = ({
 
       {pageSelected === "settings" && (
         <EmailTemplateSettings
-          template={emailTemplate}
           onDelete={onDelete}
-          changeTemplate={changeTemplate}
         />
       )}
 

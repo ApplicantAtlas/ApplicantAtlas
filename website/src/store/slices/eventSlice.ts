@@ -13,7 +13,7 @@ const eventSlice = createSlice({
   name: 'event',
   initialState,
   reducers: {
-    setEventDetails(state, action: PayloadAction<any>) {
+    setEventDetails(state, action: PayloadAction<EventModel>) {
       state.eventDetails = action.payload;
     },
     updateEventDetails(state, action: PayloadAction<any>) {

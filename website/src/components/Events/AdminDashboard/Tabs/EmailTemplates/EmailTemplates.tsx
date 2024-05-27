@@ -6,16 +6,21 @@ import CreateNewEmailTemplate from "./CreateNewEmailTemplate";
 import ListEmailTemplates from "./ListEmailTemplates";
 import { EmailTemplate } from "@/types/models/EmailTemplate";
 import SelectEmailTemplate from "./SelectEmailTemplate";
+import { AppDispatch, RootState } from "@/store";
+import { useDispatch, useSelector } from "react-redux";
+import { resetEmailTemplateState } from "@/store/slices/emailTemplateSlice";
 
 interface EmailTemplatesProps {
   eventDetails: EventModel | null;
 }
 
 const EmailTemplates: React.FC<EmailTemplatesProps> = ({ eventDetails }) => {
+  const dispatch: AppDispatch = useDispatch();
+  const selectedEmailTemplate = useSelector((state: RootState) => state.emailTemplate.emailTemplateState);
+
   const [emailTemplates, setEmailTemplates] = useState<EmailTemplate[] | undefined>();
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [refresh, setRefresh] = useState(false);
-  const [selectedEmailTemplate, setSelectedEmailTemplate] = useState<EmailTemplate | null>(null);
 
   useEffect(() => {
     if (eventDetails !== null) {
@@ -74,21 +79,20 @@ const EmailTemplates: React.FC<EmailTemplatesProps> = ({ eventDetails }) => {
 
   const onDeletedTemplate = () => {
     setRefresh(true);
-    setSelectedEmailTemplate(null);
+    dispatch(resetEmailTemplateState());
   }
 
   if (selectedEmailTemplate !== null) {
     return (
       <>
         <SelectEmailTemplate
-          template={selectedEmailTemplate}
           onDelete={onDeletedTemplate}
           eventDetails={eventDetails}
         />
         <button
           className="btn btn-error mt-4"
           onClick={() => {
-            setSelectedEmailTemplate(null);
+            dispatch(resetEmailTemplateState());
           }}
         >
           Go Back
@@ -106,14 +110,10 @@ const EmailTemplates: React.FC<EmailTemplatesProps> = ({ eventDetails }) => {
     );
   }
 
-  const selectEmailTemplate = (template: EmailTemplate) => {
-    setSelectedEmailTemplate(template);
-  };
-
   return (
     <>
       {NewEmailTemplateButton}
-      <ListEmailTemplates templates={emailTemplates} selectTemplate={selectEmailTemplate} />
+      <ListEmailTemplates templates={emailTemplates}/>
     </>
   );
 };

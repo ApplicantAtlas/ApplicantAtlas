@@ -17,7 +17,7 @@ const pipelineSlice = createSlice({
   name: "pipeline",
   initialState,
   reducers: {
-    setPipelineConfiguration(state, action: PayloadAction<any>) {
+    setPipelineConfiguration(state, action: PayloadAction<PipelineConfiguration>) {
       state.pipelineState = action.payload;
     },
     updatePipelineConfiguration(state, action: PayloadAction<any>) {

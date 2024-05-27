@@ -8,7 +8,7 @@ import SelectPipeline from "./SelectPipeline";
 import ListPipelines from "./ListPipelines";
 import { AppDispatch, RootState } from "@/store";
 import { useDispatch, useSelector } from "react-redux";
-import { setPipelineConfiguration } from "@/store/slices/pipelineSlice";
+import { resetPipelineState, setPipelineConfiguration } from "@/store/slices/pipelineSlice";
 
 interface PipelinesProps {
   eventDetails: EventModel | null;
@@ -80,7 +80,7 @@ const Pipelines: React.FC<PipelinesProps> = ({ eventDetails }) => {
 
   const onDeletedForm = () => {
     setRefresh(true);
-    dispatch(setPipelineConfiguration(null));
+    dispatch(resetPipelineState());
   }
 
   if (selectedPipeline !== null) {
@@ -93,7 +93,7 @@ const Pipelines: React.FC<PipelinesProps> = ({ eventDetails }) => {
         <button
           className="btn btn-error mt-4"
           onClick={() => {
-            dispatch(setPipelineConfiguration(null));
+            dispatch(resetPipelineState());
           }}
         >
           Go Back

@@ -1,12 +1,16 @@
+import { AppDispatch, RootState } from "@/store";
+import { setEmailTemplateState } from "@/store/slices/emailTemplateSlice";
 import { EmailTemplate } from "@/types/models/EmailTemplate";
 import moment from "moment";
+import { useDispatch, useSelector } from "react-redux";
 
 interface ListEmailTemplatesProps {
   templates: EmailTemplate[];
-  selectTemplate: (template: EmailTemplate) => void;
 }
 
-const ListEmailTemplates = ({ templates, selectTemplate }: ListEmailTemplatesProps) => {
+const ListEmailTemplates = ({ templates }: ListEmailTemplatesProps) => {
+  const dispatch: AppDispatch = useDispatch();
+
   const formatDate = (date: Date | undefined) => {
     if (!date) return "";
     return date ? moment(date).format("MMMM Do, YYYY") : "";
@@ -29,7 +33,7 @@ const ListEmailTemplates = ({ templates, selectTemplate }: ListEmailTemplatesPro
                 key={template.id}
                 className="hover cursor-pointer"
                 onClick={() => {
-                  selectTemplate(template);
+                  dispatch(setEmailTemplateState(template));
                 }}
               >
                 <td>{template.name}</td>

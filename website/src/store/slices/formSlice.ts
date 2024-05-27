@@ -13,7 +13,7 @@ const formSlice = createSlice({
   name: 'form',
   initialState,
   reducers: {
-    setFormDetails(state, action: PayloadAction<any>) {
+    setFormDetails(state, action: PayloadAction<FormStructure>) {
       state.formDetails = action.payload;
     },
     updateFormDetails(state, action: PayloadAction<any>) {
