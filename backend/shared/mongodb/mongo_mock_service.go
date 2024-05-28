@@ -243,6 +243,17 @@ func (m *MockMongoService) UpdateSource(ctx context.Context, source models.Selec
 	return &mongo.UpdateResult{ModifiedCount: 1}, nil
 }
 
+func (m *MockMongoService) ListSelectorSources(ctx context.Context) ([]models.SelectorSource, error) {
+	m.mutex.RLock()
+	defer m.mutex.RUnlock()
+
+	var sources []models.SelectorSource
+	for _, source := range m.sources {
+		sources = append(sources, source)
+	}
+	return sources, nil
+}
+
 // matchesFilter is a helper function that matches an event against a filter.
 // This is a simplified example. You would need to implement matching logic
 // based on your application's requirements.

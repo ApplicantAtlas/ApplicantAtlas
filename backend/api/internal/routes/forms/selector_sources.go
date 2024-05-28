@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"shared/logger"
 	"shared/models"
 	"time"
 
@@ -13,13 +14,32 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+const (
+	mlhSchoolUrl = "https://raw.githubusercontent.com/MLH/mlh-policies/main/schools.csv"
+)
+
+// Source Descriptors
+var (
+	mlhSchoolDescription = fmt.Sprintf("The MLH School list is a list that MLH maintains of all schools they recognize. They require their hackathons to use this list on their application forms. The full list is accessible here: %s ", mlhSchoolUrl)
+)
+
 func RegisterDefaultSelectorValues(r *gin.RouterGroup, params *types.RouteParams) {
-	r.GET("default_selector_values/:source_name", valuesFromSource(params))
+	r.GET("selector_sources/values/:source_name", valuesFromSource(params))
+	r.GET("selector_sources", availableDefaultSelectors(params))
+}
+
+func availableDefaultSelectors(params *types.RouteParams) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		sources, err := params.MongoService.ListSelectorSources(c)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to list available sources"})
+		}
+
+		c.JSON(http.StatusOK, gin.H{"sources": sources})
+	}
 }
 
 func getMLHSchools() ([]string, error) {
-	mlhSchoolUrl := "https://raw.githubusercontent.com/MLH/mlh-policies/main/schools.csv"
-
 	// Make HTTP GET request
 	resp, err := http.Get(mlhSchoolUrl)
 	if err != nil {
@@ -99,12 +119,20 @@ func valuesFromSource(params *types.RouteParams) gin.HandlerFunc {
 			case "mlh-schools":
 				schools, err := getMLHSchools()
 				if err != nil {
+					// if we failed but we were just trying to refresh the options lets use the old ones
+					if !addSource && refreshSource && source != nil && len(source.Options) > 0 {
+						logger.LogWarning(fmt.Sprintf("Failed to refresh selector source name: %s\nError: %e", sourceName, err))
+						c.JSON(http.StatusOK, source.Options)
+						return
+					}
+
 					c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve source"})
 					return
 				}
 
 				// Create the source
 				newSource := models.SelectorSource{
+					Description: mlhSchoolDescription,
 					SourceName:  sourceName,
 					LastUpdated: time.Now(),
 					Options:     schools,
@@ -127,8 +155,10 @@ func valuesFromSource(params *types.RouteParams) gin.HandlerFunc {
 				}
 
 				c.JSON(http.StatusOK, schools)
+				return
 			default:
-				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve source"})
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve source, is it valid?"})
+				return
 			}
 		}
 

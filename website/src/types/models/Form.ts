@@ -1,5 +1,13 @@
 import { Address } from './Event';
 
+export type SelectorSource = {
+  _id: string;
+  description: string;
+  sourceName: string;
+  lastUpdated: string;
+  options: string[];
+};
+
 export type EmailValidationOptions = {
   isEmail?: boolean;
   requireDomain?: string[];

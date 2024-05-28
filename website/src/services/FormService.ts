@@ -1,14 +1,21 @@
 import { AxiosResponse } from 'axios';
 
-import { FormStructure } from '@/types/models/Form';
+import { FormStructure, SelectorSource } from '@/types/models/Form';
 
 import api from './AxiosInterceptor';
 
 export const getSelectorOptions = async (name: string): Promise<string[]> => {
   const response = await api.get<string[]>(
-    `/forms/default_selector_values/${name}`,
+    `/forms/selector_sources/value/${name}`,
   );
   return response.data;
+};
+
+export const getAllSelectors = async (): Promise<SelectorSource[]> => {
+  const response = await api.get<{ sources: SelectorSource[] }>(
+    `/forms/selector_sources`,
+  );
+  return response.data.sources;
 };
 
 export const getForm = async (id: string): Promise<FormStructure> => {
