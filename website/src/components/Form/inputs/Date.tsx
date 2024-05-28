@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 import { FormField, FieldValue } from '@/types/models/Form';
+import { isZeroDate } from '@/utils/conversions';
 
 type DateInputProps = {
   field: FormField;
@@ -34,7 +35,10 @@ const DateInput: React.FC<DateInputProps> = ({
 
   const calculateAge = (date: Date) => {
     let againstDate = Date.now();
-    if (field.additionalValidation?.dateAndTimestampFromTimeField) {
+    if (
+      field.additionalValidation?.dateAndTimestampFromTimeField !== undefined &&
+      !isZeroDate(field.additionalValidation.dateAndTimestampFromTimeField)
+    ) {
       againstDate = new Date(
         field.additionalValidation.dateAndTimestampFromTimeField,
       ).getTime();

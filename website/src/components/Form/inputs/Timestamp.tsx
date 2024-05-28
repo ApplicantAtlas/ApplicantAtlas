@@ -3,6 +3,7 @@ import moment from 'moment-timezone';
 
 import { FormField, FieldValue } from '@/types/models/Form';
 import InformationIcon from '@/components/Icons/InformationIcon';
+import { isZeroDate } from '@/utils/conversions';
 
 import Select from './Select';
 
@@ -20,22 +21,19 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
   const askTimezone = field.additionalOptions?.showTimezone || false;
   const [timezone, setTimezone] = useState<string>('');
   const [error, setError] = useState<string | undefined>();
-  const guessedTz = useState<string>((): string => {
+
+  useEffect(() => {
     if (
       field.additionalOptions?.defaultTimezone &&
-      field.additionalOptions?.defaultTimezone !== ''
+      field.additionalOptions.defaultTimezone !== ''
     ) {
-      setTimezone(field.additionalOptions?.defaultTimezone);
-      return field.additionalOptions?.defaultTimezone;
-    }
-    const guessedTz = moment.tz.guess();
-    if (guessedTz) {
+      setTimezone(field.additionalOptions.defaultTimezone);
+    } else {
+      const guessedTz = moment.tz.guess();
       setTimezone(guessedTz);
     }
-    return guessedTz;
-  });
+  }, [field.additionalOptions]);
 
-  const defaultOptions = useMemo(() => [guessedTz], [guessedTz]);
   const isInitialized = useRef(false);
 
   const isValidDefaultValue = (
@@ -61,7 +59,6 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
 
   const timezoneOptions = moment.tz.names();
 
-  // TODO: This might be getting re-rendered too much by toast on submission
   useEffect(() => {
     if (
       defaultValue &&
@@ -77,11 +74,14 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
       onChange(field.key, defaultValue);
       isInitialized.current = true;
     }
-  }, [defaultValue, timezone]); // eslint-disable-line react-hooks/exhaustive-deps -- only want to run this for initial value
+  }, [defaultValue, timezone, onChange, field.key]);
 
   const calculateAge = (date: Date) => {
     let againstDate = Date.now();
-    if (field.additionalValidation?.dateAndTimestampFromTimeField) {
+    if (
+      field.additionalValidation?.dateAndTimestampFromTimeField !== undefined &&
+      !isZeroDate(field.additionalValidation.dateAndTimestampFromTimeField)
+    ) {
       againstDate = new Date(
         field.additionalValidation.dateAndTimestampFromTimeField,
       ).getTime();
@@ -155,11 +155,12 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
     }
   };
 
+  const defaultOptions = useMemo(() => [timezone], [timezone]);
+
   if (timezone === '') {
     return <div>Loading...</div>;
   }
 
-  // TODO: I want to make the timezone more pretty and inline with the rest of the form
   return (
     <div className="form-control">
       {field.question !== '' && (
@@ -184,7 +185,6 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
         required={field.required}
       />
       {!askTimezone ? null : (
-        // TODO: fix the ts error
         <Select
           field={{
             ...field,

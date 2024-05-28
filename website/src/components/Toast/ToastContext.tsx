@@ -1,10 +1,10 @@
-// ToastContext.tsx
 import React, {
   Fragment,
   createContext,
   useContext,
   useEffect,
   useState,
+  useCallback,
 } from 'react';
 
 interface ToastContextType {
@@ -35,11 +35,11 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
   const [progress, setProgress] = useState<number>(100);
   const [toastType, setToastType] = useState<ToastType>(ToastType.Success);
 
-  const showToast = (msg: string, type: ToastType) => {
+  const showToast = useCallback((msg: string, type: ToastType) => {
     setMessage(msg);
     setProgress(100);
     setToastType(type);
-  };
+  }, []);
 
   useEffect(() => {
     if (message) {
