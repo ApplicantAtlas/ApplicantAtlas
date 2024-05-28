@@ -36,7 +36,10 @@ const Checkbox: React.FC<CheckboxProps> = ({
               {field.question}{' '}
               {field.required && <span className="text-error">*</span>}
               {field.description && (
-                <div className="tooltip" data-tip={field.description}>
+                <div
+                  className="tooltip overflow-x-visible"
+                  data-tip={field.description}
+                >
                   <InformationIcon className="h-4 w-4" />
                 </div>
               )}
@@ -63,7 +66,10 @@ const Checkbox: React.FC<CheckboxProps> = ({
             <span>{field.question}</span>
             {field.required && <span className="text-error">*</span>}
             {field.description && (
-              <div className="tooltip" data-tip={field.description}>
+              <div
+                className="tooltip overflow-x-visible"
+                data-tip={field.description}
+              >
                 <InformationIcon className="h-4 w-4" />
               </div>
             )}

@@ -37,6 +37,7 @@ type MongoService interface {
 	CreateSource(ctx context.Context, source models.SelectorSource) (*mongo.InsertOneResult, error)
 	UpdateSource(ctx context.Context, source models.SelectorSource, sourceID primitive.ObjectID) (*mongo.UpdateResult, error)
 	GetSourceByName(ctx context.Context, name string) (*models.SelectorSource, error)
+	ListSelectorSources(ctx context.Context) ([]models.SelectorSource, error)
 	GetForm(ctx context.Context, formID primitive.ObjectID, stripSecrets bool) (*models.FormStructure, error)
 	ListForms(ctx context.Context, filter bson.M) ([]models.FormStructure, error)
 	CreateForm(ctx context.Context, form models.FormStructure) (*mongo.InsertOneResult, error)
@@ -347,6 +348,36 @@ func (s *Service) UpdateSource(ctx context.Context, source models.SelectorSource
 
 	filter := bson.M{"_id": sourceID}
 	return s.Database.Collection("sources").UpdateOne(ctx, filter, update)
+}
+
+func (s *Service) ListSelectorSources(ctx context.Context) ([]models.SelectorSource, error) {
+	var selectors []models.SelectorSource
+
+	cursor, err := s.Database.Collection("sources").Find(ctx, bson.M{})
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx) {
+		var selector models.SelectorSource
+		if err := cursor.Decode(&selector); err != nil {
+			return nil, err
+		}
+
+		selectors = append(selectors, selector)
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	// If selectors is null then return an empty slice instead
+	if selectors == nil {
+		return []models.SelectorSource{}, nil
+	}
+
+	return selectors, nil
 }
 
 // GetForm retrieves a form by its ID

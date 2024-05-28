@@ -1,5 +1,13 @@
 import { Address } from './Event';
 
+export type SelectorSource = {
+  _id: string;
+  description: string;
+  sourceName: string;
+  lastUpdated: string;
+  options: string[];
+};
+
 export type EmailValidationOptions = {
   isEmail?: boolean;
   requireDomain?: string[];
@@ -19,7 +27,7 @@ export type AdditionalOptions = {
   defaultTimezone?: string;
   showTimezone?: boolean;
   isPassword?: boolean;
-  useDefaultValuesFrom?: 'mlh-schools' | undefined;
+  useDefaultValuesFrom?: string | undefined;
   ifInputHTMLKeepHTML?: boolean; // for richtext
 };
 

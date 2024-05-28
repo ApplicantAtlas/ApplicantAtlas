@@ -61,7 +61,10 @@ const RichText: React.FC<RichTextProps> = ({
                 {field.question}{' '}
                 {field.required && <span className="text-error">*</span>}
                 {field.description && (
-                  <div className="tooltip" data-tip={field.description}>
+                  <div
+                    className="tooltip overflow-x-visible"
+                    data-tip={field.description}
+                  >
                     <InformationIcon className="h-4 w-4" />
                   </div>
                 )}

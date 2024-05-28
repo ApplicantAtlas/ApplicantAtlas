@@ -165,8 +165,10 @@ const RenderFormField = (
 ) => {
   // Handle additionalOptions
   if (field.additionalOptions?.useDefaultValuesFrom) {
-    field.options =
-      fetchedOptions[field.additionalOptions.useDefaultValuesFrom];
+    field = {
+      ...field,
+      options: fetchedOptions[field.additionalOptions.useDefaultValuesFrom],
+    };
   }
 
   switch (field.type) {

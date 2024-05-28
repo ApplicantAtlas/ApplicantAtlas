@@ -11,7 +11,8 @@ This section is for modeling the default values for Selectors when we fetch data
 Like MLH's School List
 */
 type SelectorSource struct {
-	ID          primitive.ObjectID `bson:"_id" mongoPreventOverride:"true"`
+	ID          primitive.ObjectID `bson:"_id" json:"id" mongoPreventOverride:"true"`
+	Description string             `bson:"description" json:"description"`
 	SourceName  string             `bson:"sourceName" json:"sourceName"`
 	LastUpdated time.Time          `bson:"lastUpdated" json:"lastUpdated"`
 	Options     []string           `bson:"options" json:"options"`
