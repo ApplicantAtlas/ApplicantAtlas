@@ -1,48 +1,20 @@
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
+import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 
 import AuthService from '@/services/AuthService';
+import { ToastType, useToast } from '@/components/Toast/ToastContext';
 
 const LogoutPage = () => {
-  const [isLoggedOut, setIsLoggedOut] = useState(false);
   const router = useRouter();
+  const { showToast } = useToast();
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      router.push('/');
-    }, 3000);
-    return () => clearTimeout(timer);
-  }, [router]);
+    AuthService.logout();
+    showToast("You've been logged out! Please log back in", ToastType.Warning);
+    router.push('/');
+  }, [router, showToast]);
 
-  useEffect(() => {
-    if (AuthService.isAuth()) {
-      handleLogout();
-    } else {
-      setIsLoggedOut(true);
-    }
-  }, []);
-
-  const handleLogout = async () => {
-    await AuthService.logout();
-    setIsLoggedOut(true);
-  };
-
-  if (isLoggedOut) {
-    return (
-      <div>
-        <p>
-          You have been logged out. Redirecting you to the home page, or click
-          below.
-        </p>
-        <Link href="/">
-          <span>Go to Home</span>
-        </Link>
-      </div>
-    );
-  }
-
-  return <p>Logging you out...</p>;
+  return <p>Logging out...</p>;
 };
 
 export default LogoutPage;
