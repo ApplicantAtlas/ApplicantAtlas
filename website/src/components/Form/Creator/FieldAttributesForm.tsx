@@ -15,6 +15,7 @@ interface FieldAttributesFormProps {
   initialAttributes?: FormField;
 }
 
+const defaultSelectorMessage = "I'd like to define my own options";
 const isSelectorType = (fieldType: FormFieldType): boolean => {
   return (
     fieldType === 'select' ||
@@ -63,10 +64,9 @@ const FieldAttributesForm: React.FC<FieldAttributesFormProps> = ({
         case 'customselect':
         case 'custommultiselect':
         case 'radio':
-          const defaultMessage = "I'd like to define my own options";
           const mappedNames =
             selectorSources?.map((source) => source.sourceName) || [];
-          const defaultFirst = [defaultMessage, ...mappedNames];
+          const defaultFirst = [defaultSelectorMessage, ...mappedNames];
 
           attrs.push({
             key: 'selectorSource',
@@ -76,7 +76,7 @@ const FieldAttributesForm: React.FC<FieldAttributesFormProps> = ({
             type: 'select',
             required: false,
             options: defaultFirst,
-            defaultOptions: [defaultMessage],
+            defaultOptions: [defaultSelectorMessage],
           });
 
           attrs.push({
@@ -177,6 +177,11 @@ const FieldAttributesForm: React.FC<FieldAttributesFormProps> = ({
       }
     }
 
+    let selectorSource = formData.selectorSource;
+    if (selectorSource === defaultSelectorMessage) {
+      selectorSource = undefined;
+    }
+
     const newField: FormField = {
       question: formData.question,
       type: type,
@@ -191,7 +196,7 @@ const FieldAttributesForm: React.FC<FieldAttributesFormProps> = ({
         dateAndTimestampFromTimeField: formData.dateAndTimestampFromTimeField,
       },
       additionalOptions: {
-        useDefaultValuesFrom: formData.selectorSource,
+        useDefaultValuesFrom: selectorSource,
       },
       required: formData.required === true,
       isInternal: formData.isInternal === true,
