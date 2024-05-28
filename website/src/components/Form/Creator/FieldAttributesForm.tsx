@@ -72,11 +72,16 @@ const FieldAttributesForm: React.FC<FieldAttributesFormProps> = ({
             key: 'selectorSource',
             question: 'Selector Source',
             description:
-              "If you want to use a predefined source of options please select it here. If you don't see the source you want, select 'I'd like to define my own options' and you can enter them below.",
+              "If you want to use a predefined source of options please select it here. If you don't see the source you want, select '" +
+              defaultSelectorMessage +
+              "' and you can enter them below.",
             type: 'select',
             required: false,
             options: defaultFirst,
-            defaultOptions: [defaultSelectorMessage],
+            defaultOptions: initialAttributes?.additionalOptions
+              ?.useDefaultValuesFrom
+              ? [initialAttributes?.additionalOptions?.useDefaultValuesFrom]
+              : [defaultSelectorMessage],
           });
 
           attrs.push({

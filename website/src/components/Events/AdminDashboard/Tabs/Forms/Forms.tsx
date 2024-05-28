@@ -86,7 +86,7 @@ const Forms: React.FC<FormProps> = ({}) => {
       <>
         <SelectForm action={selectedFormAction} onDelete={onDeletedForm} />
         <button
-          className="btn btn-error"
+          className="btn btn-error mt-4"
           onClick={() => {
             dispatch(resetFormState());
           }}
