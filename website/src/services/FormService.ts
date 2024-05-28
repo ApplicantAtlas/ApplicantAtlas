@@ -6,7 +6,7 @@ import api from './AxiosInterceptor';
 
 export const getSelectorOptions = async (name: string): Promise<string[]> => {
   const response = await api.get<string[]>(
-    `/forms/selector_sources/value/${name}`,
+    `/forms/selector_sources/values/${name}`,
   );
   return response.data;
 };

@@ -27,7 +27,7 @@ export type AdditionalOptions = {
   defaultTimezone?: string;
   showTimezone?: boolean;
   isPassword?: boolean;
-  useDefaultValuesFrom?: 'mlh-schools' | undefined;
+  useDefaultValuesFrom?: string | undefined;
   ifInputHTMLKeepHTML?: boolean; // for richtext
 };
 
