@@ -1,9 +1,11 @@
-import { FieldValue, FormField } from "@/types/models/Form";
-import React, { useState, useEffect, useRef } from "react";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
-import InformationIcon from "@/components/Icons/InformationIcon";
-import TextArea from "./TextArea";
+import React, { useState, useEffect, useRef } from 'react';
+import ReactQuill from 'react-quill';
+
+import { FieldValue, FormField } from '@/types/models/Form';
+import 'react-quill/dist/quill.snow.css';
+import InformationIcon from '@/components/Icons/InformationIcon';
+
+import TextArea from './TextArea';
 
 interface RichTextProps {
   field: FormField;
@@ -11,7 +13,7 @@ interface RichTextProps {
   onChange: (
     key: string,
     value: FieldValue,
-    errorString?: string | undefined
+    errorString?: string | undefined,
   ) => void;
 }
 
@@ -53,10 +55,10 @@ const RichText: React.FC<RichTextProps> = ({
         />
       ) : (
         <>
-          {field.question !== "" && (
+          {field.question !== '' && (
             <label className="label">
               <span className="label-text">
-                {field.question}{" "}
+                {field.question}{' '}
                 {field.required && <span className="text-error">*</span>}
                 {field.description && (
                   <div className="tooltip" data-tip={field.description}>
@@ -83,7 +85,7 @@ const RichText: React.FC<RichTextProps> = ({
           }}
           className="btn btn-xs"
         >
-          Switch to {isHtmlMode ? "Rich Text" : "HTML"} Mode
+          Switch to {isHtmlMode ? 'Rich Text' : 'HTML'} Mode
         </button>
       </div>
     </div>

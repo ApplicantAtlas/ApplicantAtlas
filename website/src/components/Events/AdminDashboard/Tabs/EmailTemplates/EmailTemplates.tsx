@@ -1,23 +1,30 @@
-import LoadingSpinner from "@/components/Loading/LoadingSpinner";
-import { GetEmailTemplates } from "@/services/EmailTemplateService";
-import { EventModel } from "@/types/models/Event";
-import React, { useEffect, useState } from "react";
-import CreateNewEmailTemplate from "./CreateNewEmailTemplate";
-import ListEmailTemplates from "./ListEmailTemplates";
-import { EmailTemplate } from "@/types/models/EmailTemplate";
-import SelectEmailTemplate from "./SelectEmailTemplate";
-import { AppDispatch, RootState } from "@/store";
-import { useDispatch, useSelector } from "react-redux";
-import { resetEmailTemplateState } from "@/store/slices/emailTemplateSlice";
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
+import LoadingSpinner from '@/components/Loading/LoadingSpinner';
+import { GetEmailTemplates } from '@/services/EmailTemplateService';
+import { EmailTemplate } from '@/types/models/EmailTemplate';
+import { AppDispatch, RootState } from '@/store';
+import { resetEmailTemplateState } from '@/store/slices/emailTemplateSlice';
+
+import CreateNewEmailTemplate from './CreateNewEmailTemplate';
+import ListEmailTemplates from './ListEmailTemplates';
+import SelectEmailTemplate from './SelectEmailTemplate';
 
 interface EmailTemplatesProps {}
 
-const EmailTemplates: React.FC<EmailTemplatesProps> = ({ }) => {
+const EmailTemplates: React.FC<EmailTemplatesProps> = ({}) => {
   const dispatch: AppDispatch = useDispatch();
-  const selectedEmailTemplate = useSelector((state: RootState) => state.emailTemplate.emailTemplateState);
-  const eventDetails = useSelector((state: RootState) => state.event.eventDetails);
+  const selectedEmailTemplate = useSelector(
+    (state: RootState) => state.emailTemplate.emailTemplateState,
+  );
+  const eventDetails = useSelector(
+    (state: RootState) => state.event.eventDetails,
+  );
 
-  const [emailTemplates, setEmailTemplates] = useState<EmailTemplate[] | undefined>();
+  const [emailTemplates, setEmailTemplates] = useState<
+    EmailTemplate[] | undefined
+  >();
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [refresh, setRefresh] = useState(false);
 
@@ -29,12 +36,12 @@ const EmailTemplates: React.FC<EmailTemplatesProps> = ({ }) => {
         })
         .catch(() => {});
     }
-  }, [refresh])
+  }, [refresh, eventDetails]);
 
   if (eventDetails === null || emailTemplates === undefined) {
     return (
       <>
-      <p>Loading...</p>
+        <p>Loading...</p>
         <LoadingSpinner />
       </>
     );
@@ -60,9 +67,7 @@ const EmailTemplates: React.FC<EmailTemplatesProps> = ({ }) => {
   if (showCreateForm) {
     return (
       <>
-        <CreateNewEmailTemplate
-          onSubmit={onNewEmailTemplateCreated}
-        />
+        <CreateNewEmailTemplate onSubmit={onNewEmailTemplateCreated} />
         <button
           className="btn btn-error mt-4"
           onClick={() => {
@@ -78,14 +83,12 @@ const EmailTemplates: React.FC<EmailTemplatesProps> = ({ }) => {
   const onDeletedTemplate = () => {
     setRefresh(true);
     dispatch(resetEmailTemplateState());
-  }
+  };
 
   if (selectedEmailTemplate !== null) {
     return (
       <>
-        <SelectEmailTemplate
-          onDelete={onDeletedTemplate}
-        />
+        <SelectEmailTemplate onDelete={onDeletedTemplate} />
         <button
           className="btn btn-error mt-4"
           onClick={() => {
@@ -110,7 +113,7 @@ const EmailTemplates: React.FC<EmailTemplatesProps> = ({ }) => {
   return (
     <>
       {NewEmailTemplateButton}
-      <ListEmailTemplates templates={emailTemplates}/>
+      <ListEmailTemplates templates={emailTemplates} />
     </>
   );
 };

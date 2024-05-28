@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
-import { getUserFull, getJWTUser } from "@/services/UserService";
-import { User } from "@/types/models/User";
+import { useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
+
+import { getUserFull, getJWTUser } from '@/services/UserService';
+import { User } from '@/types/models/User';
 
 export interface MenuItem {
   label: string;
@@ -35,7 +36,7 @@ export interface HeaderProps {
 
 export default function Header({
   menuItems,
-  brandName = "ApplicantAtlas",
+  brandName = 'ApplicantAtlas',
   customStyles = {},
   MenuIconComponent = MenuIcon,
   CloseIconComponent = CloseIcon,
@@ -48,7 +49,7 @@ export default function Header({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [user, setUser] = useState<User | null>(null);
 
-  const handleBlur = (event: React.FocusEvent<HTMLDivElement>) => {
+  const handleBlur = (_: React.FocusEvent<HTMLDivElement>) => {
     // Delay the check to allow for the new active element to gain focus
     setTimeout(() => {
       // Check if the currently active element is outside the dropdown
@@ -73,12 +74,12 @@ export default function Header({
 
   const userSubmenuItems: MenuItem[] = [
     {
-      label: "Settings",
-      href: "/user/settings",
+      label: 'Settings',
+      href: '/user/settings',
     },
     {
-      label: "Logout",
-      href: "/logout",
+      label: 'Logout',
+      href: '/logout',
     },
   ];
 
@@ -96,8 +97,8 @@ export default function Header({
 
       <div
         className={`fixed inset-y-0 left-0 transform ${
-          isMenuOpen ? "translate-x-0" : "-translate-x-full"
-        } w-64 z-30 transition duration-300 ease-in-out bg-white ${showShadow ? "shadow-md" : ""} lg:hidden ${
+          isMenuOpen ? 'translate-x-0' : '-translate-x-full'
+        } w-64 z-30 transition duration-300 ease-in-out bg-white ${showShadow ? 'shadow-md' : ''} lg:hidden ${
           customStyles.sidebar
         }`}
       >
@@ -166,7 +167,9 @@ export default function Header({
       </div>
 
       {/* Main Header */}
-      <header className={`bg-white ${showShadow ? "shadow-md" : ""} ${customStyles.header}`}>
+      <header
+        className={`bg-white ${showShadow ? 'shadow-md' : ''} ${customStyles.header}`}
+      >
         <nav className="container mx-auto px-6 py-4 flex justify-between items-center">
           {/* Brand Name for Desktop */}
           <Link href="/">
@@ -233,7 +236,7 @@ export default function Header({
                     role="button"
                     className="btn btn-ghost btn-circle avatar online placeholder cursor-pointer focus:outline-none"
                     onKeyDown={(event) =>
-                      event.key === "Enter" && setDropdownOpen(!dropdownOpen)
+                      event.key === 'Enter' && setDropdownOpen(!dropdownOpen)
                     }
                   >
                     <div className="bg-neutral text-neutral-content rounded-full w-10">

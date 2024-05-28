@@ -1,8 +1,10 @@
 // AuthService.ts
-import { AxiosResponse } from "axios";
-import api from "./AxiosInterceptor";
-import { User } from "@/types/models/User";
-import {jwtDecode} from 'jwt-decode';
+import { AxiosResponse } from 'axios';
+import { jwtDecode } from 'jwt-decode';
+
+import { User } from '@/types/models/User';
+
+import api from './AxiosInterceptor';
 
 const register = async (u: User): Promise<AxiosResponse> => {
   return api.post(`/auth/register`, u);
@@ -25,23 +27,25 @@ const login = (u: User): Promise<User> => {
 };
 
 const logout = (): void => {
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  localStorage.removeItem('token');
 };
 
 // Delete self
 const deleteUser = async (): Promise<AxiosResponse> => {
-    return api.delete(`/auth/delete`);
+  return api.delete(`/auth/delete`);
 };
 
 const isAuth = (): boolean => {
   return Boolean(localStorage.getItem('token'));
 };
 
-export default {
+const authActions = {
   register,
   login,
   logout,
   deleteUser,
-  isAuth
+  isAuth,
 };
+
+export default authActions;

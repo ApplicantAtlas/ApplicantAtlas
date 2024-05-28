@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { FormField, FieldValue } from "@/types/models/Form";
-import InformationIcon from "@/components/Icons/InformationIcon";
+import React, { useEffect, useState } from 'react';
+
+import { FormField, FieldValue } from '@/types/models/Form';
+import InformationIcon from '@/components/Icons/InformationIcon';
 
 type RadioProps = {
   field: FormField;
@@ -9,7 +10,7 @@ type RadioProps = {
 
 const Radio: React.FC<RadioProps> = ({ field, onChange }) => {
   const [selectedOption, setSelectedOption] = useState<string | undefined>(
-    field.defaultOptions?.[0]
+    field.defaultOptions?.[0],
   );
 
   useEffect(() => {
@@ -28,16 +29,19 @@ const Radio: React.FC<RadioProps> = ({ field, onChange }) => {
 
   return (
     <div className="form-control">
-      {field.question !== "" && (
-      <label className="label">
-        <span className="label-text">
-          {field.question}{" "}
-          {field.required && <span className="text-error">*</span>}
-          {field.description && (<div className="tooltip" data-tip={field.description}>
-              <InformationIcon className="h-4 w-4" />
-            </div>)}
-        </span>
-      </label>)}
+      {field.question !== '' && (
+        <label className="label">
+          <span className="label-text">
+            {field.question}{' '}
+            {field.required && <span className="text-error">*</span>}
+            {field.description && (
+              <div className="tooltip" data-tip={field.description}>
+                <InformationIcon className="h-4 w-4" />
+              </div>
+            )}
+          </span>
+        </label>
+      )}
       <div className="flex flex-col space-y-2">
         {field.options?.map((option, index) => (
           <label key={index} className="label cursor-pointer">

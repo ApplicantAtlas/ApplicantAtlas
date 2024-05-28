@@ -2,9 +2,10 @@ import React, { useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import type { Metadata } from 'next';
+import { useRouter } from 'next/router';
+
 import AuthService from '@/services/AuthService';
 import { eventEmitter } from '@/events/EventEmitter';
-import { useRouter } from 'next/router';
 import FormBuilder from '@/components/Form/FormBuilder';
 import { FormStructure } from '@/types/models/Form';
 import { User } from '@/types/models/User';
@@ -43,7 +44,7 @@ const LoginPage = () => {
         required: true,
         additionalOptions: {
           isPassword: true,
-        }
+        },
       },
     ],
   };
@@ -69,7 +70,11 @@ const LoginPage = () => {
       </Head>
 
       <div className="w-full max-w-xs">
-        <FormBuilder formStructure={loginFormStructure} submissionFunction={handleSubmit} buttonText='Login' />
+        <FormBuilder
+          formStructure={loginFormStructure}
+          submissionFunction={handleSubmit}
+          buttonText="Login"
+        />
         <Link href="/register">
           <div className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800 cursor-pointer">
             Sign Up

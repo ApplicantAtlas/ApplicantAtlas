@@ -36,13 +36,13 @@ export type Address = {
 };
 
 // Type guard for Address
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isAddress(value: any): value is Address {
   return (
-    typeof value === "object" &&
+    typeof value === 'object' &&
     value !== null &&
-    typeof value.streetAddress === "string" &&
-    typeof value.city === "string" &&
-    typeof value.zipCode === "string"
+    typeof value.streetAddress === 'string' &&
+    typeof value.city === 'string' &&
+    typeof value.zipCode === 'string'
   );
 }
-

@@ -1,9 +1,11 @@
-import { EmailTemplate } from "@/types/models/EmailTemplate";
-import { AxiosResponse } from "axios";
-import api from "./AxiosInterceptor";
+import { AxiosResponse } from 'axios';
+
+import { EmailTemplate } from '@/types/models/EmailTemplate';
+
+import api from './AxiosInterceptor';
 
 export const CreateEmailTemplate = async (
-  emailTemplate: EmailTemplate
+  emailTemplate: EmailTemplate,
 ): Promise<
   AxiosResponse<{
     id: string;
@@ -13,7 +15,7 @@ export const CreateEmailTemplate = async (
 };
 
 export const GetEmailTemplates = async (
-  eventID: string
+  eventID: string,
 ): Promise<
   AxiosResponse<{
     email_templates: EmailTemplate[];
@@ -23,13 +25,13 @@ export const GetEmailTemplates = async (
 };
 
 export const UpdateEmailTemplate = async (
-  emailTemplate: EmailTemplate
+  emailTemplate: EmailTemplate,
 ): Promise<AxiosResponse> => {
   return api.put(`/email_templates/${emailTemplate.id}`, emailTemplate);
 };
 
 export const DeleteEmailTemplate = async (
-  emailTemplateID: string
+  emailTemplateID: string,
 ): Promise<AxiosResponse> => {
   return api.delete(`/email_templates/${emailTemplateID}`);
 };

@@ -1,5 +1,6 @@
-import { FormStructure } from '@/types/models/Form';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+
+import { FormStructure } from '@/types/models/Form';
 
 interface FormState {
   formDetails: FormStructure | null;
@@ -25,5 +26,6 @@ const formSlice = createSlice({
   },
 });
 
-export const { setFormDetails, updateFormDetails, resetFormState } = formSlice.actions;
+export const { setFormDetails, updateFormDetails, resetFormState } =
+  formSlice.actions;
 export default formSlice.reducer;

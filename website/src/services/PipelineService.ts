@@ -1,10 +1,12 @@
-import { PipelineConfiguration } from "@/types/models/Pipeline";
-import api from "./AxiosInterceptor";
-import { AxiosResponse } from "axios";
-import { PipelineRun } from "@/types/models/PipelineRun";
+import { AxiosResponse } from 'axios';
+
+import { PipelineConfiguration } from '@/types/models/Pipeline';
+import { PipelineRun } from '@/types/models/PipelineRun';
+
+import api from './AxiosInterceptor';
 
 export const CreatePipeline = async (
-  pipeline: PipelineConfiguration
+  pipeline: PipelineConfiguration,
 ): Promise<
   AxiosResponse<{
     id: string;
@@ -14,7 +16,7 @@ export const CreatePipeline = async (
 };
 
 export const GetPipelines = async (
-  eventID: string
+  eventID: string,
 ): Promise<
   AxiosResponse<{
     pipelines: PipelineConfiguration[];
@@ -24,13 +26,13 @@ export const GetPipelines = async (
 };
 
 export const UpdatePipeline = async (
-  pipeline: PipelineConfiguration
+  pipeline: PipelineConfiguration,
 ): Promise<AxiosResponse> => {
   return api.put(`/pipelines/${pipeline.id}`, pipeline);
 };
 
 export const DeletePipeline = async (
-  pipelineID: string
+  pipelineID: string,
 ): Promise<AxiosResponse> => {
   return api.delete(`/pipelines/${pipelineID}`);
 };
@@ -39,7 +41,7 @@ export const DeletePipeline = async (
 export const GetPipelineRuns = async (
   pipelineID: string,
   page?: number,
-  pageSize?: number
+  pageSize?: number,
 ): Promise<
   AxiosResponse<{
     runs: PipelineRun[];
@@ -47,5 +49,7 @@ export const GetPipelineRuns = async (
     pageSize: number;
   }>
 > => {
-  return api.get(`/pipelines/${pipelineID}/runs?page=${page}&pageSize=${pageSize}`);
-}
+  return api.get(
+    `/pipelines/${pipelineID}/runs?page=${page}&pageSize=${pageSize}`,
+  );
+};

@@ -1,26 +1,36 @@
-import LoadingSpinner from "@/components/Loading/LoadingSpinner";
-import { GetPipelines } from "@/services/PipelineService";
-import { EventModel } from "@/types/models/Event";
-import { PipelineConfiguration } from "@/types/models/Pipeline";
-import React, { useEffect, useState } from "react";
-import CreateNewPipeline from "./CreateNewPipeline";
-import SelectPipeline from "./SelectPipeline";
-import ListPipelines from "./ListPipelines";
-import { AppDispatch, RootState } from "@/store";
-import { useDispatch, useSelector } from "react-redux";
-import { resetPipelineState, setPipelineConfiguration } from "@/store/slices/pipelineSlice";
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
-interface PipelinesProps { }
+import LoadingSpinner from '@/components/Loading/LoadingSpinner';
+import { GetPipelines } from '@/services/PipelineService';
+import { EventModel } from '@/types/models/Event';
+import { PipelineConfiguration } from '@/types/models/Pipeline';
+import { AppDispatch, RootState } from '@/store';
+import {
+  resetPipelineState,
+  setPipelineConfiguration,
+} from '@/store/slices/pipelineSlice';
 
-const Pipelines: React.FC<PipelinesProps> = ({ }) => {
+import CreateNewPipeline from './CreateNewPipeline';
+import SelectPipeline from './SelectPipeline';
+import ListPipelines from './ListPipelines';
+
+interface PipelinesProps {}
+
+const Pipelines: React.FC<PipelinesProps> = ({}) => {
   const dispatch: AppDispatch = useDispatch();
-  const selectedPipeline = useSelector((state: RootState) => state.pipeline.pipelineState);
-  const eventDetails = useSelector((state: RootState) => state.event.eventDetails);
+  const selectedPipeline = useSelector(
+    (state: RootState) => state.pipeline.pipelineState,
+  );
+  const eventDetails = useSelector(
+    (state: RootState) => state.event.eventDetails,
+  );
 
-  const [pipelines, setPipelines] = useState<PipelineConfiguration[] | undefined>();
+  const [pipelines, setPipelines] = useState<
+    PipelineConfiguration[] | undefined
+  >();
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [refresh, setRefresh] = useState(false);
-
 
   useEffect(() => {
     if (eventDetails !== null) {
@@ -30,12 +40,12 @@ const Pipelines: React.FC<PipelinesProps> = ({ }) => {
         })
         .catch(() => {});
     }
-  }, [refresh])
+  }, [refresh]);
 
   if (eventDetails === null || pipelines === undefined) {
     return (
       <>
-      <p>Loading...</p>
+        <p>Loading...</p>
         <LoadingSpinner />
       </>
     );
@@ -61,10 +71,7 @@ const Pipelines: React.FC<PipelinesProps> = ({ }) => {
   if (showCreateForm) {
     return (
       <>
-        <CreateNewPipeline
-          eventDetails={eventDetails}
-          onSubmit={onNewPipelineCreated}
-        />
+        <CreateNewPipeline onSubmit={onNewPipelineCreated} />
         <button
           className="btn btn-error mt-4"
           onClick={() => {
@@ -80,15 +87,12 @@ const Pipelines: React.FC<PipelinesProps> = ({ }) => {
   const onDeletedForm = () => {
     setRefresh(true);
     dispatch(resetPipelineState());
-  }
+  };
 
   if (selectedPipeline !== null) {
     return (
       <>
-        <SelectPipeline
-          eventDetails={eventDetails}
-          onDelete={onDeletedForm}
-        />
+        <SelectPipeline onDelete={onDeletedForm} />
         <button
           className="btn btn-error mt-4"
           onClick={() => {
@@ -109,7 +113,6 @@ const Pipelines: React.FC<PipelinesProps> = ({ }) => {
       </>
     );
   }
-
 
   return (
     <>

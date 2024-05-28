@@ -4,7 +4,7 @@ interface ElipsesIconProps {
 }
 
 // From heroicons.com
-const ElipsesIcon = ({ className = "w-6 h-6", onClick }: ElipsesIconProps) => {
+const ElipsesIcon = ({ className = 'w-6 h-6', onClick }: ElipsesIconProps) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

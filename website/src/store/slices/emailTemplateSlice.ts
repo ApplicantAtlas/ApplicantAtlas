@@ -1,6 +1,6 @@
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { EmailTemplate } from '@/types/models/EmailTemplate';
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface EmailTemplateState {
   emailTemplateState: EmailTemplate | null;
@@ -18,7 +18,10 @@ const formSlice = createSlice({
       state.emailTemplateState = action.payload;
     },
     updateEmailTemplateState(state, action: PayloadAction<any>) {
-      state.emailTemplateState = { ...state.emailTemplateState, ...action.payload };
+      state.emailTemplateState = {
+        ...state.emailTemplateState,
+        ...action.payload,
+      };
     },
     resetEmailTemplateState(state) {
       state.emailTemplateState = null;
@@ -26,5 +29,9 @@ const formSlice = createSlice({
   },
 });
 
-export const { setEmailTemplateState, updateEmailTemplateState, resetEmailTemplateState } = formSlice.actions;
+export const {
+  setEmailTemplateState,
+  updateEmailTemplateState,
+  resetEmailTemplateState,
+} = formSlice.actions;
 export default formSlice.reducer;

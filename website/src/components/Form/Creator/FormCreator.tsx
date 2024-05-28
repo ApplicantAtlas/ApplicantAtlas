@@ -1,9 +1,17 @@
-import React, { useState } from "react";
-import { FormStructure, FormField, FormFieldType, FieldValidation, EmailValidationOptions } from "@/types/models/Form";
-import FormFieldModal from "./FormFieldModal";
-import FieldAttributesForm from "./FieldAttributesForm";
-import { v4 as uuidv4 } from "uuid";
-import InformationIcon from "@/components/Icons/InformationIcon";
+import React, { useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
+
+import {
+  FormStructure,
+  FormField,
+  FormFieldType,
+  FieldValidation,
+  EmailValidationOptions,
+} from '@/types/models/Form';
+import InformationIcon from '@/components/Icons/InformationIcon';
+
+import FormFieldModal from './FormFieldModal';
+import FieldAttributesForm from './FieldAttributesForm';
 
 type FormCreatorProps = {
   submissionFunction: (formStructure: FormStructure) => void;
@@ -17,13 +25,13 @@ const FormCreator: React.FC<FormCreatorProps> = ({
   submissionButtonText,
 }) => {
   const [userFormStructure, setUserFormStructure] = useState<FormStructure>(
-    defaultFormStructure || { attrs: [] }
+    defaultFormStructure || { attrs: [] },
   );
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedFieldType, setSelectedFieldType] =
     useState<FormFieldType | null>(null);
   const [editingFieldIndex, setEditingFieldIndex] = useState<number | null>(
-    null
+    null,
   );
 
   const handleFieldSelect = (fieldType: string) => {
@@ -63,14 +71,14 @@ const FormCreator: React.FC<FormCreatorProps> = ({
     setUserFormStructure({ ...userFormStructure, attrs: updatedFields });
   };
 
-  const moveField = (index: number, direction: "up" | "down") => {
+  const moveField = (index: number, direction: 'up' | 'down') => {
     const newFields = [...userFormStructure.attrs];
-    if (direction === "up" && index > 0) {
+    if (direction === 'up' && index > 0) {
       [newFields[index - 1], newFields[index]] = [
         newFields[index],
         newFields[index - 1],
       ];
-    } else if (direction === "down" && index < newFields.length - 1) {
+    } else if (direction === 'down' && index < newFields.length - 1) {
       [newFields[index + 1], newFields[index]] = [
         newFields[index],
         newFields[index + 1],
@@ -79,20 +87,28 @@ const FormCreator: React.FC<FormCreatorProps> = ({
     setUserFormStructure({ ...userFormStructure, attrs: newFields });
   };
 
-  const humanReadableFieldTypeToDatabaseFormat = (attr: FormField): FormField => {
+  const humanReadableFieldTypeToDatabaseFormat = (
+    attr: FormField,
+  ): FormField => {
     switch (attr.type as string) {
-      case "email":
+      case 'email':
         // TODO: we can add additional validation to this
-        return { ...attr, type: "text", additionalValidation: { isEmail: 
-          { isEmail: true } as EmailValidationOptions
-        } as FieldValidation };
+        return {
+          ...attr,
+          type: 'text',
+          additionalValidation: {
+            isEmail: { isEmail: true } as EmailValidationOptions,
+          } as FieldValidation,
+        };
       default:
         return attr;
     }
-  }
+  };
 
   const handleSubmit = () => {
-    userFormStructure.attrs = userFormStructure.attrs.map(humanReadableFieldTypeToDatabaseFormat);
+    userFormStructure.attrs = userFormStructure.attrs.map(
+      humanReadableFieldTypeToDatabaseFormat,
+    );
     submissionFunction(userFormStructure);
   };
 
@@ -110,27 +126,27 @@ const FormCreator: React.FC<FormCreatorProps> = ({
                 <strong>Type:</strong> {field.type}
               </p>
               <p>
-                <strong>Required:</strong> {field.required ? "Yes" : "No"}
+                <strong>Required:</strong> {field.required ? 'Yes' : 'No'}
               </p>
               {field.defaultValue && (
                 <p>
-                  <strong>Default Value:</strong>{" "}
-                  {(field.defaultValue as string) || ""}{" "}
+                  <strong>Default Value:</strong>{' '}
+                  {(field.defaultValue as string) || ''}{' '}
                 </p>
               )}
               {field.options && (
                 <p>
-                  <strong>Options:</strong> {field.options.join(", ")}
+                  <strong>Options:</strong> {field.options.join(', ')}
                 </p>
               )}
-              {field.isInternal && (  
+              {field.isInternal && (
                 <p>
                   <strong>Internal Field: </strong>
                   Yes
                   <span
                     className="tooltip"
                     data-tip={
-                      "This is an internal field, it will not be shown to users submitting the form."
+                      'This is an internal field, it will not be shown to users submitting the form.'
                     }
                   >
                     <InformationIcon className="h-3 w-3" />
@@ -144,13 +160,13 @@ const FormCreator: React.FC<FormCreatorProps> = ({
                 Edit
               </button>
               <button
-                onClick={() => moveField(index, "up")}
+                onClick={() => moveField(index, 'up')}
                 className="btn btn-secondary mr-2"
               >
                 Move Up
               </button>
               <button
-                onClick={() => moveField(index, "down")}
+                onClick={() => moveField(index, 'down')}
                 className="btn btn-secondary mr-2"
               >
                 Move Down
@@ -194,7 +210,7 @@ const FormCreator: React.FC<FormCreatorProps> = ({
       )}
 
       <button onClick={handleSubmit} className="btn btn-secondary mt-4">
-        {submissionButtonText || "Create Form"}
+        {submissionButtonText || 'Create Form'}
       </button>
     </div>
   );

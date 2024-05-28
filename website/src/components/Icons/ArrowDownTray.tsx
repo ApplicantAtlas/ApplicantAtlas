@@ -5,7 +5,7 @@ interface ArrowDownTrayProps {
 
 // From heroicons.com
 const ArrowDownTray = ({
-  className = "w-6 h-6",
+  className = 'w-6 h-6',
   onClick,
 }: ArrowDownTrayProps) => {
   return (

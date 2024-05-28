@@ -1,20 +1,18 @@
-import { FormAllowedSubmitter } from "./Form";
-
-export type Comparison = "eq" | "neq";
+export type Comparison = 'eq' | 'neq';
 
 export const COMPARISON_VALUES: Record<Comparison, string> = {
-  eq: "Equals",
-  neq: "Not Equals",
-}
+  eq: 'Equals',
+  neq: 'Not Equals',
+};
 
 export type PipelineEvent = {
-    id?: string;
-    name: string;
-    type: string;
-    
-    formSubmission?: FormSubmission
-    fieldChange?: FieldChange
-}
+  id?: string;
+  name: string;
+  type: string;
+
+  formSubmission?: FormSubmission;
+  fieldChange?: FieldChange;
+};
 
 // Events
 export type FormSubmission = {
@@ -32,14 +30,14 @@ export type FieldChange = {
 
 // Actions
 export type PipelineAction = {
-    id?: string;
-    name: string;
-    type: string;
-    
-    sendEmail?: SendEmail
-    allowFormAccess?: AllowFormAccess
-    webhook?: Webhook
-}
+  id?: string;
+  name: string;
+  type: string;
+
+  sendEmail?: SendEmail;
+  allowFormAccess?: AllowFormAccess;
+  webhook?: Webhook;
+};
 
 export type SendEmail = {
   emailTemplateID: string;
@@ -48,7 +46,7 @@ export type SendEmail = {
 
 export type AllowFormAccessOptions = {
   expiresInHours?: number;
-}
+};
 
 export type AllowFormAccess = {
   toFormID: string;
@@ -58,7 +56,7 @@ export type AllowFormAccess = {
 
 export type Webhook = {
   url: string;
-  method: "POST" | "GET" | "PUT" | "DELETE";
+  method: 'POST' | 'GET' | 'PUT' | 'DELETE';
   headers: {
     [key: string]: string;
   };

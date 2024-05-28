@@ -1,12 +1,15 @@
-import FormBuilder from "@/components/Form/FormBuilder";
-import { ToastType, useToast } from "@/components/Toast/ToastContext";
-import { DeletePipeline, UpdatePipeline } from "@/services/PipelineService";
-import { AppDispatch, RootState } from "@/store";
-import { setPipelineConfiguration, updatePipelineConfiguration } from "@/store/slices/pipelineSlice";
-import { FormStructure } from "@/types/models/Form";
-import { PipelineConfiguration } from "@/types/models/Pipeline";
-import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
+import FormBuilder from '@/components/Form/FormBuilder';
+import { ToastType, useToast } from '@/components/Toast/ToastContext';
+import { DeletePipeline, UpdatePipeline } from '@/services/PipelineService';
+import { AppDispatch, RootState } from '@/store';
+import {
+  setPipelineConfiguration,
+  updatePipelineConfiguration,
+} from '@/store/slices/pipelineSlice';
+import { FormStructure } from '@/types/models/Form';
 
 interface PipelineSettingsProps {
   onDelete: () => void;
@@ -14,10 +17,12 @@ interface PipelineSettingsProps {
 
 const PipelineSettings: React.FC<PipelineSettingsProps> = ({ onDelete }) => {
   const dispatch: AppDispatch = useDispatch();
-  const pipeline = useSelector((state: RootState) => state.pipeline.pipelineState);
-  
+  const pipeline = useSelector(
+    (state: RootState) => state.pipeline.pipelineState,
+  );
+
   if (pipeline === null) {
-    return <p>Error selected pipeline null</p>
+    return <p>Error selected pipeline null</p>;
   }
 
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
@@ -28,7 +33,7 @@ const PipelineSettings: React.FC<PipelineSettingsProps> = ({ onDelete }) => {
 
     DeletePipeline(pipelineID)
       .then(() => {
-        showToast("Pipeline deleted successfully", ToastType.Success);
+        showToast('Pipeline deleted successfully', ToastType.Success);
         onDelete();
       })
       .catch(() => {});
@@ -45,13 +50,13 @@ const PipelineSettings: React.FC<PipelineSettingsProps> = ({ onDelete }) => {
         defaultValue: pipeline.name,
       },
       {
-        question: "Enable Pipeline",
-        description: "Enable the pipeline",
-        type: "checkbox",
-        key: "enabled",
+        question: 'Enable Pipeline',
+        description: 'Enable the pipeline',
+        type: 'checkbox',
+        key: 'enabled',
         required: false,
         defaultValue: pipeline.enabled,
-      }
+      },
     ],
   };
 
@@ -65,16 +70,20 @@ const PipelineSettings: React.FC<PipelineSettingsProps> = ({ onDelete }) => {
 
       UpdatePipeline(updatedPipeline)
         .then(() => {
-          showToast("Successfully updated pipeline!", ToastType.Success);
+          showToast('Successfully updated pipeline!', ToastType.Success);
           dispatch(setPipelineConfiguration(updatedPipeline));
         })
-        .catch((err) => {});
+        .catch((_) => {});
     }
   };
 
   return (
     <>
-      <FormBuilder formStructure={pipelineSettingstructure} submissionFunction={handleSubmit} buttonText='Save' />
+      <FormBuilder
+        formStructure={pipelineSettingstructure}
+        submissionFunction={handleSubmit}
+        buttonText="Save"
+      />
 
       <p>
         <button

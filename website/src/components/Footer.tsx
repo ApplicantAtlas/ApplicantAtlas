@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 const Footer: React.FC = () => {
   return (
@@ -14,10 +14,10 @@ const Footer: React.FC = () => {
           rel="noopener noreferrer"
           className="text-blue-600 hover:underline"
         >
-          {" "}
+          {' '}
           AGPLv3
         </a>
-        .{" "}
+        .{' '}
         <span>
           View on
           <a
@@ -26,7 +26,7 @@ const Footer: React.FC = () => {
             rel="noopener noreferrer"
             className="text-blue-600 hover:underline"
           >
-            {" "}
+            {' '}
             GitHub
           </a>
           .

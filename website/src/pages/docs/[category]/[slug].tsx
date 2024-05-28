@@ -1,9 +1,11 @@
-import { GetStaticPaths, GetStaticProps } from "next";
-import { useRouter } from "next/router";
-import { getDocData } from "../../../../lib/markdown";
-import DocLayout, { DocProps } from "../../../components/Docs/DocLayout";
-import path from "path";
-import fs from "fs";
+import path from 'path';
+import fs from 'fs';
+
+import { GetStaticPaths, GetStaticProps } from 'next';
+import { useRouter } from 'next/router';
+
+import { getDocData } from '../../../../lib/markdown';
+import DocLayout, { DocProps } from '../../../components/Docs/DocLayout';
 
 export default function DocPage({ docData }: DocProps) {
   const router = useRouter();
@@ -19,14 +21,17 @@ export default function DocPage({ docData }: DocProps) {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-    const categoriesDir = path.join(process.cwd(), "docs");
-    const categories = fs.readdirSync(categoriesDir)
-      .filter(item => fs.statSync(path.join(categoriesDir, item)).isDirectory());
+  const categoriesDir = path.join(process.cwd(), 'docs');
+  const categories = fs
+    .readdirSync(categoriesDir)
+    .filter((item) =>
+      fs.statSync(path.join(categoriesDir, item)).isDirectory(),
+    );
 
   const paths = categories.flatMap((category) => {
     const files = fs.readdirSync(path.join(categoriesDir, category));
     return files.map((file) => ({
-      params: { category, slug: file.replace(/\.md$/, "") },
+      params: { category, slug: file.replace(/\.md$/, '') },
     }));
   });
 
@@ -35,9 +40,9 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { category, slug } = params as { category: string; slug: string };
-  var s = slug;
-  if (slug === undefined || slug === "") {
-    s = "index";
+  let s = slug;
+  if (slug === undefined || slug === '') {
+    s = 'index';
   }
 
   const docData = await getDocData(category, s, s);

@@ -4,7 +4,7 @@ interface MagnifyingGlassIconProps {
 
 // From heroicons.com
 const MagnifyingGlassIcon = ({
-  className = "w-6 h-6",
+  className = 'w-6 h-6',
 }: MagnifyingGlassIconProps) => {
   return (
     <svg

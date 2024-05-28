@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
-import FormBuilder from "@/components/Form/FormBuilder";
-import { FormStructure, FormField, FormFieldType } from "@/types/models/Form";
+import React, { useEffect, useState } from 'react';
+
+import FormBuilder from '@/components/Form/FormBuilder';
+import { FormStructure, FormField, FormFieldType } from '@/types/models/Form';
 
 interface FieldAttributesFormProps {
   fieldType: FormFieldType;
@@ -24,8 +25,10 @@ const FieldAttributesForm: React.FC<FieldAttributesFormProps> = ({
     const newField: FormField = {
       question: formData.question,
       type: fieldType as FormFieldType,
-      key: initialAttributes?.key || "",
-      defaultValue: formData.defaultValue ? String(formData.defaultValue) : undefined,
+      key: initialAttributes?.key || '',
+      defaultValue: formData.defaultValue
+        ? String(formData.defaultValue)
+        : undefined,
       options: formData.options,
       additionalValidation: {
         min: formData.min,
@@ -42,92 +45,98 @@ const FieldAttributesForm: React.FC<FieldAttributesFormProps> = ({
 
   const createFormStructure = (
     fieldType: FormFieldType,
-    initialAttributes?: FormField
+    initialAttributes?: FormField,
   ): FormStructure => {
-    var attrs: FormField[] = [
+    const attrs: FormField[] = [
       {
-        key: "question",
-        question: "Field Label/Question",
-        type: "text",
+        key: 'question',
+        question: 'Field Label/Question',
+        type: 'text',
         required: true,
         defaultValue: initialAttributes?.question,
       },
     ];
 
     switch (fieldType) {
-        case "select":
-        case "multiselect":
-        case "customselect":
-        case "custommultiselect":
-        case "radio":
-            attrs.push({
-                key: "options",
-                question: "Options",
-                type: "custommultiselect",
-                required: true,
-                options: initialAttributes?.options,
-                defaultOptions: initialAttributes?.options,
-            });
-            break;
-        case "date":
-        case "timestamp":
-        case "number":
-            attrs.push({
-              key: "min",
-              question: "Minimum value/age",
-              type: "number",
-              required: false,
-              defaultValue: initialAttributes?.additionalValidation?.min,
-              description: "The minimum value that this form will accept. Either a number for type number, or age in years for date and timestamp"
-            })
-            attrs.push({
-              key: "max",
-              question: "Maximum value/age",
-              type: "number",
-              required: false,
-              defaultValue: initialAttributes?.additionalValidation?.max,
-              description: "The maximum value that this form will accept. Either a number for type number, or age in years for date and timestamp"
-            })
-            if (fieldType === "date" || fieldType === "timestamp") {
-              attrs.push({
-                key: "dateAndTimestampFromTimeField",
-                question: "From when should the age be calculated?",
-                type: "date",
-                required: false,
-                defaultValue: initialAttributes?.additionalValidation?.dateAndTimestampFromTimeField,
-                description: "If the age should be calculated from a specific date, such as the start of your hackathon enter that date here. If your event starts on 1/2/2022 and you want 18+ enter 1/2/2004."
-              })
-            }
-            break;
-        default:
-            break;
+      case 'select':
+      case 'multiselect':
+      case 'customselect':
+      case 'custommultiselect':
+      case 'radio':
+        attrs.push({
+          key: 'options',
+          question: 'Options',
+          type: 'custommultiselect',
+          required: true,
+          options: initialAttributes?.options,
+          defaultOptions: initialAttributes?.options,
+        });
+        break;
+      case 'date':
+      case 'timestamp':
+      case 'number':
+        attrs.push({
+          key: 'min',
+          question: 'Minimum value/age',
+          type: 'number',
+          required: false,
+          defaultValue: initialAttributes?.additionalValidation?.min,
+          description:
+            'The minimum value that this form will accept. Either a number for type number, or age in years for date and timestamp',
+        });
+        attrs.push({
+          key: 'max',
+          question: 'Maximum value/age',
+          type: 'number',
+          required: false,
+          defaultValue: initialAttributes?.additionalValidation?.max,
+          description:
+            'The maximum value that this form will accept. Either a number for type number, or age in years for date and timestamp',
+        });
+        if (fieldType === 'date' || fieldType === 'timestamp') {
+          attrs.push({
+            key: 'dateAndTimestampFromTimeField',
+            question: 'From when should the age be calculated?',
+            type: 'date',
+            required: false,
+            defaultValue:
+              initialAttributes?.additionalValidation
+                ?.dateAndTimestampFromTimeField,
+            description:
+              'If the age should be calculated from a specific date, such as the start of your hackathon enter that date here. If your event starts on 1/2/2022 and you want 18+ enter 1/2/2004.',
+          });
+        }
+        break;
+      default:
+        break;
     }
-    
+
     attrs.push({
-      key: "defaultValue",
-      question: "Default Value",
-      type: fieldType === "number" ? "number" : "text",
+      key: 'defaultValue',
+      question: 'Default Value',
+      type: fieldType === 'number' ? 'number' : 'text',
       required: false,
       defaultValue: initialAttributes?.defaultValue,
     });
     attrs.push({
-      key: "required",
-      question: "Is this field required?",
-      type: "checkbox",
+      key: 'required',
+      question: 'Is this field required?',
+      type: 'checkbox',
       required: false,
       defaultValue: initialAttributes?.required,
     });
 
     attrs.push({
-      key: "isInternal",
-      question: "Is this an internal field?",
-      description: "Internal fields are not shown to the user, and only appear in the form submission data.",
-      type: "checkbox",
+      key: 'isInternal',
+      question: 'Is this an internal field?',
+      description:
+        'Internal fields are not shown to the user, and only appear in the form submission data.',
+      type: 'checkbox',
       required: false,
       defaultValue: initialAttributes?.isInternal,
     });
 
-    console.log(attrs)
+    console.log(attrs);
 
     return { attrs: attrs };
   };
@@ -138,10 +147,10 @@ const FieldAttributesForm: React.FC<FieldAttributesFormProps> = ({
 
   return (
     <div>
-    <FormBuilder
-      formStructure={formFields}
-      submissionFunction={handleFormSubmission}
-    />
+      <FormBuilder
+        formStructure={formFields}
+        submissionFunction={handleFormSubmission}
+      />
     </div>
   );
 };

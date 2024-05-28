@@ -1,8 +1,9 @@
-import { AppDispatch, RootState } from "@/store";
-import { setEmailTemplateState } from "@/store/slices/emailTemplateSlice";
-import { EmailTemplate } from "@/types/models/EmailTemplate";
-import moment from "moment";
-import { useDispatch, useSelector } from "react-redux";
+import moment from 'moment';
+import { useDispatch } from 'react-redux';
+
+import { AppDispatch } from '@/store';
+import { setEmailTemplateState } from '@/store/slices/emailTemplateSlice';
+import { EmailTemplate } from '@/types/models/EmailTemplate';
 
 interface ListEmailTemplatesProps {
   templates: EmailTemplate[];
@@ -12,8 +13,8 @@ const ListEmailTemplates = ({ templates }: ListEmailTemplatesProps) => {
   const dispatch: AppDispatch = useDispatch();
 
   const formatDate = (date: Date | undefined) => {
-    if (!date) return "";
-    return date ? moment(date).format("MMMM Do, YYYY") : "";
+    if (!date) return '';
+    return date ? moment(date).format('MMMM Do, YYYY') : '';
   };
 
   return (

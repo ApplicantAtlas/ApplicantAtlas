@@ -1,8 +1,10 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { FormField, FieldValue } from "@/types/models/Form";
-import moment from "moment-timezone";
-import Select from "./Select";
-import InformationIcon from "@/components/Icons/InformationIcon";
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import moment from 'moment-timezone';
+
+import { FormField, FieldValue } from '@/types/models/Form';
+import InformationIcon from '@/components/Icons/InformationIcon';
+
+import Select from './Select';
 
 type TimestampInputProps = {
   field: FormField;
@@ -16,12 +18,12 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
   defaultValue,
 }) => {
   const askTimezone = field.additionalOptions?.showTimezone || false;
-  const [timezone, setTimezone] = useState<string>("");
+  const [timezone, setTimezone] = useState<string>('');
   const [error, setError] = useState<string | undefined>();
-  const [guessedTz, setGuessedTz] = useState<string>((): string => {
+  const guessedTz = useState<string>((): string => {
     if (
       field.additionalOptions?.defaultTimezone &&
-      field.additionalOptions?.defaultTimezone !== ""
+      field.additionalOptions?.defaultTimezone !== ''
     ) {
       setTimezone(field.additionalOptions?.defaultTimezone);
       return field.additionalOptions?.defaultTimezone;
@@ -37,7 +39,7 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
   const isInitialized = useRef(false);
 
   const isValidDefaultValue = (
-    defaultValue: Date | undefined
+    defaultValue: Date | undefined,
   ): defaultValue is Date => {
     return (
       defaultValue instanceof Date &&
@@ -51,10 +53,10 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
     defaultValue &&
     isValidDefaultValue(defaultValue) &&
     moment(defaultValue).isValid()
-      ? moment(defaultValue).tz("UTC").format("YYYY-MM-DDTHH:mm")
-      : "";
+      ? moment(defaultValue).tz('UTC').format('YYYY-MM-DDTHH:mm')
+      : '';
   const [localDateTime, setLocalDateTime] = useState<string>(
-    formattedDefaultValue
+    formattedDefaultValue,
   );
 
   const timezoneOptions = moment.tz.names();
@@ -70,7 +72,7 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
     ) {
       const formattedDateTime = moment(defaultValue)
         .tz(timezone)
-        .format("YYYY-MM-DDTHH:mm");
+        .format('YYYY-MM-DDTHH:mm');
       setLocalDateTime(formattedDateTime);
       onChange(field.key, defaultValue);
       isInitialized.current = true;
@@ -78,9 +80,11 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
   }, [defaultValue, timezone]);
 
   const calculateAge = (date: Date) => {
-    var againstDate = Date.now();
+    let againstDate = Date.now();
     if (field.additionalValidation?.dateAndTimestampFromTimeField) {
-      againstDate = new Date(field.additionalValidation.dateAndTimestampFromTimeField).getTime();
+      againstDate = new Date(
+        field.additionalValidation.dateAndTimestampFromTimeField,
+      ).getTime();
     }
 
     const diff = againstDate - date.getTime();
@@ -92,38 +96,43 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
     const newValue = e.target.value;
     setLocalDateTime(newValue);
 
-    if (newValue && moment(newValue, "YYYY-MM-DDTHH:mm", true).isValid()) {
+    if (newValue && moment(newValue, 'YYYY-MM-DDTHH:mm', true).isValid()) {
       const timestampValue = moment
-        .tz(newValue, "YYYY-MM-DDTHH:mm", timezone)
+        .tz(newValue, 'YYYY-MM-DDTHH:mm', timezone)
         .toDate();
       const age = calculateAge(timestampValue);
 
       let foundError = false;
 
-      if (field.additionalValidation?.min !== undefined && age < field.additionalValidation.min) {
+      if (
+        field.additionalValidation?.min !== undefined &&
+        age < field.additionalValidation.min
+      ) {
         const minAgeError = `Age must be at least ${field.additionalValidation.min} years`;
         setError(minAgeError);
         e.target.setCustomValidity(minAgeError);
         foundError = true;
-      } else if (field.additionalValidation?.max !== undefined && age > field.additionalValidation.max) {
+      } else if (
+        field.additionalValidation?.max !== undefined &&
+        age > field.additionalValidation.max
+      ) {
         const maxAgeError = `Age must be at most ${field.additionalValidation.max} years`;
         setError(maxAgeError);
         e.target.setCustomValidity(maxAgeError);
         foundError = true;
       } else {
         setError(undefined);
-        e.target.setCustomValidity("");
+        e.target.setCustomValidity('');
       }
 
       onChange(field.key, timestampValue, foundError ? error : undefined);
     }
   };
 
-
   const handleTimezoneChange = (k: string, selectedOption: any) => {
     if (
       selectedOption &&
-      typeof selectedOption === "string" &&
+      typeof selectedOption === 'string' &&
       selectedOption !== timezone
     ) {
       setTimezone(selectedOption);
@@ -135,10 +144,10 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
   const updateDateTime = (localDateTime: string, tz: string) => {
     if (
       localDateTime &&
-      moment(localDateTime, "YYYY-MM-DDTHH:mm", true).isValid()
+      moment(localDateTime, 'YYYY-MM-DDTHH:mm', true).isValid()
     ) {
       const timestampValue = moment
-        .tz(localDateTime, "YYYY-MM-DDTHH:mm", tz)
+        .tz(localDateTime, 'YYYY-MM-DDTHH:mm', tz)
         .toDate();
       if (!isInitialized.current) {
         onChange(field.key, timestampValue);
@@ -146,17 +155,17 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
     }
   };
 
-  if (timezone === "") {
+  if (timezone === '') {
     return <div>Loading...</div>;
   }
 
   // TODO: I want to make the timezone more pretty and inline with the rest of the form
   return (
     <div className="form-control">
-      {field.question !== "" && (
+      {field.question !== '' && (
         <label className="label">
           <span className="label-text">
-            {field.question}{" "}
+            {field.question}{' '}
             {field.required && <span className="text-error">*</span>}
             {field.description && (
               <div className="tooltip" data-tip={field.description}>
@@ -167,7 +176,7 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
         </label>
       )}
       <input
-        id={field.key + "-date-tz"}
+        id={field.key + '-date-tz'}
         type="datetime-local"
         value={localDateTime}
         className="input input-bordered"
@@ -178,8 +187,8 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
         <Select
           field={{
             ...field,
-            key: field.key + "-tz",
-            question: "Select " + field.question + " Timezone",
+            key: field.key + '-tz',
+            question: 'Select ' + field.question + ' Timezone',
             options: timezoneOptions,
             defaultOptions: defaultOptions,
           }}

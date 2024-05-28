@@ -1,6 +1,8 @@
-import { AxiosResponse } from "axios";
-import api from "./AxiosInterceptor";
-import { User } from "@/types/models/User";
+import { AxiosResponse } from 'axios';
+
+import { User } from '@/types/models/User';
+
+import api from './AxiosInterceptor';
 
 export const getUserFull = async (): Promise<User> => {
   // We could cache this in 'user'
@@ -11,11 +13,11 @@ export const getUserFull = async (): Promise<User> => {
 export const getUser = async (userId: string): Promise<User> => {
   const response = await api.get<User>(`/users/${userId}`);
   return response.data;
-}
+};
 
 // pulls from localstorage
 export const getJWTUser = async (): Promise<User> => {
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
   return user;
 };
 

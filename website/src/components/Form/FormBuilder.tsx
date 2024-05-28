@@ -1,28 +1,29 @@
-import React, { useEffect, useState } from "react";
-import Number from "./inputs/Number";
-import DateInput from "./inputs/Date";
-import Text from "./inputs/Text";
-import Checkbox from "./inputs/Checkbox";
-import Radio from "./inputs/Radio";
-import Telephone from "./inputs/Telephone";
-import AddressInput from "./inputs/Address";
-import ColorPicker from "./inputs/ColorPicker";
+import React, { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
 
-import { FormStructure, FieldValue } from "@/types/models/Form";
-import TextArea from "./inputs/TextArea";
-import dynamic from "next/dynamic";
-import { Address } from "@/types/models/Event";
-import { getSelectorOptions } from "@/services/FormService";
+import { FormStructure, FieldValue } from '@/types/models/Form';
+import { Address } from '@/types/models/Event';
+import { getSelectorOptions } from '@/services/FormService';
 
-const SelectDynamic = dynamic(() => import("./inputs/Select"), {
+import Number from './inputs/Number';
+import DateInput from './inputs/Date';
+import Text from './inputs/Text';
+import Checkbox from './inputs/Checkbox';
+import Radio from './inputs/Radio';
+import Telephone from './inputs/Telephone';
+import AddressInput from './inputs/Address';
+import ColorPicker from './inputs/ColorPicker';
+import TextArea from './inputs/TextArea';
+
+const SelectDynamic = dynamic(() => import('./inputs/Select'), {
   ssr: false,
 });
 
-const TimestampDynamic = dynamic(() => import("./inputs/Timestamp"), {
+const TimestampDynamic = dynamic(() => import('./inputs/Timestamp'), {
   ssr: false,
 });
 
-const RichTextDynamic = dynamic(() => import("./inputs/RichText"), {
+const RichTextDynamic = dynamic(() => import('./inputs/RichText'), {
   ssr: false,
 });
 
@@ -39,31 +40,31 @@ type FormBuilderProps = {
 const FormBuilder: React.FC<FormBuilderProps> = ({
   formStructure,
   submissionFunction,
-  buttonText = "Submit",
+  buttonText = 'Submit',
   showInternalFields = false,
 }) => {
   const [formData, setFormData] = useState<Record<string, any>>({});
   const [invalidInputs, setInvalidInputs] = useState<
     Record<string, string | undefined>
   >({});
-  const [error, setError] = useState<string | null>("");
+  const [error, setError] = useState<string | null>('');
   const [fetchedOptions, setFetchedOptions] = useState<Record<string, any>>({});
 
   useEffect(() => {
     // Generate an error message by looking up the question for each invalid input
     const errors = Object.entries(invalidInputs)
-      .filter(([key, errorMsg]) => errorMsg !== undefined)
+      .filter(([_, errorMsg]) => errorMsg !== undefined)
       .map(([key, errorMsg]) => {
         const fieldQuestion =
           formStructure.attrs.find((field) => field.key === key)?.question ||
           key;
         return `${fieldQuestion}: ${errorMsg}`;
       })
-      .join(", ");
+      .join(', ');
 
     setError((): string | null => {
       if (errors.length > 0) {
-        return "Your form is incorrect, please verify your answers.";
+        return 'Your form is incorrect, please verify your answers.';
       }
       return null;
     });
@@ -72,7 +73,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   const handleInputChange = (
     key: string,
     value: FieldValue,
-    errorString?: string | undefined
+    errorString?: string | undefined,
   ) => {
     setInvalidInputs({ ...invalidInputs, [key]: errorString });
     setFormData((formData) => {
@@ -149,13 +150,13 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
 };
 
 const RenderFormField = (
-  field: FormStructure["attrs"][number],
+  field: FormStructure['attrs'][number],
   fetchedOptions: Record<string, any>,
   handleInputChange: (
     key: string,
     value: FieldValue,
-    errorString?: string | undefined
-  ) => void
+    errorString?: string | undefined,
+  ) => void,
 ) => {
   // Handle additionalOptions
   if (field.additionalOptions?.useDefaultValuesFrom) {
@@ -164,13 +165,13 @@ const RenderFormField = (
   }
 
   switch (field.type) {
-    case "number":
+    case 'number':
       let defaultNumber: number | undefined;
       switch (typeof field.defaultValue) {
-        case "number":
+        case 'number':
           defaultNumber = field.defaultValue;
           break;
-        case "string":
+        case 'string':
           defaultNumber = parseInt(field.defaultValue);
           break;
         default:
@@ -183,9 +184,9 @@ const RenderFormField = (
           defaultValue={defaultNumber}
         />
       );
-    case "date":
+    case 'date':
       let defaultDate: Date | undefined;
-      if (typeof field.defaultValue === "string") {
+      if (typeof field.defaultValue === 'string') {
         defaultDate = new Date(field.defaultValue);
       } else if (field.defaultValue instanceof Date) {
         defaultDate = field.defaultValue as Date;
@@ -203,7 +204,7 @@ const RenderFormField = (
           defaultValue={defaultDate}
         />
       );
-    case "text":
+    case 'text':
       return (
         <Text
           field={field}
@@ -211,7 +212,7 @@ const RenderFormField = (
           defaultValue={field.defaultValue as string}
         />
       );
-    case "textarea":
+    case 'textarea':
       return (
         <TextArea
           field={field}
@@ -219,7 +220,7 @@ const RenderFormField = (
           defaultValue={field.defaultValue as string}
         />
       );
-    case "checkbox":
+    case 'checkbox':
       return (
         <Checkbox
           field={field}
@@ -227,9 +228,9 @@ const RenderFormField = (
           defaultValue={field.defaultValue as boolean}
         />
       );
-    case "radio":
+    case 'radio':
       return <Radio field={field} onChange={handleInputChange} />;
-    case "select":
+    case 'select':
       return (
         <SelectDynamic
           field={field}
@@ -238,7 +239,7 @@ const RenderFormField = (
           defaultOptions={field.defaultOptions}
         />
       );
-    case "multiselect":
+    case 'multiselect':
       return (
         <SelectDynamic
           field={field}
@@ -247,7 +248,7 @@ const RenderFormField = (
           defaultOptions={field.defaultOptions}
         />
       );
-    case "customselect":
+    case 'customselect':
       return (
         <SelectDynamic
           field={field}
@@ -257,7 +258,7 @@ const RenderFormField = (
           defaultOptions={field.defaultOptions}
         />
       );
-    case "custommultiselect":
+    case 'custommultiselect':
       return (
         <SelectDynamic
           field={field}
@@ -267,7 +268,7 @@ const RenderFormField = (
           defaultOptions={field.defaultOptions}
         />
       );
-    case "telephone":
+    case 'telephone':
       return (
         <Telephone
           field={field}
@@ -275,9 +276,9 @@ const RenderFormField = (
           defaultValue={field.defaultValue as string}
         />
       );
-    case "timestamp":
+    case 'timestamp':
       let defaultTimestamp: Date | undefined;
-      if (typeof field.defaultValue === "string") {
+      if (typeof field.defaultValue === 'string') {
         defaultTimestamp = new Date(field.defaultValue);
       } else if (field.defaultValue instanceof Date) {
         defaultTimestamp = field.defaultValue as Date;
@@ -298,7 +299,7 @@ const RenderFormField = (
           defaultValue={defaultTimestamp}
         />
       );
-    case "address":
+    case 'address':
       return (
         <AddressInput
           field={field}
@@ -306,7 +307,7 @@ const RenderFormField = (
           defaultValue={field.defaultValue as Address}
         />
       );
-    case "colorpicker":
+    case 'colorpicker':
       return (
         <ColorPicker
           field={field}
@@ -314,7 +315,7 @@ const RenderFormField = (
           defaultValue={field.defaultValue as string}
         />
       );
-    case "richtext":
+    case 'richtext':
       return (
         <RichTextDynamic
           field={field}
@@ -328,4 +329,4 @@ const RenderFormField = (
 };
 
 export default FormBuilder;
-export { RenderFormField }
+export { RenderFormField };

@@ -1,27 +1,29 @@
-import React, { useEffect, useState } from "react";
-import { GetPipelineRuns } from "@/services/PipelineService";
-import { PipelineRun } from "@/types/models/PipelineRun";
-import { ToastType, useToast } from "@/components/Toast/ToastContext";
-import { PipelineConfiguration } from "@/types/models/Pipeline";
-import StatusIcon from "@/components/Icons/StatusIcon";
-import MagnifyingGlassIcon from "@/components/Icons/MagnifyingGlassIcon";
-import { AppDispatch, RootState } from "@/store";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+
+import { GetPipelineRuns } from '@/services/PipelineService';
+import { PipelineRun } from '@/types/models/PipelineRun';
+import { ToastType, useToast } from '@/components/Toast/ToastContext';
+import StatusIcon from '@/components/Icons/StatusIcon';
+import MagnifyingGlassIcon from '@/components/Icons/MagnifyingGlassIcon';
+import { RootState } from '@/store';
 
 interface PipelineRunsProps {}
 
 const statusColors = {
-  Pending: "bg-yellow-500",
-  Running: "bg-blue-500",
-  Failure: "bg-red-500",
-  Success: "bg-green-500",
+  Pending: 'bg-yellow-500',
+  Running: 'bg-blue-500',
+  Failure: 'bg-red-500',
+  Success: 'bg-green-500',
 };
 
-const PipelineRuns: React.FC<PipelineRunsProps> = ({ }) => {
-  const pipeline = useSelector((state: RootState) => state.pipeline.pipelineState);
-  
+const PipelineRuns: React.FC<PipelineRunsProps> = ({}) => {
+  const pipeline = useSelector(
+    (state: RootState) => state.pipeline.pipelineState,
+  );
+
   if (pipeline === null) {
-    return <p>Error selected pipeline null</p>
+    return <p>Error selected pipeline null</p>;
   }
 
   const [pipelineRuns, setPipelineRuns] = useState<PipelineRun[]>([]);
@@ -31,7 +33,7 @@ const PipelineRuns: React.FC<PipelineRunsProps> = ({ }) => {
   const { showToast } = useToast();
 
   const fetchPipelineRuns = async () => {
-    GetPipelineRuns(pipeline.id || "", pageNumber, pageSize)
+    GetPipelineRuns(pipeline.id || '', pageNumber, pageSize)
       .then((response) => {
         setPipelineRuns(response.data.runs);
 
@@ -45,7 +47,7 @@ const PipelineRuns: React.FC<PipelineRunsProps> = ({ }) => {
         }
       })
       .catch(() => {
-        showToast("Failed to fetch pipeline runs", ToastType.Error);
+        showToast('Failed to fetch pipeline runs', ToastType.Error);
       });
   };
 
@@ -70,7 +72,7 @@ const PipelineRuns: React.FC<PipelineRunsProps> = ({ }) => {
         >
           <strong className="font-bold">Pipeline is disabled</strong>
           <span className="block sm:inline">
-            {" "}
+            {' '}
             - Enable the pipeline in settings to resume pipeline runs.
           </span>
         </div>
@@ -96,7 +98,7 @@ const PipelineRuns: React.FC<PipelineRunsProps> = ({ }) => {
             </thead>
             <tbody>
               {pipelineRuns.map((run) => (
-                  <React.Fragment key={run.id}>
+                <React.Fragment key={run.id}>
                   <tr
                     key={run.id}
                     className="border-b hover:bg-gray-50 cursor-pointer"
@@ -119,12 +121,12 @@ const PipelineRuns: React.FC<PipelineRunsProps> = ({ }) => {
                       </div>
                     </td>
                     <td className="py-4 px-6">
-                      {new Intl.DateTimeFormat("en-US", {
-                        month: "long",
-                        day: "2-digit",
-                        year: "numeric",
-                        hour: "numeric",
-                        minute: "2-digit",
+                      {new Intl.DateTimeFormat('en-US', {
+                        month: 'long',
+                        day: '2-digit',
+                        year: 'numeric',
+                        hour: 'numeric',
+                        minute: '2-digit',
                         hour12: true,
                       }).format(new Date(run.triggeredAt))}
                     </td>
@@ -159,8 +161,8 @@ const PipelineRuns: React.FC<PipelineRunsProps> = ({ }) => {
                                   <span className="text-gray-600">
                                     {pipeline.actions?.find(
                                       (action_local) =>
-                                        action_local.id === action.actionID
-                                    )?.name || "Name not found"}{" "}
+                                        action_local.id === action.actionID,
+                                    )?.name || 'Name not found'}{' '}
                                     ({action.actionID})
                                   </span>
                                 </div>

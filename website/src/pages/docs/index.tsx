@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
-import DocLayout, { DocProps } from "../../components/Docs/DocLayout";
-import { getDocData } from "../../../lib/markdown";
+import DocLayout, { DocProps } from '../../components/Docs/DocLayout';
+import { getDocData } from '../../../lib/markdown';
 
 export default function CategoryIndexPage({ docData }: DocProps) {
   return (
@@ -11,7 +10,7 @@ export default function CategoryIndexPage({ docData }: DocProps) {
 }
 
 export async function getStaticProps() {
-  const docData = await getDocData("", "index", "docs/");
+  const docData = await getDocData('', 'index', 'docs/');
   return {
     props: {
       docData,

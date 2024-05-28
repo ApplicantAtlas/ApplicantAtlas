@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { FormField, FieldValue } from "@/types/models/Form";
-import InformationIcon from "@/components/Icons/InformationIcon";
+import React, { useEffect, useState } from 'react';
+
+import { FormField, FieldValue } from '@/types/models/Form';
+import InformationIcon from '@/components/Icons/InformationIcon';
 
 type TextAreaProps = {
   field: FormField;
@@ -13,7 +14,7 @@ const TextArea: React.FC<TextAreaProps> = ({
   onChange,
   defaultValue,
 }) => {
-  const [value, setValue] = useState<string>(defaultValue || "");
+  const [value, setValue] = useState<string>(defaultValue || '');
 
   useEffect(() => {
     if (defaultValue) {
@@ -29,10 +30,10 @@ const TextArea: React.FC<TextAreaProps> = ({
 
   return (
     <div className="form-control">
-      {field.question !== "" && (
+      {field.question !== '' && (
         <label className="label">
           <span className="label-text">
-            {field.question}{" "}
+            {field.question}{' '}
             {field.required && <span className="text-error">*</span>}
             {field.description && (
               <div className="tooltip" data-tip={field.description}>
@@ -45,7 +46,7 @@ const TextArea: React.FC<TextAreaProps> = ({
       <textarea
         id={field.key}
         value={value}
-        placeholder={field.description || ""}
+        placeholder={field.description || ''}
         className="textarea textarea-bordered"
         onChange={handleInputChange}
         required={field.required}

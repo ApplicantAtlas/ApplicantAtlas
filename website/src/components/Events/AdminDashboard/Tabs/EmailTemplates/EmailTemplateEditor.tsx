@@ -1,28 +1,31 @@
-import React, { useMemo, useState } from "react";
-import FormBuilder from "@/components/Form/FormBuilder";
+import React, { useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
+import FormBuilder from '@/components/Form/FormBuilder';
 import {
   FormField,
   FieldValue,
   FormStructure,
   FormOptionCustomLabelValue,
-} from "@/types/models/Form";
-import { EmailTemplate } from "@/types/models/EmailTemplate";
-import { IsObjectIDNotNull } from "@/utils/conversions";
-import { EventModel } from "@/types/models/Event";
-import { getEventForms } from "@/services/EventService";
-import { ToastType, useToast } from "@/components/Toast/ToastContext";
-import { AppDispatch, RootState } from "@/store";
-import { useDispatch, useSelector } from "react-redux";
-import { setEmailTemplateState } from "@/store/slices/emailTemplateSlice";
-import { UpdateEmailTemplate } from "@/services/EmailTemplateService";
+} from '@/types/models/Form';
+import { EmailTemplate } from '@/types/models/EmailTemplate';
+import { IsObjectIDNotNull } from '@/utils/conversions';
+import { getEventForms } from '@/services/EventService';
+import { ToastType, useToast } from '@/components/Toast/ToastContext';
+import { AppDispatch, RootState } from '@/store';
+import { setEmailTemplateState } from '@/store/slices/emailTemplateSlice';
+import { UpdateEmailTemplate } from '@/services/EmailTemplateService';
 
-interface EmailTemplateEditorProps { }
+interface EmailTemplateEditorProps {}
 
-const EmailTemplateEditor = ({
-}: EmailTemplateEditorProps) => {
+const EmailTemplateEditor = ({}: EmailTemplateEditorProps) => {
   const dispatch: AppDispatch = useDispatch();
-  const templateData = useSelector((state: RootState) => state.emailTemplate.emailTemplateState);
-  const eventDetails = useSelector((state: RootState) => state.event.eventDetails);
+  const templateData = useSelector(
+    (state: RootState) => state.emailTemplate.emailTemplateState,
+  );
+  const eventDetails = useSelector(
+    (state: RootState) => state.event.eventDetails,
+  );
 
   if (templateData === null) {
     return <p>No email template found in state</p>;
@@ -39,7 +42,7 @@ const EmailTemplateEditor = ({
         })
         .catch(() => {});
     } else {
-      showToast("Could not find event details to load forms", ToastType.Error);
+      showToast('Could not find event details to load forms', ToastType.Error);
     }
   }, [eventDetails]);
 
@@ -48,73 +51,75 @@ const EmailTemplateEditor = ({
   const formFields: FormField[] = useMemo(() => {
     return [
       {
-        key: "name",
-        question: "Template Name",
-        type: "text",
+        key: 'name',
+        question: 'Template Name',
+        type: 'text',
         defaultValue: templateData.name,
         required: true,
       },
       {
-        key: "description",
-        question: "Description",
-        type: "textarea",
+        key: 'description',
+        question: 'Description',
+        type: 'textarea',
         defaultValue: templateData.description,
       },
       {
-        key: "from",
-        question: "Email Address To Send From",
-        type: "text",
+        key: 'from',
+        question: 'Email Address To Send From',
+        type: 'text',
         defaultValue: templateData.from,
         required: true,
         additionalValidation: {
           isEmail: {
             isEmail: true,
           },
-        }
+        },
       },
       {
-        key: "subject",
-        question: "Subject",
-        type: "text",
+        key: 'subject',
+        question: 'Subject',
+        type: 'text',
         defaultValue: templateData.subject,
       },
       {
-        key: "body",
-        question: "Email Body",
-        type: "richtext",
+        key: 'body',
+        question: 'Email Body',
+        type: 'richtext',
         defaultValue: templateData.body,
       },
       {
-        key: "dataFromFormID",
-        question: "Allow Templating From Form ID",
+        key: 'dataFromFormID',
+        question: 'Allow Templating From Form ID',
         description:
           "If you want to use data from a form's submission in your email template, enter the form ID here. You can then template with ${field_id}", // TODO: Want to link out to docs about templating on click
-        type: "select",
-        defaultOptions: IsObjectIDNotNull(templateData.dataFromFormID) ? [templateData.dataFromFormID as string] : undefined,
+        type: 'select',
+        defaultOptions: IsObjectIDNotNull(templateData.dataFromFormID)
+          ? [templateData.dataFromFormID as string]
+          : undefined,
         options: eventForms?.map(
           (form) =>
             ({
               value: form.id,
               label: `${form.name} (${form.id})`,
-            } as FormOptionCustomLabelValue)
+            }) as FormOptionCustomLabelValue,
         ),
       },
       {
-        key: "cc",
-        question: "CC",
-        type: "custommultiselect",
+        key: 'cc',
+        question: 'CC',
+        type: 'custommultiselect',
         defaultOptions: templateData.cc,
       },
       {
-        key: "bcc",
-        question: "BCC",
-        type: "custommultiselect",
+        key: 'bcc',
+        question: 'BCC',
+        type: 'custommultiselect',
         defaultOptions: templateData.bcc,
       },
       {
-        key: "replyTo",
-        question: "Reply To",
-        type: "customselect",
+        key: 'replyTo',
+        question: 'Reply To',
+        type: 'customselect',
         defaultOptions: templateData.replyTo ? [templateData.replyTo] : [],
         options: templateData.replyTo ? [templateData.replyTo] : [],
       },
@@ -128,9 +133,9 @@ const EmailTemplateEditor = ({
       isHTML: true,
     } as EmailTemplate;
     UpdateEmailTemplate(updatedTemplate).then(() => {
-      showToast("Email template updated successfully", ToastType.Success);
+      showToast('Email template updated successfully', ToastType.Success);
       dispatch(setEmailTemplateState(updatedTemplate));
-    })
+    });
   };
 
   return (

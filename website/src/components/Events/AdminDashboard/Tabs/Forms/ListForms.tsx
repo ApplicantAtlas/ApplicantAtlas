@@ -1,8 +1,9 @@
-import { FormStructure } from "@/types/models/Form";
-import moment from "moment";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/store";
-import { setFormDetails } from "@/store/slices/formSlice";
+import moment from 'moment';
+import { useDispatch } from 'react-redux';
+
+import { FormStructure } from '@/types/models/Form';
+import { AppDispatch } from '@/store';
+import { setFormDetails } from '@/store/slices/formSlice';
 
 interface ListFormsProps {
   forms: FormStructure[];
@@ -10,10 +11,10 @@ interface ListFormsProps {
 
 const ListForms: React.FC<ListFormsProps> = ({ forms }) => {
   const dispatch: AppDispatch = useDispatch();
-  
+
   const formatDate = (date: Date | undefined) => {
-    if (!date) return "";
-    return date ? moment(date).format("MMMM Do, YYYY") : "";
+    if (!date) return '';
+    return date ? moment(date).format('MMMM Do, YYYY') : '';
   };
 
   const handleSelectForm = (form: FormStructure) => {

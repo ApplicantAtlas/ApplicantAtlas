@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { ChromePicker } from "react-color";
-import { FormField, FieldValue } from "@/types/models/Form";
+import React, { useState } from 'react';
+import { ChromePicker, ColorResult } from 'react-color';
+
+import { FormField, FieldValue } from '@/types/models/Form';
 
 type ColorPickerProps = {
   field: FormField;
@@ -13,17 +14,17 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
   onChange,
   defaultValue,
 }) => {
-  const [color, setColor] = useState<string>(defaultValue || "#ffffff");
+  const [color, setColor] = useState<string>(defaultValue || '#ffffff');
   const [showPicker, setShowPicker] = useState<boolean>(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     if (e.target.validity.patternMismatch) {
       e.target.setCustomValidity(
-        "Please enter a valid hex color (e.g., #123ABC)"
+        'Please enter a valid hex color (e.g., #123ABC)',
       );
     } else {
-      e.target.setCustomValidity("");
+      e.target.setCustomValidity('');
     }
     handleColorChange(newValue);
   };
@@ -33,16 +34,19 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
     onChange(field.key, color);
   };
 
-  const handleColorPickerChange = (color: any) => {
+  const handleColorPickerChange = (
+    color: ColorResult,
+    _: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     handleColorChange(color.hex);
   };
 
   return (
     <div className="form-control relative">
-      {field.question !== "" && (
+      {field.question !== '' && (
         <label className="label">
           <span className="label-text">
-            {field.question}{" "}
+            {field.question}{' '}
             {field.required && <span className="text-error">*</span>}
           </span>
         </label>
@@ -57,7 +61,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
           type="text"
           value={color}
           onChange={handleInputChange}
-          placeholder={field.description || "Enter hex color"}
+          placeholder={field.description || 'Enter hex color'}
           className="input input-bordered w-full"
           pattern="^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
           title="Enter a valid hex color code (e.g., #123ABC)"
