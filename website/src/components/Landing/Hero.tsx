@@ -1,4 +1,5 @@
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 export default function Hero() {
   return (
     <header className="flex flex-wrap items-center justify-between px-20 py-20 bg-gray-100">
@@ -11,10 +12,10 @@ export default function Hero() {
           events and applicant tracking.
         </p>
         <div className="flex space-x-4">
-          <Link href = "/register">
-          <button className="btn btn-primary py-2 px-4 rounded-md shadow-lg">
-            Get Started
-          </button>
+          <Link href="/register">
+            <button className="btn btn-primary py-2 px-4 rounded-md shadow-lg">
+              Get Started
+            </button>
           </Link>
           <button className="btn btn-outline btn-secondary py-2 px-4 rounded-md shadow-lg">
             Learn More
@@ -22,10 +23,12 @@ export default function Hero() {
         </div>
       </div>
       <div className="w-full lg:w-1/2 lg:flex lg:justify-end mt-8 px-2 lg:mt-0">
-        <img
-          src="/assets/index/tower.jpg"
+        <Image
+          src={'/assets/index/tower.jpg'}
           alt="Hero Tower"
           className="rounded-lg shadow-lg object-cover object-center w-full h-auto max-w-sm lg:max-w-md"
+          width={800}
+          height={800}
         />
       </div>
     </header>

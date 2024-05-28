@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Listener = (...args: any[]) => void;
 
 class EventEmitter {
@@ -12,13 +13,16 @@ class EventEmitter {
 
   off(event: string, listener: Listener) {
     if (this.listeners[event]) {
-      this.listeners[event] = this.listeners[event].filter(l => l !== listener);
+      this.listeners[event] = this.listeners[event].filter(
+        (l) => l !== listener,
+      );
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   emit(event: string, ...args: any[]) {
     if (this.listeners[event]) {
-      this.listeners[event].forEach(listener => {
+      this.listeners[event].forEach((listener) => {
         listener(...args);
       });
     }

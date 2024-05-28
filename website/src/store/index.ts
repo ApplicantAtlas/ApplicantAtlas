@@ -1,8 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
-import eventReducer, { resetEventState } from './slices/eventSlice';
+
+import eventReducer from './slices/eventSlice';
 import formReducer, { resetFormState } from './slices/formSlice';
 import pipelineReducer, { resetPipelineState } from './slices/pipelineSlice';
-import emailTemplateReducer, { resetEmailTemplateState } from './slices/emailTemplateSlice';
+import emailTemplateReducer, {
+  resetEmailTemplateState,
+} from './slices/emailTemplateSlice';
 
 const store = configureStore({
   reducer: {
@@ -18,7 +21,7 @@ export const resetTabs = () => {
   store.dispatch(resetFormState());
   store.dispatch(resetPipelineState());
   store.dispatch(resetEmailTemplateState());
-}
+};
 
 export default store;
 export type RootState = ReturnType<typeof store.getState>;

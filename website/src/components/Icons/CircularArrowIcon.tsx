@@ -5,7 +5,7 @@ interface CircularArrowIconProps {
 
 // From heroicons.com
 const CircularArrowIcon = ({
-  className = "w-6 h-6",
+  className = 'w-6 h-6',
   onClick,
 }: CircularArrowIconProps) => {
   return (

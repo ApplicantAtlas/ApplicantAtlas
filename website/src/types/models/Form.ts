@@ -1,4 +1,4 @@
-import { Address } from "./Event";
+import { Address } from './Event';
 
 export type EmailValidationOptions = {
   isEmail?: boolean;
@@ -10,7 +10,7 @@ export type EmailValidationOptions = {
 export type FieldValidation = {
   min?: number;
   max?: number;
-  dateAndTimestampFromTimeField?: Date;
+  dateAndTimestampFromTimeField?: string;
   isEmail?: EmailValidationOptions;
 };
 
@@ -19,7 +19,7 @@ export type AdditionalOptions = {
   defaultTimezone?: string;
   showTimezone?: boolean;
   isPassword?: boolean;
-  useDefaultValuesFrom?: "mlh-schools" | undefined;
+  useDefaultValuesFrom?: 'mlh-schools' | undefined;
   ifInputHTMLKeepHTML?: boolean; // for richtext
 };
 
@@ -35,26 +35,26 @@ export type FieldValue =
   | undefined;
 
 export type FormFieldType =
-  | "number"
-  | "text"
-  | "date"
-  | "timestamp"
-  | "telephone"
-  | "textarea"
-  | "select"
-  | "multiselect"
-  | "customselect"
-  | "custommultiselect"
-  | "checkbox"
-  | "radio"
-  | "address"
-  | "colorpicker"
-  | "richtext";
+  | 'number'
+  | 'text'
+  | 'date'
+  | 'timestamp'
+  | 'telephone'
+  | 'textarea'
+  | 'select'
+  | 'multiselect'
+  | 'customselect'
+  | 'custommultiselect'
+  | 'checkbox'
+  | 'radio'
+  | 'address'
+  | 'colorpicker'
+  | 'richtext';
 
 export type FormOptionCustomLabelValue = {
   label: string;
   value: string;
-}
+};
 
 export type FormField = {
   question: string;
@@ -74,7 +74,7 @@ export type FormField = {
 export type FormAllowedSubmitter = {
   email: string;
   expiresAt?: Date;
-}
+};
 
 // We have a lot of optional fields here because we want to be able to use FormStructure as a way to define our own forms like login/register
 // without having to define every single field

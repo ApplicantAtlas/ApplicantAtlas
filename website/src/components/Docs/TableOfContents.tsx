@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { TOCItem } from "../../../lib/markdown";
-import ChevronRight from "../Icons/ChevronRight";
+import React, { useState } from 'react';
+
+import { TOCItem } from '../../../lib/markdown';
+import ChevronRight from '../Icons/ChevronRight';
 
 interface TOCProps {
   items: TOCItem[];
@@ -22,9 +23,9 @@ const TOCItemComponent: React.FC<{ item: TOCItem }> = ({ item }) => {
     // Scroll to the heading
     const heading = document.getElementById(item.id);
     if (heading) {
-      heading.scrollIntoView({ behavior: "smooth" });
+      heading.scrollIntoView({ behavior: 'smooth' });
       // Add the hash to the URL
-      window.history.pushState({}, "", `#${item.id}`);
+      window.history.pushState({}, '', `#${item.id}`);
     }
   };
 
@@ -39,14 +40,14 @@ const TOCItemComponent: React.FC<{ item: TOCItem }> = ({ item }) => {
             >
               <ChevronRight
                 className={`${arrowWidthHeightClass} transform transition-transform ${
-                  isExpanded ? "rotate-90" : "rotate-0"
+                  isExpanded ? 'rotate-90' : 'rotate-0'
                 }`}
               />
             </span>
           )}
           <span
             className={`hover:text-blue-500 dark:hover:text-blue-400 transition-colors cursor-pointer ${
-              !hasChildren ? nonChildrenMarginClass : ""
+              !hasChildren ? nonChildrenMarginClass : ''
             }`}
             onClick={goToSegment}
           >

@@ -1,16 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import Sidebar from "@/components/Events/AdminDashboard/Sidebar";
-import Footer from "@/components/Footer";
-import LoadingSpinner from "@/components/Loading/LoadingSpinner";
-import Header from "@/components/Header";
-import { AppDispatch, RootState } from "@/store";
-import { useDispatch, useSelector } from "react-redux";
-import { getEvent } from "@/services/EventService";
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/router';
+import { useDispatch, useSelector } from 'react-redux';
+
+import Sidebar from '@/components/Events/AdminDashboard/Sidebar';
+import Footer from '@/components/Footer';
+import LoadingSpinner from '@/components/Loading/LoadingSpinner';
+import Header from '@/components/Header';
+import { AppDispatch, RootState } from '@/store';
+import { getEvent } from '@/services/EventService';
 import {
   setEventDetails,
   setEventStateIsLoading,
-} from "@/store/slices/eventSlice";
+} from '@/store/slices/eventSlice';
 
 const EventAdminDashboard: React.FC<{
   children: () => React.ReactNode;
@@ -29,20 +30,20 @@ const EventAdminDashboard: React.FC<{
           dispatch(setEventDetails(details.data.event));
           dispatch(setEventStateIsLoading(false));
         })
-        .catch((error) => {
+        .catch((_) => {
           dispatch(setEventStateIsLoading(false));
         });
     }
-  }, [eventId]);
+  }, [eventId, dispatch]);
 
-  const menuItems = [{ label: "My Events", href: "/user/dashboard" }];
+  const menuItems = [{ label: 'My Events', href: '/user/dashboard' }];
 
   return (
     <>
       <Header menuItems={menuItems} showUserProfile={true} />
       <div
         className="flex flex-col min-h-screen bg-gray-100 text-gray-900"
-        style={{ maxWidth: "100vw" }}
+        style={{ maxWidth: '100vw' }}
       >
         <ContentWithLoading
           activeSection={activeSection}

@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
-import ReactSelect from "react-select";
-import CreatableSelect from "react-select/creatable";
-import InformationIcon from "@/components/Icons/InformationIcon";
+import React, { useEffect, useState } from 'react';
+import ReactSelect from 'react-select';
+import CreatableSelect from 'react-select/creatable';
+
+import InformationIcon from '@/components/Icons/InformationIcon';
 import {
   FormField,
   FieldValue,
   FormOptionCustomLabelValue,
-} from "@/types/models/Form";
+} from '@/types/models/Form';
 
 type SelectProps = {
   field: FormField;
@@ -25,7 +26,7 @@ const Select: React.FC<SelectProps> = ({
 }) => {
   const options = Array.isArray(field.options)
     ? field.options.map((option) =>
-        typeof option === "string" ? { label: option, value: option } : option
+        typeof option === 'string' ? { label: option, value: option } : option,
       )
     : [];
 
@@ -35,9 +36,9 @@ const Select: React.FC<SelectProps> = ({
       // For multi-select, each default option is mapped to an object
       return Array.isArray(defaultOptions)
         ? defaultOptions.map((option) =>
-            typeof option === "string"
+            typeof option === 'string'
               ? { label: option, value: option }
-              : option
+              : option,
           )
         : [];
     } else {
@@ -47,7 +48,7 @@ const Select: React.FC<SelectProps> = ({
           ? defaultOptions[0]
           : undefined;
 
-      return typeof singleDefaultValue === "string"
+      return typeof singleDefaultValue === 'string'
         ? options.find((option) => option.value === singleDefaultValue)
         : singleDefaultValue;
     }
@@ -57,11 +58,13 @@ const Select: React.FC<SelectProps> = ({
 
   useEffect(() => {
     setSelectedValue(getDefaultValue());
-  }, [defaultOptions]);
+  }, [defaultOptions]); // eslint-disable-line react-hooks/exhaustive-deps -- only want to run this for initial value
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- react-select types are complex
   const handleChange = (selectedOption: any) => {
     const value = isMultiSelect
-      ? selectedOption.map((opt: any) => opt.value)
+      ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        selectedOption.map((opt: any) => opt.value)
       : selectedOption.value;
 
     setSelectedValue(selectedOption);
@@ -72,10 +75,10 @@ const Select: React.FC<SelectProps> = ({
 
   return (
     <div className="form-control">
-      {field.question !== "" && (
+      {field.question !== '' && (
         <label className="label">
           <span className="label-text">
-            {field.question}{" "}
+            {field.question}{' '}
             {field.required && <span className="text-error">*</span>}
             {field.description && (
               <div className="tooltip" data-tip={field.description}>

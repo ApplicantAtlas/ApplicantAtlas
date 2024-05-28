@@ -1,10 +1,9 @@
-import { AppDispatch, RootState } from "@/store";
-import { setPipelineConfiguration } from "@/store/slices/pipelineSlice";
-import { FormStructure } from "@/types/models/Form";
-import { PipelineConfiguration } from "@/types/models/Pipeline";
-import moment from "moment";
-import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import moment from 'moment';
+import { useDispatch } from 'react-redux';
+
+import { AppDispatch } from '@/store';
+import { setPipelineConfiguration } from '@/store/slices/pipelineSlice';
+import { PipelineConfiguration } from '@/types/models/Pipeline';
 
 interface ListPipelinesProps {
   pipelines: PipelineConfiguration[];
@@ -14,8 +13,8 @@ const ListPipelines = ({ pipelines }: ListPipelinesProps) => {
   const dispatch: AppDispatch = useDispatch();
 
   const formatDate = (date: Date | undefined) => {
-    if (!date) return "";
-    return date ? moment(date).format("MMMM Do, YYYY") : "";
+    if (!date) return '';
+    return date ? moment(date).format('MMMM Do, YYYY') : '';
   };
 
   return (

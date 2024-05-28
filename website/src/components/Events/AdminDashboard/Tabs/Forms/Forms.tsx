@@ -1,34 +1,35 @@
-import LoadingSpinner from "@/components/Loading/LoadingSpinner";
-import { getEventForms } from "@/services/EventService";
-import { EventModel } from "@/types/models/Event";
-import { FormStructure } from "@/types/models/Form";
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState, AppDispatch } from "@/store";
-import { resetFormState, setFormDetails } from "@/store/slices/formSlice";
-import ListForms from "./ListForms";
-import CreateNewForm from "./CreateNewForm";
-import SelectForm from "./SelectForm";
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
-interface FormProps { }
+import LoadingSpinner from '@/components/Loading/LoadingSpinner';
+import { getEventForms } from '@/services/EventService';
+import { FormStructure } from '@/types/models/Form';
+import { RootState, AppDispatch } from '@/store';
+import { resetFormState } from '@/store/slices/formSlice';
 
-const Forms: React.FC<FormProps> = ({ }) => {
+import ListForms from './ListForms';
+import CreateNewForm from './CreateNewForm';
+import SelectForm from './SelectForm';
+
+interface FormProps {}
+
+const Forms: React.FC<FormProps> = ({}) => {
   const dispatch: AppDispatch = useDispatch();
-  const selectedForm = useSelector((state: RootState) => state.form.formDetails);
-  const eventDetails = useSelector((state: RootState) => state.event.eventDetails);
-
-  if (eventDetails === null) {
-    return (
-      <p>No event data found in state</p>
-    );
-  }
+  const selectedForm = useSelector(
+    (state: RootState) => state.form.formDetails,
+  );
+  const eventDetails = useSelector(
+    (state: RootState) => state.event.eventDetails,
+  );
 
   const [forms, setForms] = useState<FormStructure[] | undefined>();
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [refresh, setRefresh] = useState(false);
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- should be used in the future
   const [selectedFormAction, setSelectedFormAction] = useState<
-    "responses" | "edit"
-  >("responses");
+    'responses' | 'edit'
+  >('responses');
 
   useEffect(() => {
     if (eventDetails !== null) {
@@ -39,7 +40,7 @@ const Forms: React.FC<FormProps> = ({ }) => {
         })
         .catch(() => {});
     }
-  }, [refresh]);
+  }, [refresh, eventDetails]);
 
   const onNewFormCreated = () => {
     setRefresh(!refresh);
@@ -50,6 +51,10 @@ const Forms: React.FC<FormProps> = ({ }) => {
     setRefresh(!refresh);
     dispatch(resetFormState());
   };
+
+  if (eventDetails === null) {
+    return <p>No event data found in state</p>;
+  }
 
   if (forms === undefined || eventDetails === null) {
     return (
@@ -63,9 +68,7 @@ const Forms: React.FC<FormProps> = ({ }) => {
   if (showCreateForm) {
     return (
       <>
-        <CreateNewForm
-          onSubmit={onNewFormCreated}
-        />
+        <CreateNewForm onSubmit={onNewFormCreated} />
         <button
           className="btn btn-error mt-4"
           onClick={() => {
@@ -80,12 +83,8 @@ const Forms: React.FC<FormProps> = ({ }) => {
 
   if (selectedForm) {
     return (
-      (
-        <>
-        <SelectForm
-          action={selectedFormAction}
-          onDelete={onDeletedForm}
-        />
+      <>
+        <SelectForm action={selectedFormAction} onDelete={onDeletedForm} />
         <button
           className="btn btn-error"
           onClick={() => {
@@ -94,9 +93,8 @@ const Forms: React.FC<FormProps> = ({ }) => {
         >
           Go Back
         </button>
-        </>
-      )
-    )
+      </>
+    );
   }
 
   return (

@@ -1,14 +1,18 @@
-// ToastContext.tsx
-import React, { Fragment, createContext, useContext, useEffect, useState } from "react";
+import React, {
+  Fragment,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+} from 'react';
 
 interface ToastContextType {
   showToast: (message: string, type: ToastType) => void;
 }
 
 const ToastContext = createContext<ToastContextType>({
-  showToast: () => {
-    
-  },
+  showToast: () => {},
 });
 
 export const useToast = () => useContext(ToastContext);
@@ -21,9 +25,9 @@ type ToastProviderProps = {
 };
 
 export enum ToastType {
-  Success = "success",
-  Warning = "warning",
-  Error = "error",
+  Success = 'success',
+  Warning = 'warning',
+  Error = 'error',
 }
 
 export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
@@ -31,33 +35,33 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
   const [progress, setProgress] = useState<number>(100);
   const [toastType, setToastType] = useState<ToastType>(ToastType.Success);
 
-  const showToast = (msg: string, type: ToastType) => {
+  const showToast = useCallback((msg: string, type: ToastType) => {
     setMessage(msg);
     setProgress(100);
     setToastType(type);
-
-    const totalSteps = TOAST_DURATION / UPDATE_INTERVAL;
-  };
+  }, []);
 
   useEffect(() => {
     if (message) {
       const interval = setInterval(() => {
         // Update progress
-        setProgress((prevProgress) => prevProgress - 100 / (TOAST_DURATION / UPDATE_INTERVAL));
+        setProgress(
+          (prevProgress) =>
+            prevProgress - 100 / (TOAST_DURATION / UPDATE_INTERVAL),
+        );
       }, UPDATE_INTERVAL);
-  
+
       const timeout = setTimeout(() => {
         setMessage(null);
         clearInterval(interval);
       }, TOAST_DURATION);
-  
+
       return () => {
         clearTimeout(timeout);
         clearInterval(interval);
       };
     }
   }, [message]);
-  
 
   const dismissToast = () => {
     setMessage(null);
@@ -73,33 +77,34 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
   };
 
   const getToastStyle = (type: ToastType) => {
-    let baseColorClass = "";
-    let darkerEffect = "brightness-75"; // Using CSS filter to darken the color
-  
+    let baseColorClass = '';
+    const darkerEffect = 'brightness-75'; // Using CSS filter to darken the color
+
     switch (type) {
       case ToastType.Success:
-        baseColorClass = "bg-success";
+        baseColorClass = 'bg-success';
         break;
       case ToastType.Warning:
-        baseColorClass = "bg-warning";
+        baseColorClass = 'bg-warning';
         break;
       case ToastType.Error:
-        baseColorClass = "bg-error";
+        baseColorClass = 'bg-error';
         break;
       default:
-        baseColorClass = "bg-neutral";
+        baseColorClass = 'bg-neutral';
         break;
     }
-  
+
     return [baseColorClass, `${baseColorClass} ${darkerEffect}`];
   };
-  
 
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
       {message && (
-        <div className={`fixed bottom-5 right-5 ${getToastStyle(toastType)[0]} text-white py-2 px-4 rounded flex items-center justify-between`}>
+        <div
+          className={`fixed bottom-5 right-5 ${getToastStyle(toastType)[0]} text-white py-2 px-4 rounded flex items-center justify-between`}
+        >
           <span>{renderMessage(message)}</span>
           <button onClick={dismissToast} className="text-white ml-4">
             &#10005;

@@ -1,19 +1,22 @@
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import { useToast, ToastType } from "@/components/Toast/ToastContext";
-import { deleteEvent, getEventSecrets } from "@/services/EventService";
-import EventSecretsSettings from "./EventSecretsSettings";
-import { EventModel } from "@/types/models/Event";
-import { EventSecrets } from "@/types/models/EventSecret";
-import { IsObjectIDNotNull } from "@/utils/conversions";
-import ManageEventAdmins from "./ManageEventAdmins";
-import { RootState } from "@/store";
-import { useSelector } from "react-redux";
+import React, { useCallback, useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import { useSelector } from 'react-redux';
 
-interface SettingsProps { }
+import { useToast, ToastType } from '@/components/Toast/ToastContext';
+import { deleteEvent, getEventSecrets } from '@/services/EventService';
+import { EventSecrets } from '@/types/models/EventSecret';
+import { IsObjectIDNotNull } from '@/utils/conversions';
+import { RootState } from '@/store';
 
-const Settings: React.FC<SettingsProps> = ({ }) => {
-  const eventDetails = useSelector((state: RootState) => state.event.eventDetails);
+import ManageEventAdmins from './ManageEventAdmins';
+import EventSecretsSettings from './EventSecretsSettings';
+
+interface SettingsProps {}
+
+const Settings: React.FC<SettingsProps> = ({}) => {
+  const eventDetails = useSelector(
+    (state: RootState) => state.event.eventDetails,
+  );
 
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [editingSecret, setEditingSecret] = useState(false);
@@ -22,7 +25,7 @@ const Settings: React.FC<SettingsProps> = ({ }) => {
   const { showToast } = useToast();
   const router = useRouter();
 
-  const updateEventSecrets = () => {
+  const updateEventSecrets = useCallback(() => {
     if (!eventDetails) return;
 
     getEventSecrets(eventDetails.ID)
@@ -37,14 +40,14 @@ const Settings: React.FC<SettingsProps> = ({ }) => {
         }
         setEventSecrets(res.data.eventSecrets);
       })
-      .catch(() => showToast("Failed to load event secrets", ToastType.Error));
-  };
+      .catch(() => showToast('Failed to load event secrets', ToastType.Error));
+  }, [eventDetails, showToast]);
 
   useEffect(() => {
     if (!eventDetails) return;
 
     updateEventSecrets();
-  }, [eventDetails]);
+  }, [eventDetails, updateEventSecrets]);
 
   const handleEditSecretClick = () => {
     setEditingSecret(true);
@@ -54,10 +57,10 @@ const Settings: React.FC<SettingsProps> = ({ }) => {
     setShowDeleteConfirmation(false);
     deleteEvent(eventId)
       .then(() => {
-        showToast("Event deleted successfully", ToastType.Success);
-        router.push("/user/dashboard");
+        showToast('Event deleted successfully', ToastType.Success);
+        router.push('/user/dashboard');
       })
-      .catch(() => showToast("Failed to delete event", ToastType.Error));
+      .catch(() => showToast('Failed to delete event', ToastType.Error));
   };
 
   if (!eventDetails) return <p>Loading...</p>;
@@ -85,7 +88,7 @@ const Settings: React.FC<SettingsProps> = ({ }) => {
                   <td>
                     {eventSecrets?.email?.updatedAt
                       ? new Date(eventSecrets.email.updatedAt).toLocaleString()
-                      : "Not Set"}
+                      : 'Not Set'}
                   </td>
                   <td>
                     <button
@@ -114,7 +117,7 @@ const Settings: React.FC<SettingsProps> = ({ }) => {
           />
         </>
       )}
-      
+
       <h2 className="mt-4">Event Admins</h2>
       {!editingEventAdmins && (
         <button
@@ -128,7 +131,6 @@ const Settings: React.FC<SettingsProps> = ({ }) => {
       {editingEventAdmins && (
         <ManageEventAdmins onDone={() => setEditingEventAdmins(false)} />
       )}
-
 
       <h2 className="mt-4">Danger!</h2>
 

@@ -1,23 +1,23 @@
-import { ToastType, useToast } from "@/components/Toast/ToastContext";
-import { DeleteEmailTemplate } from "@/services/EmailTemplateService";
-import { AppDispatch, RootState } from "@/store";
-import { resetEmailTemplateState } from "@/store/slices/emailTemplateSlice";
-import { EmailTemplate } from "@/types/models/EmailTemplate";
-import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { ToastType, useToast } from '@/components/Toast/ToastContext';
+import { DeleteEmailTemplate } from '@/services/EmailTemplateService';
+import { AppDispatch, RootState } from '@/store';
+import { resetEmailTemplateState } from '@/store/slices/emailTemplateSlice';
 
 interface EmailTemplateSettingsProps {
   onDelete: () => void;
 }
 
-const EmailTemplateSettings: React.FC<EmailTemplateSettingsProps> = ({ onDelete }) => {
+const EmailTemplateSettings: React.FC<EmailTemplateSettingsProps> = ({
+  onDelete,
+}) => {
   const dispatch: AppDispatch = useDispatch();
-  const template = useSelector((state: RootState) => state.emailTemplate.emailTemplateState);
+  const template = useSelector(
+    (state: RootState) => state.emailTemplate.emailTemplateState,
+  );
 
-  if (template == null) {
-    return <p>No email template found in state</p>;
-  }
-  
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const { showToast } = useToast();
 
@@ -26,12 +26,16 @@ const EmailTemplateSettings: React.FC<EmailTemplateSettingsProps> = ({ onDelete 
 
     DeleteEmailTemplate(templateID)
       .then(() => {
-        showToast("Email template deleted successfully", ToastType.Success);
+        showToast('Email template deleted successfully', ToastType.Success);
         onDelete();
         dispatch(resetEmailTemplateState());
       })
       .catch(() => {});
   };
+
+  if (template == null) {
+    return <p>No email template found in state</p>;
+  }
 
   return (
     <>
@@ -51,7 +55,9 @@ const EmailTemplateSettings: React.FC<EmailTemplateSettingsProps> = ({ onDelete 
               Are you sure you want to delete this template?
               <br />
               <p>Name: {template.name}</p>
-              {template.description && (<p>Description: {template.description}</p>)}
+              {template.description && (
+                <p>Description: {template.description}</p>
+              )}
             </h3>
             <div className="modal-action">
               <button

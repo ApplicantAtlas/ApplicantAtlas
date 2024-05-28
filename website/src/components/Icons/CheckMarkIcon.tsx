@@ -4,7 +4,10 @@ interface CheckMarkIconProps {
 }
 
 // From heroicons.com
-const CheckMarkIcon = ({ className = "w-6 h-6", onClick }: CheckMarkIconProps) => {
+const CheckMarkIcon = ({
+  className = 'w-6 h-6',
+  onClick,
+}: CheckMarkIconProps) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

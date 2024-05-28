@@ -4,7 +4,7 @@ interface LinkIconProps {
 }
 
 // From heroicons.com
-const LinkIcon = ({ className = "w-6 h-6", onClick }: LinkIconProps) => {
+const LinkIcon = ({ className = 'w-6 h-6', onClick }: LinkIconProps) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

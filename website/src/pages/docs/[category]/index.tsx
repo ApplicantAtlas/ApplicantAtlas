@@ -1,8 +1,10 @@
-import { GetStaticPaths, GetStaticProps } from "next";
-import DocLayout, { DocProps } from "../../../components/Docs/DocLayout";
-import { getDocData } from "../../../../lib/markdown";
-import path from "path";
-import fs from "fs";
+import path from 'path';
+import fs from 'fs';
+
+import { GetStaticPaths, GetStaticProps } from 'next';
+
+import DocLayout, { DocProps } from '../../../components/Docs/DocLayout';
+import { getDocData } from '../../../../lib/markdown';
 
 export default function CategoryIndexPage({ docData }: DocProps) {
   return (
@@ -14,7 +16,7 @@ export default function CategoryIndexPage({ docData }: DocProps) {
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { category } = params as { category: string };
-  const docData = await getDocData(category, "index", `${category}`);
+  const docData = await getDocData(category, 'index', `${category}`);
   return {
     props: {
       docData,
@@ -23,11 +25,11 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 };
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const categoriesDir = path.join(process.cwd(), "docs");
+  const categoriesDir = path.join(process.cwd(), 'docs');
   const categories = fs
     .readdirSync(categoriesDir)
     .filter((item) =>
-      fs.statSync(path.join(categoriesDir, item)).isDirectory()
+      fs.statSync(path.join(categoriesDir, item)).isDirectory(),
     );
 
   const paths = categories.map((category) => ({

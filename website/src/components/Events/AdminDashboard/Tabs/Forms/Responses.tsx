@@ -1,25 +1,27 @@
-import LoadingSpinner from "@/components/Loading/LoadingSpinner";
+import { useEffect, useRef, useState } from 'react';
+import debounce from 'lodash/debounce';
+import { useSelector } from 'react-redux';
+
+import LoadingSpinner from '@/components/Loading/LoadingSpinner';
 import {
   DownloadResponses,
   GetResponses,
   UpdateResponse,
-} from "@/services/ResponsesService";
-import { FieldValue, FormField, FormStructure } from "@/types/models/Form";
-import { useEffect, useRef, useState } from "react";
-import ArrowDownTray from "@/components/Icons/ArrowDownTray";
-import { RenderFormField } from "@/components/Form/FormBuilder";
-import EditIcon from "@/components/Icons/EditIcon";
-import { ToastType, useToast } from "@/components/Toast/ToastContext";
-import debounce from "lodash/debounce";
-import Checkbox from "@/components/Form/inputs/Checkbox";
-import { AppDispatch, RootState } from "@/store";
-import { useDispatch, useSelector } from "react-redux";
+} from '@/services/ResponsesService';
+import { FieldValue, FormField } from '@/types/models/Form';
+import ArrowDownTray from '@/components/Icons/ArrowDownTray';
+import { RenderFormField } from '@/components/Form/FormBuilder';
+import EditIcon from '@/components/Icons/EditIcon';
+import { ToastType, useToast } from '@/components/Toast/ToastContext';
+import Checkbox from '@/components/Form/inputs/Checkbox';
+import { RootState } from '@/store';
 
 interface ResponsesProps {}
 
 const Responses = ({}: ResponsesProps) => {
   const form = useSelector((state: RootState) => state.form.formDetails);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- this is a generic form response
   const [responses, setResponses] = useState<Record<string, any>[]>([]);
   const [columnOrder, setColumnOrder] = useState<
     Record<string, FormField | undefined>[]
@@ -30,37 +32,37 @@ const Responses = ({}: ResponsesProps) => {
   const { showToast } = useToast();
 
   const debouncersRef = useRef(new Map());
-  const defaultFormColumns = ["Response ID", "Submitted At", "User ID"];
+  const defaultFormColumns = ['Response ID', 'Submitted At', 'User ID'];
 
   const getDebouncedOnSubmissionFieldChange = (key: string) => {
     if (!debouncersRef.current.has(key)) {
       debouncersRef.current.set(
         key,
         debounce((value, errorStr) => {
-          let keyMap = JSON.parse(key);
-          let submissionId = keyMap.submission_id;
-          let question = keyMap.question;
-          let attrKey = keyMap.attr_key;
-          let fullKey = `${question}_attr_key:${attrKey}`;
+          const keyMap = JSON.parse(key);
+          const submissionId = keyMap.submission_id;
+          const question = keyMap.question;
+          const attrKey = keyMap.attr_key;
+          const fullKey = `${question}_attr_key:${attrKey}`;
 
           if (errorStr !== undefined) {
             showToast(
               `Error updating response: ${errorStr}
         Response ID: ${submissionId}`,
-              ToastType.Error
+              ToastType.Error,
             );
             return;
           }
 
           // Go through responses to find the correct response and update it
-          const updatedResponses = responses.map((response) => {
-            if (response["Response ID"] === submissionId) {
+          responses.map((response) => {
+            if (response['Response ID'] === submissionId) {
               const oldValue = response[fullKey];
               const newValue = value;
               response[fullKey] = value;
 
               // Deep copy response to avoid mutating original form structure
-              let newResponse = JSON.parse(JSON.stringify(response));
+              const newResponse = JSON.parse(JSON.stringify(response));
 
               // Drop the defaultFormColumns from the new response
               defaultFormColumns.forEach((column) => {
@@ -68,9 +70,9 @@ const Responses = ({}: ResponsesProps) => {
               });
 
               // For each key remove the _attr_key: and replace with the actual key which follows it
-              var shouldUpdate = false;
+              let shouldUpdate = false;
               Object.keys(newResponse).forEach((key) => {
-                let [_, id_val] = key.split("_attr_key:");
+                const id_val = key.split('_attr_key:')[1];
 
                 if (oldValue !== newValue) {
                   shouldUpdate = true;
@@ -81,11 +83,11 @@ const Responses = ({}: ResponsesProps) => {
               });
 
               if (shouldUpdate) {
-                UpdateResponse(form?.id || "", submissionId, newResponse)
+                UpdateResponse(form?.id || '', submissionId, newResponse)
                   .then(() => {
                     showToast(
-                      "Successfully updated reponse",
-                      ToastType.Success
+                      'Successfully updated reponse',
+                      ToastType.Success,
                     );
                   })
                   .catch(() => {});
@@ -94,9 +96,7 @@ const Responses = ({}: ResponsesProps) => {
 
             return response;
           });
-
-          //setResponses(updatedResponses);
-        }, 500)
+        }, 500),
       );
     }
     return debouncersRef.current.get(key);
@@ -105,23 +105,27 @@ const Responses = ({}: ResponsesProps) => {
   const onSubmissionFieldChange = (
     key: string,
     value: FieldValue,
-    errorStr: string | undefined
+    errorStr: string | undefined,
   ) => {
     const debouncedOnChange = getDebouncedOnSubmissionFieldChange(key);
     debouncedOnChange(value, errorStr);
   };
 
   useEffect(() => {
+    const debouncers = debouncersRef.current;
+
     return () => {
-      debouncersRef.current.forEach((debouncer) => debouncer.cancel());
+      debouncers.forEach((debouncer) => debouncer.cancel());
     };
   }, []);
 
   useEffect(() => {
-    GetResponses(form?.id || "", showDeletedColumns)
+    GetResponses(form?.id || '', showDeletedColumns)
       .then((r) => {
         const cleanedResponses = r.data.responses.map(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- this is a generic form response
           (response: Record<string, any>) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any -- this is a generic form response
             const cleanedResponse: Record<string, any> = {};
 
             Object.entries(response).forEach(([key, value]) => {
@@ -129,7 +133,7 @@ const Responses = ({}: ResponsesProps) => {
             });
 
             return cleanedResponse;
-          }
+          },
         );
 
         setResponses(cleanedResponses);
@@ -138,7 +142,7 @@ const Responses = ({}: ResponsesProps) => {
         let columnOrder: Record<string, FormField | undefined>[] = [];
         if (r.data.columnOrder) {
           columnOrder = r.data.columnOrder.map((key: string) => {
-            let [_, id_val] = key.split("_attr_key:");
+            const id_val = key.split('_attr_key:')[1];
             const field = form?.attrs.find((f) => {
               return f.key === id_val;
             });
@@ -154,7 +158,7 @@ const Responses = ({}: ResponsesProps) => {
         console.error(err);
         setIsLoading(false);
       });
-  }, [form?.id, showDeletedColumns]);
+  }, [form?.id, showDeletedColumns, form?.attrs]);
 
   if (isLoading) {
     return <LoadingSpinner />;
@@ -165,11 +169,11 @@ const Responses = ({}: ResponsesProps) => {
   }
 
   const handleExportCSV = () => {
-    DownloadResponses(form?.id || "", showDeletedColumns)
+    DownloadResponses(form?.id || '', showDeletedColumns)
       .then((r) => {
-        const blob = new Blob([r.data], { type: "text/csv" });
+        const blob = new Blob([r.data], { type: 'text/csv' });
         const url = window.URL.createObjectURL(blob);
-        const link = document.createElement("a");
+        const link = document.createElement('a');
         link.href = url;
 
         const currentISO = new Date().toISOString();
@@ -180,7 +184,7 @@ const Responses = ({}: ResponsesProps) => {
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
       })
-      .catch((err) => {});
+      .catch((_) => {});
   };
 
   return (
@@ -191,7 +195,7 @@ const Responses = ({}: ResponsesProps) => {
           className="btn btn-primary mr-2"
         >
           <EditIcon className="w-6 h-6" />
-          {isEditing ? "Stop Editing" : "Edit Fields"}
+          {isEditing ? 'Stop Editing' : 'Edit Fields'}
         </button>
 
         <button onClick={handleExportCSV} className="btn btn-primary">
@@ -200,11 +204,11 @@ const Responses = ({}: ResponsesProps) => {
       </div>
       <Checkbox
         field={{
-          key: "showDeletedColumns",
-          question: "Show Deleted Columns",
+          key: 'showDeletedColumns',
+          question: 'Show Deleted Columns',
           description:
-            "Show responses to deleted columns, this happens if you modify the form structure after some responses have been submitted.",
-          type: "checkbox",
+            'Show responses to deleted columns, this happens if you modify the form structure after some responses have been submitted.',
+          type: 'checkbox',
           required: false,
         }}
         inline={true}
@@ -213,13 +217,13 @@ const Responses = ({}: ResponsesProps) => {
         }}
         defaultValue={false}
       />
-      <div className="overflow-x-auto" style={{ height: "70vh" }}>
+      <div className="overflow-x-auto" style={{ height: '70vh' }}>
         <table className="table table-sm table-pin-rows bg-white">
           <thead>
             <tr>
               {columnOrder.map((header) => (
                 <th key={Object.keys(header)[0]}>
-                  {Object.keys(header)[0].split("_attr_key:")[0]}
+                  {Object.keys(header)[0].split('_attr_key:')[0]}
                 </th>
               ))}
             </tr>
@@ -229,29 +233,29 @@ const Responses = ({}: ResponsesProps) => {
               if (index === 0) return null;
 
               return (
-                <tr key={response["Response ID"] || index} className="hover">
+                <tr key={response['Response ID'] || index} className="hover">
                   {columnOrder.map((columnHeaderAttrMap) => {
-                    let header = Object.keys(columnHeaderAttrMap)[0];
+                    const header = Object.keys(columnHeaderAttrMap)[0];
                     const value = response[header];
                     let displayValue;
 
-                    if (value !== null && typeof value === "object") {
+                    if (value !== null && typeof value === 'object') {
                       displayValue = JSON.stringify(value);
                     } else {
                       displayValue = value;
                     }
 
-                    let field = columnHeaderAttrMap[header];
+                    const field = columnHeaderAttrMap[header];
                     if (!isEditing || !field) {
                       return <td key={`${header}-${index}`}>{displayValue}</td>;
                     }
 
                     // Deep copy field to avoid mutating original form structure
-                    let newField = JSON.parse(JSON.stringify(field));
+                    const newField = JSON.parse(JSON.stringify(field));
                     newField.defaultValue = value;
-                    newField.question = "";
+                    newField.question = '';
                     newField.key = JSON.stringify({
-                      submission_id: response["Response ID"],
+                      submission_id: response['Response ID'],
                       attr_key: field.key,
                       question: field.question,
                     });

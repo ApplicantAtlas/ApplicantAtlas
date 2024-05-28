@@ -1,25 +1,26 @@
-import FeatureCard from "@/components/Landing/FeatureCard";
-import Header, { MenuItem } from "@/components/Header";
-import Hero from "@/components/Landing/Hero";
-import AuthService from "@/services/AuthService";
-import { useEffect, useState } from "react";
-import Footer from "@/components/Footer";
+import { useEffect, useState } from 'react';
+
+import FeatureCard from '@/components/Landing/FeatureCard';
+import Header, { MenuItem } from '@/components/Header';
+import Hero from '@/components/Landing/Hero';
+import AuthService from '@/services/AuthService';
+import Footer from '@/components/Footer';
 
 export default function Component() {
   const [primaryButton, setPrimaryButton] = useState<MenuItem>({
-    label: "Get Started",
-    href: "/register",
+    label: 'Get Started',
+    href: '/register',
   });
   const menuItems: MenuItem[] = [
-    { label: "Home", href: "/" },
-    { label: "Features", href: "#features" },
-    { label: "About", href: "#about" },
-    { label: "Contact", href: "#contact" },
+    { label: 'Home', href: '/' },
+    { label: 'Features', href: '#features' },
+    { label: 'About', href: '#about' },
+    { label: 'Contact', href: '#contact' },
   ];
 
   useEffect(() => {
     if (AuthService.isAuth()) {
-      setPrimaryButton({ label: "Dashboard", href: "/user/dashboard" });
+      setPrimaryButton({ label: 'Dashboard', href: '/user/dashboard' });
     }
   }, []);
 
@@ -56,7 +57,7 @@ export default function Component() {
               </div>
             </div>
           </section>
-          
+
           {/* About Section */}
           <section id="about" className="py-12 md:py-24 lg:py-32">
             <div className="container mx-auto px-4">

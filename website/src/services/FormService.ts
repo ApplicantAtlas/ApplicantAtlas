@@ -1,28 +1,30 @@
-import { FormStructure } from "@/types/models/Form";
-import api from "./AxiosInterceptor";
-import { AxiosResponse } from "axios";
+import { AxiosResponse } from 'axios';
+
+import { FormStructure } from '@/types/models/Form';
+
+import api from './AxiosInterceptor';
 
 export const getSelectorOptions = async (name: string): Promise<string[]> => {
   const response = await api.get<string[]>(
-    `/forms/default_selector_values/${name}`
+    `/forms/default_selector_values/${name}`,
   );
   return response.data;
 };
 
 export const getForm = async (id: string): Promise<FormStructure> => {
-  const response = await api.get<{form: FormStructure}>(`/forms/${id}`);
+  const response = await api.get<{ form: FormStructure }>(`/forms/${id}`);
   return response.data.form;
 };
 
 export const createForm = async (
-  form: FormStructure
+  form: FormStructure,
 ): Promise<AxiosResponse<{ id: string }>> => {
-  return api.post<{ id: string }>("/forms", form);
+  return api.post<{ id: string }>('/forms', form);
 };
 
 export const updateForm = async (
   id: string,
-  form: FormStructure
+  form: FormStructure,
 ): Promise<AxiosResponse> => {
   return api.put(`/forms/${id}`, form);
 };

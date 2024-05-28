@@ -1,8 +1,10 @@
-import React, { ReactNode } from "react";
-import Header from "../Header";
-import Footer from "../Footer";
-import { TOCItem } from "../../../lib/markdown";
-import TableOfContents from "./TableOfContents";
+import React, { ReactNode } from 'react';
+
+import Header from '../Header';
+import Footer from '../Footer';
+import { TOCItem } from '../../../lib/markdown';
+
+import TableOfContents from './TableOfContents';
 
 export interface DocLayoutProps {
   children: ReactNode;
@@ -24,7 +26,7 @@ const DocLayout: React.FC<DocLayoutProps> = ({ children, toc }) => {
       <Header
         showUserProfile={true}
         showShadow={false}
-        customStyles={{ header: "border-b border-gray-200" }}
+        customStyles={{ header: 'border-b border-gray-200' }}
         menuItems={[]}
       />
       <div className="flex flex-row min-h-screen">

@@ -1,49 +1,48 @@
-import React, { useEffect, useState } from "react";
-import PipelineActionModal from "./PipelineActionModal";
-import { PipelineAction, PipelineConfiguration, PipelineEvent } from "@/types/models/Pipeline";
-import { EventModel } from "@/types/models/Event";
-import { FormStructure } from "@/types/models/Form";
-import { getEventForms } from "@/services/EventService";
-import { EmailTemplate } from "@/types/models/EmailTemplate";
-import { GetEmailTemplates } from "@/services/EmailTemplateService";
-import { AppDispatch, RootState } from "@/store";
-import { useDispatch, useSelector } from "react-redux";
-import { addOrUpdateAction, removeAction, setEvent, setPipelineConfiguration } from "@/store/slices/pipelineSlice";
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { PipelineAction, PipelineEvent } from '@/types/models/Pipeline';
+import { FormStructure } from '@/types/models/Form';
+import { getEventForms } from '@/services/EventService';
+import { EmailTemplate } from '@/types/models/EmailTemplate';
+import { GetEmailTemplates } from '@/services/EmailTemplateService';
+import { AppDispatch, RootState } from '@/store';
+import {
+  addOrUpdateAction,
+  removeAction,
+  setEvent,
+  setPipelineConfiguration,
+} from '@/store/slices/pipelineSlice';
+
+import PipelineActionModal from './PipelineActionModal';
 
 interface PipelineBuilderProps {
   onSubmit: () => void;
 }
 
-const PipelineBuilder: React.FC<PipelineBuilderProps> = ({
-  onSubmit,
-}) => {
+const PipelineBuilder: React.FC<PipelineBuilderProps> = ({ onSubmit }) => {
   const dispatch: AppDispatch = useDispatch();
-  const pipelineConfig = useSelector((state: RootState) => state.pipeline.pipelineState);
-  const eventDetails = useSelector((state: RootState) => state.event.eventDetails);
-  
-  if (pipelineConfig === null) {
-    return <p>Error selected pipeline null</p>
-  }
-  
-  const [showModalType, setShowModalType] = useState<"action" | "event" | null>(
-    null
+  const pipelineConfig = useSelector(
+    (state: RootState) => state.pipeline.pipelineState,
+  );
+  const eventDetails = useSelector(
+    (state: RootState) => state.event.eventDetails,
+  );
+
+  const [showModalType, setShowModalType] = useState<'action' | 'event' | null>(
+    null,
   );
   const [deleteAction, setDeleteAction] = useState<PipelineAction>();
   const [eventForms, setEventForms] = useState<FormStructure[]>();
-  const [eventEmailTemplates, setEventEmailTemplates] = useState<EmailTemplate[]>();
+  const [eventEmailTemplates, setEventEmailTemplates] =
+    useState<EmailTemplate[]>();
   const [editAction, setEditAction] = useState<PipelineAction>();
 
-    useEffect(() => {
-      if (editAction) {
-        setShowModalType("action");
+  useEffect(() => {
+    if (editAction) {
+      setShowModalType('action');
     }
-    }, [editAction]);
-
-
-  const handleFormSubmit = () => {
-    dispatch(setPipelineConfiguration(pipelineConfig));
-    onSubmit();
-  };
+  }, [editAction]);
 
   useEffect(() => {
     if (eventDetails !== null) {
@@ -59,23 +58,31 @@ const PipelineBuilder: React.FC<PipelineBuilderProps> = ({
         })
         .catch(() => {});
     }
-  }, [eventDetails])
+  }, [eventDetails]);
+
+  if (pipelineConfig === null) {
+    return <p>Error selected pipeline null</p>;
+  }
+
+  const handleFormSubmit = () => {
+    dispatch(setPipelineConfiguration(pipelineConfig));
+    onSubmit();
+  };
 
   const handleAddAction = (action: PipelineAction | PipelineEvent) => {
-    dispatch(addOrUpdateAction(action))
+    dispatch(addOrUpdateAction(action));
   };
-  
 
   const handleRemoveAction = (action: PipelineAction) => {
     setDeleteAction(undefined);
-    dispatch(removeAction({ id: action?.id || "" }))
+    dispatch(removeAction({ id: action?.id || '' }));
   };
 
   const handleSetEvent = (event: PipelineEvent | PipelineAction) => {
-    dispatch(setEvent(event as PipelineEvent))
+    dispatch(setEvent(event as PipelineEvent));
   };
 
-  // TODO: Pre-populate the email action & form id to be a selector 
+  // TODO: Pre-populate the email action & form id to be a selector
   return (
     <>
       <h2 className="text-lg">Pipeline Trigger</h2>
@@ -105,15 +112,15 @@ const PipelineBuilder: React.FC<PipelineBuilderProps> = ({
 
       <p>
         <button
-          onClick={() => setShowModalType("event")}
+          onClick={() => setShowModalType('event')}
           className="btn btn-primary mt-4"
         >
-          {pipelineConfig.event?.name ? "Edit Event" : "Set Event"}
+          {pipelineConfig.event?.name ? 'Edit Event' : 'Set Event'}
         </button>
       </p>
 
       <PipelineActionModal
-        isOpen={showModalType === "event"}
+        isOpen={showModalType === 'event'}
         onClose={() => setShowModalType(null)}
         onSelect={handleSetEvent}
         modalType="event"
@@ -147,7 +154,7 @@ const PipelineBuilder: React.FC<PipelineBuilderProps> = ({
                           className="btn btn-primary"
                           onClick={(e) => {
                             e.stopPropagation();
-                            setEditAction(action)
+                            setEditAction(action);
                           }}
                         >
                           Edit
@@ -174,7 +181,7 @@ const PipelineBuilder: React.FC<PipelineBuilderProps> = ({
 
       <p>
         <button
-          onClick={() => setShowModalType("action")}
+          onClick={() => setShowModalType('action')}
           className="btn btn-primary mt-4"
         >
           Add Action
@@ -182,19 +189,16 @@ const PipelineBuilder: React.FC<PipelineBuilderProps> = ({
       </p>
 
       <p>
-        <button
-          onClick={handleFormSubmit}
-          className="btn btn-primary mt-4"
-        >
+        <button onClick={handleFormSubmit} className="btn btn-primary mt-4">
           Save Pipeline
         </button>
       </p>
 
       <PipelineActionModal
-        isOpen={showModalType === "action"}
+        isOpen={showModalType === 'action'}
         onClose={() => {
-          setEditAction(undefined)  
-          setShowModalType(null)
+          setEditAction(undefined);
+          setShowModalType(null);
         }}
         onSelect={handleAddAction}
         modalType="action"
@@ -222,7 +226,7 @@ const PipelineBuilder: React.FC<PipelineBuilderProps> = ({
               <button
                 className="btn btn-ghost"
                 onClick={() => {
-                  setDeleteAction(undefined)
+                  setDeleteAction(undefined);
                 }}
               >
                 Cancel

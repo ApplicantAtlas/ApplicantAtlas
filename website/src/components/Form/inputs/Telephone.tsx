@@ -1,9 +1,9 @@
-import React, { useRef, useState } from "react";
-import { FormField, FieldValue } from "@/types/models/Form";
+import React, { useRef, useState } from 'react';
+import PhoneInput from 'react-phone-number-input';
+import { isValidPhoneNumber } from 'react-phone-number-input';
 
-import PhoneInput from "react-phone-number-input";
-import { isValidPhoneNumber } from "react-phone-number-input";
-import "react-phone-number-input/style.css";
+import { FormField, FieldValue } from '@/types/models/Form';
+import 'react-phone-number-input/style.css';
 
 type TelephoneInputProps = {
   field: FormField;
@@ -16,42 +16,42 @@ const Telephone: React.FC<TelephoneInputProps> = ({
   onChange,
   defaultValue,
 }) => {
-  const [phoneNumber, setPhoneNumber] = useState<string>(defaultValue || "");
+  const [phoneNumber, setPhoneNumber] = useState<string>(defaultValue || '');
   const inputRef = useRef<HTMLInputElement>(null);
-  const [error, setError] = useState<string>("");
+  const [error, setError] = useState<string>('');
 
   const handlePhoneNumberChange = (number: string | undefined) => {
-    setPhoneNumber(number || "");
+    setPhoneNumber(number || '');
     validatePhoneNumber(number);
   };
 
   const validatePhoneNumber = (number: string | undefined) => {
     const isValid = !number || isValidPhoneNumber(number);
     if (inputRef.current) {
-      inputRef.current.setCustomValidity(isValid ? "" : "Invalid phone number");
+      inputRef.current.setCustomValidity(isValid ? '' : 'Invalid phone number');
     }
     if (isValid) {
       onChange(field.key, number as string);
-      setError("");
+      setError('');
     } else {
-      onChange(field.key, "", "Invalid phone number");
-      setError("Invalid phone number");
+      onChange(field.key, '', 'Invalid phone number');
+      setError('Invalid phone number');
     }
   };
 
   return (
     <div className="form-control">
-      {field.question !== "" && (
+      {field.question !== '' && (
         <label className="label">
           <span className="label-text">
-            {field.question}{" "}
+            {field.question}{' '}
             {field.required && <span className="text-error">*</span>}
           </span>
         </label>
       )}
       <div className="telephone-input">
         <PhoneInput
-          // @ts-ignore
+          // @ts-expect-error - We don't have proper typing for this library
           ref={inputRef}
           id={field.key}
           name={field.question}

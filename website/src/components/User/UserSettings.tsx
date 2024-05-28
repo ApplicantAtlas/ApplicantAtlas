@@ -1,14 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { User } from "@/types/models/User";
-import { getUserFull, updateUser } from "@/services/UserService";
-import { useRouter } from "next/router";
-import { useToast, ToastType } from "@/components/Toast/ToastContext";
-import LoadingOverlay from "@/components/Loading/LoadingOverlay";
-import { FormStructure } from "@/types/models/Form";
-import FormBuilder from "@/components/Form/FormBuilder";
-import AuthService from "@/services/AuthService";
-import Header from "../Header";
-import Footer from "../Footer";
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+
+import { User } from '@/types/models/User';
+import { getUserFull, updateUser } from '@/services/UserService';
+import { useToast, ToastType } from '@/components/Toast/ToastContext';
+import LoadingOverlay from '@/components/Loading/LoadingOverlay';
+import { FormStructure } from '@/types/models/Form';
+import FormBuilder from '@/components/Form/FormBuilder';
+import AuthService from '@/services/AuthService';
+
+import Header from '../Header';
+import Footer from '../Footer';
 
 const UserSettings: React.FC = () => {
   const [user, setUser] = useState<User | undefined>();
@@ -28,14 +30,14 @@ const UserSettings: React.FC = () => {
   const handleDeleteAccount = async () => {
     if (
       window.confirm(
-        "Are you sure you want to delete your account? This action cannot be undone."
+        'Are you sure you want to delete your account? This action cannot be undone.',
       )
     ) {
       AuthService.deleteUser()
         .then(() => {
           AuthService.logout();
-          showToast("Account deleted successfully", ToastType.Success);
-          router.push("/");
+          showToast('Account deleted successfully', ToastType.Success);
+          router.push('/');
         })
         .catch(() => {});
     }
@@ -45,23 +47,23 @@ const UserSettings: React.FC = () => {
     return {
       attrs: [
         {
-          key: "firstName",
-          question: "First Name",
-          type: "text",
+          key: 'firstName',
+          question: 'First Name',
+          type: 'text',
           required: true,
           defaultValue: user?.firstName,
         },
         {
-          key: "lastName",
-          question: "Last Name",
-          type: "text",
+          key: 'lastName',
+          question: 'Last Name',
+          type: 'text',
           required: true,
           defaultValue: user?.lastName,
         },
         {
-          key: "email",
-          question: "Email",
-          type: "text",
+          key: 'email',
+          question: 'Email',
+          type: 'text',
           additionalValidation: {
             isEmail: {
               isEmail: true,
@@ -71,13 +73,13 @@ const UserSettings: React.FC = () => {
           defaultValue: user?.email,
         },
         {
-          key: "schoolEmail",
-          question: "School Email",
-          type: "text",
+          key: 'schoolEmail',
+          question: 'School Email',
+          type: 'text',
           additionalValidation: {
             isEmail: {
               isEmail: true,
-              allowTLDs: ["edu"],
+              allowTLDs: ['edu'],
               allowSubdomains: true,
             },
           },
@@ -85,16 +87,16 @@ const UserSettings: React.FC = () => {
           defaultValue: user?.schoolEmail,
         },
         {
-          key: "alternativeEmails",
-          question: "Alternative Emails",
-          type: "custommultiselect",
+          key: 'alternativeEmails',
+          question: 'Alternative Emails',
+          type: 'custommultiselect',
           required: false,
           defaultValue: user?.alternativeEmails,
         },
         {
-          key: "birthday",
-          question: "Birthday",
-          type: "date",
+          key: 'birthday',
+          question: 'Birthday',
+          type: 'date',
           required: true,
           defaultValue: user?.birthday,
         },
@@ -102,24 +104,25 @@ const UserSettings: React.FC = () => {
     };
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- this is a generic form submission handler
   const handleFormSubmission = (formData: Record<string, any>) => {
     // Convert birthday from Date object to format with utc, 0 padded month and day
     const d = new Date(formData.birthday);
     const year = d.getUTCFullYear();
-    const month = (d.getUTCMonth() + 1).toString().padStart(2, "0");
-    const day = d.getUTCDate().toString().padStart(2, "0");
+    const month = (d.getUTCMonth() + 1).toString().padStart(2, '0');
+    const day = d.getUTCDate().toString().padStart(2, '0');
 
     formData.birthday = `${month}/${day}/${year}`;
 
     updateUser(formData as User)
-      .then((r) => {
+      .then((_) => {
         getUserFull()
           .then((r) => {
             setUser(r);
             setFormFields(createFormStructure(r));
           })
           .catch(() => {});
-        showToast("Account updated successfully", ToastType.Success);
+        showToast('Account updated successfully', ToastType.Success);
       })
       .catch(() => {});
   };
@@ -131,7 +134,7 @@ const UserSettings: React.FC = () => {
   return (
     <>
       <Header
-        menuItems={[{ label: "My Events", href: "/user/dashboard" }]}
+        menuItems={[{ label: 'My Events', href: '/user/dashboard' }]}
         showUserProfile={true}
       />
       <div className="container mx-auto p-4">

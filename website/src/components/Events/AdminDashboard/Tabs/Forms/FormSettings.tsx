@@ -1,11 +1,12 @@
-import FormBuilder from "@/components/Form/FormBuilder";
-import { ToastType, useToast } from "@/components/Toast/ToastContext";
-import { deleteForm, updateForm } from "@/services/FormService";
-import { FormStructure } from "@/types/models/Form";
-import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState, AppDispatch } from "@/store";
-import { updateFormDetails, setFormDetails } from "@/store/slices/formSlice";
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
+import FormBuilder from '@/components/Form/FormBuilder';
+import { ToastType, useToast } from '@/components/Toast/ToastContext';
+import { deleteForm, updateForm } from '@/services/FormService';
+import { FormStructure } from '@/types/models/Form';
+import { RootState, AppDispatch } from '@/store';
+import { updateFormDetails, resetFormState } from '@/store/slices/formSlice';
 
 interface FormSettingsProps {
   onDelete: () => void;
@@ -26,9 +27,9 @@ const FormSettings: React.FC<FormSettingsProps> = ({ onDelete }) => {
 
     deleteForm(formID)
       .then(() => {
-        showToast("Form deleted successfully", ToastType.Success);
+        showToast('Form deleted successfully', ToastType.Success);
         onDelete();
-        dispatch(setFormDetails(null)); // Clear the form details from Redux
+        dispatch(resetFormState()); // Clear the form details from Redux
       })
       .catch(() => {});
   };
@@ -36,84 +37,84 @@ const FormSettings: React.FC<FormSettingsProps> = ({ onDelete }) => {
   const formSettingStructure: FormStructure = {
     attrs: [
       {
-        question: "Form Name",
-        description: "The name of the form",
-        type: "text",
-        key: "name",
+        question: 'Form Name',
+        description: 'The name of the form',
+        type: 'text',
+        key: 'name',
         required: true,
         defaultValue: form.name,
       },
       {
-        question: "Form Description",
-        description: "The description of the form",
-        type: "textarea",
-        key: "description",
+        question: 'Form Description',
+        description: 'The description of the form',
+        type: 'textarea',
+        key: 'description',
         required: false,
         defaultValue: form.description,
       },
       {
-        question: "Allow Multiple Submissions",
-        description: "Allow users to submit the form multiple times",
-        type: "checkbox",
-        key: "allowMultipleSubmissions",
+        question: 'Allow Multiple Submissions',
+        description: 'Allow users to submit the form multiple times',
+        type: 'checkbox',
+        key: 'allowMultipleSubmissions',
         required: false,
         defaultValue: form.allowMultipleSubmissions,
       },
       {
-        question: "Max Submissions",
-        description: "The maximum number of total submissions allowed",
-        type: "number",
-        key: "maxSubmissions",
+        question: 'Max Submissions',
+        description: 'The maximum number of total submissions allowed',
+        type: 'number',
+        key: 'maxSubmissions',
         required: false,
         defaultValue: form.maxSubmissions,
       },
       {
-        question: "Form Status",
-        description: "The status of the form",
-        type: "radio",
-        key: "status",
+        question: 'Form Status',
+        description: 'The status of the form',
+        type: 'radio',
+        key: 'status',
         required: true,
-        options: ["draft", "published", "closed", "archived"],
-        defaultOptions: [form.status ? form.status : "draft"],
+        options: ['draft', 'published', 'closed', 'archived'],
+        defaultOptions: [form.status ? form.status : 'draft'],
       },
       {
-        question: "Open Submission Date",
-        description: "The date the form will open for submissions",
-        type: "timestamp",
-        key: "openSubmissionsAt",
+        question: 'Open Submission Date',
+        description: 'The date the form will open for submissions',
+        type: 'timestamp',
+        key: 'openSubmissionsAt',
         required: false,
         defaultValue: form.openSubmissionsAt,
       },
       {
-        question: "Close Submission Date",
-        description: "The date the form will close for submissions",
-        type: "timestamp",
-        key: "closeSubmissionsAt",
+        question: 'Close Submission Date',
+        description: 'The date the form will close for submissions',
+        type: 'timestamp',
+        key: 'closeSubmissionsAt',
         required: false,
         defaultValue: form.closeSubmissionsAt,
       },
       {
-        question: "Form Submission Message",
-        description: "The message to display after the form is submitted",
-        type: "textarea",
-        key: "submissionMessage",
+        question: 'Form Submission Message',
+        description: 'The message to display after the form is submitted',
+        type: 'textarea',
+        key: 'submissionMessage',
         required: false,
         defaultValue: form.submissionMessage,
       },
       {
-        question: "Restrict This Form",
-        description: "Restrict who can submit the form",
-        type: "checkbox",
-        key: "isRestricted",
+        question: 'Restrict This Form',
+        description: 'Restrict who can submit the form',
+        type: 'checkbox',
+        key: 'isRestricted',
         required: false,
         defaultValue: form.isRestricted,
       },
       {
-        question: "Allowed Submitters",
+        question: 'Allowed Submitters',
         description:
-          "The emails of users allowed to submit the form, this is only applicable if the form is restricted",
-        type: "textarea",
-        key: "allowedSubmitters",
+          'The emails of users allowed to submit the form, this is only applicable if the form is restricted',
+        type: 'textarea',
+        key: 'allowedSubmitters',
         required: false,
         defaultValue: Array.isArray(form.allowedSubmitters)
           ? form.allowedSubmitters
@@ -125,17 +126,18 @@ const FormSettings: React.FC<FormSettingsProps> = ({ onDelete }) => {
                   `${submitter.email}` +
                   (submitter.expiresAt && !isZeroDate
                     ? `,expiresAt:${submitter.expiresAt}`
-                    : "")
+                    : '')
                 );
               })
-              .join("\n")
-          : "",
+              .join('\n')
+          : '',
       },
     ],
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- this is a generic form submission handler
   const handleSubmit = (formData: Record<string, any>) => {
-    let {
+    const {
       status,
       allowMultipleSubmissions,
       openSubmissionsAt,
@@ -145,20 +147,22 @@ const FormSettings: React.FC<FormSettingsProps> = ({ onDelete }) => {
       name,
       description,
       isRestricted,
-      allowedSubmitters,
     } = formData;
+    let { allowedSubmitters } = formData;
 
     if (allowedSubmitters) {
-      allowedSubmitters = allowedSubmitters.split("\n").map((submitter: string) => {
-        const [email, expiresAtPart] = submitter.split(",");
-        const expiresAt = expiresAtPart
-          ? expiresAtPart.split("expiresAt:")[1]
-          : undefined;
-        return {
-          email,
-          expiresAt: expiresAt ? new Date(expiresAt) : undefined,
-        };
-      });
+      allowedSubmitters = allowedSubmitters
+        .split('\n')
+        .map((submitter: string) => {
+          const [email, expiresAtPart] = submitter.split(',');
+          const expiresAt = expiresAtPart
+            ? expiresAtPart.split('expiresAt:')[1]
+            : undefined;
+          return {
+            email,
+            expiresAt: expiresAt ? new Date(expiresAt) : undefined,
+          };
+        });
     }
 
     if (allowedSubmitters == undefined || allowedSubmitters.length === 0)
@@ -178,12 +182,12 @@ const FormSettings: React.FC<FormSettingsProps> = ({ onDelete }) => {
       allowedSubmitters,
     };
 
-    updateForm(form.id || "t", updatedForm)
+    updateForm(form.id || 't', updatedForm)
       .then(() => {
-        showToast("Successfully updated form!", ToastType.Success);
+        showToast('Successfully updated form!', ToastType.Success);
         dispatch(updateFormDetails(updatedForm));
       })
-      .catch((err) => {});
+      .catch((_) => {});
   };
 
   return (

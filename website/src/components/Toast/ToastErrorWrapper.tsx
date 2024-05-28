@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
+
+import { eventEmitter } from '../../events/EventEmitter';
+
 import { ToastType, useToast } from './ToastContext';
-import { eventEmitter } from '../../events/EventEmitter'; 
 
 const ToastErrorWrapper: React.FC = () => {
   const { showToast } = useToast();
@@ -12,11 +14,11 @@ const ToastErrorWrapper: React.FC = () => {
 
     const toastWarning = (msg: string) => {
       showToast(msg, ToastType.Warning);
-    }
+    };
 
     const toastSuccess = (msg: string) => {
       showToast(msg, ToastType.Success);
-    }
+    };
 
     eventEmitter.on('warning', toastWarning); // Listen for warning events
     eventEmitter.on('success', toastSuccess); // Listen for success events
@@ -25,7 +27,7 @@ const ToastErrorWrapper: React.FC = () => {
 
     return () => {
       eventEmitter.off('apiError', toastError);
-      eventEmitter.off('error', toastError); 
+      eventEmitter.off('error', toastError);
       eventEmitter.off('warning', toastWarning);
       eventEmitter.off('success', toastSuccess);
     };

@@ -4,7 +4,7 @@ interface XMarkIconProps {
 }
 
 // From heroicons.com
-const XMarkIcon = ({ className = "w-6 h-6", onClick }: XMarkIconProps) => {
+const XMarkIcon = ({ className = 'w-6 h-6', onClick }: XMarkIconProps) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

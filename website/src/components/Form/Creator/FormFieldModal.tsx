@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { humanFormTypes, fieldDescriptions } from "../FormConstants"; // Assuming fieldDescriptions is an object mapping field types to their descriptions
+import React, { useState } from 'react';
+
+import { humanFormTypes, fieldDescriptions } from '../FormConstants'; // Assuming fieldDescriptions is an object mapping field types to their descriptions
 
 interface FormFieldModalProps {
   isOpen: boolean;
@@ -12,7 +13,9 @@ const FormFieldModal: React.FC<FormFieldModalProps> = ({
   onClose,
   onFieldSelect,
 }) => {
-  const [selectedFieldType, setSelectedFieldType] = useState<string | null>(null);
+  const [selectedFieldType, setSelectedFieldType] = useState<string | null>(
+    null,
+  );
 
   const handleFieldSelection = (type: string) => {
     setSelectedFieldType(type);
@@ -35,7 +38,10 @@ const FormFieldModal: React.FC<FormFieldModalProps> = ({
               <div className="flex-1 p-4">
                 <ul className="menu bg-base-100 w-full">
                   {humanFormTypes.map((type) => (
-                    <li key={type} className={selectedFieldType === type ? "bordered" : ""}>
+                    <li
+                      key={type}
+                      className={selectedFieldType === type ? 'bordered' : ''}
+                    >
                       <a onClick={() => handleFieldSelection(type)}>{type}</a>
                     </li>
                   ))}
@@ -44,15 +50,21 @@ const FormFieldModal: React.FC<FormFieldModalProps> = ({
               <div className="flex-1 p-4">
                 {selectedFieldType && (
                   <div>
-                    <h4 className="text-lg font-semibold">{selectedFieldType}</h4>
+                    <h4 className="text-lg font-semibold">
+                      {selectedFieldType}
+                    </h4>
                     <p>{fieldDescriptions[selectedFieldType]}</p>
                   </div>
                 )}
               </div>
             </div>
             <div className="modal-action">
-              <button onClick={handleAddField} className="btn btn-primary">Add Field</button>
-              <button onClick={onClose} className="btn btn-outline">Close</button>
+              <button onClick={handleAddField} className="btn btn-primary">
+                Add Field
+              </button>
+              <button onClick={onClose} className="btn btn-outline">
+                Close
+              </button>
             </div>
           </div>
         </div>

@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { FormField, FieldValue } from "@/types/models/Form";
-import InformationIcon from "@/components/Icons/InformationIcon";
+import React, { useEffect, useState } from 'react';
+
+import { FormField, FieldValue } from '@/types/models/Form';
+import InformationIcon from '@/components/Icons/InformationIcon';
 
 type CheckboxProps = {
   field: FormField;
@@ -19,7 +20,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
 
   useEffect(() => {
     onChange(field.key, defaultValue || false);
-  }, [defaultValue]);
+  }, [defaultValue]); // eslint-disable-line react-hooks/exhaustive-deps -- only want to run this for initial value
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setChecked(e.target.checked);
@@ -28,11 +29,11 @@ const Checkbox: React.FC<CheckboxProps> = ({
 
   return (
     <>
-      {!inline && field.question !== "" && (
+      {!inline && field.question !== '' && (
         <div className="form-control">
           <label className="label cursor-pointer">
             <span className="label-text mr-2">
-              {field.question}{" "}
+              {field.question}{' '}
               {field.required && <span className="text-error">*</span>}
               {field.description && (
                 <div className="tooltip" data-tip={field.description}>

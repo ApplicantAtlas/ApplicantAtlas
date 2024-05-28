@@ -1,40 +1,41 @@
-import React, { useEffect } from "react";
-import Head from "next/head";
-import Link from "next/link";
-import AuthService from "@/services/AuthService";
-import { User } from "@/types/models/User";
-import { eventEmitter } from "@/events/EventEmitter";
-import { useRouter } from "next/router";
-import FormBuilder from "@/components/Form/FormBuilder";
-import { FormStructure } from "@/types/models/Form";
+import React, { useEffect } from 'react';
+import Head from 'next/head';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+
+import AuthService from '@/services/AuthService';
+import { User } from '@/types/models/User';
+import { eventEmitter } from '@/events/EventEmitter';
+import FormBuilder from '@/components/Form/FormBuilder';
+import { FormStructure } from '@/types/models/Form';
 
 const RegistrationPage = () => {
   const router = useRouter();
 
   useEffect(() => {
     if (AuthService.isAuth()) {
-      router.push("/user/dashboard");
+      router.push('/user/dashboard');
     }
   }, [router]);
 
   const registrationFormStructure: FormStructure = {
     attrs: [
       {
-        question: "First Name",
-        type: "text",
-        key: "firstName",
+        question: 'First Name',
+        type: 'text',
+        key: 'firstName',
         required: true,
       },
       {
-        question: "Last Name",
-        type: "text",
-        key: "lastName",
+        question: 'Last Name',
+        type: 'text',
+        key: 'lastName',
         required: true,
       },
       {
-        question: "Email",
-        type: "text",
-        key: "email",
+        question: 'Email',
+        type: 'text',
+        key: 'email',
         additionalValidation: {
           isEmail: {
             isEmail: true,
@@ -43,27 +44,27 @@ const RegistrationPage = () => {
         required: true,
       },
       {
-        question: "School Email (Optional)",
-        type: "text",
-        key: "schoolEmail",
+        question: 'School Email (Optional)',
+        type: 'text',
+        key: 'schoolEmail',
         additionalValidation: {
           isEmail: {
             isEmail: true,
             allowSubdomains: true,
-            allowTLDs: ["edu"],
-          }
+            allowTLDs: ['edu'],
+          },
         },
       },
       {
-        question: "Birthday",
-        type: "date",
-        key: "birthday",
+        question: 'Birthday',
+        type: 'date',
+        key: 'birthday',
         required: true,
       },
       {
-        question: "Password",
-        type: "text",
-        key: "password",
+        question: 'Password',
+        type: 'text',
+        key: 'password',
         additionalOptions: {
           isPassword: true,
         },
@@ -72,20 +73,21 @@ const RegistrationPage = () => {
     ],
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- this is a generic form submission handler
   const handleSubmit = (formData: Record<string, any>) => {
     const formattedData = {
       ...formData,
-      birthday: formData.birthday ? formatDate(formData.birthday) : "",
+      birthday: formData.birthday ? formatDate(formData.birthday) : '',
     };
 
     AuthService.register(formattedData as User)
       .then(() => {
-        eventEmitter.emit("success", "Successfully registered, please log in!");
-        router.push("/login");
+        eventEmitter.emit('success', 'Successfully registered, please log in!');
+        router.push('/login');
       })
       .catch((err) => {
         if (err.response) {
-          eventEmitter.emit("apiError", err.response.data.error);
+          eventEmitter.emit('apiError', err.response.data.error);
         }
       });
   };
@@ -93,8 +95,8 @@ const RegistrationPage = () => {
   const formatDate = (dateString: string): string => {
     // Get the UTC month day year from the date string, it's passed in as a Date() string
     const date = new Date(dateString);
-    const utcMonth = (date.getUTCMonth() + 1).toString().padStart(2, "0");
-    const utcDay = date.getUTCDate().toString().padStart(2, "0");
+    const utcMonth = (date.getUTCMonth() + 1).toString().padStart(2, '0');
+    const utcDay = date.getUTCDate().toString().padStart(2, '0');
     const utcYear = date.getUTCFullYear();
     return `${utcMonth}/${utcDay}/${utcYear}`;
   };

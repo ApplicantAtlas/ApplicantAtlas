@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
-import CountryRegionData from "@../../../node_modules/country-region-data/data.json";
-import Text from "./Text";
-import { FieldValue, FormField } from "@/types/models/Form";
-import { Address } from "@/types/models/Event";
-import dynamic from "next/dynamic";
+import React, { useEffect, useState } from 'react';
+import CountryRegionData from '@../../../node_modules/country-region-data/data.json';
+import dynamic from 'next/dynamic';
 
-const SelectDynamic = dynamic(() => import("./Select"), {
+import { FieldValue, FormField } from '@/types/models/Form';
+import type { Address } from '@/types/models/Event';
+
+import Text from './Text';
+
+const SelectDynamic = dynamic(() => import('./Select'), {
   ssr: false,
 });
 
@@ -16,16 +18,16 @@ type AddressProps = {
 };
 
 const Address: React.FC<AddressProps> = ({ field, onChange, defaultValue }) => {
-  const [country, setCountry] = useState(defaultValue?.country || "");
-  const [region, setRegion] = useState(defaultValue?.region || "");
+  const [country, setCountry] = useState(defaultValue?.country || '');
+  const [region, setRegion] = useState(defaultValue?.region || '');
   const [streetAddress, setStreetAddress] = useState(
-    defaultValue?.streetAddress || ""
+    defaultValue?.streetAddress || '',
   );
-  const [city, setCity] = useState(defaultValue?.city || "");
-  const [zipCode, setZipCode] = useState(defaultValue?.zipCode || "");
+  const [city, setCity] = useState(defaultValue?.city || '');
+  const [zipCode, setZipCode] = useState(defaultValue?.zipCode || '');
 
-  var formAddress = (): Address => {
-    var address: Address = {
+  const formAddress = (): Address => {
+    const address: Address = {
       country,
       region,
       streetAddress,
@@ -37,23 +39,23 @@ const Address: React.FC<AddressProps> = ({ field, onChange, defaultValue }) => {
 
   useEffect(() => {
     onChange(field.key, formAddress());
-  }, [defaultValue]);
+  }, [defaultValue]); // eslint-disable-line react-hooks/exhaustive-deps -- only want to run this for initial value
 
   const handleInputChange = (key: string, value: FieldValue) => {
     switch (key) {
-      case field.key + "_streetAddress":
+      case field.key + '_streetAddress':
         setStreetAddress(value as string);
         break;
-      case field.key + "_city":
+      case field.key + '_city':
         setCity(value as string);
         break;
-      case field.key + "_zipCode":
+      case field.key + '_zipCode':
         setZipCode(value as string);
         break;
-      case field.key + "_country":
+      case field.key + '_country':
         setCountry(value as string);
         break;
-      case field.key + "_region":
+      case field.key + '_region':
         setRegion(value as string);
         break;
       default:
@@ -66,9 +68,9 @@ const Address: React.FC<AddressProps> = ({ field, onChange, defaultValue }) => {
     <div className="space-y-4">
       <Text
         field={{
-          question: "Street Address",
-          key: field.key + "_streetAddress",
-          type: "text",
+          question: 'Street Address',
+          key: field.key + '_streetAddress',
+          type: 'text',
           required: field.required,
           defaultValue: streetAddress,
         }}
@@ -77,9 +79,9 @@ const Address: React.FC<AddressProps> = ({ field, onChange, defaultValue }) => {
       />
       <Text
         field={{
-          key: field.key + "_city",
-          question: "City",
-          type: "text",
+          key: field.key + '_city',
+          question: 'City',
+          type: 'text',
           required: field.required,
           defaultValue: city,
         }}
@@ -89,9 +91,9 @@ const Address: React.FC<AddressProps> = ({ field, onChange, defaultValue }) => {
       <div className="form-control w-full">
         <SelectDynamic
           field={{
-            key: field.key + "_country",
-            question: "Country",
-            type: "select",
+            key: field.key + '_country',
+            question: 'Country',
+            type: 'select',
             required: field.required,
             options: CountryRegionData.map((country) => country.countryName),
             defaultOptions: [country],
@@ -104,12 +106,12 @@ const Address: React.FC<AddressProps> = ({ field, onChange, defaultValue }) => {
         <SelectDynamic
           key={country} // force re-render when country changes
           field={{
-            key: field.key + "_region",
-            question: "Region",
-            type: "select",
+            key: field.key + '_region',
+            question: 'Region',
+            type: 'select',
             required: field.required,
             options: CountryRegionData.find(
-              (country_i) => country_i.countryName === country
+              (country_i) => country_i.countryName === country,
             )?.regions.map((region) => region.name),
             defaultOptions: [region],
           }}
@@ -119,9 +121,9 @@ const Address: React.FC<AddressProps> = ({ field, onChange, defaultValue }) => {
       </div>
       <Text
         field={{
-          key: field.key + "_zipCode",
-          question: "Zip Code",
-          type: "text",
+          key: field.key + '_zipCode',
+          question: 'Zip Code',
+          type: 'text',
           required: field.required,
           defaultValue: zipCode,
         }}

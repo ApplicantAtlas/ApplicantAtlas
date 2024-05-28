@@ -5,7 +5,7 @@ interface ChevronRightProps {
 
 // From heroicons.com
 const ChevronRight = ({
-  className = "w-6 h-6",
+  className = 'w-6 h-6',
   onClick,
 }: ChevronRightProps) => {
   return (
@@ -16,6 +16,7 @@ const ChevronRight = ({
       strokeWidth={1.5}
       stroke="currentColor"
       className={className}
+      onClick={onClick}
     >
       <path
         strokeLinecap="round"

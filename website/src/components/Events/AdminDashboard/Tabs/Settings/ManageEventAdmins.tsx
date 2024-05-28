@@ -1,33 +1,28 @@
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import { useToast, ToastType } from "@/components/Toast/ToastContext";
-import LoadingOverlay from "@/components/Loading/LoadingOverlay";
-import { getUser } from "@/services/UserService";
-import { EventModel } from "@/types/models/Event";
-import { User } from "@/types/models/User";
-import { addEventAdmin, removeEventAdmin } from "@/services/EventService";
-import { useSelector } from "react-redux";
-import { RootState } from "@/store";
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+
+import { useToast, ToastType } from '@/components/Toast/ToastContext';
+import LoadingOverlay from '@/components/Loading/LoadingOverlay';
+import { getUser } from '@/services/UserService';
+import { User } from '@/types/models/User';
+import { addEventAdmin, removeEventAdmin } from '@/services/EventService';
+import { RootState } from '@/store';
 
 interface ManageEventAdminsProps {
   onDone: () => void;
 }
 
-const ManageEventAdmins: React.FC<ManageEventAdminsProps> = ({
-  onDone,
-}) => {
-  const eventDetails = useSelector((state: RootState) => state.event.eventDetails);
-  if (eventDetails == null) {
-    return <p>Event details not found in state</p>
-  }
+const ManageEventAdmins: React.FC<ManageEventAdminsProps> = ({ onDone }) => {
+  const eventDetails = useSelector(
+    (state: RootState) => state.event.eventDetails,
+  );
 
-  const router = useRouter();
   const { showToast } = useToast();
   const [eventAdminsIDs, setEventAdminsIDs] = useState<string[] | undefined>(
-    eventDetails?.organizerIDs
+    eventDetails?.organizerIDs,
   );
   const [eventAdmins, setEventAdmins] = useState<User[]>([]);
-  const [newAdminEmail, setNewAdminEmail] = useState<string>("");
+  const [newAdminEmail, setNewAdminEmail] = useState<string>('');
 
   useEffect(() => {
     if (!eventAdminsIDs) {
@@ -41,37 +36,45 @@ const ManageEventAdmins: React.FC<ManageEventAdminsProps> = ({
           eventAdminsIDs.map(async (adminID) => {
             const res = await getUser(adminID);
             return res;
-          })
+          }),
         );
         setEventAdmins(fullEventAdmins);
       } catch {
-        showToast("Failed to load event admins", ToastType.Error);
+        showToast('Failed to load event admins', ToastType.Error);
       }
     };
 
     fetchAdmins();
-  }, [eventAdminsIDs]);
+  }, [eventAdminsIDs, showToast]);
+
+  if (eventDetails == null) {
+    return <p>Event details not found in state</p>;
+  }
 
   if (!eventAdminsIDs) {
     return <LoadingOverlay />;
   }
 
   const removeAdmin = (adminID: string) => {
-    if (window.confirm(
-      "Are you sure you want to remove admin: " + eventAdmins.find((admin) => admin.id === adminID)?.email + "?"
-    )) {
-    removeEventAdmin(eventDetails.ID, adminID)
-      .then(() => {
-        setEventAdminsIDs((prev) => prev?.filter((id) => id !== adminID))
-        setEventAdmins((prev) =>
-          prev ? prev.filter((admin) => admin.id !== adminID) : []
-        );
-        eventDetails.organizerIDs = eventDetails.organizerIDs?.filter(
-          (id) => id !== adminID
-        );
-        showToast("Admin removed successfully", ToastType.Success);
-      })
-      .catch(() => {});
+    if (
+      window.confirm(
+        'Are you sure you want to remove admin: ' +
+          eventAdmins.find((admin) => admin.id === adminID)?.email +
+          '?',
+      )
+    ) {
+      removeEventAdmin(eventDetails.ID, adminID)
+        .then(() => {
+          setEventAdminsIDs((prev) => prev?.filter((id) => id !== adminID));
+          setEventAdmins((prev) =>
+            prev ? prev.filter((admin) => admin.id !== adminID) : [],
+          );
+          eventDetails.organizerIDs = eventDetails.organizerIDs?.filter(
+            (id) => id !== adminID,
+          );
+          showToast('Admin removed successfully', ToastType.Success);
+        })
+        .catch(() => {});
     }
   };
 
@@ -79,10 +82,10 @@ const ManageEventAdmins: React.FC<ManageEventAdminsProps> = ({
     addEventAdmin(eventDetails.ID, newAdminEmail)
       .then((r) => {
         setEventAdminsIDs((prev) =>
-          prev ? [...prev, r.data.userID] : [r.data.userID]
+          prev ? [...prev, r.data.userID] : [r.data.userID],
         );
-        setNewAdminEmail("");
-        showToast("Admin added successfully", ToastType.Success);
+        setNewAdminEmail('');
+        showToast('Admin added successfully', ToastType.Success);
       })
       .catch(() => {});
   };
