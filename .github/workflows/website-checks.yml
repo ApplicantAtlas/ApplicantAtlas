@@ -1,0 +1,36 @@
+name: Website Linter & TypeScript Check
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint_and_type_check:
+    name: Run Linter and TypeScript Checks
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install dependencies
+      run: |
+        cd website
+        npm install
+
+    - name: Run linter
+      run: |
+        cd website
+        npm run lint
+
+    - name: Run TypeScript checks
+      run: |
+        cd website
+        npm run type-check
