@@ -21,6 +21,7 @@ interface ResponsesProps {}
 const Responses = ({}: ResponsesProps) => {
   const form = useSelector((state: RootState) => state.form.formDetails);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- this is a generic form response
   const [responses, setResponses] = useState<Record<string, any>[]>([]);
   const [columnOrder, setColumnOrder] = useState<
     Record<string, FormField | undefined>[]
@@ -48,7 +49,7 @@ const Responses = ({}: ResponsesProps) => {
             showToast(
               `Error updating response: ${errorStr}
         Response ID: ${submissionId}`,
-              ToastType.Error
+              ToastType.Error,
             );
             return;
           }
@@ -86,7 +87,7 @@ const Responses = ({}: ResponsesProps) => {
                   .then(() => {
                     showToast(
                       'Successfully updated reponse',
-                      ToastType.Success
+                      ToastType.Success,
                     );
                   })
                   .catch(() => {});
@@ -95,7 +96,7 @@ const Responses = ({}: ResponsesProps) => {
 
             return response;
           });
-        }, 500)
+        }, 500),
       );
     }
     return debouncersRef.current.get(key);
@@ -104,15 +105,17 @@ const Responses = ({}: ResponsesProps) => {
   const onSubmissionFieldChange = (
     key: string,
     value: FieldValue,
-    errorStr: string | undefined
+    errorStr: string | undefined,
   ) => {
     const debouncedOnChange = getDebouncedOnSubmissionFieldChange(key);
     debouncedOnChange(value, errorStr);
   };
 
   useEffect(() => {
+    const debouncers = debouncersRef.current;
+
     return () => {
-      debouncersRef.current.forEach((debouncer) => debouncer.cancel());
+      debouncers.forEach((debouncer) => debouncer.cancel());
     };
   }, []);
 
@@ -120,7 +123,9 @@ const Responses = ({}: ResponsesProps) => {
     GetResponses(form?.id || '', showDeletedColumns)
       .then((r) => {
         const cleanedResponses = r.data.responses.map(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- this is a generic form response
           (response: Record<string, any>) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any -- this is a generic form response
             const cleanedResponse: Record<string, any> = {};
 
             Object.entries(response).forEach(([key, value]) => {
@@ -128,7 +133,7 @@ const Responses = ({}: ResponsesProps) => {
             });
 
             return cleanedResponse;
-          }
+          },
         );
 
         setResponses(cleanedResponses);
@@ -137,7 +142,7 @@ const Responses = ({}: ResponsesProps) => {
         let columnOrder: Record<string, FormField | undefined>[] = [];
         if (r.data.columnOrder) {
           columnOrder = r.data.columnOrder.map((key: string) => {
-            const [_, id_val] = key.split('_attr_key:');
+            const id_val = key.split('_attr_key:')[1];
             const field = form?.attrs.find((f) => {
               return f.key === id_val;
             });
@@ -153,7 +158,7 @@ const Responses = ({}: ResponsesProps) => {
         console.error(err);
         setIsLoading(false);
       });
-  }, [form?.id, showDeletedColumns]);
+  }, [form?.id, showDeletedColumns, form?.attrs]);
 
   if (isLoading) {
     return <LoadingSpinner />;

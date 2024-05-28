@@ -17,7 +17,7 @@ const Text: React.FC<TextInputProps> = ({ field, onChange, defaultValue }) => {
     if (defaultValue) {
       onChange(field.key, defaultValue);
     }
-  }, [defaultValue]);
+  }, [defaultValue]); // eslint-disable-line react-hooks/exhaustive-deps -- only want to run this for initial value
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
@@ -46,7 +46,7 @@ const Text: React.FC<TextInputProps> = ({ field, onChange, defaultValue }) => {
         const domainRegex = allowSubdomains
           ? new RegExp(
               `@([a-zA-Z0-9.-]+\\.)?(${requireDomain.join('|')})$`,
-              'i'
+              'i',
             )
           : new RegExp(`@(${requireDomain.join('|')})$`, 'i');
         domainValid = domainRegex.test(inputValue);

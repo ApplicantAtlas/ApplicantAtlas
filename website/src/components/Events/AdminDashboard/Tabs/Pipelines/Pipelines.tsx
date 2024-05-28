@@ -3,13 +3,9 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import LoadingSpinner from '@/components/Loading/LoadingSpinner';
 import { GetPipelines } from '@/services/PipelineService';
-import { EventModel } from '@/types/models/Event';
 import { PipelineConfiguration } from '@/types/models/Pipeline';
 import { AppDispatch, RootState } from '@/store';
-import {
-  resetPipelineState,
-  setPipelineConfiguration,
-} from '@/store/slices/pipelineSlice';
+import { resetPipelineState } from '@/store/slices/pipelineSlice';
 
 import CreateNewPipeline from './CreateNewPipeline';
 import SelectPipeline from './SelectPipeline';
@@ -20,10 +16,10 @@ interface PipelinesProps {}
 const Pipelines: React.FC<PipelinesProps> = ({}) => {
   const dispatch: AppDispatch = useDispatch();
   const selectedPipeline = useSelector(
-    (state: RootState) => state.pipeline.pipelineState
+    (state: RootState) => state.pipeline.pipelineState,
   );
   const eventDetails = useSelector(
-    (state: RootState) => state.event.eventDetails
+    (state: RootState) => state.event.eventDetails,
   );
 
   const [pipelines, setPipelines] = useState<
@@ -40,7 +36,7 @@ const Pipelines: React.FC<PipelinesProps> = ({}) => {
         })
         .catch(() => {});
     }
-  }, [refresh]);
+  }, [refresh, eventDetails]);
 
   if (eventDetails === null || pipelines === undefined) {
     return (

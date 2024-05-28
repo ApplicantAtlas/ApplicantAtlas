@@ -95,6 +95,7 @@ const Test: React.FC = () => {
     ],
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleFormSubmit = (formData: Record<string, any>) => {
     console.log('Form Data:', formData);
   };

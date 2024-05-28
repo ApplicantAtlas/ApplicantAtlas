@@ -18,7 +18,7 @@ const DateInput: React.FC<DateInputProps> = ({
   };
 
   const [value, setValue] = useState<string>(
-    defaultValue ? formatDateToUTC(defaultValue) : ''
+    defaultValue ? formatDateToUTC(defaultValue) : '',
   );
   const [error, setError] = useState<string | undefined>();
 
@@ -30,13 +30,13 @@ const DateInput: React.FC<DateInputProps> = ({
         onChange(field.key, defaultValue);
       }
     }
-  }, [defaultValue]);
+  }, [defaultValue]); // eslint-disable-line react-hooks/exhaustive-deps -- only want to run this for initial value
 
   const calculateAge = (date: Date) => {
     let againstDate = Date.now();
     if (field.additionalValidation?.dateAndTimestampFromTimeField) {
       againstDate = new Date(
-        field.additionalValidation.dateAndTimestampFromTimeField
+        field.additionalValidation.dateAndTimestampFromTimeField,
       ).getTime();
     }
 

@@ -23,18 +23,14 @@ interface PipelineBuilderProps {
 const PipelineBuilder: React.FC<PipelineBuilderProps> = ({ onSubmit }) => {
   const dispatch: AppDispatch = useDispatch();
   const pipelineConfig = useSelector(
-    (state: RootState) => state.pipeline.pipelineState
+    (state: RootState) => state.pipeline.pipelineState,
   );
   const eventDetails = useSelector(
-    (state: RootState) => state.event.eventDetails
+    (state: RootState) => state.event.eventDetails,
   );
 
-  if (pipelineConfig === null) {
-    return <p>Error selected pipeline null</p>;
-  }
-
   const [showModalType, setShowModalType] = useState<'action' | 'event' | null>(
-    null
+    null,
   );
   const [deleteAction, setDeleteAction] = useState<PipelineAction>();
   const [eventForms, setEventForms] = useState<FormStructure[]>();
@@ -47,11 +43,6 @@ const PipelineBuilder: React.FC<PipelineBuilderProps> = ({ onSubmit }) => {
       setShowModalType('action');
     }
   }, [editAction]);
-
-  const handleFormSubmit = () => {
-    dispatch(setPipelineConfiguration(pipelineConfig));
-    onSubmit();
-  };
 
   useEffect(() => {
     if (eventDetails !== null) {
@@ -68,6 +59,15 @@ const PipelineBuilder: React.FC<PipelineBuilderProps> = ({ onSubmit }) => {
         .catch(() => {});
     }
   }, [eventDetails]);
+
+  if (pipelineConfig === null) {
+    return <p>Error selected pipeline null</p>;
+  }
+
+  const handleFormSubmit = () => {
+    dispatch(setPipelineConfiguration(pipelineConfig));
+    onSubmit();
+  };
 
   const handleAddAction = (action: PipelineAction | PipelineEvent) => {
     dispatch(addOrUpdateAction(action));

@@ -21,16 +21,11 @@ interface EmailTemplateEditorProps {}
 const EmailTemplateEditor = ({}: EmailTemplateEditorProps) => {
   const dispatch: AppDispatch = useDispatch();
   const templateData = useSelector(
-    (state: RootState) => state.emailTemplate.emailTemplateState
+    (state: RootState) => state.emailTemplate.emailTemplateState,
   );
   const eventDetails = useSelector(
-    (state: RootState) => state.event.eventDetails
+    (state: RootState) => state.event.eventDetails,
   );
-
-  if (templateData === null) {
-    return <p>No email template found in state</p>;
-  }
-
   const [eventForms, setEventForms] = useState<FormStructure[]>();
   const { showToast } = useToast();
 
@@ -44,11 +39,12 @@ const EmailTemplateEditor = ({}: EmailTemplateEditorProps) => {
     } else {
       showToast('Could not find event details to load forms', ToastType.Error);
     }
-  }, [eventDetails]);
+  }, [eventDetails, showToast]);
 
   // TODO: Pre-populate the templating form ID with the list of all forms
   // TODO: Allow some sort of validation and auto popup for the templating form field IDs
   const formFields: FormField[] = useMemo(() => {
+    if (templateData === null) return [];
     return [
       {
         key: 'name',
@@ -101,7 +97,7 @@ const EmailTemplateEditor = ({}: EmailTemplateEditorProps) => {
             ({
               value: form.id,
               label: `${form.name} (${form.id})`,
-            }) as FormOptionCustomLabelValue
+            }) as FormOptionCustomLabelValue,
         ),
       },
       {
@@ -137,6 +133,8 @@ const EmailTemplateEditor = ({}: EmailTemplateEditorProps) => {
       dispatch(setEmailTemplateState(updatedTemplate));
     });
   };
+
+  if (templateData === null) return <p>Error loading template from state</p>;
 
   return (
     <div className="form-control w-full max-w-2xl">

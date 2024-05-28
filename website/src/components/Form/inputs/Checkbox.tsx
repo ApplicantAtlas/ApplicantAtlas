@@ -20,7 +20,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
 
   useEffect(() => {
     onChange(field.key, defaultValue || false);
-  }, [defaultValue]);
+  }, [defaultValue]); // eslint-disable-line react-hooks/exhaustive-deps -- only want to run this for initial value
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setChecked(e.target.checked);

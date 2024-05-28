@@ -15,7 +15,7 @@ const CreateNewEmailTemplate: React.FC<CreateNewEmailTemplateProps> = ({
   onSubmit,
 }) => {
   const eventDetails = useSelector(
-    (state: RootState) => state.event.eventDetails
+    (state: RootState) => state.event.eventDetails,
   );
   if (eventDetails == null) {
     return <p>Event details not found in state</p>;
@@ -32,6 +32,7 @@ const CreateNewEmailTemplate: React.FC<CreateNewEmailTemplateProps> = ({
     ],
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSubmit = (formData: Record<string, any>) => {
     const { name } = formData;
     const emailTemplateStructure: EmailTemplate = {
@@ -44,7 +45,7 @@ const CreateNewEmailTemplate: React.FC<CreateNewEmailTemplateProps> = ({
       .then(() => {
         eventEmitter.emit(
           'success',
-          'Successfully created new email template!'
+          'Successfully created new email template!',
         );
         onSubmit();
       })

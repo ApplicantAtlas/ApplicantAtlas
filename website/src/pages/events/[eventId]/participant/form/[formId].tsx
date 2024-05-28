@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
 import FormBuilder from '@/components/Form/FormBuilder';
-import Header, { MenuItem } from '@/components/Header';
+import Header from '@/components/Header';
 import LoadingSpinner from '@/components/Loading/LoadingSpinner';
 import { ToastType, useToast } from '@/components/Toast/ToastContext';
 import AuthService from '@/services/AuthService';
@@ -16,7 +16,7 @@ const FormSubmission = () => {
   const router = useRouter();
   const { eventId, formId } = router.query;
   const [formStructure, setFormStructure] = useState<FormStructure | null>(
-    null
+    null,
   );
   const [event, setEvent] = useState<EventModel | null>(null);
   const [err, setErr] = useState<string | null>(null);
@@ -59,7 +59,7 @@ const FormSubmission = () => {
         }
         setErr(msg);
       });
-  }, [eventId, formId]);
+  }, [eventId, formId, showToast]);
 
   if (!AuthService.isAuth) {
     showToast('You must be logged in to access this form.', ToastType.Error);
@@ -82,6 +82,7 @@ const FormSubmission = () => {
 
   if (!formStructure || !event) return <LoadingSpinner />;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- this is a generic form submission
   const onSubmission = (formData: Record<string, any>) => {
     SubmitResponse(formStructure.id || '', formData)
       .then(() => {

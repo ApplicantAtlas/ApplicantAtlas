@@ -12,7 +12,7 @@ type NumberProps = {
 const Number: React.FC<NumberProps> = ({ field, onChange, defaultValue }) => {
   // Initialize state with defaultValue or 0 if defaultValue is undefined
   const [value, setValue] = useState<string>(
-    defaultValue !== undefined ? defaultValue.toString() : ''
+    defaultValue !== undefined ? defaultValue.toString() : '',
   );
 
   useEffect(() => {
@@ -20,7 +20,7 @@ const Number: React.FC<NumberProps> = ({ field, onChange, defaultValue }) => {
     if (defaultValue !== undefined) {
       onChange(field.key, defaultValue);
     }
-  }, [defaultValue]);
+  }, [defaultValue]); // eslint-disable-line react-hooks/exhaustive-deps -- only want to run this for initial value
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;

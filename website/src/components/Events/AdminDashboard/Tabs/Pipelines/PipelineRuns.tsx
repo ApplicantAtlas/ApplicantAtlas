@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { GetPipelineRuns } from '@/services/PipelineService';
@@ -19,12 +19,8 @@ const statusColors = {
 
 const PipelineRuns: React.FC<PipelineRunsProps> = ({}) => {
   const pipeline = useSelector(
-    (state: RootState) => state.pipeline.pipelineState
+    (state: RootState) => state.pipeline.pipelineState,
   );
-
-  if (pipeline === null) {
-    return <p>Error selected pipeline null</p>;
-  }
 
   const [pipelineRuns, setPipelineRuns] = useState<PipelineRun[]>([]);
   const [expandedRows, setExpandedRows] = useState<string[]>([]);
@@ -32,8 +28,8 @@ const PipelineRuns: React.FC<PipelineRunsProps> = ({}) => {
   const [pageSize, setPageSize] = useState(10);
   const { showToast } = useToast();
 
-  const fetchPipelineRuns = async () => {
-    GetPipelineRuns(pipeline.id || '', pageNumber, pageSize)
+  const fetchPipelineRuns = useCallback(async () => {
+    GetPipelineRuns(pipeline?.id || '', pageNumber, pageSize)
       .then((response) => {
         setPipelineRuns(response.data.runs);
 
@@ -49,11 +45,15 @@ const PipelineRuns: React.FC<PipelineRunsProps> = ({}) => {
       .catch(() => {
         showToast('Failed to fetch pipeline runs', ToastType.Error);
       });
-  };
+  }, [pipeline, pageNumber, pageSize, showToast]);
 
   useEffect(() => {
     fetchPipelineRuns();
-  }, [pipeline.id, pageNumber, pageSize]);
+  }, [pipeline, pageNumber, pageSize, fetchPipelineRuns]);
+
+  if (pipeline === null) {
+    return <p>Error selected pipeline null</p>;
+  }
 
   const toggleRow = (id: string) => {
     if (expandedRows.includes(id)) {
@@ -161,7 +161,7 @@ const PipelineRuns: React.FC<PipelineRunsProps> = ({}) => {
                                   <span className="text-gray-600">
                                     {pipeline.actions?.find(
                                       (action_local) =>
-                                        action_local.id === action.actionID
+                                        action_local.id === action.actionID,
                                     )?.name || 'Name not found'}{' '}
                                     ({action.actionID})
                                   </span>

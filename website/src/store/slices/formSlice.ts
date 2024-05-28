@@ -17,8 +17,17 @@ const formSlice = createSlice({
     setFormDetails(state, action: PayloadAction<FormStructure>) {
       state.formDetails = action.payload;
     },
-    updateFormDetails(state, action: PayloadAction<any>) {
-      state.formDetails = { ...state.formDetails, ...action.payload };
+    updateFormDetails(state, action: PayloadAction<Partial<FormStructure>>) {
+      const keys = Object.keys(action.payload) as Array<keyof FormStructure>;
+
+      keys.forEach((key) => {
+        const value = action.payload[key];
+        if (value !== undefined) {
+          if (state.formDetails) {
+            (state.formDetails[key] as typeof value) = value;
+          }
+        }
+      });
     },
     resetFormState(state) {
       state.formDetails = null;

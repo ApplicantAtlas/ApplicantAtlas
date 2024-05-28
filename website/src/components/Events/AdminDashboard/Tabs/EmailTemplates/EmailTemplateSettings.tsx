@@ -15,12 +15,8 @@ const EmailTemplateSettings: React.FC<EmailTemplateSettingsProps> = ({
 }) => {
   const dispatch: AppDispatch = useDispatch();
   const template = useSelector(
-    (state: RootState) => state.emailTemplate.emailTemplateState
+    (state: RootState) => state.emailTemplate.emailTemplateState,
   );
-
-  if (template == null) {
-    return <p>No email template found in state</p>;
-  }
 
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const { showToast } = useToast();
@@ -36,6 +32,10 @@ const EmailTemplateSettings: React.FC<EmailTemplateSettingsProps> = ({
       })
       .catch(() => {});
   };
+
+  if (template == null) {
+    return <p>No email template found in state</p>;
+  }
 
   return (
     <>

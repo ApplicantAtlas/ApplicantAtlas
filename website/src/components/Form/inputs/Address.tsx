@@ -3,7 +3,7 @@ import CountryRegionData from '@../../../node_modules/country-region-data/data.j
 import dynamic from 'next/dynamic';
 
 import { FieldValue, FormField } from '@/types/models/Form';
-import { Address } from '@/types/models/Event';
+import type { Address } from '@/types/models/Event';
 
 import Text from './Text';
 
@@ -21,7 +21,7 @@ const Address: React.FC<AddressProps> = ({ field, onChange, defaultValue }) => {
   const [country, setCountry] = useState(defaultValue?.country || '');
   const [region, setRegion] = useState(defaultValue?.region || '');
   const [streetAddress, setStreetAddress] = useState(
-    defaultValue?.streetAddress || ''
+    defaultValue?.streetAddress || '',
   );
   const [city, setCity] = useState(defaultValue?.city || '');
   const [zipCode, setZipCode] = useState(defaultValue?.zipCode || '');
@@ -39,7 +39,7 @@ const Address: React.FC<AddressProps> = ({ field, onChange, defaultValue }) => {
 
   useEffect(() => {
     onChange(field.key, formAddress());
-  }, [defaultValue]);
+  }, [defaultValue]); // eslint-disable-line react-hooks/exhaustive-deps -- only want to run this for initial value
 
   const handleInputChange = (key: string, value: FieldValue) => {
     switch (key) {
@@ -111,7 +111,7 @@ const Address: React.FC<AddressProps> = ({ field, onChange, defaultValue }) => {
             type: 'select',
             required: field.required,
             options: CountryRegionData.find(
-              (country_i) => country_i.countryName === country
+              (country_i) => country_i.countryName === country,
             )?.regions.map((region) => region.name),
             defaultOptions: [region],
           }}

@@ -11,7 +11,7 @@ import { useToast, ToastType } from '@/components/Toast/ToastContext';
 import LoadingOverlay from '@/components/Loading/LoadingOverlay';
 
 function withAuth<P>(
-  WrappedComponent: ComponentType<P>
+  WrappedComponent: ComponentType<P>,
 ): FC<PropsWithChildren<P>> {
   const WithAuth: FC<PropsWithChildren<P>> = (props: PropsWithChildren<P>) => {
     const router = useRouter();
@@ -25,13 +25,13 @@ function withAuth<P>(
         // Redirect to login if not authenticated
         showToast(
           'You must be logged in to view that page, please login.',
-          ToastType.Error
+          ToastType.Error,
         );
         router.push('/login');
       } else {
         setLoading(false);
       }
-    }, [router]);
+    }, [router, showToast]);
 
     if (loading) {
       return <LoadingOverlay />;

@@ -13,7 +13,7 @@ interface CreateNewPipelineProps {
 
 const CreateNewPipeline: React.FC<CreateNewPipelineProps> = ({ onSubmit }) => {
   const eventDetails = useSelector(
-    (state: RootState) => state.event.eventDetails
+    (state: RootState) => state.event.eventDetails,
   );
   if (eventDetails == null) {
     return <p>Event details not found in state</p>;
@@ -30,6 +30,7 @@ const CreateNewPipeline: React.FC<CreateNewPipelineProps> = ({ onSubmit }) => {
     ],
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- this is a generic form submission handler
   const handleSubmit = (formData: Record<string, any>) => {
     const { name } = formData;
     const pipelineStructure: PipelineConfiguration = {

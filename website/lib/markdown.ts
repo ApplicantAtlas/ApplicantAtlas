@@ -12,7 +12,7 @@ import rehypeSlug from 'rehype-slug';
 
 export async function processMarkdown(
   filePath: string,
-  linksBasePath: string = ''
+  linksBasePath: string = '',
 ): Promise<{ contentHtml: string; toc: TOCItem[] }> {
   const fileContents = fs.readFileSync(filePath, 'utf8');
   const { content } = matter(fileContents);
@@ -73,12 +73,11 @@ export interface TOCItem {
 export async function getDocData(
   category: string,
   slug: string,
-  linksBasePath: string = ''
+  linksBasePath: string = '',
 ): Promise<{
   slug: string;
   contentHtml: string;
   toc: TOCItem[];
-  [key: string]: any;
 }> {
   let fullPath = path.join(process.cwd(), 'docs', category, `${slug}.md`);
   if (category === '') {

@@ -49,6 +49,7 @@ const LoginPage = () => {
     ],
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- this is a generic form submission handler
   const handleSubmit = (formData: Record<string, any>) => {
     const { email, password } = formData;
     AuthService.login({ email, password } as User)

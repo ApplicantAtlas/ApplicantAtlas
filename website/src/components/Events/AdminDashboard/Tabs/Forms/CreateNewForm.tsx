@@ -12,7 +12,7 @@ interface CreateNewFormProps {
 
 const CreateNewForm: React.FC<CreateNewFormProps> = ({ onSubmit }) => {
   const eventDetails = useSelector(
-    (state: RootState) => state.event.eventDetails
+    (state: RootState) => state.event.eventDetails,
   );
   if (eventDetails == null) {
     return <p>Event details not found in state</p>;
@@ -29,6 +29,7 @@ const CreateNewForm: React.FC<CreateNewFormProps> = ({ onSubmit }) => {
     ],
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- this is a generic form submission handler
   const handleSubmit = (formData: Record<string, any>) => {
     const { name } = formData;
     const formStructure: FormStructure = {

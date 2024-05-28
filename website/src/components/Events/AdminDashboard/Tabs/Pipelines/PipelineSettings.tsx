@@ -18,15 +18,15 @@ interface PipelineSettingsProps {
 const PipelineSettings: React.FC<PipelineSettingsProps> = ({ onDelete }) => {
   const dispatch: AppDispatch = useDispatch();
   const pipeline = useSelector(
-    (state: RootState) => state.pipeline.pipelineState
+    (state: RootState) => state.pipeline.pipelineState,
   );
+
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const { showToast } = useToast();
 
   if (pipeline === null) {
     return <p>Error selected pipeline null</p>;
   }
-
-  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
-  const { showToast } = useToast();
 
   const handleDeletePipeline = async (pipelineID: string | undefined) => {
     if (!pipelineID) return;
@@ -60,6 +60,7 @@ const PipelineSettings: React.FC<PipelineSettingsProps> = ({ onDelete }) => {
     ],
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- this is a generic form submission handler
   const handleSubmit = (formData: Record<string, any>) => {
     const { name, enabled } = formData;
 

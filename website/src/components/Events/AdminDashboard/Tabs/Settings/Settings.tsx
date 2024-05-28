@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 
@@ -15,7 +15,7 @@ interface SettingsProps {}
 
 const Settings: React.FC<SettingsProps> = ({}) => {
   const eventDetails = useSelector(
-    (state: RootState) => state.event.eventDetails
+    (state: RootState) => state.event.eventDetails,
   );
 
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
@@ -25,7 +25,7 @@ const Settings: React.FC<SettingsProps> = ({}) => {
   const { showToast } = useToast();
   const router = useRouter();
 
-  const updateEventSecrets = () => {
+  const updateEventSecrets = useCallback(() => {
     if (!eventDetails) return;
 
     getEventSecrets(eventDetails.ID)
@@ -41,13 +41,13 @@ const Settings: React.FC<SettingsProps> = ({}) => {
         setEventSecrets(res.data.eventSecrets);
       })
       .catch(() => showToast('Failed to load event secrets', ToastType.Error));
-  };
+  }, [eventDetails, showToast]);
 
   useEffect(() => {
     if (!eventDetails) return;
 
     updateEventSecrets();
-  }, [eventDetails]);
+  }, [eventDetails, updateEventSecrets]);
 
   const handleEditSecretClick = () => {
     setEditingSecret(true);

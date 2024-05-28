@@ -135,6 +135,7 @@ const FormSettings: React.FC<FormSettingsProps> = ({ onDelete }) => {
     ],
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- this is a generic form submission handler
   const handleSubmit = (formData: Record<string, any>) => {
     const {
       status,

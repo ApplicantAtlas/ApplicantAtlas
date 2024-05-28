@@ -15,11 +15,16 @@ const SelectEmailTemplate: React.FC<SelectEmailTemplateProps> = ({
   onDelete,
 }) => {
   const emailTemplate = useSelector(
-    (state: RootState) => state.emailTemplate.emailTemplateState
+    (state: RootState) => state.emailTemplate.emailTemplateState,
   );
   const eventDetails = useSelector(
-    (state: RootState) => state.event.eventDetails
+    (state: RootState) => state.event.eventDetails,
   );
+  const [pageSelected, setPageSelected] = useState<
+    'edit' | 'preview' | 'settings'
+  >('edit');
+  const { showToast } = useToast();
+
   if (eventDetails == null) {
     return <p>No event details found in state</p>;
   }
@@ -27,11 +32,6 @@ const SelectEmailTemplate: React.FC<SelectEmailTemplateProps> = ({
   if (emailTemplate == null) {
     return <p>No email template found in state</p>;
   }
-
-  const [pageSelected, setPageSelected] = useState<
-    'edit' | 'preview' | 'settings'
-  >('edit');
-  const { showToast } = useToast();
 
   const onCopyHTML = () => {
     if (!emailTemplate.body) {

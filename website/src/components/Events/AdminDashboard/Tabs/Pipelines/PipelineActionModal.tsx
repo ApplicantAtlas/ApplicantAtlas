@@ -43,11 +43,12 @@ const PipelineActionModal: React.FC<PipelineActionModalProps> = ({
       : ['FormSubmission', 'FieldChange'];
   const defaultType = defaultEvent?.type || defaultAction?.type;
   const [selectedType, setSelectedType] = useState<string | undefined>(
-    defaultType
+    defaultType,
   );
 
   const createEventObject = (
-    formData: Record<string, any>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- this is a generic form submission handler
+    formData: Record<string, any>,
   ): PipelineEvent | null => {
     switch (selectedType) {
       case 'FormSubmission':
@@ -77,7 +78,8 @@ const PipelineActionModal: React.FC<PipelineActionModalProps> = ({
   };
 
   const createActionObject = (
-    formData: Record<string, any>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- this is a generic form submission handler
+    formData: Record<string, any>,
   ): PipelineAction | null => {
     switch (selectedType) {
       case 'SendEmail':
@@ -116,6 +118,7 @@ const PipelineActionModal: React.FC<PipelineActionModalProps> = ({
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- this is a generic form submission handler
   const handleAddAction = (formData: Record<string, any>) => {
     if (selectedType) {
       const action = createActionObject(formData);
@@ -131,6 +134,7 @@ const PipelineActionModal: React.FC<PipelineActionModalProps> = ({
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- this is a generic form submission handler
   const handleAddEvent = (formData: Record<string, any>) => {
     if (selectedType) {
       const event = createEventObject(formData);
@@ -151,13 +155,13 @@ const PipelineActionModal: React.FC<PipelineActionModalProps> = ({
         formStructure = createSendEmailFormStructure(
           eventForms,
           eventEmailTemplates,
-          defaultAction
+          defaultAction,
         );
         break;
       case 'AllowFormAccess':
         formStructure = createAllowFormAccessFormStructure(
           eventForms,
-          defaultAction
+          defaultAction,
         );
         break;
       case 'Webhook':
@@ -166,13 +170,13 @@ const PipelineActionModal: React.FC<PipelineActionModalProps> = ({
       case 'FormSubmission':
         formStructure = createFormSubmissionFormStructure(
           eventForms,
-          defaultEvent
+          defaultEvent,
         );
         break;
       case 'FieldChange':
         formStructure = createFieldChangeFormStructure(
           eventForms,
-          defaultEvent
+          defaultEvent,
         );
         break;
       default:
@@ -249,7 +253,7 @@ export default PipelineActionModal;
 const createSendEmailFormStructure = (
   eventForms: FormStructure[] | undefined,
   eventEmailTemplates: EmailTemplate[] | undefined,
-  defaultAction: PipelineAction | undefined
+  defaultAction: PipelineAction | undefined,
 ): FormStructure => {
   return {
     attrs: [
@@ -285,7 +289,7 @@ const createSendEmailFormStructure = (
           form.attrs.map((attr) => ({
             value: attr.key,
             label: `${attr.question} (${form.name} id: ${form.id})`, // TODO: Conditional options depending on form selected.
-          }))
+          })),
         ),
         defaultOptions: defaultAction?.sendEmail?.emailFieldID
           ? [defaultAction?.sendEmail?.emailFieldID]
@@ -298,7 +302,7 @@ const createSendEmailFormStructure = (
 
 const createAllowFormAccessFormStructure = (
   eventForms: FormStructure[] | undefined,
-  defaultAction: PipelineAction | undefined
+  defaultAction: PipelineAction | undefined,
 ): FormStructure => {
   return {
     attrs: [
@@ -344,7 +348,7 @@ const createAllowFormAccessFormStructure = (
           form.attrs.map((attr) => ({
             value: `${attr.key}`,
             label: `${attr.question} (${form.name} id: ${form.id})`, // TODO: Conditional options depending on form selected.
-          }))
+          })),
         ),
         defaultOptions: defaultAction?.allowFormAccess?.emailFieldID
           ? [defaultAction?.allowFormAccess?.emailFieldID]
@@ -356,7 +360,7 @@ const createAllowFormAccessFormStructure = (
 
 const createWebhookFormStructure = (
   eventForms: FormStructure[] | undefined,
-  defaultAction: PipelineAction | undefined
+  defaultAction: PipelineAction | undefined,
 ): FormStructure => {
   return {
     attrs: [
@@ -391,7 +395,7 @@ const createWebhookFormStructure = (
 
 const createFormSubmissionFormStructure = (
   eventForms: FormStructure[] | undefined,
-  defaultEvent: PipelineEvent | undefined
+  defaultEvent: PipelineEvent | undefined,
 ): FormStructure => {
   return {
     attrs: [
@@ -423,7 +427,7 @@ const createFormSubmissionFormStructure = (
 
 const createFieldChangeFormStructure = (
   eventForms: FormStructure[] | undefined,
-  defaultEvent: PipelineEvent | undefined
+  defaultEvent: PipelineEvent | undefined,
 ): FormStructure => {
   return {
     attrs: [
@@ -458,7 +462,7 @@ const createFieldChangeFormStructure = (
           form.attrs.map((attr) => ({
             value: `${attr.key}`,
             label: `${attr.question} (${form.name} id: ${form.id})`, // TODO: Conditional options depending on form selected.
-          }))
+          })),
         ),
         defaultOptions: defaultEvent?.fieldChange?.onFieldID
           ? [defaultEvent?.fieldChange?.onFieldID]

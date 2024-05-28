@@ -29,6 +29,7 @@ const RichTextDynamic = dynamic(() => import('./inputs/RichText'), {
 
 type FormBuilderProps = {
   formStructure: FormStructure;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- this is a generic form submission handler
   submissionFunction: (formJSON: Record<string, any>) => void;
   buttonText?: string;
   showInternalFields?: boolean;
@@ -43,11 +44,13 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   buttonText = 'Submit',
   showInternalFields = false,
 }) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- this is a generic form submission handler
   const [formData, setFormData] = useState<Record<string, any>>({});
   const [invalidInputs, setInvalidInputs] = useState<
     Record<string, string | undefined>
   >({});
   const [error, setError] = useState<string | null>('');
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- this is a generic form submission handler
   const [fetchedOptions, setFetchedOptions] = useState<Record<string, any>>({});
 
   useEffect(() => {
@@ -73,7 +76,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   const handleInputChange = (
     key: string,
     value: FieldValue,
-    errorString?: string | undefined
+    errorString?: string | undefined,
   ) => {
     setInvalidInputs({ ...invalidInputs, [key]: errorString });
     setFormData((formData) => {
@@ -82,7 +85,8 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
         return { ...formData, [key]: value };
       } else {
         // If value is undefined, remove the key from formData
-        const { [key]: removed, ...newFormData } = formData;
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { [key]: _, ...newFormData } = formData;
         return newFormData;
       }
     });
@@ -117,7 +121,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
         }
       });
     }
-  }, [formStructure.attrs]);
+  }, [formStructure.attrs, fetchedOptions]);
 
   if (formStructure.attrs === undefined || formStructure.attrs.length === 0) {
     return (
@@ -151,12 +155,13 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
 
 const RenderFormField = (
   field: FormStructure['attrs'][number],
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- this is a generic form submission handler
   fetchedOptions: Record<string, any>,
   handleInputChange: (
     key: string,
     value: FieldValue,
-    errorString?: string | undefined
-  ) => void
+    errorString?: string | undefined,
+  ) => void,
 ) => {
   // Handle additionalOptions
   if (field.additionalOptions?.useDefaultValuesFrom) {

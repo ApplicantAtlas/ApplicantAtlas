@@ -19,8 +19,17 @@ const eventSlice = createSlice({
     setEventDetails(state, action: PayloadAction<EventModel>) {
       state.eventDetails = action.payload;
     },
-    updateEventDetails(state, action: PayloadAction<any>) {
-      state.eventDetails = { ...state.eventDetails, ...action.payload };
+    updateEventDetails(state, action: PayloadAction<Partial<EventModel>>) {
+      const keys = Object.keys(action.payload) as Array<keyof EventModel>;
+
+      keys.forEach((key) => {
+        const value = action.payload[key];
+        if (value !== undefined) {
+          if (state.eventDetails) {
+            (state.eventDetails[key] as typeof value) = value;
+          }
+        }
+      });
     },
     resetEventState(state) {
       state.eventDetails = null;

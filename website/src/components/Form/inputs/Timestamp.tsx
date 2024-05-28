@@ -39,7 +39,7 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
   const isInitialized = useRef(false);
 
   const isValidDefaultValue = (
-    defaultValue: Date | undefined
+    defaultValue: Date | undefined,
   ): defaultValue is Date => {
     return (
       defaultValue instanceof Date &&
@@ -56,7 +56,7 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
       ? moment(defaultValue).tz('UTC').format('YYYY-MM-DDTHH:mm')
       : '';
   const [localDateTime, setLocalDateTime] = useState<string>(
-    formattedDefaultValue
+    formattedDefaultValue,
   );
 
   const timezoneOptions = moment.tz.names();
@@ -77,13 +77,13 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
       onChange(field.key, defaultValue);
       isInitialized.current = true;
     }
-  }, [defaultValue, timezone]);
+  }, [defaultValue, timezone]); // eslint-disable-line react-hooks/exhaustive-deps -- only want to run this for initial value
 
   const calculateAge = (date: Date) => {
     let againstDate = Date.now();
     if (field.additionalValidation?.dateAndTimestampFromTimeField) {
       againstDate = new Date(
-        field.additionalValidation.dateAndTimestampFromTimeField
+        field.additionalValidation.dateAndTimestampFromTimeField,
       ).getTime();
     }
 
@@ -129,7 +129,7 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
     }
   };
 
-  const handleTimezoneChange = (k: string, selectedOption: any) => {
+  const handleTimezoneChange = (k: string, selectedOption: FieldValue) => {
     if (
       selectedOption &&
       typeof selectedOption === 'string' &&
@@ -184,6 +184,7 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
         required={field.required}
       />
       {!askTimezone ? null : (
+        // TODO: fix the ts error
         <Select
           field={{
             ...field,

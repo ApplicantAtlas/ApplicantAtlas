@@ -30,7 +30,7 @@ const UserSettings: React.FC = () => {
   const handleDeleteAccount = async () => {
     if (
       window.confirm(
-        'Are you sure you want to delete your account? This action cannot be undone.'
+        'Are you sure you want to delete your account? This action cannot be undone.',
       )
     ) {
       AuthService.deleteUser()
@@ -104,6 +104,7 @@ const UserSettings: React.FC = () => {
     };
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- this is a generic form submission handler
   const handleFormSubmission = (formData: Record<string, any>) => {
     // Convert birthday from Date object to format with utc, 0 padded month and day
     const d = new Date(formData.birthday);

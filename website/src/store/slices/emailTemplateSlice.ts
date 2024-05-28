@@ -17,11 +17,20 @@ const formSlice = createSlice({
     setEmailTemplateState(state, action: PayloadAction<EmailTemplate>) {
       state.emailTemplateState = action.payload;
     },
-    updateEmailTemplateState(state, action: PayloadAction<any>) {
-      state.emailTemplateState = {
-        ...state.emailTemplateState,
-        ...action.payload,
-      };
+    updateEmailTemplateState(
+      state,
+      action: PayloadAction<Partial<EmailTemplate>>,
+    ) {
+      const keys = Object.keys(action.payload) as Array<keyof EmailTemplate>;
+
+      keys.forEach((key) => {
+        const value = action.payload[key];
+        if (value !== undefined) {
+          if (state.emailTemplateState) {
+            (state.emailTemplateState[key] as typeof value) = value;
+          }
+        }
+      });
     },
     resetEmailTemplateState(state) {
       state.emailTemplateState = null;

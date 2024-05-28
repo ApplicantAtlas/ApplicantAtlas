@@ -26,7 +26,7 @@ const Select: React.FC<SelectProps> = ({
 }) => {
   const options = Array.isArray(field.options)
     ? field.options.map((option) =>
-        typeof option === 'string' ? { label: option, value: option } : option
+        typeof option === 'string' ? { label: option, value: option } : option,
       )
     : [];
 
@@ -38,7 +38,7 @@ const Select: React.FC<SelectProps> = ({
         ? defaultOptions.map((option) =>
             typeof option === 'string'
               ? { label: option, value: option }
-              : option
+              : option,
           )
         : [];
     } else {
@@ -58,11 +58,13 @@ const Select: React.FC<SelectProps> = ({
 
   useEffect(() => {
     setSelectedValue(getDefaultValue());
-  }, [defaultOptions]);
+  }, [defaultOptions]); // eslint-disable-line react-hooks/exhaustive-deps -- only want to run this for initial value
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- react-select types are complex
   const handleChange = (selectedOption: any) => {
     const value = isMultiSelect
-      ? selectedOption.map((opt: any) => opt.value)
+      ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        selectedOption.map((opt: any) => opt.value)
       : selectedOption.value;
 
     setSelectedValue(selectedOption);

@@ -21,6 +21,7 @@ const FieldAttributesForm: React.FC<FieldAttributesFormProps> = ({
     setFormFields(formStructure);
   }, [fieldType, initialAttributes]);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- this is a generic form submission handler
   const handleFormSubmission = (formData: Record<string, any>) => {
     const newField: FormField = {
       question: formData.question,
@@ -45,7 +46,7 @@ const FieldAttributesForm: React.FC<FieldAttributesFormProps> = ({
 
   const createFormStructure = (
     fieldType: FormFieldType,
-    initialAttributes?: FormField
+    initialAttributes?: FormField,
   ): FormStructure => {
     const attrs: FormField[] = [
       {

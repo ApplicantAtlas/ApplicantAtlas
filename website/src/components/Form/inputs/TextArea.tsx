@@ -20,7 +20,7 @@ const TextArea: React.FC<TextAreaProps> = ({
     if (defaultValue) {
       onChange(field.key, defaultValue);
     }
-  }, [defaultValue]);
+  }, [defaultValue]); // eslint-disable-line react-hooks/exhaustive-deps -- only want to run this for initial value
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e.target.value;

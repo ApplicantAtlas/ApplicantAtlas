@@ -16,19 +16,17 @@ interface FormProps {}
 const Forms: React.FC<FormProps> = ({}) => {
   const dispatch: AppDispatch = useDispatch();
   const selectedForm = useSelector(
-    (state: RootState) => state.form.formDetails
+    (state: RootState) => state.form.formDetails,
   );
   const eventDetails = useSelector(
-    (state: RootState) => state.event.eventDetails
+    (state: RootState) => state.event.eventDetails,
   );
-
-  if (eventDetails === null) {
-    return <p>No event data found in state</p>;
-  }
 
   const [forms, setForms] = useState<FormStructure[] | undefined>();
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [refresh, setRefresh] = useState(false);
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- should be used in the future
   const [selectedFormAction, setSelectedFormAction] = useState<
     'responses' | 'edit'
   >('responses');
@@ -53,6 +51,10 @@ const Forms: React.FC<FormProps> = ({}) => {
     setRefresh(!refresh);
     dispatch(resetFormState());
   };
+
+  if (eventDetails === null) {
+    return <p>No event data found in state</p>;
+  }
 
   if (forms === undefined || eventDetails === null) {
     return (
