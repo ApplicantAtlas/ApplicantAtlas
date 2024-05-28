@@ -48,7 +48,7 @@ const Responses = ({}: ResponsesProps) => {
             showToast(
               `Error updating response: ${errorStr}
         Response ID: ${submissionId}`,
-              ToastType.Error,
+              ToastType.Error
             );
             return;
           }
@@ -86,7 +86,7 @@ const Responses = ({}: ResponsesProps) => {
                   .then(() => {
                     showToast(
                       'Successfully updated reponse',
-                      ToastType.Success,
+                      ToastType.Success
                     );
                   })
                   .catch(() => {});
@@ -95,7 +95,7 @@ const Responses = ({}: ResponsesProps) => {
 
             return response;
           });
-        }, 500),
+        }, 500)
       );
     }
     return debouncersRef.current.get(key);
@@ -104,7 +104,7 @@ const Responses = ({}: ResponsesProps) => {
   const onSubmissionFieldChange = (
     key: string,
     value: FieldValue,
-    errorStr: string | undefined,
+    errorStr: string | undefined
   ) => {
     const debouncedOnChange = getDebouncedOnSubmissionFieldChange(key);
     debouncedOnChange(value, errorStr);
@@ -128,7 +128,7 @@ const Responses = ({}: ResponsesProps) => {
             });
 
             return cleanedResponse;
-          },
+          }
         );
 
         setResponses(cleanedResponses);

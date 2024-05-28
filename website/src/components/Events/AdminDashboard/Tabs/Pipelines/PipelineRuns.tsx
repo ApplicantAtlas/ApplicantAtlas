@@ -19,7 +19,7 @@ const statusColors = {
 
 const PipelineRuns: React.FC<PipelineRunsProps> = ({}) => {
   const pipeline = useSelector(
-    (state: RootState) => state.pipeline.pipelineState,
+    (state: RootState) => state.pipeline.pipelineState
   );
 
   if (pipeline === null) {
@@ -161,7 +161,7 @@ const PipelineRuns: React.FC<PipelineRunsProps> = ({}) => {
                                   <span className="text-gray-600">
                                     {pipeline.actions?.find(
                                       (action_local) =>
-                                        action_local.id === action.actionID,
+                                        action_local.id === action.actionID
                                     )?.name || 'Name not found'}{' '}
                                     ({action.actionID})
                                   </span>

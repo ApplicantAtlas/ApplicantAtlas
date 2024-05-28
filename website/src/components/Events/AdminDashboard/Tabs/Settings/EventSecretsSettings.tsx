@@ -20,7 +20,7 @@ interface EventSecretsSettings {
 // Note: when we add multiple types of secrets we should refactor to be more like a switch statement
 const EventSecretsSettings: React.FC<EventSecretsSettings> = ({ onDone }) => {
   const eventDetails = useSelector(
-    (state: RootState) => state.event.eventDetails,
+    (state: RootState) => state.event.eventDetails
   );
   if (eventDetails == null) {
     return <p>Event details not found in state</p>;
@@ -63,7 +63,7 @@ const EventSecretsSettings: React.FC<EventSecretsSettings> = ({ onDone }) => {
         onDone();
       })
       .catch(() =>
-        showToast('Failed to update event secrets', ToastType.Error),
+        showToast('Failed to update event secrets', ToastType.Error)
       );
   };
 

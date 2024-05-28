@@ -21,7 +21,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
     const newValue = e.target.value;
     if (e.target.validity.patternMismatch) {
       e.target.setCustomValidity(
-        'Please enter a valid hex color (e.g., #123ABC)',
+        'Please enter a valid hex color (e.g., #123ABC)'
       );
     } else {
       e.target.setCustomValidity('');
@@ -36,7 +36,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
 
   const handleColorPickerChange = (
     color: ColorResult,
-    _: React.ChangeEvent<HTMLInputElement>,
+    _: React.ChangeEvent<HTMLInputElement>
   ) => {
     handleColorChange(color.hex);
   };

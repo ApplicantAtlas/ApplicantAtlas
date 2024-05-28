@@ -15,7 +15,7 @@ const EmailTemplateSettings: React.FC<EmailTemplateSettingsProps> = ({
 }) => {
   const dispatch: AppDispatch = useDispatch();
   const template = useSelector(
-    (state: RootState) => state.emailTemplate.emailTemplateState,
+    (state: RootState) => state.emailTemplate.emailTemplateState
   );
 
   if (template == null) {

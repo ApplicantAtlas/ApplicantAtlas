@@ -21,10 +21,10 @@ interface EmailTemplateEditorProps {}
 const EmailTemplateEditor = ({}: EmailTemplateEditorProps) => {
   const dispatch: AppDispatch = useDispatch();
   const templateData = useSelector(
-    (state: RootState) => state.emailTemplate.emailTemplateState,
+    (state: RootState) => state.emailTemplate.emailTemplateState
   );
   const eventDetails = useSelector(
-    (state: RootState) => state.event.eventDetails,
+    (state: RootState) => state.event.eventDetails
   );
 
   if (templateData === null) {
@@ -101,7 +101,7 @@ const EmailTemplateEditor = ({}: EmailTemplateEditorProps) => {
             ({
               value: form.id,
               label: `${form.name} (${form.id})`,
-            }) as FormOptionCustomLabelValue,
+            }) as FormOptionCustomLabelValue
         ),
       },
       {

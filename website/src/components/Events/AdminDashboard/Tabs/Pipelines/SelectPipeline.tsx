@@ -18,7 +18,7 @@ interface SelectPipelineProps {
 const SelectPipeline: React.FC<SelectPipelineProps> = ({ onDelete }) => {
   const dispatch: AppDispatch = useDispatch();
   const pipelineConfig = useSelector(
-    (state: RootState) => state.pipeline.pipelineState,
+    (state: RootState) => state.pipeline.pipelineState
   );
 
   const [pageSelected, setPageSelected] = useState<

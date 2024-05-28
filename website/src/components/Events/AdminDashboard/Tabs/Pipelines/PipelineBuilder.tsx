@@ -23,10 +23,10 @@ interface PipelineBuilderProps {
 const PipelineBuilder: React.FC<PipelineBuilderProps> = ({ onSubmit }) => {
   const dispatch: AppDispatch = useDispatch();
   const pipelineConfig = useSelector(
-    (state: RootState) => state.pipeline.pipelineState,
+    (state: RootState) => state.pipeline.pipelineState
   );
   const eventDetails = useSelector(
-    (state: RootState) => state.event.eventDetails,
+    (state: RootState) => state.event.eventDetails
   );
 
   if (pipelineConfig === null) {
@@ -34,7 +34,7 @@ const PipelineBuilder: React.FC<PipelineBuilderProps> = ({ onSubmit }) => {
   }
 
   const [showModalType, setShowModalType] = useState<'action' | 'event' | null>(
-    null,
+    null
   );
   const [deleteAction, setDeleteAction] = useState<PipelineAction>();
   const [eventForms, setEventForms] = useState<FormStructure[]>();

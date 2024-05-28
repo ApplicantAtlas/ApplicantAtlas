@@ -46,7 +46,7 @@ const Text: React.FC<TextInputProps> = ({ field, onChange, defaultValue }) => {
         const domainRegex = allowSubdomains
           ? new RegExp(
               `@([a-zA-Z0-9.-]+\\.)?(${requireDomain.join('|')})$`,
-              'i',
+              'i'
             )
           : new RegExp(`@(${requireDomain.join('|')})$`, 'i');
         domainValid = domainRegex.test(inputValue);

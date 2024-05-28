@@ -39,7 +39,7 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
   const isInitialized = useRef(false);
 
   const isValidDefaultValue = (
-    defaultValue: Date | undefined,
+    defaultValue: Date | undefined
   ): defaultValue is Date => {
     return (
       defaultValue instanceof Date &&
@@ -56,7 +56,7 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
       ? moment(defaultValue).tz('UTC').format('YYYY-MM-DDTHH:mm')
       : '';
   const [localDateTime, setLocalDateTime] = useState<string>(
-    formattedDefaultValue,
+    formattedDefaultValue
   );
 
   const timezoneOptions = moment.tz.names();
@@ -83,7 +83,7 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
     let againstDate = Date.now();
     if (field.additionalValidation?.dateAndTimestampFromTimeField) {
       againstDate = new Date(
-        field.additionalValidation.dateAndTimestampFromTimeField,
+        field.additionalValidation.dateAndTimestampFromTimeField
       ).getTime();
     }
 

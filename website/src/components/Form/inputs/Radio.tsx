@@ -10,7 +10,7 @@ type RadioProps = {
 
 const Radio: React.FC<RadioProps> = ({ field, onChange }) => {
   const [selectedOption, setSelectedOption] = useState<string | undefined>(
-    field.defaultOptions?.[0],
+    field.defaultOptions?.[0]
   );
 
   useEffect(() => {

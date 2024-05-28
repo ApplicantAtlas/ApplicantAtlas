@@ -73,7 +73,7 @@ const FormBuilder: React.FC<FormBuilderProps> = ({
   const handleInputChange = (
     key: string,
     value: FieldValue,
-    errorString?: string | undefined,
+    errorString?: string | undefined
   ) => {
     setInvalidInputs({ ...invalidInputs, [key]: errorString });
     setFormData((formData) => {
@@ -155,8 +155,8 @@ const RenderFormField = (
   handleInputChange: (
     key: string,
     value: FieldValue,
-    errorString?: string | undefined,
-  ) => void,
+    errorString?: string | undefined
+  ) => void
 ) => {
   // Handle additionalOptions
   if (field.additionalOptions?.useDefaultValuesFrom) {

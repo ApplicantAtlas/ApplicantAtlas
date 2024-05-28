@@ -22,7 +22,7 @@ interface SelectFormProps {
 const SelectForm: React.FC<SelectFormProps> = ({ action, onDelete }) => {
   const dispatch: AppDispatch = useDispatch();
   const formStructure = useSelector(
-    (state: RootState) => state.form.formDetails,
+    (state: RootState) => state.form.formDetails
   );
   const [pageSelected, setPageSelected] = useState<
     'edit' | 'responses' | 'preview' | 'settings'
@@ -50,7 +50,7 @@ const SelectForm: React.FC<SelectFormProps> = ({ action, onDelete }) => {
     if (formStructure.status !== 'published') {
       showToast(
         'This form is not published, please publish it in form settings before sharing.',
-        ToastType.Warning,
+        ToastType.Warning
       );
       return;
     }

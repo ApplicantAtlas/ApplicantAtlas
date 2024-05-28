@@ -14,7 +14,7 @@ interface ManageEventAdminsProps {
 
 const ManageEventAdmins: React.FC<ManageEventAdminsProps> = ({ onDone }) => {
   const eventDetails = useSelector(
-    (state: RootState) => state.event.eventDetails,
+    (state: RootState) => state.event.eventDetails
   );
   if (eventDetails == null) {
     return <p>Event details not found in state</p>;
@@ -22,7 +22,7 @@ const ManageEventAdmins: React.FC<ManageEventAdminsProps> = ({ onDone }) => {
 
   const { showToast } = useToast();
   const [eventAdminsIDs, setEventAdminsIDs] = useState<string[] | undefined>(
-    eventDetails?.organizerIDs,
+    eventDetails?.organizerIDs
   );
   const [eventAdmins, setEventAdmins] = useState<User[]>([]);
   const [newAdminEmail, setNewAdminEmail] = useState<string>('');
@@ -39,7 +39,7 @@ const ManageEventAdmins: React.FC<ManageEventAdminsProps> = ({ onDone }) => {
           eventAdminsIDs.map(async (adminID) => {
             const res = await getUser(adminID);
             return res;
-          }),
+          })
         );
         setEventAdmins(fullEventAdmins);
       } catch {
@@ -59,17 +59,17 @@ const ManageEventAdmins: React.FC<ManageEventAdminsProps> = ({ onDone }) => {
       window.confirm(
         'Are you sure you want to remove admin: ' +
           eventAdmins.find((admin) => admin.id === adminID)?.email +
-          '?',
+          '?'
       )
     ) {
       removeEventAdmin(eventDetails.ID, adminID)
         .then(() => {
           setEventAdminsIDs((prev) => prev?.filter((id) => id !== adminID));
           setEventAdmins((prev) =>
-            prev ? prev.filter((admin) => admin.id !== adminID) : [],
+            prev ? prev.filter((admin) => admin.id !== adminID) : []
           );
           eventDetails.organizerIDs = eventDetails.organizerIDs?.filter(
-            (id) => id !== adminID,
+            (id) => id !== adminID
           );
           showToast('Admin removed successfully', ToastType.Success);
         })
@@ -81,7 +81,7 @@ const ManageEventAdmins: React.FC<ManageEventAdminsProps> = ({ onDone }) => {
     addEventAdmin(eventDetails.ID, newAdminEmail)
       .then((r) => {
         setEventAdminsIDs((prev) =>
-          prev ? [...prev, r.data.userID] : [r.data.userID],
+          prev ? [...prev, r.data.userID] : [r.data.userID]
         );
         setNewAdminEmail('');
         showToast('Admin added successfully', ToastType.Success);

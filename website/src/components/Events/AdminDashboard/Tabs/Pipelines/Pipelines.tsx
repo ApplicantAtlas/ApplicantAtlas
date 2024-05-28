@@ -20,10 +20,10 @@ interface PipelinesProps {}
 const Pipelines: React.FC<PipelinesProps> = ({}) => {
   const dispatch: AppDispatch = useDispatch();
   const selectedPipeline = useSelector(
-    (state: RootState) => state.pipeline.pipelineState,
+    (state: RootState) => state.pipeline.pipelineState
   );
   const eventDetails = useSelector(
-    (state: RootState) => state.event.eventDetails,
+    (state: RootState) => state.event.eventDetails
   );
 
   const [pipelines, setPipelines] = useState<

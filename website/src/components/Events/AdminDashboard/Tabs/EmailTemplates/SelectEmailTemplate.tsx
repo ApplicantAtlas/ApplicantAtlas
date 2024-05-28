@@ -15,10 +15,10 @@ const SelectEmailTemplate: React.FC<SelectEmailTemplateProps> = ({
   onDelete,
 }) => {
   const emailTemplate = useSelector(
-    (state: RootState) => state.emailTemplate.emailTemplateState,
+    (state: RootState) => state.emailTemplate.emailTemplateState
   );
   const eventDetails = useSelector(
-    (state: RootState) => state.event.eventDetails,
+    (state: RootState) => state.event.eventDetails
   );
   if (eventDetails == null) {
     return <p>No event details found in state</p>;

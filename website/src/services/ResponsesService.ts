@@ -4,7 +4,7 @@ import api from './AxiosInterceptor';
 
 export const GetResponses = async (
   formID: string,
-  getDeletedColumnData: boolean = false,
+  getDeletedColumnData: boolean = false
 ): Promise<
   AxiosResponse<{
     responses: Record<string, any>;
@@ -20,7 +20,7 @@ export const GetResponses = async (
 
 export const SubmitResponse = async (
   formID: string,
-  data: Record<string, any>,
+  data: Record<string, any>
 ): Promise<AxiosResponse<{ id: string }>> => {
   return api.post(`/forms/${formID}/responses`, data);
 };
@@ -28,14 +28,14 @@ export const SubmitResponse = async (
 export const UpdateResponse = async (
   formID: string,
   responseID: string,
-  data: Record<string, any>,
+  data: Record<string, any>
 ): Promise<AxiosResponse<{ id: string }>> => {
   return api.put(`/forms/${formID}/responses/${responseID}`, data);
 };
 
 export const DownloadResponses = async (
   formID: string,
-  getDeletedColumnData: boolean = false,
+  getDeletedColumnData: boolean = false
 ): Promise<AxiosResponse<Blob>> => {
   return api.get(`/forms/${formID}/responses/csv`, {
     responseType: 'blob',

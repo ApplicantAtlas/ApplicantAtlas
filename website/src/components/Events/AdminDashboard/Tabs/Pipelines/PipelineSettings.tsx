@@ -18,7 +18,7 @@ interface PipelineSettingsProps {
 const PipelineSettings: React.FC<PipelineSettingsProps> = ({ onDelete }) => {
   const dispatch: AppDispatch = useDispatch();
   const pipeline = useSelector(
-    (state: RootState) => state.pipeline.pipelineState,
+    (state: RootState) => state.pipeline.pipelineState
   );
 
   if (pipeline === null) {

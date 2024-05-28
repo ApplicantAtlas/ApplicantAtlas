@@ -16,10 +16,10 @@ interface FormProps {}
 const Forms: React.FC<FormProps> = ({}) => {
   const dispatch: AppDispatch = useDispatch();
   const selectedForm = useSelector(
-    (state: RootState) => state.form.formDetails,
+    (state: RootState) => state.form.formDetails
   );
   const eventDetails = useSelector(
-    (state: RootState) => state.event.eventDetails,
+    (state: RootState) => state.event.eventDetails
   );
 
   if (eventDetails === null) {

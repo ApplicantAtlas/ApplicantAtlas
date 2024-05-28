@@ -12,7 +12,7 @@ interface CreateNewFormProps {
 
 const CreateNewForm: React.FC<CreateNewFormProps> = ({ onSubmit }) => {
   const eventDetails = useSelector(
-    (state: RootState) => state.event.eventDetails,
+    (state: RootState) => state.event.eventDetails
   );
   if (eventDetails == null) {
     return <p>Event details not found in state</p>;

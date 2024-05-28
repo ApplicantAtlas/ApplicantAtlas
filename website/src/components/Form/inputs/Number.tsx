@@ -12,7 +12,7 @@ type NumberProps = {
 const Number: React.FC<NumberProps> = ({ field, onChange, defaultValue }) => {
   // Initialize state with defaultValue or 0 if defaultValue is undefined
   const [value, setValue] = useState<string>(
-    defaultValue !== undefined ? defaultValue.toString() : '',
+    defaultValue !== undefined ? defaultValue.toString() : ''
   );
 
   useEffect(() => {

@@ -26,7 +26,7 @@ const Select: React.FC<SelectProps> = ({
 }) => {
   const options = Array.isArray(field.options)
     ? field.options.map((option) =>
-        typeof option === 'string' ? { label: option, value: option } : option,
+        typeof option === 'string' ? { label: option, value: option } : option
       )
     : [];
 
@@ -38,7 +38,7 @@ const Select: React.FC<SelectProps> = ({
         ? defaultOptions.map((option) =>
             typeof option === 'string'
               ? { label: option, value: option }
-              : option,
+              : option
           )
         : [];
     } else {

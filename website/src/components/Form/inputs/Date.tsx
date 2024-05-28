@@ -18,7 +18,7 @@ const DateInput: React.FC<DateInputProps> = ({
   };
 
   const [value, setValue] = useState<string>(
-    defaultValue ? formatDateToUTC(defaultValue) : '',
+    defaultValue ? formatDateToUTC(defaultValue) : ''
   );
   const [error, setError] = useState<string | undefined>();
 
@@ -36,7 +36,7 @@ const DateInput: React.FC<DateInputProps> = ({
     let againstDate = Date.now();
     if (field.additionalValidation?.dateAndTimestampFromTimeField) {
       againstDate = new Date(
-        field.additionalValidation.dateAndTimestampFromTimeField,
+        field.additionalValidation.dateAndTimestampFromTimeField
       ).getTime();
     }
 

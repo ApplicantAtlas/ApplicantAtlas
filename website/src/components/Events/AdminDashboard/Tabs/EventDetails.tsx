@@ -13,7 +13,7 @@ interface EventDetailsProps {}
 
 const EventDetails: React.FC<EventDetailsProps> = ({}) => {
   const eventDetails = useSelector(
-    (state: RootState) => state.event.eventDetails,
+    (state: RootState) => state.event.eventDetails
   );
   const { showToast } = useToast();
 
@@ -118,7 +118,7 @@ const EventDetails: React.FC<EventDetailsProps> = ({}) => {
 
   const formFields = useMemo(
     () => createFormStructure(eventDetails.metadata),
-    [eventDetails.metadata],
+    [eventDetails.metadata]
   );
 
   return (

@@ -16,7 +16,7 @@ const FormSubmission = () => {
   const router = useRouter();
   const { eventId, formId } = router.query;
   const [formStructure, setFormStructure] = useState<FormStructure | null>(
-    null,
+    null
   );
   const [event, setEvent] = useState<EventModel | null>(null);
   const [err, setErr] = useState<string | null>(null);

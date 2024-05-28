@@ -13,7 +13,7 @@ class EventEmitter {
   off(event: string, listener: Listener) {
     if (this.listeners[event]) {
       this.listeners[event] = this.listeners[event].filter(
-        (l) => l !== listener,
+        (l) => l !== listener
       );
     }
   }

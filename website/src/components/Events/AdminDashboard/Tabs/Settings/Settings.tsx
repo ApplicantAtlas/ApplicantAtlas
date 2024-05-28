@@ -15,7 +15,7 @@ interface SettingsProps {}
 
 const Settings: React.FC<SettingsProps> = ({}) => {
   const eventDetails = useSelector(
-    (state: RootState) => state.event.eventDetails,
+    (state: RootState) => state.event.eventDetails
   );
 
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
