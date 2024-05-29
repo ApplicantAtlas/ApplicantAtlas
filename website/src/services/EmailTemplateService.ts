@@ -26,7 +26,12 @@ export const GetEmailTemplates = async (
 
 export const UpdateEmailTemplate = async (
   emailTemplate: EmailTemplate,
-): Promise<AxiosResponse> => {
+): Promise<
+  AxiosResponse<{
+    message?: string;
+    lastUpdatedAt?: Date;
+  }>
+> => {
   return api.put(`/email_templates/${emailTemplate.id}`, emailTemplate);
 };
 

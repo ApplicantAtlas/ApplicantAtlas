@@ -9,7 +9,7 @@ export type EmailTemplate = {
   cc?: string[];
   bcc?: string[];
   replyTo?: string;
-  updatedAt?: Date;
+  lastUpdatedAt?: Date;
   description?: string;
   isHTML?: boolean;
 };

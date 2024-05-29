@@ -128,10 +128,14 @@ const EmailTemplateEditor = ({}: EmailTemplateEditorProps) => {
       ...formData,
       isHTML: true,
     } as EmailTemplate;
-    UpdateEmailTemplate(updatedTemplate).then(() => {
-      showToast('Email template updated successfully', ToastType.Success);
-      dispatch(setEmailTemplateState(updatedTemplate));
-    });
+    UpdateEmailTemplate(updatedTemplate)
+      .then((r) => {
+        const newTemplate = { ...updatedTemplate };
+        newTemplate.lastUpdatedAt = r.data.lastUpdatedAt;
+        showToast('Email template updated successfully', ToastType.Success);
+        dispatch(setEmailTemplateState(newTemplate));
+      })
+      .catch(() => {});
   };
 
   if (templateData === null) return <p>Error loading template from state</p>;

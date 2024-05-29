@@ -4,6 +4,7 @@ import (
 	"api/internal/middlewares"
 	"api/internal/types"
 	"net/http"
+	"shared/messages"
 	"shared/models"
 	"shared/mongodb"
 	"shared/utils"
@@ -76,7 +77,7 @@ func createNewTemplate(params *types.RouteParams) gin.HandlerFunc {
 			return
 		}
 
-		template.UpdatedAt = time.Now()
+		template.LastUpdatedAt = time.Now()
 		templateID, err := params.MongoService.CreateEmailTemplate(c, template)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Error creating email template"})
@@ -106,19 +107,31 @@ func updateTemplate(params *types.RouteParams) gin.HandlerFunc {
 			return
 		}
 
-		if !mongodb.CanUserModifyEmailTemplate(c, params.MongoService, authenticatedUser, templateID, nil) {
+		emailTemplate, err := params.MongoService.GetEmailTemplate(c, templateID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get email template"})
+			return
+		}
+
+		if !mongodb.CanUserModifyEmailTemplate(c, params.MongoService, authenticatedUser, templateID, emailTemplate) {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "You are not authorized to update this pipeline"})
 			return
 		}
 
-		req.UpdatedAt = time.Now()
+		if emailTemplate.LastUpdatedAt.After(req.LastUpdatedAt) {
+			c.JSON(http.StatusConflict, gin.H{"error": messages.UpdateAttemptOnChangedEntity})
+			return
+		}
+
+		newUpdatedAt := time.Now()
+		req.LastUpdatedAt = newUpdatedAt
 		_, err = params.MongoService.UpdateEmailTemplate(c, req, templateID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update pipeline configuration"})
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"message": "Pipeline configuration updated successfully"})
+		c.JSON(http.StatusOK, gin.H{"message": "Pipeline configuration updated successfully", "lastUpdatedAt": newUpdatedAt})
 	}
 }
 
