@@ -6,10 +6,12 @@ import (
 	"api/internal/types"
 	"log"
 	"net/http"
+	"shared/messages"
 	"shared/models"
 	"shared/mongodb"
 	"shared/utils"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -183,11 +185,24 @@ func updateFormHandler(params *types.RouteParams) gin.HandlerFunc {
 			return
 		}
 
-		if !mongodb.CanUserModifyForm(c, params.MongoService, authenticatedUser, formID, nil) {
+		form, err := params.MongoService.GetForm(c, formID, true)
+		if err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Form not found"})
+			return
+		}
+
+		if !mongodb.CanUserModifyForm(c, params.MongoService, authenticatedUser, formID, form) {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "You are not authorized to update this form"})
 			return
 		}
 
+		if form.LastUpdatedAt.After(req.LastUpdatedAt) {
+			c.JSON(http.StatusConflict, gin.H{"error": messages.UpdateAttemptOnChangedEntity})
+			return
+		}
+
+		newLastUpdatedAt := time.Now()
+		req.LastUpdatedAt = newLastUpdatedAt
 		_, err = params.MongoService.UpdateForm(c, req, formID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update form"})
@@ -195,6 +210,6 @@ func updateFormHandler(params *types.RouteParams) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"message": "Form updated successfully"})
+		c.JSON(http.StatusOK, gin.H{"message": "Form updated successfully", "lastUpdatedAt": newLastUpdatedAt})
 	}
 }

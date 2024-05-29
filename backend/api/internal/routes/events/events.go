@@ -7,10 +7,12 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"shared/messages"
 	"shared/models"
 	"shared/mongodb"
 	"shared/utils"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
@@ -84,9 +86,11 @@ func createEventHandler(params *types.RouteParams) gin.HandlerFunc {
 			return
 		}
 
+		lastUpdatedAt := time.Now()
 		event := models.Event{
 			Metadata: models.EventMetadata{
-				Name: req.Name,
+				Name:          req.Name,
+				LastUpdatedAt: lastUpdatedAt,
 			},
 			OrganizerIDs: []primitive.ObjectID{authenticatedUser.ID},
 		}
@@ -127,7 +131,21 @@ func updateEventHandler(params *types.RouteParams) gin.HandlerFunc {
 			return
 		}
 
+		// Pull the current event from the database to compare the last updated time
+		event, err := params.MongoService.GetEvent(c, objID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get event"})
+			return
+		}
+
+		if event.Metadata.LastUpdatedAt.After(req.Metadata.LastUpdatedAt) {
+			c.JSON(http.StatusBadRequest, gin.H{"error": messages.UpdateAttemptOnChangedEntity})
+			return
+		}
+
 		// Update the event
+		newLastUpdatedAt := time.Now()
+		req.Metadata.LastUpdatedAt = newLastUpdatedAt
 		_, err = params.MongoService.UpdateEventMetadata(c, objID, req.Metadata)
 		if err != nil {
 			if err == mongodb.ErrUserNotAuthenticated {
@@ -138,7 +156,7 @@ func updateEventHandler(params *types.RouteParams) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"message": "Event updated successfully"})
+		c.JSON(http.StatusOK, gin.H{"message": "Event updated successfully", "lastUpdatedAt": newLastUpdatedAt})
 	}
 }
 

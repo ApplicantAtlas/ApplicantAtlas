@@ -68,6 +68,6 @@ export type PipelineConfiguration = {
   event?: PipelineEvent;
   actions?: PipelineAction[];
   eventID: string;
-  updatedAt?: Date;
+  lastUpdatedAt?: string;
   enabled: boolean;
 };

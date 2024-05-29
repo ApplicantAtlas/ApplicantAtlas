@@ -9,7 +9,7 @@ import { FormStructure } from '@/types/models/Form';
 import { ToastType, useToast } from '@/components/Toast/ToastContext';
 import LinkIcon from '@/components/Icons/LinkIcon';
 import { RootState, AppDispatch } from '@/store';
-import { updateFormDetails } from '@/store/slices/formSlice';
+import { setFormDetails } from '@/store/slices/formSlice';
 
 import Responses from './Responses';
 import FormSettings from './FormSettings';
@@ -31,9 +31,13 @@ const SelectForm: React.FC<SelectFormProps> = ({ action, onDelete }) => {
 
   const onFormStructureChange = (newFormStructure: FormStructure) => {
     updateForm(newFormStructure.id || '', newFormStructure)
-      .then(() => {
+      .then((r) => {
+        const newFormStructureCopy = { ...newFormStructure };
+        newFormStructureCopy.lastUpdatedAt = r.data.lastUpdatedAt
+          ? new Date(r.data.lastUpdatedAt)
+          : undefined;
         eventEmitter.emit('success', 'Successfully updated form!');
-        dispatch(updateFormDetails(newFormStructure));
+        dispatch(setFormDetails(newFormStructureCopy));
       })
       .catch((_) => {});
   };

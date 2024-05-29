@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"shared/kafka"
 	"shared/logger"
+	"shared/messages"
 	"shared/models"
 	"shared/mongodb"
 	"shared/utils"
@@ -48,9 +49,10 @@ func submitFormHandler(params *types.RouteParams) gin.HandlerFunc {
 		}
 
 		req := models.FormResponse{
-			FormID:    formID,
-			Data:      formData,
-			CreatedAt: time.Now(),
+			FormID:        formID,
+			Data:          formData,
+			CreatedAt:     time.Now(),
+			LastUpdatedAt: time.Now(),
 		}
 		if errors := utils.ValidateStruct(utils.Validator, req); len(errors) > 0 {
 			c.JSON(http.StatusBadRequest, gin.H{"error": strings.Join(errors, "\n")})
@@ -197,7 +199,8 @@ func processResponses(form *models.FormStructure, responses *[]models.FormRespon
 	var processedResponses []map[string]interface{}
 
 	// Define the order of columns
-	columnOrder := []string{"Response ID", "User ID", "Submitted At"}
+	columnOrder := []string{"Response ID", "User ID", "Submitted At", "Last Updated At"}
+	defaultColumnNum := len(columnOrder)
 	colKeyMap := make(map[string]struct{})
 	for _, attr := range form.Attrs {
 		columnOrder = append(columnOrder, attr.Question+"_attr_key:"+attr.Key)
@@ -230,10 +233,11 @@ func processResponses(form *models.FormStructure, responses *[]models.FormRespon
 		processedResponse := make(map[string]interface{})
 		processedResponse["Response ID"] = response.ID.Hex()
 		processedResponse["User ID"] = response.UserID.Hex()
-		processedResponse["Submitted At"] = response.CreatedAt.Format(time.RFC3339)
+		processedResponse["Submitted At"] = response.CreatedAt
+		processedResponse["Last Updated At"] = response.LastUpdatedAt
 
 		// Add other attributes
-		for _, fullKeyName := range columnOrder[3:] {
+		for _, fullKeyName := range columnOrder[defaultColumnNum:] {
 			split := strings.Split(fullKeyName, "_attr_key:")
 			uniqueKey := split[len(split)-1]
 
@@ -395,19 +399,23 @@ func updateFormResponseHandler(params *types.RouteParams) gin.HandlerFunc {
 			return
 		}
 
-		var formData map[string]interface{} // in form attr_id -> value format
-		if err := utils.BindJSON(c, &formData); err != nil {
+		var req models.FormResponse
+		if err := utils.BindJSON(c, &req); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
 
-		// originalData := responses[0].Data
+		formData := req.Data // in form attr_id -> value format
 		response := responses[0]
 		response.Data = formData
-		response.UpdatedAt = time.Now()
 
 		if errors := utils.ValidateStruct(utils.Validator, response); len(errors) > 0 {
 			c.JSON(http.StatusBadRequest, gin.H{"error": strings.Join(errors, "\n")})
+			return
+		}
+
+		if response.LastUpdatedAt.After(req.LastUpdatedAt) {
+			c.JSON(http.StatusBadRequest, gin.H{"error": messages.UpdateAttemptOnChangedEntity})
 			return
 		}
 
@@ -440,6 +448,8 @@ func updateFormResponseHandler(params *types.RouteParams) gin.HandlerFunc {
 			}
 		}
 
+		newUpdatedAt := time.Now()
+		response.LastUpdatedAt = newUpdatedAt
 		_, err = params.MongoService.UpdateResponse(c, response, responseID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
@@ -447,6 +457,6 @@ func updateFormResponseHandler(params *types.RouteParams) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"id": responseID})
+		c.JSON(http.StatusOK, gin.H{"id": responseID, "lastUpdatedAt": newUpdatedAt})
 	}
 }

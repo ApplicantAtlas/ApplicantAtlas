@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { ToastType, useToast } from '@/components/Toast/ToastContext';
-import { PipelineConfiguration } from '@/types/models/Pipeline';
 import { UpdatePipeline } from '@/services/PipelineService';
 import { AppDispatch, RootState } from '@/store';
 import { setPipelineConfiguration } from '@/store/slices/pipelineSlice';
@@ -27,11 +26,6 @@ const SelectPipeline: React.FC<SelectPipelineProps> = ({ onDelete }) => {
 
   const { showToast } = useToast();
 
-  // Edit
-  const changePipeline = (pipeline: PipelineConfiguration) => {
-    dispatch(setPipelineConfiguration(pipeline));
-  };
-
   const updatePipeline = () => {
     if (pipelineConfig === null) {
       showToast('Pipeline not found in state', ToastType.Error);
@@ -39,9 +33,11 @@ const SelectPipeline: React.FC<SelectPipelineProps> = ({ onDelete }) => {
     }
 
     UpdatePipeline(pipelineConfig)
-      .then(() => {
+      .then((r) => {
+        const newPipelineConfig = { ...pipelineConfig };
+        newPipelineConfig.lastUpdatedAt = r.data.lastUpdatedAt;
+        dispatch(setPipelineConfiguration(newPipelineConfig));
         showToast('Successfully updated pipeline!', ToastType.Success);
-        changePipeline(pipelineConfig);
       })
       .catch((_) => {});
   };

@@ -15,6 +15,7 @@ import EditIcon from '@/components/Icons/EditIcon';
 import { ToastType, useToast } from '@/components/Toast/ToastContext';
 import Checkbox from '@/components/Form/inputs/Checkbox';
 import { RootState } from '@/store';
+import { FormResponse } from '@/types/models/Response';
 
 interface ResponsesProps {}
 
@@ -32,7 +33,12 @@ const Responses = ({}: ResponsesProps) => {
   const { showToast } = useToast();
 
   const debouncersRef = useRef(new Map());
-  const defaultFormColumns = ['Response ID', 'Submitted At', 'User ID'];
+  const defaultFormColumns = [
+    'Response ID',
+    'Submitted At',
+    'User ID',
+    'Last Updated At',
+  ];
 
   const getDebouncedOnSubmissionFieldChange = (key: string) => {
     if (!debouncersRef.current.has(key)) {
@@ -83,8 +89,17 @@ const Responses = ({}: ResponsesProps) => {
               });
 
               if (shouldUpdate) {
-                UpdateResponse(form?.id || '', submissionId, newResponse)
-                  .then(() => {
+                console.log('Updating response', response);
+                const newResponseObj: FormResponse = {
+                  id: submissionId,
+                  formID: form?.id || '',
+                  data: newResponse,
+                  lastUpdatedAt: response['Last Updated At'],
+                  createdAt: response['Submitted At'],
+                };
+                UpdateResponse(newResponseObj)
+                  .then((r) => {
+                    response['Last Updated At'] = r.data.lastUpdatedAt;
                     showToast(
                       'Successfully updated reponse',
                       ToastType.Success,

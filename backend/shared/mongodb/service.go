@@ -398,7 +398,7 @@ func (s *Service) GetForm(ctx context.Context, formID primitive.ObjectID, stripS
 // CreateForm creates a new form
 func (s *Service) CreateForm(ctx context.Context, form models.FormStructure) (*mongo.InsertOneResult, error) {
 	form.CreatedAt = time.Now()
-	form.UpdatedAt = time.Now()
+	form.LastUpdatedAt = time.Now()
 	form.IsDeleted = false
 	form.Status = "draft"
 	return s.Database.Collection("forms").InsertOne(ctx, form)
@@ -406,7 +406,6 @@ func (s *Service) CreateForm(ctx context.Context, form models.FormStructure) (*m
 
 // UpdateForm updates a form by its ID
 func (s *Service) UpdateForm(ctx context.Context, form models.FormStructure, formID primitive.ObjectID) (*mongo.UpdateResult, error) {
-	form.UpdatedAt = time.Now()
 	updatePayload := utils.StructToBsonM(form)
 	cleanUpdatePayload := RemoveNonOverridableFields(updatePayload, form)
 
@@ -440,7 +439,7 @@ func (s *Service) DeleteForm(ctx context.Context, formID primitive.ObjectID) (*m
 
 // CreatePipeline creates a new pipeline
 func (s *Service) CreatePipeline(ctx context.Context, pipeline models.PipelineConfiguration) (*mongo.InsertOneResult, error) {
-	pipeline.UpdatedAt = time.Now()
+	pipeline.LastUpdatedAt = time.Now()
 
 	// Generate each action an ID
 	for i := range pipeline.Actions {
@@ -454,8 +453,6 @@ func (s *Service) CreatePipeline(ctx context.Context, pipeline models.PipelineCo
 
 // UpdatePipeline updates a pipeline by its ID
 func (s *Service) UpdatePipeline(ctx context.Context, pipeline models.PipelineConfiguration, pipelineID primitive.ObjectID) (*mongo.UpdateResult, error) {
-	pipeline.UpdatedAt = time.Now()
-
 	// Generate each action an ID
 	for i := range pipeline.Actions {
 		if pipeline.Actions[i].ID.IsZero() {
@@ -551,13 +548,12 @@ func (s *Service) ListResponses(ctx context.Context, filter bson.M) ([]models.Fo
 
 // CreateResponse creates a new response
 func (s *Service) CreateResponse(ctx context.Context, response models.FormResponse) (*mongo.InsertOneResult, error) {
+	response.LastUpdatedAt = time.Now()
 	return s.Database.Collection("responses").InsertOne(ctx, response)
 }
 
 // UpdateResponse updates a response by its ID
 func (s *Service) UpdateResponse(ctx context.Context, response models.FormResponse, responseID primitive.ObjectID) (*mongo.UpdateResult, error) {
-	response.UpdatedAt = time.Now()
-
 	cleanUpdatePayload := RemoveNonOverridableFields(utils.StructToBsonM(response), response)
 
 	update := bson.M{"$set": cleanUpdatePayload}

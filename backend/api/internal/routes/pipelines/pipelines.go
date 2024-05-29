@@ -5,10 +5,12 @@ import (
 	"api/internal/types"
 	"fmt"
 	"net/http"
+	"shared/messages"
 	"shared/models"
 	"shared/mongodb"
 	"shared/utils"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
@@ -109,18 +111,32 @@ func updatePipelineConfigHandler(params *types.RouteParams) gin.HandlerFunc {
 			return
 		}
 
-		if !mongodb.CanUserModifyPipeline(c, params.MongoService, authenticatedUser, pipelineID, nil) {
+		// Pull configuration
+		pipelineConfig, err := params.MongoService.GetPipeline(c, pipelineID)
+		if err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Pipeline configuration not found"})
+			return
+		}
+		if !mongodb.CanUserModifyPipeline(c, params.MongoService, authenticatedUser, pipelineID, pipelineConfig) {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "You are not authorized to update this pipeline"})
 			return
 		}
 
+		// Check if the configuration has changed since the user last fetched it
+		if pipelineConfig.LastUpdatedAt.After(req.LastUpdatedAt) {
+			c.JSON(http.StatusConflict, gin.H{"error": messages.UpdateAttemptOnChangedEntity})
+			return
+		}
+
+		newLastUpdatedAt := time.Now()
+		req.LastUpdatedAt = newLastUpdatedAt
 		_, err = params.MongoService.UpdatePipeline(c, req, pipelineID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update pipeline configuration"})
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"message": "Pipeline configuration updated successfully"})
+		c.JSON(http.StatusOK, gin.H{"message": "Pipeline configuration updated successfully", "lastUpdatedAt": newLastUpdatedAt})
 	}
 }
 

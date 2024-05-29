@@ -36,7 +36,6 @@ const CreateNewPipeline: React.FC<CreateNewPipelineProps> = ({ onSubmit }) => {
     const pipelineStructure: PipelineConfiguration = {
       name: name,
       eventID: eventDetails.ID,
-      updatedAt: new Date(),
       enabled: false,
     };
     CreatePipeline(pipelineStructure)
