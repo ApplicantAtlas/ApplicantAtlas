@@ -38,7 +38,6 @@ const CreateNewEmailTemplate: React.FC<CreateNewEmailTemplateProps> = ({
     const emailTemplateStructure: EmailTemplate = {
       name: name,
       eventID: eventDetails.ID,
-      updatedAt: new Date(),
       from: '',
     };
     CreateEmailTemplate(emailTemplateStructure)

@@ -185,7 +185,9 @@ const FormSettings: React.FC<FormSettingsProps> = ({ onDelete }) => {
     updateForm(form.id || '', updatedForm)
       .then((r) => {
         const newForm = { ...updatedForm };
-        newForm.lastUpdatedAt = r.data.lastUpdatedAt;
+        newForm.lastUpdatedAt = r.data.lastUpdatedAt
+          ? new Date(r.data.lastUpdatedAt)
+          : undefined;
         showToast('Successfully updated form!', ToastType.Success);
         dispatch(setFormDetails(newForm));
       })

@@ -33,7 +33,9 @@ const SelectForm: React.FC<SelectFormProps> = ({ action, onDelete }) => {
     updateForm(newFormStructure.id || '', newFormStructure)
       .then((r) => {
         const newFormStructureCopy = { ...newFormStructure };
-        newFormStructureCopy.lastUpdatedAt = r.data.lastUpdatedAt;
+        newFormStructureCopy.lastUpdatedAt = r.data.lastUpdatedAt
+          ? new Date(r.data.lastUpdatedAt)
+          : undefined;
         eventEmitter.emit('success', 'Successfully updated form!');
         dispatch(setFormDetails(newFormStructureCopy));
       })
