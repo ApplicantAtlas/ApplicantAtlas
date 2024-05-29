@@ -398,7 +398,7 @@ func (s *Service) GetForm(ctx context.Context, formID primitive.ObjectID, stripS
 // CreateForm creates a new form
 func (s *Service) CreateForm(ctx context.Context, form models.FormStructure) (*mongo.InsertOneResult, error) {
 	form.CreatedAt = time.Now()
-	form.UpdatedAt = time.Now()
+	form.LastUpdatedAt = time.Now()
 	form.IsDeleted = false
 	form.Status = "draft"
 	return s.Database.Collection("forms").InsertOne(ctx, form)
@@ -406,7 +406,6 @@ func (s *Service) CreateForm(ctx context.Context, form models.FormStructure) (*m
 
 // UpdateForm updates a form by its ID
 func (s *Service) UpdateForm(ctx context.Context, form models.FormStructure, formID primitive.ObjectID) (*mongo.UpdateResult, error) {
-	form.UpdatedAt = time.Now()
 	updatePayload := utils.StructToBsonM(form)
 	cleanUpdatePayload := RemoveNonOverridableFields(updatePayload, form)
 

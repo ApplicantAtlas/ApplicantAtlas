@@ -106,10 +106,13 @@ const FormCreator: React.FC<FormCreatorProps> = ({
   };
 
   const handleSubmit = () => {
-    userFormStructure.attrs = userFormStructure.attrs.map(
-      humanReadableFieldTypeToDatabaseFormat,
-    );
-    submissionFunction(userFormStructure);
+    const newUserFormStructure = {
+      ...userFormStructure,
+      attrs: userFormStructure.attrs.map(
+        humanReadableFieldTypeToDatabaseFormat,
+      ),
+    };
+    submissionFunction(newUserFormStructure);
   };
 
   return (

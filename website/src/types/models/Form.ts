@@ -95,7 +95,6 @@ export type FormStructure = {
   name?: string;
   description?: string;
   createdAt?: Date;
-  updatedAt?: Date;
   status?: 'draft' | 'published' | 'archived' | 'closed';
   isDeleted?: boolean;
   eventID?: string;
@@ -103,4 +102,6 @@ export type FormStructure = {
   submissionMessage?: string;
   isRestricted?: boolean;
   allowedSubmitters?: FormAllowedSubmitter[];
+
+  lastUpdatedAt?: string;
 };

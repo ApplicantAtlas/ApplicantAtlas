@@ -89,7 +89,6 @@ type FormStructure struct {
 	Name                     string                 `json:"name,omitempty" bson:"name"`
 	Description              string                 `json:"description,omitempty" bson:"description"`
 	CreatedAt                time.Time              `json:"createdAt,omitempty" bson:"createdAt"`
-	UpdatedAt                time.Time              `json:"updatedAt,omitempty" bson:"updatedAt"`
 	Status                   string                 `json:"status,omitempty" bson:"status"`
 	IsDeleted                bool                   `json:"isDeleted,omitempty" bson:"isDeleted"`
 	EventID                  primitive.ObjectID     `json:"eventID,omitempty" bson:"eventID" mongoPreventOverride:"true"`
@@ -97,6 +96,8 @@ type FormStructure struct {
 	SubmissionMessage        string                 `json:"submissionMessage,omitempty" bson:"submissionMessage"`
 	IsRestricted             bool                   `json:"isRestricted,omitempty" bson:"isRestricted"`
 	AllowedSubmitters        []FormAllowedSubmitter `json:"allowedSubmitters,omitempty" bson:"allowedSubmitters" validate:"dive"`
+
+	LastUpdatedAt time.Time `json:"lastUpdatedAt,omitempty" bson:"lastUpdatedAt"`
 }
 
 // StripSecrets removes any sensitive information from the form

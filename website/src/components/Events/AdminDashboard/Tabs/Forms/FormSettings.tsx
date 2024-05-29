@@ -6,7 +6,7 @@ import { ToastType, useToast } from '@/components/Toast/ToastContext';
 import { deleteForm, updateForm } from '@/services/FormService';
 import { FormStructure } from '@/types/models/Form';
 import { RootState, AppDispatch } from '@/store';
-import { updateFormDetails, resetFormState } from '@/store/slices/formSlice';
+import { resetFormState, setFormDetails } from '@/store/slices/formSlice';
 
 interface FormSettingsProps {
   onDelete: () => void;
@@ -182,10 +182,12 @@ const FormSettings: React.FC<FormSettingsProps> = ({ onDelete }) => {
       allowedSubmitters,
     };
 
-    updateForm(form.id || 't', updatedForm)
-      .then(() => {
+    updateForm(form.id || '', updatedForm)
+      .then((r) => {
+        const newForm = { ...updatedForm };
+        newForm.lastUpdatedAt = r.data.lastUpdatedAt;
         showToast('Successfully updated form!', ToastType.Success);
-        dispatch(updateFormDetails(updatedForm));
+        dispatch(setFormDetails(newForm));
       })
       .catch((_) => {});
   };

@@ -32,7 +32,12 @@ export const createForm = async (
 export const updateForm = async (
   id: string,
   form: FormStructure,
-): Promise<AxiosResponse> => {
+): Promise<
+  AxiosResponse<{
+    message?: string;
+    lastUpdatedAt?: string;
+  }>
+> => {
   return api.put(`/forms/${id}`, form);
 };
 
