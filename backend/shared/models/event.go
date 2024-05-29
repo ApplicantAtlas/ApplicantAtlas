@@ -33,6 +33,8 @@ type EventMetadata struct {
 	SocialMediaLinks []string `bson:"socialMediaLinks,omitempty" json:"socialMediaLinks,omitempty"`
 	Tags             []string `bson:"tags,omitempty" json:"tags,omitempty"`
 	ContactEmail     string   `bson:"contactEmail,omitempty" json:"contactEmail,omitempty"`
+
+	LastUpdatedAt time.Time `bson:"lastUpdatedAt" json:"lastUpdatedAt"` // RFC3339
 }
 
 // Address represents a physical address

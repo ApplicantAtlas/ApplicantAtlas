@@ -440,7 +440,7 @@ func (s *Service) DeleteForm(ctx context.Context, formID primitive.ObjectID) (*m
 
 // CreatePipeline creates a new pipeline
 func (s *Service) CreatePipeline(ctx context.Context, pipeline models.PipelineConfiguration) (*mongo.InsertOneResult, error) {
-	pipeline.UpdatedAt = time.Now()
+	pipeline.LastUpdatedAt = time.Now()
 
 	// Generate each action an ID
 	for i := range pipeline.Actions {
@@ -454,8 +454,6 @@ func (s *Service) CreatePipeline(ctx context.Context, pipeline models.PipelineCo
 
 // UpdatePipeline updates a pipeline by its ID
 func (s *Service) UpdatePipeline(ctx context.Context, pipeline models.PipelineConfiguration, pipelineID primitive.ObjectID) (*mongo.UpdateResult, error) {
-	pipeline.UpdatedAt = time.Now()
-
 	// Generate each action an ID
 	for i := range pipeline.Actions {
 		if pipeline.Actions[i].ID.IsZero() {

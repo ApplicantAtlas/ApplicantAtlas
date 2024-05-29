@@ -95,11 +95,11 @@ type Webhook struct {
 
 // PipelineConfiguration represents the configuration of a pipeline
 type PipelineConfiguration struct {
-	ID        primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty" mongoPreventOverride:"true"`
-	Name      string             `bson:"name" json:"name" validate:"required"`
-	Event     PipelineEvent      `bson:"event" json:"event,omitempty" validate:"pipelineevent"`
-	Actions   []PipelineAction   `bson:"actions" json:"actions,omitempty" validate:"dive"`
-	EventID   primitive.ObjectID `bson:"eventID" json:"eventID" validate:"required" mongoPreventOverride:"true"`
-	UpdatedAt time.Time          `bson:"updatedAt" json:"updatedAt" validate:"required"`
-	Enabled   bool               `bson:"enabled" json:"enabled" validate:"required"`
+	ID            primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty" mongoPreventOverride:"true"`
+	Name          string             `bson:"name" json:"name" validate:"required"`
+	Event         PipelineEvent      `bson:"event" json:"event,omitempty" validate:"pipelineevent"`
+	Actions       []PipelineAction   `bson:"actions" json:"actions,omitempty" validate:"dive"`
+	EventID       primitive.ObjectID `bson:"eventID" json:"eventID" validate:"required" mongoPreventOverride:"true"`
+	LastUpdatedAt time.Time          `bson:"lastUpdatedAt" json:"lastUpdatedAt" validate:"required"`
+	Enabled       bool               `bson:"enabled" json:"enabled" validate:"required"`
 }
