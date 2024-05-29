@@ -12,6 +12,7 @@ type ListEventsResponse = {
 
 type UpdateEventResponse = {
   message: string;
+  lastUpdatedAt: string;
 };
 
 type ListMyEventsResponse = {

@@ -23,6 +23,8 @@ export type EventMetadata = {
   socialMediaLinks?: string[];
   tags?: string[];
   contactEmail?: string;
+
+  lastUpdatedAt: string;
 };
 
 // Address represents a physical address

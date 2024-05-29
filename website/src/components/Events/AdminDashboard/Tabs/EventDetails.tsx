@@ -1,27 +1,51 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import moment from 'moment-timezone';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
-import { updateEvent } from '@/services/EventService';
+import { getEvent, updateEvent } from '@/services/EventService';
 import { useToast, ToastType } from '@/components/Toast/ToastContext';
 import FormBuilder from '@/components/Form/FormBuilder';
 import { FormField } from '@/types/models/Form';
 import { EventMetadata } from '@/types/models/Event';
 import { RootState } from '@/store';
+import { setEventDetails, updateEventDetails } from '@/store/slices/eventSlice';
 
 interface EventDetailsProps {}
 
 const EventDetails: React.FC<EventDetailsProps> = ({}) => {
+  const dispatch = useDispatch();
   const eventDetails = useSelector(
     (state: RootState) => state.event.eventDetails,
   );
   const { showToast } = useToast();
 
+  useEffect(() => {
+    if (!eventDetails) {
+      return;
+    }
+    getEvent(eventDetails?.ID).then((r) => {
+      if (
+        eventDetails.ID === r.data.event.ID &&
+        eventDetails.metadata.lastUpdatedAt ===
+          r.data.event.metadata.lastUpdatedAt
+      ) {
+        return;
+      }
+      dispatch(setEventDetails(r.data.event));
+    });
+  }, [eventDetails, dispatch]);
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- this is a generic form submission handler
   const handleFormSubmission = async (formData: Record<string, any>) => {
     if (eventDetails) {
-      updateEvent(eventDetails.ID, { metadata: formData as EventMetadata })
-        .then(() => {
+      const eventMetadata = formData as EventMetadata;
+      eventMetadata.lastUpdatedAt = eventDetails.metadata.lastUpdatedAt;
+      updateEvent(eventDetails.ID, { metadata: eventMetadata })
+        .then((r) => {
+          eventMetadata.lastUpdatedAt = r.data.lastUpdatedAt;
+          dispatch(
+            updateEventDetails({ ...eventDetails, metadata: eventMetadata }),
+          );
           showToast('Event updated successfully', ToastType.Success);
         })
         .catch(() => {});
