@@ -5,10 +5,7 @@ import FormBuilder from '@/components/Form/FormBuilder';
 import { ToastType, useToast } from '@/components/Toast/ToastContext';
 import { DeletePipeline, UpdatePipeline } from '@/services/PipelineService';
 import { AppDispatch, RootState } from '@/store';
-import {
-  setPipelineConfiguration,
-  updatePipelineConfiguration,
-} from '@/store/slices/pipelineSlice';
+import { setPipelineConfiguration } from '@/store/slices/pipelineSlice';
 import { FormStructure } from '@/types/models/Form';
 
 interface PipelineSettingsProps {
@@ -63,14 +60,12 @@ const PipelineSettings: React.FC<PipelineSettingsProps> = ({ onDelete }) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- this is a generic form submission handler
   const handleSubmit = (formData: Record<string, any>) => {
     const { name, enabled } = formData;
-
-    dispatch(updatePipelineConfiguration({ name, enabled }));
-
     if (pipeline) {
       const updatedPipeline = { ...pipeline, name, enabled };
 
       UpdatePipeline(updatedPipeline)
-        .then(() => {
+        .then((r) => {
+          updatedPipeline.lastUpdatedAt = r.data.lastUpdatedAt;
           showToast('Successfully updated pipeline!', ToastType.Success);
           dispatch(setPipelineConfiguration(updatedPipeline));
         })

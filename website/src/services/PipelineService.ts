@@ -27,7 +27,12 @@ export const GetPipelines = async (
 
 export const UpdatePipeline = async (
   pipeline: PipelineConfiguration,
-): Promise<AxiosResponse> => {
+): Promise<
+  AxiosResponse<{
+    message?: string;
+    lastUpdatedAt?: string;
+  }>
+> => {
   return api.put(`/pipelines/${pipeline.id}`, pipeline);
 };
 

@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/store';
 import { setPipelineConfiguration } from '@/store/slices/pipelineSlice';
 import { PipelineConfiguration } from '@/types/models/Pipeline';
+import { isZeroDate } from '@/utils/conversions';
 
 interface ListPipelinesProps {
   pipelines: PipelineConfiguration[];
@@ -28,6 +29,12 @@ const ListPipelines = ({ pipelines }: ListPipelinesProps) => {
         </thead>
         <tbody>
           {pipelines.map((pipeline) => {
+            let lastUpdatedAt = pipeline?.lastUpdatedAt;
+            if (lastUpdatedAt && !isZeroDate(lastUpdatedAt)) {
+              lastUpdatedAt = formatDate(new Date(lastUpdatedAt));
+            } else {
+              lastUpdatedAt = 'Unknown';
+            }
             return (
               <tr
                 key={pipeline.id}
@@ -37,7 +44,7 @@ const ListPipelines = ({ pipelines }: ListPipelinesProps) => {
                 }}
               >
                 <td>{pipeline.name}</td>
-                <td>{formatDate(pipeline.updatedAt)}</td>
+                <td>{lastUpdatedAt}</td>
               </tr>
             );
           })}
