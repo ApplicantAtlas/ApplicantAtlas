@@ -548,13 +548,12 @@ func (s *Service) ListResponses(ctx context.Context, filter bson.M) ([]models.Fo
 
 // CreateResponse creates a new response
 func (s *Service) CreateResponse(ctx context.Context, response models.FormResponse) (*mongo.InsertOneResult, error) {
+	response.LastUpdatedAt = time.Now()
 	return s.Database.Collection("responses").InsertOne(ctx, response)
 }
 
 // UpdateResponse updates a response by its ID
 func (s *Service) UpdateResponse(ctx context.Context, response models.FormResponse, responseID primitive.ObjectID) (*mongo.UpdateResult, error) {
-	response.UpdatedAt = time.Now()
-
 	cleanUpdatePayload := RemoveNonOverridableFields(utils.StructToBsonM(response), response)
 
 	update := bson.M{"$set": cleanUpdatePayload}

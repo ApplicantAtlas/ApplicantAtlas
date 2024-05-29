@@ -1,5 +1,7 @@
 import { AxiosResponse } from 'axios';
 
+import { FormResponse } from '@/types/models/Response';
+
 import api from './AxiosInterceptor';
 
 export const GetResponses = async (
@@ -28,12 +30,12 @@ export const SubmitResponse = async (
 };
 
 export const UpdateResponse = async (
-  formID: string,
-  responseID: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- generic form update response
-  data: Record<string, any>,
-): Promise<AxiosResponse<{ id: string }>> => {
-  return api.put(`/forms/${formID}/responses/${responseID}`, data);
+  response: FormResponse,
+): Promise<AxiosResponse<{ id: string; lastUpdatedAt?: string }>> => {
+  return api.put(
+    `/forms/${response.formID}/responses/${response.id}`,
+    response,
+  );
 };
 
 export const DownloadResponses = async (

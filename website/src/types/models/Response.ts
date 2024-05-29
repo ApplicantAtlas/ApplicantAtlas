@@ -5,4 +5,6 @@ export type FormResponse = {
   data: Record<string, any>;
   createdAt: Date;
   userID?: string;
+
+  lastUpdatedAt?: string;
 };

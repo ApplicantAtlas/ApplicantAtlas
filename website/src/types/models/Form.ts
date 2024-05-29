@@ -103,5 +103,5 @@ export type FormStructure = {
   isRestricted?: boolean;
   allowedSubmitters?: FormAllowedSubmitter[];
 
-  lastUpdatedAt?: string;
+  lastUpdatedAt?: Date;
 };
