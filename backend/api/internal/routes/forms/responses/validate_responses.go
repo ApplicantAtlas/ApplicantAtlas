@@ -94,7 +94,6 @@ func ValidateResponse(attrValue interface{}, attr models.FormField) error {
 		}
 	case "telephone":
 		phoneStr := attrValue.(string)
-		fmt.Println(phoneStr)
 		// Blank region tells the library to figure it out
 		phoneNumber, err := phonenumbers.Parse(phoneStr, "")
 		if err != nil {

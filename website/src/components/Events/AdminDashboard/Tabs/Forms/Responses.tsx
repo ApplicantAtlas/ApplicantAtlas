@@ -27,6 +27,8 @@ const Responses = ({}: ResponsesProps) => {
   const [columnOrder, setColumnOrder] = useState<
     Record<string, FormField | undefined>[]
   >([]);
+  const [pageNumber, setPageNumber] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [showDeletedColumns, setShowDeletedColumns] = useState(false);
@@ -135,7 +137,7 @@ const Responses = ({}: ResponsesProps) => {
   }, []);
 
   useEffect(() => {
-    GetResponses(form?.id || '', showDeletedColumns)
+    GetResponses(form?.id || '', showDeletedColumns, pageNumber, pageSize)
       .then((r) => {
         const cleanedResponses = r.data.responses.map(
           // eslint-disable-next-line @typescript-eslint/no-explicit-any -- this is a generic form response
@@ -168,12 +170,21 @@ const Responses = ({}: ResponsesProps) => {
           setColumnOrder(columnOrder);
         }
         setIsLoading(false);
+
+        // If page and pageSize are different from the response, update them
+        if (pageNumber !== r.data.page) {
+          setPageNumber(r.data.page);
+        }
+
+        if (pageSize !== r.data.pageSize) {
+          setPageSize(r.data.pageSize);
+        }
       })
       .catch((err) => {
         console.error(err);
         setIsLoading(false);
       });
-  }, [form?.id, showDeletedColumns, form?.attrs]);
+  }, [form?.id, showDeletedColumns, form?.attrs, pageNumber, pageSize]);
 
   if (isLoading) {
     return <LoadingSpinner />;
@@ -286,6 +297,25 @@ const Responses = ({}: ResponsesProps) => {
             })}
           </tbody>
         </table>
+      </div>
+      <div className="join flex justify-center mt-4 ">
+        <button
+          className="btn join-item bg-white"
+          onClick={() => {
+            setPageNumber(pageNumber > 1 ? pageNumber - 1 : pageNumber);
+          }}
+        >
+          «
+        </button>
+        <button className="btn join-item bg-white">Page {pageNumber}</button>
+        <button
+          className="btn join-item bg-white"
+          onClick={() => {
+            setPageNumber(pageNumber + 1);
+          }}
+        >
+          »
+        </button>
       </div>
     </div>
   );

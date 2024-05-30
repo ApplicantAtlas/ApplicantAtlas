@@ -7,16 +7,22 @@ import api from './AxiosInterceptor';
 export const GetResponses = async (
   formID: string,
   getDeletedColumnData: boolean = false,
+  page: number = 1,
+  pageSize: number = 10,
 ): Promise<
   AxiosResponse<{
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- generic form responses
     responses: Record<string, any>;
     columnOrder: string[];
+    page: number;
+    pageSize: number;
   }>
 > => {
   return api.get(`/forms/${formID}/responses`, {
     params: {
       getDeletedColumnData: getDeletedColumnData.toString(),
+      page,
+      pageSize,
     },
   });
 };

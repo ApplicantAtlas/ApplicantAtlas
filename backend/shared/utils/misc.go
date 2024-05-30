@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"fmt"
 	"os"
 	"reflect"
 	"strings"
@@ -20,7 +19,6 @@ func GetBSONFieldNames(structType reflect.Type) []string {
 	for i := 0; i < structType.NumField(); i++ {
 		field := structType.Field(i)
 		bsonTag := field.Tag.Get("bson")
-		fmt.Println(field)
 		if bsonTag == "" || bsonTag == "-" {
 			// Use field name if json tag is not specified or is "-"
 			fieldNames = append(fieldNames, field.Name)

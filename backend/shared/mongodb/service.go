@@ -49,7 +49,7 @@ type MongoService interface {
 	GetPipeline(ctx context.Context, pipelineID primitive.ObjectID) (*models.PipelineConfiguration, error)
 	ListPipelines(ctx context.Context, filter bson.M) ([]models.PipelineConfiguration, error)
 	DeletePipeline(ctx context.Context, pipelineID primitive.ObjectID) (*mongo.DeleteResult, error)
-	ListResponses(ctx context.Context, filter bson.M) ([]models.FormResponse, error)
+	ListResponses(ctx context.Context, filter bson.M, options *options.FindOptions) ([]models.FormResponse, error)
 	CreateResponse(ctx context.Context, response models.FormResponse) (*mongo.InsertOneResult, error)
 	UpdateResponse(ctx context.Context, response models.FormResponse, responseID primitive.ObjectID) (*mongo.UpdateResult, error)
 	DeleteResponse(ctx context.Context, responseID primitive.ObjectID) (*mongo.DeleteResult, error)
@@ -516,10 +516,10 @@ func (s *Service) DeletePipeline(ctx context.Context, pipelineID primitive.Objec
 }
 
 // ListResponses retrieves responses based on a filter
-func (s *Service) ListResponses(ctx context.Context, filter bson.M) ([]models.FormResponse, error) {
+func (s *Service) ListResponses(ctx context.Context, filter bson.M, options *options.FindOptions) ([]models.FormResponse, error) {
 	var responses []models.FormResponse
 
-	cursor, err := s.Database.Collection("responses").Find(ctx, filter)
+	cursor, err := s.Database.Collection("responses").Find(ctx, filter, options)
 	if err != nil {
 		return nil, err
 	}

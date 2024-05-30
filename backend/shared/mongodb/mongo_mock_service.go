@@ -14,6 +14,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// NOTE: I think I hate this file now and looking back is a bad idea. Will be removed soon.
 type MockMongoService struct {
 	mock.Mock
 	data                     map[string]models.User // In-memory store
@@ -417,7 +418,7 @@ func (m *MockMongoService) CreateResponse(ctx context.Context, submission models
 	return nil, nil
 }
 
-func (m *MockMongoService) ListResponses(ctx context.Context, filter bson.M) ([]models.FormResponse, error) {
+func (m *MockMongoService) ListResponses(ctx context.Context, filter bson.M, options *options.FindOptions) ([]models.FormResponse, error) {
 	return nil, nil
 }
 

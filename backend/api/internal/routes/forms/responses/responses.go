@@ -13,12 +13,14 @@ import (
 	"shared/models"
 	"shared/mongodb"
 	"shared/utils"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func RegisterFormResponsesRoutes(r *gin.RouterGroup, params *types.RouteParams) {
@@ -83,7 +85,7 @@ func submitFormHandler(params *types.RouteParams) gin.HandlerFunc {
 		// Check if form has reached max submissions
 		var submissions []models.FormResponse
 		if form.MaxSubmissions > 0 {
-			submissions, err = params.MongoService.ListResponses(c, bson.M{"formID": formID})
+			submissions, err = params.MongoService.ListResponses(c, bson.M{"formID": formID}, nil)
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
 				logger.Error("Failed to list form responses", err)
@@ -98,7 +100,7 @@ func submitFormHandler(params *types.RouteParams) gin.HandlerFunc {
 
 		if !form.AllowMultipleSubmissions {
 			if submissions == nil {
-				submissions, err = params.MongoService.ListResponses(c, bson.M{"formID": formID, "userID": authenticatedUser.ID})
+				submissions, err = params.MongoService.ListResponses(c, bson.M{"formID": formID, "userID": authenticatedUser.ID}, nil)
 				if err != nil {
 					c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
 					logger.Error("Failed to list form responses for duplicate submission check", err)
@@ -282,7 +284,26 @@ func listFormResponsesHandler(params *types.RouteParams) gin.HandlerFunc {
 			return
 		}
 
-		responses, err := params.MongoService.ListResponses(c, bson.M{"formID": formID})
+		// Pagination parameters
+		page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+		pageSize, _ := strconv.Atoi(c.DefaultQuery("pageSize", "10"))
+
+		// Validate page and pageSize
+		if page < 1 {
+			page = 1
+		}
+		if pageSize < 1 || pageSize > 100 {
+			pageSize = 10
+		}
+
+		// Pagination options
+		skip := (page - 1) * pageSize
+		options := options.Find()
+		options.SetLimit(int64(pageSize))
+		options.SetSkip(int64(skip))
+		options.SetSort(bson.D{{Key: "createdAt", Value: -1}})
+
+		responses, err := params.MongoService.ListResponses(c, bson.M{"formID": formID}, options)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
 			logger.Error("Failed to list form responses", err)
@@ -291,7 +312,7 @@ func listFormResponsesHandler(params *types.RouteParams) gin.HandlerFunc {
 
 		processedResponses, columnOrder := processResponses(form, &responses, getDeletedColumnDataBool)
 
-		c.JSON(http.StatusOK, gin.H{"responses": processedResponses, "columnOrder": columnOrder})
+		c.JSON(http.StatusOK, gin.H{"responses": processedResponses, "columnOrder": columnOrder, "page": page, "pageSize": pageSize})
 	}
 }
 
@@ -332,7 +353,7 @@ func downloadFormResponsesAsCSVHandler(params *types.RouteParams) gin.HandlerFun
 			return
 		}
 
-		responses, err := params.MongoService.ListResponses(c, bson.M{"formID": formID})
+		responses, err := params.MongoService.ListResponses(c, bson.M{"formID": formID}, nil)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
 			logger.Error("Failed to list form responses", err)
@@ -376,7 +397,7 @@ func updateFormResponseHandler(params *types.RouteParams) gin.HandlerFunc {
 			return
 		}
 
-		responses, err := params.MongoService.ListResponses(c, bson.M{"_id": responseID})
+		responses, err := params.MongoService.ListResponses(c, bson.M{"_id": responseID}, nil)
 		if err != nil || len(responses) == 0 {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Response does not exist"})
 			return
