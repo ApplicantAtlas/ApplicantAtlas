@@ -3,7 +3,7 @@ import { getDocData } from '../../../lib/markdown';
 
 export default function CategoryIndexPage({ docData }: DocProps) {
   return (
-    <DocLayout toc={docData.toc}>
+    <DocLayout toc={docData.toc} path={'/docs/index.md'}>
       <div dangerouslySetInnerHTML={{ __html: docData.contentHtml }} />
     </DocLayout>
   );

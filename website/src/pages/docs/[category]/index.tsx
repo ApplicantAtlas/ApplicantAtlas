@@ -6,9 +6,12 @@ import { GetStaticPaths, GetStaticProps } from 'next';
 import DocLayout, { DocProps } from '../../../components/Docs/DocLayout';
 import { getDocData } from '../../../../lib/markdown';
 
-export default function CategoryIndexPage({ docData }: DocProps) {
+export default function CategoryIndexPage({
+  docData,
+  category,
+}: DocProps & { category: string }) {
   return (
-    <DocLayout toc={docData.toc}>
+    <DocLayout toc={docData.toc} path={`/docs/${category}/index.md`}>
       <div dangerouslySetInnerHTML={{ __html: docData.contentHtml }} />
     </DocLayout>
   );
@@ -20,6 +23,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   return {
     props: {
       docData,
+      category,
     },
   };
 };

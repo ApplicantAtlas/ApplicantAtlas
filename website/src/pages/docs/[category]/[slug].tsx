@@ -7,14 +7,18 @@ import { useRouter } from 'next/router';
 import { getDocData } from '../../../../lib/markdown';
 import DocLayout, { DocProps } from '../../../components/Docs/DocLayout';
 
-export default function DocPage({ docData }: DocProps) {
+export default function DocPage({
+  docData,
+  category,
+  slug,
+}: DocProps & { category: string; slug: string }) {
   const router = useRouter();
   if (router.isFallback) {
     return <div>Loading...</div>;
   }
 
   return (
-    <DocLayout toc={docData.toc}>
+    <DocLayout toc={docData.toc} path={`/docs/${category}/${slug}.md`}>
       <div dangerouslySetInnerHTML={{ __html: docData.contentHtml }} />
     </DocLayout>
   );
@@ -49,6 +53,8 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   return {
     props: {
       docData,
+      category,
+      slug: s,
     },
   };
 };
