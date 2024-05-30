@@ -39,7 +39,11 @@ const ListEmailTemplates = ({ templates }: ListEmailTemplatesProps) => {
               >
                 <td>{template.name}</td>
                 <td>{template.description}</td>
-                <td>{formatDate(template.lastUpdatedAt)}</td>
+                <td>
+                  {template.lastUpdatedAt
+                    ? formatDate(new Date(template.lastUpdatedAt))
+                    : 'Unknown'}
+                </td>
               </tr>
             );
           })}

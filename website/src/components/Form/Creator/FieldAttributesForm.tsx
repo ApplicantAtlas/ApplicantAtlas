@@ -91,8 +91,30 @@ const FieldAttributesForm: React.FC<FieldAttributesFormProps> = ({
               "Enter the options you'd like to display in the dropdown. If you've selected a source above, these will be ignored.",
             type: 'custommultiselect',
             required: false,
-            options: initialAttributes?.options,
+            options: [],
             defaultOptions: initialAttributes?.options,
+          });
+
+          attrs.push({
+            key: 'isCustomSelect',
+            question: 'Is this a custom select?',
+            description:
+              "If you'd like to allow users to enter their own option, check this box.",
+            type: 'checkbox',
+            required: false,
+            defaultValue:
+              fieldType === 'customselect' || fieldType === 'custommultiselect',
+          });
+
+          attrs.push({
+            key: 'isMultiSelect',
+            question: 'Is this a multi-select field?',
+            description:
+              'If you want users to be able to select multiple options, check this box.',
+            type: 'checkbox',
+            required: false,
+            defaultValue:
+              fieldType === 'multiselect' || fieldType === 'custommultiselect',
           });
           break;
         case 'date':
@@ -134,14 +156,39 @@ const FieldAttributesForm: React.FC<FieldAttributesFormProps> = ({
           break;
       }
 
-      // TODO: rework this for selector types
-      attrs.push({
-        key: 'defaultValue',
-        question: 'Default Value',
-        type: fieldType === 'number' ? 'number' : 'text',
-        required: false,
-        defaultValue: initialAttributes?.defaultValue,
-      });
+      if (isSelectorType(fieldType)) {
+        const defaultOptions = initialAttributes?.defaultOptions || [];
+        let question = 'Default Option';
+        if (fieldType === 'multiselect' || fieldType === 'custommultiselect') {
+          question += 's';
+        }
+
+        let type: FormFieldType = 'multiselect';
+        if (
+          fieldType === 'radio' ||
+          fieldType === 'select' ||
+          fieldType === 'customselect'
+        ) {
+          type = 'customselect';
+        }
+
+        attrs.push({
+          key: 'defaultOptions',
+          question: question,
+          type: type,
+          required: false,
+          defaultOptions: defaultOptions,
+          options: initialAttributes?.options,
+        });
+      } else {
+        attrs.push({
+          key: 'defaultValue',
+          question: 'Default Value',
+          type: fieldType === 'number' ? 'number' : 'text',
+          required: false,
+          defaultValue: initialAttributes?.defaultValue,
+        });
+      }
       attrs.push({
         key: 'required',
         question: 'Is this field required?',
@@ -174,7 +221,7 @@ const FieldAttributesForm: React.FC<FieldAttributesFormProps> = ({
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- this is a generic form submission handler
   const handleFormSubmission = (formData: Record<string, any>) => {
-    const type = fieldType as FormFieldType;
+    let type = fieldType as FormFieldType;
     let newFieldOptions = formData.options;
     if (!newFieldOptions) {
       if (isSelectorType(type)) {
@@ -187,14 +234,27 @@ const FieldAttributesForm: React.FC<FieldAttributesFormProps> = ({
       selectorSource = undefined;
     }
 
+    if (isSelectorType(type)) {
+      type = 'select';
+      if (formData.isMultiSelect) {
+        type = 'multi' + type;
+      }
+      if (formData.isCustomSelect) {
+        type = 'custom' + type;
+      }
+    }
+
     const newField: FormField = {
       question: formData.question,
-      type: type,
+      type: type as FormFieldType,
       key: initialAttributes?.key || '',
       defaultValue: formData.defaultValue
         ? String(formData.defaultValue)
         : undefined,
       options: formData.options,
+      defaultOptions: Array.isArray(formData.defaultOptions)
+        ? formData.defaultOptions
+        : [formData.defaultOptions],
       additionalValidation: {
         min: formData.min,
         max: formData.max,
@@ -206,6 +266,7 @@ const FieldAttributesForm: React.FC<FieldAttributesFormProps> = ({
       required: formData.required === true,
       isInternal: formData.isInternal === true,
     };
+    console.log('new field', newField);
 
     // Call the onAddField function passed from FormCreator
     onAddField(newField);

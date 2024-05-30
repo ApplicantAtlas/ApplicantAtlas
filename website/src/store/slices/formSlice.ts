@@ -15,7 +15,7 @@ const formSlice = createSlice({
   initialState,
   reducers: {
     setFormDetails(state, action: PayloadAction<FormStructure>) {
-      state.formDetails = action.payload;
+      state.formDetails = { ...action.payload };
     },
     updateFormDetails(state, action: PayloadAction<Partial<FormStructure>>) {
       const keys = Object.keys(action.payload) as Array<keyof FormStructure>;

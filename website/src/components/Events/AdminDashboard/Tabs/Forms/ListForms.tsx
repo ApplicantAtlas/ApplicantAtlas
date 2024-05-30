@@ -42,7 +42,11 @@ const ListForms: React.FC<ListFormsProps> = ({ forms }) => {
               >
                 <td>{form.name}</td>
                 <td>{form.status}</td>
-                <td>{formatDate(form.lastUpdatedAt)}</td>
+                <td>
+                  {form.lastUpdatedAt
+                    ? formatDate(new Date(form.lastUpdatedAt))
+                    : 'Unknown'}
+                </td>
                 <td>
                   <button
                     className="btn btn-outline btn-secondary"

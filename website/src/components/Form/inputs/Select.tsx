@@ -57,7 +57,19 @@ const Select: React.FC<SelectProps> = ({
   const [selectedValue, setSelectedValue] = useState(getDefaultValue());
 
   useEffect(() => {
-    setSelectedValue(getDefaultValue());
+    const d = getDefaultValue();
+    setSelectedValue(d);
+
+    if (d === undefined) return;
+
+    if (Array.isArray(d)) {
+      onChange(
+        field.key,
+        d.map((opt) => opt.value),
+      );
+    } else {
+      onChange(field.key, d.value);
+    }
   }, [defaultOptions]); // eslint-disable-line react-hooks/exhaustive-deps -- only want to run this for initial value
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- react-select types are complex

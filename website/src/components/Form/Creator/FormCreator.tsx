@@ -142,6 +142,12 @@ const FormCreator: React.FC<FormCreatorProps> = ({
                   <strong>Options:</strong> {field.options.join(', ')}
                 </p>
               )}
+              {field.defaultOptions && (
+                <p>
+                  <strong>Default Options:</strong>{' '}
+                  {(field.defaultOptions as string[]).join(', ')}
+                </p>
+              )}
               {field.isInternal && (
                 <p>
                   <strong>Internal Field: </strong>

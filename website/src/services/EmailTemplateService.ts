@@ -29,7 +29,7 @@ export const UpdateEmailTemplate = async (
 ): Promise<
   AxiosResponse<{
     message?: string;
-    lastUpdatedAt?: Date;
+    lastUpdatedAt?: string;
   }>
 > => {
   return api.put(`/email_templates/${emailTemplate.id}`, emailTemplate);

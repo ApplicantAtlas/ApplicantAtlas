@@ -30,12 +30,11 @@ const SelectForm: React.FC<SelectFormProps> = ({ action, onDelete }) => {
   const { showToast } = useToast();
 
   const onFormStructureChange = (newFormStructure: FormStructure) => {
+    newFormStructure.lastUpdatedAt = formStructure?.lastUpdatedAt;
     updateForm(newFormStructure.id || '', newFormStructure)
       .then((r) => {
         const newFormStructureCopy = { ...newFormStructure };
-        newFormStructureCopy.lastUpdatedAt = r.data.lastUpdatedAt
-          ? new Date(r.data.lastUpdatedAt)
-          : undefined;
+        newFormStructureCopy.lastUpdatedAt = r.data.lastUpdatedAt;
         eventEmitter.emit('success', 'Successfully updated form!');
         dispatch(setFormDetails(newFormStructureCopy));
       })
