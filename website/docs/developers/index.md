@@ -3,6 +3,7 @@
 Welcome to the Developer & Contributors Documentation for ApplicantAtlas. This documentation is designed for developers and contributors who wish to contribute to the ApplicantAtlas platform, a comprehensive tool for managing hackathon applicants, RSVPs, and other communications. Whether you're looking to fix bugs, add new features, or simply understand how the platform works, this guide will help you get started.
 
 ## Who This Guide is For
+
 - **Developers** interested in setting up the project for development or testing purposes.
 - **Contributors** looking to improve the platform or add new features.
 - **Technical Writers** aiming to enhance documentation or tutorials.
@@ -10,13 +11,16 @@ Welcome to the Developer & Contributors Documentation for ApplicantAtlas. This d
 ## Getting Started
 
 ### Prerequisites
+
 Before you begin, ensure you have the following installed:
+
 - Docker (with compose)
 - Go (version >= 1.21)
 - Node.js (version >= 21 for frontend development)
 - npm (Node package manager)
 
 ### Running the Project For Development
+
 The project is composed of multiple services, including backend APIs, Kafka event listeners, and a frontend application. Follow these steps to get the project up and running:
 
 #### Using The Dev Container
@@ -54,20 +58,23 @@ For ease of development, we recommend not running everything in docker since it'
 
 1. **Start Docker Services**
    Spin up all the required Docker images for the project's infrastructure components.
+
    ```bash
    docker compose up kafka mongo zookeeper
    ```
 
-
 2. **Kafka Event Listener Service**
    In a new terminal, go to the `backend/event-listener` folder and execute the command below to launch the Kafka event listener service:
+
    ```bash
    MONGO_URL=localhost:27017 MONGO_USER=admin MONGO_PASSWORD=admin MONGO_DB=app MONGO_AUTH_SOURCE=admin KAFKA_BROKER_URL=localhost:9092 go run cmd/main.go
    ```
+
    If you encounter any issues, try running the command from the API service directory.
 
 3. **API Service Setup**
    Open a separate terminal, navigate to the `backend/api` directory, and run the following command to start the API service:
+
    ```bash
    MONGO_URL=localhost:27017 MONGO_USER=admin MONGO_PASSWORD=admin MONGO_DB=app MONGO_AUTH_SOURCE=admin CORS_ALLOW_ORIGINS="*" JWT_SECRET_TOKEN="testtesttesttest" KAFKA_BROKER_URL=localhost:9092 go run cmd/main.go
    ```
@@ -79,6 +86,7 @@ For ease of development, we recommend not running everything in docker since it'
    ```
 
 ## Contributing
+
 We welcome contributions of all forms, from bug fixes to feature additions, and even documentation updates. Please refer to our contribution guidelines for more information on how to submit your contributions effectively.
 
 If you're not sure where to start, if you go to the issues tab on the GitHub repository, you can find issues that are labeled as "good first issue" which are perfect for new contributors to get started with.
@@ -92,21 +100,23 @@ This section is for new developers who are looking to get started with the proje
 ### Project Services Overview
 
 This project is a mono-repo that contains multiple services, which are listed below:
-* **website** (/website) | *Nextjs, React, TypeScript*  - This is the frontend application for the project.
-* **api** (/backend/api) | *Go* - This is the backend API service for the project. This manages all the data and business logic for the platform.
-* **event-listener** (/backend/event-listener) | *Go* - This service listens to Kafka events and processes them accordingly. Currently events are only used for processing and executing event pipelines, ie: sending emails, allowing access to forms, etc.
-* **kafka** - This is the Kafka service that is used for event processing.
-* **mongo** - This is the MongoDB service that is used for data storage.
+
+- **website** (/website) | _Nextjs, React, TypeScript_ - This is the frontend application for the project.
+- **api** (/backend/api) | _Go_ - This is the backend API service for the project. This manages all the data and business logic for the platform.
+- **event-listener** (/backend/event-listener) | _Go_ - This service listens to Kafka events and processes them accordingly. Currently events are only used for processing and executing event pipelines, ie: sending emails, allowing access to forms, etc.
+- **kafka** - This is the Kafka service that is used for event processing.
+- **mongo** - This is the MongoDB service that is used for data storage.
 
 ### Website Service Overview
 
 The website service is the frontend application for the project. It is built using Next.js, React, and TypeScript. The website is responsible for providing a user interface for managing hackathon events, applicants, and other related data.
 
 #### Important Features
-* **Form Logic** - If you're looking to modify any of the form rendering or creation logic you'll want to look at the `components/Form` directory. It has `FormBuilder` which is responsible for taking in a form structure and rendering it. `components/Form/Creator/FormCreator` is responsible for creating new forms and editing existing forms.
-* **Event Management Dashboard** - These are all located in the `components/Events/AdminDashboard/Tabs` directory and are responsible for creating, managing, deleting: forms, email templates, pipelines, and anything else on the side bar in the admin dashboard.
-* **User Authentication** - We route all of our requests through the `services/AxiosInterceptor.ts` file through the `api` export. This manages adding our JWT token to all requests and logging the user out if the token is invalid. It also will initiate a toast message if the API request fails with the error message returned from the API.
-* **Documentation** - The markdown for the documentation is located at `website/docs` and is rendered using `remark` and `rehype` to parse the markdown and render it as HTML. If you want to modify the styling of the documentation you can do so in the `components/Docs` directory. If you want to change how the markdown is rendered you can do so in the `website/lib/markdown.ts` file.
+
+- **Form Logic** - If you're looking to modify any of the form rendering or creation logic you'll want to look at the `components/Form` directory. It has `FormBuilder` which is responsible for taking in a form structure and rendering it. `components/Form/Creator/FormCreator` is responsible for creating new forms and editing existing forms.
+- **Event Management Dashboard** - These are all located in the `components/Events/AdminDashboard/Tabs` directory and are responsible for creating, managing, deleting: forms, email templates, pipelines, and anything else on the side bar in the admin dashboard.
+- **User Authentication** - We route all of our requests through the `services/AxiosInterceptor.ts` file through the `api` export. This manages adding our JWT token to all requests and logging the user out if the token is invalid. It also will initiate a toast message if the API request fails with the error message returned from the API.
+- **Documentation** - The markdown for the documentation is located at `website/docs` and is rendered using `remark` and `rehype` to parse the markdown and render it as HTML. If you want to modify the styling of the documentation you can do so in the `components/Docs` directory. If you want to change how the markdown is rendered you can do so in the `website/lib/markdown.ts` file.
 
 #### File Structure
 
@@ -200,13 +210,17 @@ Kafka is used here to process events like sending emails, allowing access to for
 
 MongoDB is our database of choice, and it is used for data storage.
 
-
 Thank you for contributing to ApplicantAtlas and helping us make managing hackathon events easier and more efficient!
 
 ## Getting Help
 
 If you have any questions or need assistance, we have these resources available:
+
 1. **GitHub Issues** - If you encounter any bugs or issues, please search for existing issues then open a GitHub issue on the repository if you can't find a solution.
 2. **GitHub Discussions** - For general questions or discussions, you can use the GitHub Discussions feature.
 3. **Discord Server** - Join our [Discord server](https://discord.gg/yyPhbfma6f) to chat with other contributors and maintainers.
 4. **Email** - You can reach out to me directly through any of the contact methods on my [GitHub profile](https://github.com/davidteather)
+
+## Road Map
+
+We've listed some of the larger future goals for the project in the [road map](./roadmap.md) document.
