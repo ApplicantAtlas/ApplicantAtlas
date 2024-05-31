@@ -209,7 +209,11 @@ const PipelineActionModal: React.FC<PipelineActionModalProps> = ({
       {isOpen && (
         <div className="modal modal-open">
           <div className="modal-box">
-            <h3 className="text-xl font-bold">Add a new {modalType}</h3>
+            <h3 className="text-xl font-bold">
+              {modalType === 'event'
+                ? 'Set pipeline trigger'
+                : 'Change or add a new pipeline event'}
+            </h3>
             <Select
               field={
                 {

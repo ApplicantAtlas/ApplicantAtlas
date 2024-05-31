@@ -115,7 +115,7 @@ const PipelineBuilder: React.FC<PipelineBuilderProps> = ({ onSubmit }) => {
           onClick={() => setShowModalType('event')}
           className="btn btn-primary mt-4"
         >
-          {pipelineConfig.event?.name ? 'Edit Event' : 'Set Event'}
+          {pipelineConfig.event?.name ? 'Edit Trigger' : 'Set Event'}
         </button>
       </p>
 

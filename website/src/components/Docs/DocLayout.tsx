@@ -28,7 +28,7 @@ const DocLayout: React.FC<DocLayoutProps> = ({ children, toc, path }) => {
         showUserProfile={true}
         showShadow={false}
         customStyles={{ header: 'border-b border-gray-200' }}
-        menuItems={[]}
+        menuItems={[{ label: 'My Events', href: '/user/dashboard' }]}
       />
       <div className="flex flex-row min-h-screen">
         <aside
