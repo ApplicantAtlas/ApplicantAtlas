@@ -1,19 +1,21 @@
-import DocLayout, { DocProps } from '../../components/Docs/DocLayout';
-import { getDocData } from '../../../lib/markdown';
+import { GetStaticProps } from 'next';
 
-export default function CategoryIndexPage({ docData }: DocProps) {
+import { getDocData } from '../../../lib/markdown';
+import DocLayout, { DocProps } from '../../components/Docs/DocLayout';
+
+export default function DocsIndexPage({ docData }: DocProps) {
   return (
-    <DocLayout toc={docData.toc} path={'/docs/index.md'}>
+    <DocLayout toc={docData.toc} path={`docs/index.md`}>
       <div dangerouslySetInnerHTML={{ __html: docData.contentHtml }} />
     </DocLayout>
   );
 }
 
-export async function getStaticProps() {
-  const docData = await getDocData('', 'index', 'docs/');
+export const getStaticProps: GetStaticProps = async () => {
+  const docData = await getDocData(['']);
   return {
     props: {
       docData,
     },
   };
-}
+};

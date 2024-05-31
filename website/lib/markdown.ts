@@ -70,21 +70,25 @@ export interface TOCItem {
   children?: TOCItem[];
 }
 
-export async function getDocData(
-  category: string,
-  slug: string,
-  linksBasePath: string = '',
-): Promise<{
-  slug: string;
+export async function getDocData(slug: string[]): Promise<{
+  slug: string[];
   contentHtml: string;
   toc: TOCItem[];
 }> {
-  let fullPath = path.join(process.cwd(), 'docs', category, `${slug}.md`);
-  if (category === '') {
-    fullPath = path.join(process.cwd(), 'docs', `${slug}.md`);
-  }
+  const filePath = path.join(process.cwd(), 'docs', ...slug);
 
-  const { contentHtml, toc } = await processMarkdown(fullPath, linksBasePath);
+  const slugCopy = [...slug];
+  if (fs.existsSync(filePath) && fs.lstatSync(filePath).isDirectory()) {
+    slug.push('index.md');
+  } else {
+    const lastSlug = slug[slug.length - 1];
+    slug[slug.length - 1] = `${lastSlug}.md`;
+  }
+  const newFilePath = path.join(process.cwd(), 'docs', ...slug);
+  const { contentHtml, toc } = await processMarkdown(
+    newFilePath,
+    `/docs/${slugCopy.join('/')}`,
+  );
 
   return {
     slug,
