@@ -14,8 +14,8 @@ export type EventMetadata = {
   address?: Address;
   lat?: number;
   lon?: number;
-  startTime?: Date;
-  endTime?: Date;
+  startTime?: string;
+  endTime?: string;
   timezone?: string;
   visibility?: boolean;
   website?: string;
