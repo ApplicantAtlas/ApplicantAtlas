@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 
 import EventAdminDashboard from '@/layouts/EventAdminDashboard';
 import Dashboard from '@/components/Events/AdminDashboard/Tabs/Dashboard';
-import Announcements from '@/components/Events/AdminDashboard/Tabs/Announcements';
 import Settings from '@/components/Events/AdminDashboard/Tabs/Settings/Settings';
 import EventDetails from '@/components/Events/AdminDashboard/Tabs/EventDetails';
 import Pipelines from '@/components/Events/AdminDashboard/Tabs/Pipelines/Pipelines';
@@ -21,8 +20,6 @@ const AdminDashboard: React.FC = () => {
         switch (activeSection) {
           case 'dashboard':
             return <Dashboard />;
-          case 'announcements':
-            return <Announcements />;
           case 'settings':
             return <Settings />;
           case 'event-details':

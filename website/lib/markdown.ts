@@ -10,6 +10,37 @@ import { Node } from 'unist';
 import { visit } from 'unist-util-visit';
 import rehypeSlug from 'rehype-slug';
 
+const addCopyButtonToCodeBlocks = () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return (tree: any) => {
+    visit(tree, 'element', (node) => {
+      if (
+        node.tagName === 'pre' &&
+        node.children &&
+        node.children[0].tagName === 'code'
+      ) {
+        // Create a button element
+        const button = {
+          type: 'element',
+          tagName: 'button',
+          properties: { onclick: 'copyCodeToClipboard(this)' },
+          children: [{ type: 'text', value: 'Copy' }],
+        };
+
+        // Wrap the pre block in a div with the button
+        node.children = [
+          {
+            type: 'element',
+            tagName: 'div',
+            properties: { className: ['code-container'] },
+            children: [button, node.children[0]], // include the button before the code
+          },
+        ];
+      }
+    });
+  };
+};
+
 export async function processMarkdown(
   filePath: string,
   linksBasePath: string = '',
@@ -48,6 +79,7 @@ export async function processMarkdown(
         });
       };
     })
+    .use(addCopyButtonToCodeBlocks)
     .use(rehypeStringify);
 
   const processedContent = await processor.process(content);
