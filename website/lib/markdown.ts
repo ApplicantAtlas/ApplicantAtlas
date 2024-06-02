@@ -9,7 +9,7 @@ import { unified } from 'unified';
 import { Node } from 'unist';
 import { visit } from 'unist-util-visit';
 import rehypeSlug from 'rehype-slug';
-
+/*
 const addCopyButtonToCodeBlocks = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (tree: any) => {
@@ -40,6 +40,7 @@ const addCopyButtonToCodeBlocks = () => {
     });
   };
 };
+*/
 
 export async function processMarkdown(
   filePath: string,
@@ -79,7 +80,7 @@ export async function processMarkdown(
         });
       };
     })
-    .use(addCopyButtonToCodeBlocks)
+    //.use(addCopyButtonToCodeBlocks)
     .use(rehypeStringify);
 
   const processedContent = await processor.process(content);
