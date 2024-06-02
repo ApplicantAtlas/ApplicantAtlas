@@ -1,7 +1,6 @@
 /** @type {import('next').NextConfig} */
 const isProd = process.env.NODE_ENV === 'production';
 
-
 // Default API URL for development
 let apiUrl = 'http://localhost:8080';
 
@@ -14,9 +13,9 @@ if (isProd) {
 }
 
 const nextConfig = {
-    env: {
-        NEXT_PUBLIC_API_URL: apiUrl
-    }
-}
+  env: {
+    NEXT_PUBLIC_API_URL: apiUrl,
+  },
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

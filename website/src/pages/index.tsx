@@ -81,8 +81,6 @@ export default function Component() {
                 If you have any questions or feedback, feel free to reach out to
                 us.
               </p>
-              <p>Email: contact@applicantatlas.com</p>
-              <p>Phone: +1 (123) 456-7890</p>
             </div>
           </section>
         </main>
