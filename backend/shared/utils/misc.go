@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"os"
 	"reflect"
 	"strings"
@@ -50,9 +51,14 @@ func StringInSlice(str string, slice []string) bool {
 }
 
 // StructToBsonM converts a struct to bson.M
-func StructToBsonM(model interface{}) bson.M {
+func StructToBsonM(model interface{}) (bson.M, error) {
 	val := reflect.ValueOf(model)
 	typ := val.Type()
+
+	// Check if the provided model is a struct
+	if val.Kind() != reflect.Struct {
+		return nil, fmt.Errorf("StructToBsonM: provided value is not a struct")
+	}
 
 	result := bson.M{}
 	for i := 0; i < val.NumField(); i++ {
@@ -80,7 +86,7 @@ func StructToBsonM(model interface{}) bson.M {
 		result[bsonFieldName] = field.Interface()
 	}
 
-	return result
+	return result, nil
 }
 
 // ConvertMapStringToMapInterface converts a map[string]string to a map[string]interface{}

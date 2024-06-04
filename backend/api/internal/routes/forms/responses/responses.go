@@ -61,7 +61,7 @@ func submitFormHandler(params *types.RouteParams) gin.HandlerFunc {
 			return
 		}
 
-		form, err := params.MongoService.GetForm(c, formID, true)
+		form, err := params.MongoService.GetForm(c, formID, false)
 		if err != nil && form != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Form does not exist"})
 			return
