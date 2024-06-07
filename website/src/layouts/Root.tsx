@@ -1,10 +1,10 @@
-import { Inter } from 'next/font/google';
+import { Montserrat } from 'next/font/google';
 import Head from 'next/head';
 
 import { ToastProvider } from '@/components/Toast/ToastContext';
 import ToastErrorWrapper from '@/components/Toast/ToastErrorWrapper';
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Montserrat({ subsets: ['latin'] });
 
 export default function RootLayout({
   children,

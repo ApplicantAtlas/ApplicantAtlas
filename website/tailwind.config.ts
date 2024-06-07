@@ -15,7 +15,7 @@ const config: Config = {
     extend: {
       fontFamily: {
         nexa: ['Nexa', 'sans-serif'], // brand logo primary
-        nexaText: ['Nexa Text', 'sans-serif'],
+        nexaText: ['Nexa Text', 'sans-serif'], // brand logo as text
         montserrat: ['Montserrat', 'sans-serif'], // secondary
       },
       colors: {
