@@ -259,7 +259,7 @@ const Responses = ({}: ResponsesProps) => {
         }}
         defaultValue={false}
       />
-      <div className="overflow-x-auto" style={{ height: '70vh' }}>
+      <div className="overflow-x-auto">
         <table className="table table-sm table-pin-rows bg-white">
           <thead>
             <tr>

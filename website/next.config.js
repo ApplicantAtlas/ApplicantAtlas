@@ -16,6 +16,16 @@ const nextConfig = {
   env: {
     NEXT_PUBLIC_API_URL: apiUrl,
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'avatars.githubusercontent.com',
+        port: '',
+        pathname: '/u/**',
+      },
+    ],
+  },
 };
 
 module.exports = nextConfig;
