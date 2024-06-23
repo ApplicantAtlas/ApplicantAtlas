@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 import { getUserFull, getJWTUser } from '@/services/UserService';
 import { User } from '@/types/models/User';
@@ -44,6 +45,27 @@ export default function Header({
   showUserProfile = false,
   showShadow = true,
 }: HeaderProps) {
+  const brandNameSplit = brandName.match(/([A-Z][a-z]+)/g);
+  const brandNameFirst = brandNameSplit?.shift();
+  const brandNameRest = brandNameSplit?.join('');
+
+  const brandStyledComponent = (
+    <div className="flex items-center space-x-2">
+      <Image
+        src="/branding/gradient-logo.svg"
+        alt="ApplicantAtlas Logo"
+        width={10}
+        height={10}
+        className="w-8 h-8 lg:w-10 lg:h-10"
+      />
+      <span
+        className={`font-bold text-2xl lg:text-4xl cursor-pointer font-nexa ${customStyles.brand ? customStyles.brand : ''}`}
+      >
+        <span className="text-brandPrimaryOne">{brandNameFirst}</span>
+        <span className="text-brandPrimaryTwo">{brandNameRest}</span>
+      </span>
+    </div>
+  );
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -104,13 +126,7 @@ export default function Header({
       >
         {/* Brand Name */}
         <div className="flex items-center justify-between p-6">
-          <Link href="/">
-            <span
-              className={`font-bold text-2xl lg:text-4xl cursor-pointer ${customStyles.brand}`}
-            >
-              {brandName}
-            </span>
-          </Link>
+          <Link href="/">{brandStyledComponent}</Link>
         </div>
 
         {/* Mobile Menu Items */}
@@ -168,17 +184,11 @@ export default function Header({
 
       {/* Main Header */}
       <header
-        className={`bg-white ${showShadow ? 'shadow-md' : ''} ${customStyles.header}`}
+        className={`bg-white ${showShadow ? 'shadow-md' : ''} ${customStyles.header ? customStyles.header : ''}`}
       >
         <nav className="container mx-auto px-6 py-4 flex justify-between items-center">
           {/* Brand Name for Desktop */}
-          <Link href="/">
-            <span
-              className={`font-bold text-2xl lg:text-4xl cursor-pointer ${customStyles.brand}`}
-            >
-              {brandName}
-            </span>
-          </Link>
+          <Link href="/">{brandStyledComponent}</Link>
 
           {/* Mobile Menu Toggle Button */}
           {menuItems !== undefined && (

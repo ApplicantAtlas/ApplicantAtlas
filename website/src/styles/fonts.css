@@ -1,0 +1,55 @@
+/* Monserrat */
+@font-face {
+  font-family: 'montserrat';
+  src: url('/fonts/montserrat/Montserrat-VariableFont_wght.ttf')
+    format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+.montserrat-light {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 100;
+  font-style: normal;
+}
+
+.montserrat-bold {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900;
+  font-style: normal;
+}
+
+/* Nexa */
+@font-face {
+  font-family: 'Nexa';
+  src: url('/fonts/nexa/NexaDemo-Bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Nexa';
+  src:
+    url('/fonts/nexa/NexaDemo-Light.woff2') format('woff2'),
+    url('/fonts/nexa/NexaDemo-Light.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Nexa Text';
+  src:
+    url('/fonts/nexa/NexaTextDemo-Bold.woff2') format('woff2'),
+    url('/fonts/nexa/NexaTextDemo-Bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Nexa Text';
+  src:
+    url('/fonts/nexa/NexaTextDemo-Light.woff2') format('woff2'),
+    url('/fonts/nexa/NexaTextDemo-Light.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+}

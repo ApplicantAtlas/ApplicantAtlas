@@ -16,6 +16,7 @@ import { ToastType, useToast } from '@/components/Toast/ToastContext';
 import Checkbox from '@/components/Form/inputs/Checkbox';
 import { RootState } from '@/store';
 import { FormResponse } from '@/types/models/Response';
+import { getSelectorOptions } from '@/services/FormService';
 
 interface ResponsesProps {}
 
@@ -32,7 +33,22 @@ const Responses = ({}: ResponsesProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [showDeletedColumns, setShowDeletedColumns] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- this is a generic form submission handler
+  const [fetchedOptions, setFetchedOptions] = useState<Record<string, any>>({});
   const { showToast } = useToast();
+
+  const fetchSelector = (key: string) => {
+    if (!fetchedOptions[key]) {
+      getSelectorOptions(key)
+        .then((options) => {
+          setFetchedOptions((prevOptions) => ({
+            ...prevOptions,
+            [key]: options,
+          }));
+        })
+        .catch((error) => console.error(error));
+    }
+  };
 
   const debouncersRef = useRef(new Map());
   const defaultFormColumns = [
@@ -243,7 +259,7 @@ const Responses = ({}: ResponsesProps) => {
         }}
         defaultValue={false}
       />
-      <div className="overflow-x-auto" style={{ height: '70vh' }}>
+      <div className="overflow-x-auto">
         <table className="table table-sm table-pin-rows bg-white">
           <thead>
             <tr>
@@ -277,18 +293,31 @@ const Responses = ({}: ResponsesProps) => {
                     }
 
                     // Deep copy field to avoid mutating original form structure
-                    const newField = JSON.parse(JSON.stringify(field));
+                    const newField: FormField = JSON.parse(
+                      JSON.stringify(field),
+                    );
                     newField.defaultValue = value;
-                    newField.question = '';
+                    newField.defaultOptions = [value];
+
                     newField.key = JSON.stringify({
                       submission_id: response['Response ID'],
                       attr_key: field.key,
                       question: field.question,
                     });
 
+                    if (newField.additionalOptions?.useDefaultValuesFrom) {
+                      fetchSelector(
+                        newField.additionalOptions.useDefaultValuesFrom,
+                      );
+                    }
+
                     return (
                       <td key={`${header}-${index}`}>
-                        {RenderFormField(newField, {}, onSubmissionFieldChange)}
+                        {RenderFormField(
+                          newField,
+                          fetchedOptions,
+                          onSubmissionFieldChange,
+                        )}
                       </td>
                     );
                   })}
