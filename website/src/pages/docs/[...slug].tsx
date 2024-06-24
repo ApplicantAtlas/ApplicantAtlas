@@ -42,6 +42,11 @@ export const getStaticPaths: GetStaticPaths = async () => {
         if (fs.lstatSync(entryPath).isDirectory()) {
           paths.push(...getPaths(entryPath, entrySlug));
         } else if (entry.isFile()) {
+          // ignore the docs/index.md file, so we don't double up creating pages against docs/index.tsx
+          if (entrySlug.join('/') === 'index.md') {
+            return;
+          }
+
           // if it's a file strip the .md extension at the last element of slug
           const cutSlug = entrySlug.slice(0, -1);
           const lastSlug = entrySlug[entrySlug.length - 1];

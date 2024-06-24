@@ -41,6 +41,16 @@ const Card3D: React.FC<Card3DProps> = ({
   const glareRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
+    const reset = () => {
+      if (cardRef.current) {
+        cardRef.current.style.transform = '';
+        cardRef.current.style.transition = '';
+      }
+      if (glare && glareRef.current) {
+        glareRef.current.remove();
+      }
+    };
+
     if (stop) {
       reset();
       return;
@@ -108,16 +118,6 @@ const Card3D: React.FC<Card3DProps> = ({
     noReset,
     stop,
   ]);
-
-  const reset = () => {
-    if (cardRef.current) {
-      cardRef.current.style.transform = '';
-      cardRef.current.style.transition = '';
-    }
-    if (glare && glareRef.current) {
-      glareRef.current.remove();
-    }
-  };
 
   return (
     <div className={styles.card3d} ref={cardRef}>
