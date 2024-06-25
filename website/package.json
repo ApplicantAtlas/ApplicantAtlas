@@ -37,6 +37,7 @@
     "rehype-toc": "^3.0.2",
     "remark": "^15.0.1",
     "remark-rehype": "^11.1.0",
+    "sharp": "^0.33.4",
     "tailwind-merge": "^2.3.0",
     "uuid": "^9.0.1"
   },
