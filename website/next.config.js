@@ -13,10 +13,12 @@ if (isProd) {
 }
 
 const nextConfig = {
+  output: 'export',
   env: {
     NEXT_PUBLIC_API_URL: apiUrl,
   },
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',
