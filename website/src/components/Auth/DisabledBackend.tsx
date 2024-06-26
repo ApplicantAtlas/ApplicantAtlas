@@ -8,9 +8,8 @@ const DisabledBackend: React.FC = () => {
           Managed Hosting Coming Soon
         </h1>
         <p className="text-lg">
-          The project, including the backend, is complete and functional. We are
-          currently working on hosting solutions to support serverless
-          technologies.
+          The project, including the backend is functional. We are currently
+          working on hosting solutions to support serverless technologies.
         </p>
         <p className="text-lg">
           We are seeking sponsorships to run the backend for free and developing
