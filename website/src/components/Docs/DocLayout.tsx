@@ -3,6 +3,7 @@ import React, { ReactNode } from 'react';
 import Header from '../Header';
 import Footer from '../Footer';
 import { TOCItem } from '../../../lib/markdown';
+import Metadata from '../Metadata';
 
 import TableOfContents from './TableOfContents';
 
@@ -24,6 +25,7 @@ export interface DocProps {
 const DocLayout: React.FC<DocLayoutProps> = ({ children, toc, path }) => {
   return (
     <>
+      <Metadata title={'ApplicantAtlas | ' + toc[0].value} />
       <Header
         showUserProfile={true}
         showShadow={false}

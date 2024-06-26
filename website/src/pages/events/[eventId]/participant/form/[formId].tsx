@@ -11,6 +11,7 @@ import { getForm } from '@/services/FormService';
 import { SubmitResponse } from '@/services/ResponsesService';
 import { EventModel } from '@/types/models/Event';
 import { FormStructure } from '@/types/models/Form';
+import Metadata from '@/components/Metadata';
 
 const FormSubmission = () => {
   const router = useRouter();
@@ -69,6 +70,7 @@ const FormSubmission = () => {
   if (err) {
     return (
       <>
+        <Metadata title="Form Submission | ApplicantAtlas" />
         <Header />
         <div className="p-4">
           <p>{err}</p>
@@ -94,6 +96,7 @@ const FormSubmission = () => {
 
   return (
     <>
+      <Metadata title={formStructure.name + ' | ApplicantAtlas'} />
       <div className="flex flex-col min-h-screen bg-gray-50 text-gray-900">
         <Header showUserProfile={true} />
         <div className="p-4">

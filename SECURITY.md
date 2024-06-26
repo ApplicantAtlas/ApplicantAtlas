@@ -1,22 +1,22 @@
-# Applicant Atlas Security Policy
+# ApplicantAtlas Security Policy
 
 **Overview**
-Applicant Atlas is an open source event management platform committed to maintaining the security and privacy of our users. This policy outlines how users can report security vulnerabilities and the scope of issues we address.
+ApplicantAtlas is an open source event management platform committed to maintaining the security and privacy of our users. This policy outlines how users can report security vulnerabilities and the scope of issues we address.
 
 **Reporting Security Vulnerabilities**
 1. **How to Report**:
-   - Users who find security vulnerabilities within the Applicant Atlas platform are encouraged to report them via email to contact.davidteather@gmail.com. Please provide a detailed description of the issue, including steps to reproduce it, if possible.
+   - Users who find security vulnerabilities within the ApplicantAtlas platform are encouraged to report them via email to contact.davidteather@gmail.com. Please provide a detailed description of the issue, including steps to reproduce it, if possible.
    - Reports can also be submitted through our GitHub issue tracker, tagged with the "security" label for easy identification.
 
 2. **What to Report**:
-   - We accept reports on any security issue found within the Applicant Atlas platform. This includes, but is not limited to, problems related to data protection, unauthorized access, and vulnerabilities that could lead to the exploitation of the platform or its users.
+   - We accept reports on any security issue found within the ApplicantAtlas platform. This includes, but is not limited to, problems related to data protection, unauthorized access, and vulnerabilities that could lead to the exploitation of the platform or its users.
 
 3. **Safe Harbor**:
-   - We consider ethical reporting a vital part of our community’s health. Reporters following our guidelines, acting in good faith, and not causing harm to Applicant Atlas or its users will not face any legal actions.
+   - We consider ethical reporting a vital part of our community’s health. Reporters following our guidelines, acting in good faith, and not causing harm to ApplicantAtlas or its users will not face any legal actions.
 
 **Scope of Security Issues**
 1. **In-Scope**:
-   - All aspects of the Applicant Atlas platform are within scope, including but not limited to the web interface, APIs, client-side applications, and server-side components.
+   - All aspects of the ApplicantAtlas platform are within scope, including but not limited to the web interface, APIs, client-side applications, and server-side components.
    - Any issue that affects the confidentiality, integrity, or availability of the platform or its data is considered relevant.
 
 2. **Out-of-Scope**:
@@ -28,11 +28,11 @@ Applicant Atlas is an open source event management platform committed to maintai
 - Once resolved, we will publicly acknowledge the contribution of the reporter in our release notes, unless anonymity is requested.
 
 **Policy Updates**
-- This policy is subject to change as the Applicant Atlas platform evolves. We encourage users and contributors to regularly review it for any updates.
+- This policy is subject to change as the ApplicantAtlas platform evolves. We encourage users and contributors to regularly review it for any updates.
 
 **Contact Information For Reporting**
 For any security concerns or vulnerability reports, please contact: contact.davidteather@gmail.com
 
 Effective Date: 4/6/2024
 
-We thank our community for their contributions to keeping Applicant Atlas secure and trust-worthy.
+We thank our community for their contributions to keeping ApplicantAtlas secure and trust-worthy.

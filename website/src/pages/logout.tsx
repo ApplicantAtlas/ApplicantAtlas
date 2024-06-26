@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 
 import AuthService from '@/services/AuthService';
 import { ToastType, useToast } from '@/components/Toast/ToastContext';
+import Metadata from '@/components/Metadata';
 
 const LogoutPage = () => {
   const router = useRouter();
@@ -14,7 +15,12 @@ const LogoutPage = () => {
     router.push('/');
   }, [router, showToast]);
 
-  return <p>Logging out...</p>;
+  return (
+    <>
+      <Metadata title="ApplicantAtlas | Logout" />
+      <p>Logging out...</p>
+    </>
+  );
 };
 
 export default LogoutPage;

@@ -1,7 +1,5 @@
 import React, { useEffect } from 'react';
-import Head from 'next/head';
 import Link from 'next/link';
-import type { Metadata } from 'next';
 import { useRouter } from 'next/router';
 
 import AuthService from '@/services/AuthService';
@@ -12,11 +10,7 @@ import { User } from '@/types/models/User';
 import { IS_BACKEND_DISABLED } from '@/config/constants';
 import DisabledBackend from '@/components/Auth/DisabledBackend';
 import Header from '@/components/Header';
-
-export const metadata: Metadata = {
-  title: 'ApplicantAtlas',
-  description: 'ApplicantAtlas',
-};
+import Metadata from '@/components/Metadata';
 
 const LoginPage = () => {
   const router = useRouter();
@@ -69,12 +63,9 @@ const LoginPage = () => {
 
   return (
     <>
+      <Metadata title="ApplicantAtlas | Login" />
       <Header />
       <div className="flex items-center justify-center h-screen bg-gray-100">
-        <Head>
-          <title>Login</title>
-        </Head>
-
         {IS_BACKEND_DISABLED ? (
           <DisabledBackend />
         ) : (

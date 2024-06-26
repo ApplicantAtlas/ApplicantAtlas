@@ -10,6 +10,7 @@ import dashboardImage from '@/images/landing/dashboard.png';
 import formImage from '@/images/landing/form.png';
 import pipelinesImage from '@/images/landing/pipelines.png';
 import openSourceImage from '@/images/landing/open-source.png';
+import Metadata from '@/components/Metadata';
 
 export default function Component() {
   const [primaryButton, setPrimaryButton] = useState<MenuItem>({
@@ -30,6 +31,7 @@ export default function Component() {
 
   return (
     <>
+      <Metadata />
       <div className="relative scroll-smooth">
         <Header menuItems={menuItems} primaryButton={primaryButton} />
 

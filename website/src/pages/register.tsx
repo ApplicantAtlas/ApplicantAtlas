@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
@@ -11,6 +10,7 @@ import { FormStructure } from '@/types/models/Form';
 import { IS_BACKEND_DISABLED } from '@/config/constants';
 import DisabledBackend from '@/components/Auth/DisabledBackend';
 import Header from '@/components/Header';
+import Metadata from '@/components/Metadata';
 
 const RegistrationPage = () => {
   const router = useRouter();
@@ -106,12 +106,9 @@ const RegistrationPage = () => {
 
   return (
     <>
+      <Metadata title="ApplicantAtlas | Register" />
       <Header />
       <div className="flex items-center justify-center h-screen bg-gray-100">
-        <Head>
-          <title>Register</title>
-        </Head>
-
         {IS_BACKEND_DISABLED ? (
           <DisabledBackend />
         ) : (
