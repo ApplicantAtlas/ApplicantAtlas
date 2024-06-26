@@ -221,7 +221,7 @@ export default function Component() {
                     necessity. As the founder, I was involved in organizing a
                     hackathon called{' '}
                     <Link
-                      href="MadHacks"
+                      href="https://www.madhacks.io/"
                       className="font-medium hover:font-semibold"
                     >
                       MadHacks
