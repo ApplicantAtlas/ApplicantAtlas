@@ -67,7 +67,7 @@ export async function processMarkdown(
             if (!href.startsWith('http') && !href.startsWith('#')) {
               const [filePath, anchor] = href.split('#');
 
-              let processedPath = `${linksBasePath}/${filePath
+              let processedPath = `${linksBasePath}${filePath
                 .replace(/\/index\.md$/, '')
                 .replace(/\.md$/, '')}`;
 
