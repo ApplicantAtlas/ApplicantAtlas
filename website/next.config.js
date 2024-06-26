@@ -24,6 +24,7 @@ const nextConfig = {
     NEXT_PUBLIC_API_URL: apiUrl,
     NEXT_PUBLIC_IS_BACKEND_DISABLED: isBackendDisabled,
   },
+  trailingSlash: true,
   images: {
     unoptimized: true,
     remotePatterns: [
