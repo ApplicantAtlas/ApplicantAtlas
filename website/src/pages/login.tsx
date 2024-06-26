@@ -9,6 +9,9 @@ import { eventEmitter } from '@/events/EventEmitter';
 import FormBuilder from '@/components/Form/FormBuilder';
 import { FormStructure } from '@/types/models/Form';
 import { User } from '@/types/models/User';
+import { IS_BACKEND_DISABLED } from '@/config/constants';
+import DisabledBackend from '@/components/Auth/DisabledBackend';
+import Header from '@/components/Header';
 
 export const metadata: Metadata = {
   title: 'ApplicantAtlas',
@@ -65,24 +68,31 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100">
-      <Head>
-        <title>Login</title>
-      </Head>
+    <>
+      <Header />
+      <div className="flex items-center justify-center h-screen bg-gray-100">
+        <Head>
+          <title>Login</title>
+        </Head>
 
-      <div className="w-full max-w-xs">
-        <FormBuilder
-          formStructure={loginFormStructure}
-          submissionFunction={handleSubmit}
-          buttonText="Login"
-        />
-        <Link href="/register">
-          <div className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800 cursor-pointer">
-            Sign Up
+        {IS_BACKEND_DISABLED ? (
+          <DisabledBackend />
+        ) : (
+          <div className="w-full max-w-xs">
+            <FormBuilder
+              formStructure={loginFormStructure}
+              submissionFunction={handleSubmit}
+              buttonText="Login"
+            />
+            <Link href="/register">
+              <div className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800 cursor-pointer">
+                Sign Up
+              </div>
+            </Link>
           </div>
-        </Link>
+        )}
       </div>
-    </div>
+    </>
   );
 };
 

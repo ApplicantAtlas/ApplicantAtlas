@@ -12,10 +12,17 @@ if (isProd) {
   apiUrl = `https://${process.env.CODESPACE_NAME}-8080.${process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}`;
 }
 
+// Handling for if backend should be considered disabled
+let isBackendDisabled = 'false';
+if (process.env.DISABLE_BACKEND) {
+  isBackendDisabled = 'true';
+}
+
 const nextConfig = {
   output: 'export',
   env: {
     NEXT_PUBLIC_API_URL: apiUrl,
+    NEXT_PUBLIC_IS_BACKEND_DISABLED: isBackendDisabled,
   },
   images: {
     unoptimized: true,

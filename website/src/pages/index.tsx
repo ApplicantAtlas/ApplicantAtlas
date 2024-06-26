@@ -340,7 +340,7 @@ export default function Component() {
                       </p>
                     </div>
                   </div>
-                  {/*<div className="collapse collapse-arrow border border-base-content/10">
+                  <div className="collapse collapse-arrow border border-base-content/10">
                     <input name="faq" type="radio" aria-label="open/close" />
                     <div className="collapse-title text-xl font-medium">
                       Why can&apos;t I create an account?
@@ -365,7 +365,7 @@ export default function Component() {
                         own instance.
                       </p>
                     </div>
-                  </div>*/}
+                  </div>
                   <div className="collapse collapse-arrow border border-base-content/10">
                     <input name="faq" type="radio" aria-label="open/close" />
                     <div className="collapse-title text-xl font-medium">
