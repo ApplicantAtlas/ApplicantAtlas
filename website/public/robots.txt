@@ -1,0 +1,17 @@
+# *
+User-agent: *
+Allow: /
+
+# *
+User-agent: *
+Disallow: /user/*
+
+# *
+User-agent: *
+Disallow: /*/form/*
+
+# Host
+Host: https://applicantatlas.com
+
+# Sitemaps
+Sitemap: https://applicantatlas.com/sitemap.xml

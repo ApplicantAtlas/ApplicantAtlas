@@ -11,6 +11,7 @@ import formImage from '@/images/landing/form.png';
 import pipelinesImage from '@/images/landing/pipelines.png';
 import openSourceImage from '@/images/landing/open-source.png';
 import Metadata from '@/components/Metadata';
+import { IS_BACKEND_DISABLED } from '@/config/constants';
 
 export default function Component() {
   const [primaryButton, setPrimaryButton] = useState<MenuItem>({
@@ -342,32 +343,34 @@ export default function Component() {
                       </p>
                     </div>
                   </div>
-                  <div className="collapse collapse-arrow border border-base-content/10">
-                    <input name="faq" type="radio" aria-label="open/close" />
-                    <div className="collapse-title text-xl font-medium">
-                      Why can&apos;t I create an account?
+                  {IS_BACKEND_DISABLED && (
+                    <div className="collapse collapse-arrow border border-base-content/10">
+                      <input name="faq" type="radio" aria-label="open/close" />
+                      <div className="collapse-title text-xl font-medium">
+                        Why can&apos;t I create an account?
+                      </div>
+                      <div className="collapse-content">
+                        <p className="text-base">
+                          Currently we do not offer account creation on our main
+                          site. You&apos;ll need to run your own instance of
+                          ApplicantAtlas to get the full experience. You can
+                          find the source code and documentation on running your
+                          own instance{' '}
+                          <Link
+                            href="https://github.com/davidteather/ApplicantAtlas/blob/main/website/docs/index.md"
+                            className="font-medium hover:font-semibold"
+                          >
+                            here
+                          </Link>
+                          <br />
+                          We&apos;re currently working behind the scenes to
+                          offer a fully managed hosted version of ApplicantAtlas
+                          soon! This way you won&apos;t need to worry about
+                          hosting your own instance.
+                        </p>
+                      </div>
                     </div>
-                    <div className="collapse-content">
-                      <p className="text-base">
-                        Currently we do not offer account creation on our main
-                        site. You&apos;ll need to run your own instance of
-                        ApplicantAtlas to get the full experience. You can find
-                        the source code and documentation on running your own
-                        instance{' '}
-                        <Link
-                          href="https://github.com/davidteather/ApplicantAtlas/blob/main/website/docs/index.md"
-                          className="font-medium hover:font-semibold"
-                        >
-                          here
-                        </Link>
-                        <br />
-                        We&apos;re currently working behind the scenes to offer
-                        a fully managed hosted version of ApplicantAtlas soon!
-                        This way you won&apos;t need to worry about hosting your
-                        own instance.
-                      </p>
-                    </div>
-                  </div>
+                  )}
                   <div className="collapse collapse-arrow border border-base-content/10">
                     <input name="faq" type="radio" aria-label="open/close" />
                     <div className="collapse-title text-xl font-medium">

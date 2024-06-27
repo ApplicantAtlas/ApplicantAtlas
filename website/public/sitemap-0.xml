@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:mobile="http://www.google.com/schemas/sitemap-mobile/1.0" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+<url><loc>https://applicantatlas.com/</loc><lastmod>2024-06-27T00:53:28.980Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://applicantatlas.com/docs/</loc><lastmod>2024-06-27T00:53:28.981Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://applicantatlas.com/login/</loc><lastmod>2024-06-27T00:53:28.981Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://applicantatlas.com/logout/</loc><lastmod>2024-06-27T00:53:28.981Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://applicantatlas.com/register/</loc><lastmod>2024-06-27T00:53:28.981Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://applicantatlas.com/docs/developers/</loc><lastmod>2024-06-27T00:53:28.981Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://applicantatlas.com/docs/developers/roadmap/</loc><lastmod>2024-06-27T00:53:28.981Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://applicantatlas.com/docs/end-users/</loc><lastmod>2024-06-27T00:53:28.981Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://applicantatlas.com/docs/event-organizers/dashboard/dashboard/</loc><lastmod>2024-06-27T00:53:28.981Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://applicantatlas.com/docs/event-organizers/dashboard/email-templates/</loc><lastmod>2024-06-27T00:53:28.981Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://applicantatlas.com/docs/event-organizers/dashboard/event-details/</loc><lastmod>2024-06-27T00:53:28.981Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://applicantatlas.com/docs/event-organizers/dashboard/forms/</loc><lastmod>2024-06-27T00:53:28.981Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://applicantatlas.com/docs/event-organizers/dashboard/</loc><lastmod>2024-06-27T00:53:28.981Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://applicantatlas.com/docs/event-organizers/dashboard/pipelines/</loc><lastmod>2024-06-27T00:53:28.981Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://applicantatlas.com/docs/event-organizers/dashboard/settings/</loc><lastmod>2024-06-27T00:53:28.981Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://applicantatlas.com/docs/event-organizers/</loc><lastmod>2024-06-27T00:53:28.981Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://applicantatlas.com/docs/participants/</loc><lastmod>2024-06-27T00:53:28.981Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://applicantatlas.com/docs/self-hosters/</loc><lastmod>2024-06-27T00:53:28.981Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+</urlset>
