@@ -14,7 +14,7 @@
 		"MONGO_AUTH_SOURCE": "admin",
 		"CORS_ALLOW_ORIGINS": "*",
 		"JWT_SECRET_TOKEN": "testtesttesttest",
-		"KAFKA_BROKER_URL": "localhost:9092"
+		"KAFKA_BROKER_URLS": "localhost:9092"
 	},
 	"postStartCommand": "docker compose up mongo zookeeper kafka -d && cd website && npm i",
 	"postAttachCommand": {

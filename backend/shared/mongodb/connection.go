@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"shared/config"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -16,15 +17,16 @@ var (
 )
 
 func init() {
-	mongoURL := os.Getenv("MONGO_URL")
-	mongoUser := os.Getenv("MONGO_USER")
-	mongoPassword := os.Getenv("MONGO_PASSWORD")
-	MongoDBName = os.Getenv("MONGO_DB")
-	authSource := os.Getenv("MONGO_AUTH_SOURCE")
+	mongoConfig, err := config.GetMongoConfig()
+	if err != nil {
+		fmt.Println("Error getting MongoDB config: ", err)
+		os.Exit(1)
+	}
 
-	mongoURI = fmt.Sprintf("mongodb://%s:%s@%s/%s", mongoUser, mongoPassword, mongoURL, MongoDBName)
-	if authSource != "" {
-		mongoURI = mongoURI + fmt.Sprintf("?authSource=%s", authSource)
+	MongoDBName = mongoConfig.MONGO_DB
+	mongoURI = fmt.Sprintf("mongodb://%s:%s@%s/%s", mongoConfig.MONGO_USER, mongoConfig.MONGO_PASSWORD, mongoConfig.MONGO_URL, mongoConfig.MONGO_DB)
+	if mongoConfig.MONGO_AUTH_SOURCE != "" {
+		mongoURI = mongoURI + fmt.Sprintf("?authSource=%s", mongoConfig.MONGO_AUTH_SOURCE)
 	}
 }
 

@@ -1,0 +1,28 @@
+# Stage 1: Build the Go application
+FROM golang:1.21.5-alpine AS builder
+
+WORKDIR /app
+
+# Copy the shared directory from the build context
+# Definitely better way to do this, but it's fine for now (TODO)
+COPY ./shared /shared
+
+# Copy the api directory from the build context
+COPY ./api /app
+
+# Download any necessary dependencies
+RUN go mod download
+
+# Build the binary for Linux (necessary for Lambda)
+RUN GOOS=linux go build -o main ./cmd/main.go
+
+# Stage 2: Build the final image using the AWS Lambda base image
+FROM public.ecr.aws/lambda/go:1
+
+WORKDIR /app
+
+# Copy the built binary from the builder stage
+COPY --from=builder /app/main /app/main
+
+# Command to run the Lambda function
+CMD ["main"]

@@ -5,7 +5,7 @@ import (
 	"errors"
 	"log"
 	"net/http"
-	"os"
+	"shared/config"
 	"shared/models"
 	"strings"
 	"time"
@@ -18,13 +18,16 @@ import (
 var jwtSecret []byte
 
 func init() {
-	secret := os.Getenv("JWT_SECRET_TOKEN")
+	apiConfig, err := config.GetAPIConfig()
+	if err != nil {
+		log.Fatalf("Error getting API config: %v", err)
+	}
 
-	if secret == "" || secret == "secret_please_change" {
+	if apiConfig.JWT_SECRET_TOKEN == "" || apiConfig.JWT_SECRET_TOKEN == "secret_please_change" {
 		log.Println("[WARNING] JWT_SECRET_TOKEN is not set or is set to a default value. Generating a random secret key, this will cause all existing JWT tokens to be invalid and will not work on lambda or multi-instance deployments.")
 		jwtSecret = generateRandomSecret(32)
 	} else {
-		jwtSecret = []byte(secret)
+		jwtSecret = []byte(apiConfig.JWT_SECRET_TOKEN)
 	}
 }
 

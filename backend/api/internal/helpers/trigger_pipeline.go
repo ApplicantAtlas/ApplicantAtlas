@@ -2,18 +2,19 @@ package helpers
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"shared/kafka"
+	"shared/kafka/producer"
 	"shared/models"
 	"shared/mongodb"
 	"shared/utils"
 	"time"
 
-	"github.com/IBM/sarama"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func TriggerPipeline(c context.Context, producer sarama.SyncProducer, mongo mongodb.MongoService, pipeline models.PipelineConfiguration, actionData map[string]interface{}) error {
+func TriggerPipeline(c context.Context, producer producer.MessageProducer, mongo mongodb.MongoService, pipeline models.PipelineConfiguration, actionData map[string]interface{}) error {
 	if !pipeline.Enabled {
 		return nil
 	}
@@ -53,7 +54,15 @@ func TriggerPipeline(c context.Context, producer sarama.SyncProducer, mongo mong
 			return errors.New("action type not implemented")
 		}
 
-		kafka.WriteActionToKafka(producer, actionMessage)
+		actionBytes, err := json.Marshal(actionMessage)
+		if err != nil {
+			return err
+		}
+
+		err = producer.ProduceMessage(string(actionBytes))
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

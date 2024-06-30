@@ -2,7 +2,7 @@ package kafka
 
 import (
 	"errors"
-	"os"
+	"shared/config"
 	"shared/utils"
 
 	"github.com/IBM/sarama"
@@ -20,14 +20,18 @@ func CreateConsumer() (sarama.ConsumerGroup, error) {
 }
 
 func createLocalKafkaConsumer() (sarama.ConsumerGroup, error) {
-	brokers := []string{os.Getenv("KAFKA_BROKER_URL")} // Example: "localhost:9092"
+	eventListenerCfg, err := config.GetEventListenerConfig()
+	if err != nil {
+		return nil, err
+	}
+
 	config := sarama.NewConfig()
 	config.Version = sarama.V3_6_0_0 // Specify your Kafka version here
 	config.Consumer.Return.Errors = true
 
 	// Additional local configuration setup as needed, like authentication
 
-	group, err := sarama.NewConsumerGroup(brokers, PipelineActionTopicGroup, config)
+	group, err := sarama.NewConsumerGroup(eventListenerCfg.KAFKA_BROKER_URLS, PipelineActionTopicGroup, config)
 	if err != nil {
 		return nil, err
 	}

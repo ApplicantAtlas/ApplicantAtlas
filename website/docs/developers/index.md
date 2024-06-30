@@ -67,7 +67,7 @@ For ease of development, we recommend not running everything in docker since it'
    In a new terminal, go to the `backend/event-listener` folder and execute the command below to launch the Kafka event listener service:
 
    ```bash
-   MONGO_URL=localhost:27017 MONGO_USER=admin MONGO_PASSWORD=admin MONGO_DB=app MONGO_AUTH_SOURCE=admin KAFKA_BROKER_URL=localhost:9092 go run cmd/main.go
+   MONGO_URL=localhost:27017 MONGO_USER=admin MONGO_PASSWORD=admin MONGO_DB=app MONGO_AUTH_SOURCE=admin KAFKA_BROKER_URLS=localhost:9092 go run cmd/main.go
    ```
 
    If you encounter any issues, try running the command from the API service directory.
@@ -76,7 +76,7 @@ For ease of development, we recommend not running everything in docker since it'
    Open a separate terminal, navigate to the `backend/api` directory, and run the following command to start the API service:
 
    ```bash
-   MONGO_URL=localhost:27017 MONGO_USER=admin MONGO_PASSWORD=admin MONGO_DB=app MONGO_AUTH_SOURCE=admin CORS_ALLOW_ORIGINS="*" JWT_SECRET_TOKEN="testtesttesttest" KAFKA_BROKER_URL=localhost:9092 go run cmd/main.go
+   MONGO_URL=localhost:27017 MONGO_USER=admin MONGO_PASSWORD=admin MONGO_DB=app MONGO_AUTH_SOURCE=admin CORS_ALLOW_ORIGINS="*" JWT_SECRET_TOKEN="testtesttesttest" KAFKA_BROKER_URLS=localhost:9092 go run cmd/main.go
    ```
 
 4. **Frontend Development**
