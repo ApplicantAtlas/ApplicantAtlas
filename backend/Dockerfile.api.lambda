@@ -22,6 +22,7 @@ FROM public.ecr.aws/lambda/go:1
 WORKDIR /app
 
 # Copy the built binary from the builder stage
+COPY --from=builder /app/main /app/main
 COPY --from=builder /app/main /var/task/main
 
 # Command to run the Lambda function

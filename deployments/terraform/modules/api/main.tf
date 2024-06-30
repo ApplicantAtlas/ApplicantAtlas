@@ -13,9 +13,10 @@ data "aws_ecr_image" "lambda_image" {
   image_tag       = "latest"
 }
 
+# TODO: Need to add semvar to the docker tags, since if we use latest it doesn't update the image immediately
 resource "aws_lambda_function" "applicant_atlas_api" {
   function_name = "applicant_atlas_api"
-  image_uri     = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/${aws_ecr_repository.applicant_atlas_api_lambda.name}:latest"
+  image_uri     = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/${aws_ecr_repository.applicant_atlas_api_lambda.name}:d97d7397dccb510a1bbc9ce4ec6def80474134fb"
   role          = aws_iam_role.iam_for_lambda.arn
   package_type  = "Image"
   memory_size   = 128
