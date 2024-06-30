@@ -10,6 +10,7 @@ require (
 )
 
 require (
+	github.com/aws/aws-lambda-go v1.47.0
 	github.com/bytedance/sonic v1.9.1 // indirect
 	github.com/caarlos0/env/v6 v6.10.1 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect

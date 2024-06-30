@@ -7,10 +7,16 @@ import (
 )
 
 type EventListenerConfig struct {
+	// MESSAGE_BROKER_TYPE is the type of message broker to use
+	MESSAGE_BROKER_TYPE string `env:"MESSAGE_BROKER_TYPE" envDefault:"kafka"` // kafka | sqs
+
 	// Kafka options
 
 	// KAFKA_BROKER_URLS is the URL of the Kafka brokers to connect to
 	KAFKA_BROKER_URLS []string `env:"KAFKA_BROKER_URLS" envSeparator:","`
+
+	// SQS options
+
 }
 
 var (
