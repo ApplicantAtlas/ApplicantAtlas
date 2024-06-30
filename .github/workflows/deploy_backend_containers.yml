@@ -1,0 +1,24 @@
+name: build
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+
+    - uses: kciter/aws-ecr-action@master
+      env:
+        DOCKER_BUILDKIT: 1
+      with:
+        path: ./backend/api
+        access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        account_id: ${{ secrets.AWS_ACCOUNT_ID }}
+        repo: applicant-atlas-api-lambda
+        region: us-east-1
+        # tags: v0.0.1 TODO: version services

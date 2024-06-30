@@ -1,2 +1,3 @@
 screenshot.py
 *.DS_Store
+*.tfvars

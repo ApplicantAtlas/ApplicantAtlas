@@ -11,7 +11,7 @@ COPY . .
 RUN go mod download
 
 # Build the binary
-RUN go build -o myapp ./cmd/main.go
+RUN go build -o api ./cmd/main.go
 
 # Command to run the binary
-CMD ["./myapp"]
+CMD ["./api"]
