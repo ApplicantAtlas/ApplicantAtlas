@@ -175,7 +175,7 @@ func submitFormHandler(params *types.RouteParams) gin.HandlerFunc {
 					continue
 				}
 
-				err := helpers.TriggerPipeline(c, params.KafkaProducer, params.MongoService, pipeline, req.Data)
+				err := helpers.TriggerPipeline(c, params.MessageProducer, params.MongoService, pipeline, req.Data)
 
 				if err != nil {
 					c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
@@ -459,7 +459,7 @@ func updateFormResponseHandler(params *types.RouteParams) gin.HandlerFunc {
 					continue
 				}
 
-				err := helpers.TriggerPipeline(c, params.KafkaProducer, params.MongoService, pipeline, response.Data)
+				err := helpers.TriggerPipeline(c, params.MessageProducer, params.MongoService, pipeline, response.Data)
 
 				if err != nil {
 					c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})

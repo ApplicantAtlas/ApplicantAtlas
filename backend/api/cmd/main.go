@@ -9,10 +9,10 @@ import (
 	"net/http"
 	"os/exec"
 	"os/signal"
-	"shared/kafka"
+	"shared/config"
+	"shared/kafka/producer"
 	"shared/mongodb"
 	"shared/utils"
-	"strings"
 	"syscall"
 	"time"
 
@@ -29,9 +29,10 @@ func main() {
 	r := gin.Default()
 	corsConfig := cors.DefaultConfig()
 
-	corsAllowedOrigins := os.Getenv("CORS_ALLOW_ORIGINS")
-	// Split the origins into a slice, assuming they are comma-separated
-	allowedOrigins := strings.Split(corsAllowedOrigins, ",")
+	apiConfig, err := config.GetAPIConfig()
+	if err != nil {
+		log.Fatalf("Error getting API config: %v", err)
+	}
 
 	// If we're on a Codespace add that
 	if os.Getenv("CODESPACES") == "true" {
@@ -56,15 +57,15 @@ func main() {
 
 		// Add the domain to valid
 		codespaceURL := fmt.Sprintf("https://%s-8080.%s", os.Getenv("CODESPACE_NAME"), os.Getenv("GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN"))
-		allowedOrigins = append(allowedOrigins, codespaceURL)
+		apiConfig.CORS_ALLOW_ORIGINS = append(apiConfig.CORS_ALLOW_ORIGINS, codespaceURL)
 	}
 
 	// If no origins are specified, error out
-	if len(allowedOrigins) == 0 {
+	if len(apiConfig.CORS_ALLOW_ORIGINS) == 0 {
 		log.Fatal("CORS: No allowed origins specified, please specify with CORS_ALLOW_ORIGINS environment variable")
 	}
 
-	corsConfig.AllowOrigins = allowedOrigins
+	corsConfig.AllowOrigins = apiConfig.CORS_ALLOW_ORIGINS
 	corsConfig.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}
 	corsConfig.AllowHeaders = []string{"Origin", "Content-Type", "Accept", "Authorization"}
 	corsConfig.AllowCredentials = true
@@ -77,7 +78,7 @@ func main() {
 	}
 	defer cleanup()
 
-	producer, err := kafka.CreateProducer()
+	producer, err := producer.NewMessageProducer()
 	if err != nil {
 		log.Fatalf("Failed to create Kafka producer: %v", err)
 	}
@@ -85,8 +86,8 @@ func main() {
 
 	// Setup routes
 	params := types.RouteParams{
-		MongoService:  mongoService,
-		KafkaProducer: producer,
+		MongoService:    mongoService,
+		MessageProducer: producer,
 	}
 	routes.SetupRoutes(r, &params)
 

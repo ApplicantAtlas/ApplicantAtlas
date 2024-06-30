@@ -1,12 +1,11 @@
 package types
 
 import (
+	"shared/kafka/producer"
 	"shared/mongodb"
-
-	"github.com/IBM/sarama"
 )
 
 type RouteParams struct {
-	MongoService  mongodb.MongoService
-	KafkaProducer sarama.SyncProducer
+	MongoService    mongodb.MongoService
+	MessageProducer producer.MessageProducer
 }
