@@ -1,6 +1,7 @@
 package main
 
 import (
+	"api/internal/middlewares"
 	"api/internal/routes"
 	"api/internal/types"
 	"context"
@@ -13,6 +14,7 @@ import (
 	"shared/kafka/producer"
 	"shared/mongodb"
 	"shared/utils"
+	"strings"
 	"syscall"
 	"time"
 
@@ -21,13 +23,11 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	ginadapter "github.com/awslabs/aws-lambda-go-api-proxy/gin"
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	r := gin.Default()
-	corsConfig := cors.DefaultConfig()
 
 	apiConfig, err := config.GetAPIConfig()
 	if err != nil {
@@ -65,12 +65,7 @@ func main() {
 		log.Fatal("CORS: No allowed origins specified, please specify with CORS_ALLOW_ORIGINS environment variable")
 	}
 
-	corsConfig.AllowOrigins = apiConfig.CORS_ALLOW_ORIGINS
-	corsConfig.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}
-	corsConfig.AllowHeaders = []string{"Origin", "Content-Type", "Accept", "Authorization"}
-	corsConfig.AllowCredentials = true
-
-	r.Use(cors.New(corsConfig))
+	r.Use(middlewares.CORSMiddleware(strings.Join(apiConfig.CORS_ALLOW_ORIGINS, ",")))
 
 	mongoService, cleanup, err := mongodb.NewService()
 	if err != nil {
