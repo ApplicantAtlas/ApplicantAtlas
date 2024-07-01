@@ -13,10 +13,15 @@ data "aws_ecr_image" "lambda_image" {
   image_tag       = "latest"
 }
 
+resource "aws_cloudwatch_log_group" "lambda_log_group" {
+  name              = "/aws/lambda/applicant_atlas_api"
+  retention_in_days = 14
+}
+
 # TODO: Need to add semvar to the docker tags, since if we use latest it doesn't update the image immediately
 resource "aws_lambda_function" "applicant_atlas_api" {
   function_name = "applicant_atlas_api"
-  image_uri     = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/${aws_ecr_repository.applicant_atlas_api_lambda.name}:d97d7397dccb510a1bbc9ce4ec6def80474134fb"
+  image_uri     = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/${aws_ecr_repository.applicant_atlas_api_lambda.name}:015473f39edeec2823063a7db9c10d828528e514"
   role          = aws_iam_role.iam_for_lambda.arn
   package_type  = "Image"
   memory_size   = 128
@@ -25,10 +30,12 @@ resource "aws_lambda_function" "applicant_atlas_api" {
   environment {
     variables = local.combined_env_vars
   }
+
+  depends_on = [aws_cloudwatch_log_group.lambda_log_group]
 }
 
 resource "aws_iam_role" "iam_for_lambda" {
-  name = "iam_for_lambda"
+  name = "iam_for_applicant_atlas_api_lambda"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -43,6 +50,24 @@ resource "aws_iam_role" "iam_for_lambda" {
       }
     ]
   })
+
+  inline_policy {
+    name = "lambda-logs"
+    policy = jsonencode({
+      Version = "2012-10-17"
+      Statement = [
+        {
+          Action = [
+            "logs:CreateLogGroup",
+            "logs:CreateLogStream",
+            "logs:PutLogEvents"
+          ]
+          Effect = "Allow"
+          Resource = "arn:aws:logs:*:*:*"
+        }
+      ]
+    })
+  }
 }
 
 resource "aws_api_gateway_rest_api" "api" {

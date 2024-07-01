@@ -3,6 +3,7 @@ package mongodb
 import (
 	"context"
 	"fmt"
+	"net/url"
 	"os"
 	"shared/config"
 
@@ -24,7 +25,10 @@ func init() {
 	}
 
 	MongoDBName = mongoConfig.MONGO_DB
-	mongoURI = fmt.Sprintf("mongodb://%s:%s@%s/%s", mongoConfig.MONGO_USER, mongoConfig.MONGO_PASSWORD, mongoConfig.MONGO_URL, mongoConfig.MONGO_DB)
+	encodedUser := url.QueryEscape(mongoConfig.MONGO_USER)
+	encodedPassword := url.QueryEscape(mongoConfig.MONGO_PASSWORD)
+
+	mongoURI = fmt.Sprintf("mongodb://%s:%s@%s/%s", encodedUser, encodedPassword, mongoConfig.MONGO_URL, mongoConfig.MONGO_DB)
 	if mongoConfig.MONGO_EXTRA_PARAMS != "" || mongoConfig.MONGO_AUTH_SOURCE != "" {
 		mongoURI = mongoURI + "?"
 	}
@@ -42,6 +46,5 @@ func init() {
 }
 
 func getMongoClient() (*mongo.Client, error) {
-	fmt.Println("Connecting to MongoDB with URI: ", mongoURI)
 	return mongo.Connect(context.TODO(), options.Client().ApplyURI(mongoURI))
 }
