@@ -96,7 +96,6 @@ func main() {
 		// Create a Lambda server with the Gin router
 		// This converts lambda events to http.Request objects
 		ginLambda := ginadapter.New(r)
-		fmt.Println("Running in lambda")
 		lambda.Start(func(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 			// Proxy the request to the Gin engine
 			return ginLambda.ProxyWithContext(ctx, req)

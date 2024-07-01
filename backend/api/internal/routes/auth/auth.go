@@ -4,6 +4,7 @@ import (
 	"api/internal/middlewares"
 	"api/internal/types"
 	"net/http"
+	"shared/logger"
 	"shared/models"
 	"shared/mongodb"
 	"shared/utils"
@@ -42,6 +43,7 @@ func loginUser(params *types.RouteParams) gin.HandlerFunc {
 				c.JSON(http.StatusBadRequest, gin.H{"error": "Email and password do not match"})
 				return
 			}
+			logger.Error("Failed to find user by email", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to login"})
 			return
 		}

@@ -7,6 +7,8 @@ import (
 )
 
 type MongoConfig struct {
+	MONGO_CONNECTION_TYPE string `env:"MONGO_CONNECTION_TYPE" envDefault:"mongodb"`
+
 	// MONGO_URL is the URL of the MongoDB instance
 	MONGO_URL string `env:"MONGO_URL"`
 

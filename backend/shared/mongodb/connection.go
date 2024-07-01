@@ -28,7 +28,7 @@ func init() {
 	encodedUser := url.QueryEscape(mongoConfig.MONGO_USER)
 	encodedPassword := url.QueryEscape(mongoConfig.MONGO_PASSWORD)
 
-	mongoURI = fmt.Sprintf("mongodb://%s:%s@%s/%s", encodedUser, encodedPassword, mongoConfig.MONGO_URL, mongoConfig.MONGO_DB)
+	mongoURI = fmt.Sprintf("%s://%s:%s@%s/%s", mongoConfig.MONGO_CONNECTION_TYPE, encodedUser, encodedPassword, mongoConfig.MONGO_URL, mongoConfig.MONGO_DB)
 	if mongoConfig.MONGO_EXTRA_PARAMS != "" || mongoConfig.MONGO_AUTH_SOURCE != "" {
 		mongoURI = mongoURI + "?"
 	}
