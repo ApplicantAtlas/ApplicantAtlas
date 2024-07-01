@@ -21,6 +21,9 @@ type MongoConfig struct {
 
 	// MONGO_AUTH_SOURCE is the authentication source to use when connecting to MongoDB
 	MONGO_AUTH_SOURCE string `env:"MONGO_AUTH_SOURCE"`
+
+	// MONGO_EXTRA_PARAMS is any extra parameters to use when connecting to MongoDB
+	MONGO_EXTRA_PARAMS string `env:"MONGO_EXTRA_PARAMS"`
 }
 
 var (

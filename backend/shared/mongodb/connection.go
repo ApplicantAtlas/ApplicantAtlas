@@ -25,8 +25,19 @@ func init() {
 
 	MongoDBName = mongoConfig.MONGO_DB
 	mongoURI = fmt.Sprintf("mongodb://%s:%s@%s/%s", mongoConfig.MONGO_USER, mongoConfig.MONGO_PASSWORD, mongoConfig.MONGO_URL, mongoConfig.MONGO_DB)
+	if mongoConfig.MONGO_EXTRA_PARAMS != "" || mongoConfig.MONGO_AUTH_SOURCE != "" {
+		mongoURI = mongoURI + "?"
+	}
+
 	if mongoConfig.MONGO_AUTH_SOURCE != "" {
-		mongoURI = mongoURI + fmt.Sprintf("?authSource=%s", mongoConfig.MONGO_AUTH_SOURCE)
+		mongoURI = mongoURI + fmt.Sprintf("authSource=%s", mongoConfig.MONGO_AUTH_SOURCE)
+	}
+
+	if mongoConfig.MONGO_EXTRA_PARAMS != "" {
+		if mongoConfig.MONGO_AUTH_SOURCE != "" {
+			mongoURI = mongoURI + "&"
+		}
+		mongoURI = mongoURI + mongoConfig.MONGO_EXTRA_PARAMS
 	}
 }
 
