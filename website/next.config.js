@@ -6,7 +6,7 @@ let apiUrl = 'http://localhost:8080';
 
 // If in production, use the production API URL
 if (isProd) {
-  apiUrl = 'https://api.productiondomain.com';
+  apiUrl = 'https://api.applicantatlas.com';
 } else if (process.env.CODESPACES) {
   // If running in GitHub Codespaces (and not in production), set the API URL dynamically
   apiUrl = `https://${process.env.CODESPACE_NAME}-8080.${process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}`;
