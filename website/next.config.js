@@ -19,14 +19,11 @@ if (process.env.DISABLE_BACKEND) {
 }
 
 const nextConfig = {
-  output: 'export',
   env: {
     NEXT_PUBLIC_API_URL: apiUrl,
     NEXT_PUBLIC_IS_BACKEND_DISABLED: isBackendDisabled,
   },
-  trailingSlash: true,
   images: {
-    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',
