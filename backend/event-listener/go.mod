@@ -9,6 +9,8 @@ require (
 	shared v0.0.0
 )
 
+require github.com/sirupsen/logrus v1.9.3 // indirect
+
 require (
 	github.com/aws/aws-lambda-go v1.47.0
 	github.com/bytedance/sonic v1.9.1 // indirect
