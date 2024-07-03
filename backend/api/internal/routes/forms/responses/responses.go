@@ -168,7 +168,6 @@ func submitFormHandler(params *types.RouteParams) gin.HandlerFunc {
 			return
 		}
 
-		fmt.Printf("Pipelines: %v\n", pipelines)
 		for _, pipeline := range pipelines {
 			if pipeline.Event.Type == "FormSubmission" {
 				// Sanity check
@@ -176,7 +175,6 @@ func submitFormHandler(params *types.RouteParams) gin.HandlerFunc {
 					continue
 				}
 
-				logger.LogInfo(fmt.Sprintf("Triggering pipeline %s", pipeline.ID.Hex()))
 				err := helpers.TriggerPipeline(c, params.MessageProducer, params.MongoService, pipeline, req.Data)
 
 				if err != nil {
