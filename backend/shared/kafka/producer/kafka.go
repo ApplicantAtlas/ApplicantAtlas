@@ -39,6 +39,10 @@ func (k *KafkaProducer) ProduceMessage(message string) error {
 	return nil
 }
 
+func (k *KafkaProducer) GetType() string {
+	return "kafka"
+}
+
 func (k *KafkaProducer) Close() error {
 	return k.producer.Close()
 }

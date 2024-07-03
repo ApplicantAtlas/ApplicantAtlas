@@ -7,6 +7,7 @@ import (
 
 type MessageProducer interface {
 	ProduceMessage(message string) error
+	GetType() string
 	Close() error
 }
 

@@ -37,6 +37,10 @@ func (s *SQSProducer) ProduceMessage(message string) error {
 	return nil
 }
 
+func (s *SQSProducer) GetType() string {
+	return "sqs"
+}
+
 func (s *SQSProducer) Close() error {
 	return nil
 }

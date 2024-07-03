@@ -4,8 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"shared/kafka"
 	"shared/kafka/producer"
+	"shared/logger"
 	"shared/models"
 	"shared/mongodb"
 	"shared/utils"
@@ -61,6 +63,7 @@ func TriggerPipeline(c context.Context, producer producer.MessageProducer, mongo
 
 		err = producer.ProduceMessage(string(actionBytes))
 		if err != nil {
+			logger.Error(fmt.Sprintf("Failed to write message to %s", producer.GetType()), err)
 			return err
 		}
 	}
