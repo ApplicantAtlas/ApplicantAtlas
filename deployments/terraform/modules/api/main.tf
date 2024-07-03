@@ -30,11 +30,6 @@ resource "aws_ecr_lifecycle_policy" "applicant_atlas_api_lambda_lifecycle_policy
 POLICY
 }
 
-data "aws_ecr_image" "lambda_image" {
-  repository_name = aws_ecr_repository.applicant_atlas_api_lambda.name
-  image_tag       = "latest"
-}
-
 resource "aws_cloudwatch_log_group" "lambda_log_group" {
   name              = "/aws/lambda/applicant_atlas_api"
   retention_in_days = 14

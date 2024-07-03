@@ -25,7 +25,7 @@ func NewMessageConsumer(mongoService *mongodb.Service, actionHandlers map[string
 		}
 		return NewKafkaConsumer(mongoService, actionHandlers)
 	case "sqs":
-		return nil, errors.New("SQS message broker not yet implemented")
+		return NewSQSConsumer(mongoService, actionHandlers)
 	default:
 		return nil, errors.New("invalid message broker type specified")
 	}

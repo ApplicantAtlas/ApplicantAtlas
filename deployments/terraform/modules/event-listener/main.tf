@@ -42,7 +42,7 @@ resource "aws_cloudwatch_log_group" "lambda_log_group" {
 
 resource "aws_lambda_function" "applicant_atlas_event_listener" {
   function_name = "applicant_atlas_event_listener"
-  image_uri     = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/${aws_ecr_repository.applicant_atlas_event_listener_lambda.name}:bc8c4043286c6d8578aa2d8fef419a0c7f42e2af"
+  image_uri     = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/${aws_ecr_repository.applicant_atlas_event_listener_lambda.name}:5e7dc9d7fdc7dc6288eb427ceeda6bc69bd6d537"
   role          = aws_iam_role.iam_for_lambda.arn
   package_type  = "Image"
   memory_size   = 128
@@ -113,7 +113,7 @@ resource "aws_lambda_event_source_mapping" "sqs_event_source" {
   event_source_arn = var.sqs_queue_arn
   function_name    = aws_lambda_function.applicant_atlas_event_listener.arn
   batch_size       = 10
-  enabled          = false
+  enabled          = true
 }
 
 output "lambda_function_arn" {

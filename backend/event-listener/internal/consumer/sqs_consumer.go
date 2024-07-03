@@ -16,11 +16,11 @@ type SQSConsumer struct {
 	actionHandlers map[string]types.EventHandler
 }
 
-func NewSQSConsumer(mongoService *mongodb.Service, actionHandlers map[string]types.EventHandler) *SQSConsumer {
+func NewSQSConsumer(mongoService *mongodb.Service, actionHandlers map[string]types.EventHandler) (*SQSConsumer, error) {
 	return &SQSConsumer{
 		mongoService:   mongoService,
 		actionHandlers: actionHandlers,
-	}
+	}, nil
 }
 
 func (s *SQSConsumer) Consume(ctx context.Context) error {
