@@ -21,7 +21,7 @@ resource "aws_cloudwatch_log_group" "lambda_log_group" {
 # TODO: Need to add semvar to the docker tags, since if we use latest it doesn't update the image immediately
 resource "aws_lambda_function" "applicant_atlas_api" {
   function_name = "applicant_atlas_api"
-  image_uri     = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/${aws_ecr_repository.applicant_atlas_api_lambda.name}:7057afaeab8a1e76ee031320f5581c6948386fd5"
+  image_uri     = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/${aws_ecr_repository.applicant_atlas_api_lambda.name}:1294b532f84f9b0f0d8984d94eaa29d1c24d953a"
   role          = aws_iam_role.iam_for_lambda.arn
   package_type  = "Image"
   memory_size   = 128
