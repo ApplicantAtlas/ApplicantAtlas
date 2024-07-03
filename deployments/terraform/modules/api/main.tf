@@ -8,6 +8,28 @@ resource "aws_ecr_repository" "applicant_atlas_api_lambda" {
   name = "applicant-atlas-api-lambda"
 }
 
+resource "aws_ecr_lifecycle_policy" "applicant_atlas_api_lambda_lifecycle_policy" {
+  repository = aws_ecr_repository.applicant_atlas_api_lambda.name
+  policy     = <<POLICY
+{
+    "rules": [
+        {
+            "rulePriority": 2,
+            "description": "Retain only the last 5 ECR images",
+            "selection": {
+                "tagStatus": "any",
+                "countType": "imageCountMoreThan",
+                "countNumber": 5
+            },
+            "action": {
+                "type": "expire"
+            }
+        }
+    ]
+}
+POLICY
+}
+
 data "aws_ecr_image" "lambda_image" {
   repository_name = aws_ecr_repository.applicant_atlas_api_lambda.name
   image_tag       = "latest"

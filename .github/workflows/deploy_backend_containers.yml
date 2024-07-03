@@ -24,7 +24,7 @@ jobs:
       id: ecr-login
       uses: aws-actions/amazon-ecr-login@v2
 
-    - name: Build, tag, and push Docker image
+    - name: Build API Lambda Docker image
       env:
         AWS_DEFAULT_REGION: us-east-1
         AWS_REGION: us-east-1
@@ -36,4 +36,18 @@ jobs:
       run: |
         cd backend
         docker build -f Dockerfile.api.lambda -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+        docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+    - name: Build Backend Lambda Docker image
+      env:
+        AWS_DEFAULT_REGION: us-east-1
+        AWS_REGION: us-east-1
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+        REPOSITORY: applicant-atlas-event-listener-lambda
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        cd backend
+        docker build -f Dockerfile.event.listener.lambda -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
         docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG

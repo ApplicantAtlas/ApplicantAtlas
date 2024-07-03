@@ -1,0 +1,31 @@
+# Stage 1: Build the Go application
+FROM golang:1.21.5-alpine AS builder
+
+WORKDIR /app
+ENV GIN_MODE=release
+
+# Copy the shared directory from the build context
+# Definitely better way to do this, but it's fine for now (TODO)
+COPY ./shared /shared
+
+# Copy the event-listener directory from the build context
+COPY ./event-listener /app
+
+# Download any necessary dependencies
+RUN go mod download
+
+# Build the binary for Linux (necessary for Lambda)
+RUN GOOS=linux GIN_MODE=release go build -o main ./cmd/main.go
+
+# Stage 2: Build the final image using the AWS Lambda base image
+FROM public.ecr.aws/lambda/go:1
+
+WORKDIR /app
+
+# Copy the built binary from the builder stage
+COPY --from=builder /app/main /app/main
+COPY --from=builder /app/main /var/task/main
+
+# Command to run the Lambda function
+ENV GIN_MODE=release
+CMD ["main"]
