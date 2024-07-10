@@ -2,16 +2,9 @@
 
 This is a rough outline of the features we want to implement in the future. This is hopefully a living document. These are more so ideas of what we want to implement in the future, and is not a guarantee that they will be implemented.
 
+The most immediate list of features we want to implement can be found in the [GitHub Project](https://github.com/users/davidteather/projects/5/views/2), this page should be considered a more long term list of features that would make ApplicantAtlas a more complete platform.
+
 ## Planned Features
-
-### Cloud Hosting Service
-
-We want to get to a point where we can host our own instance of ApplicantAtlas for users to use. This would be an optional paid service and would allow users to use ApplicantAtlas without having to host it themselves.
-
-Challenges
-
-- Ideally this would be hosted on lambda function for backend services and this is currently not supported by the current stack.
-- Integration with payment services, optional for users to use.
 
 ### Hoster's Admin Panel
 
