@@ -44,18 +44,23 @@ const Address: React.FC<AddressProps> = ({ field, onChange, defaultValue }) => {
   const handleInputChange = (key: string, value: FieldValue) => {
     switch (key) {
       case field.key + '_streetAddress':
+        if (value === streetAddress) return;
         setStreetAddress(value as string);
         break;
       case field.key + '_city':
+        if (value === city) return;
         setCity(value as string);
         break;
       case field.key + '_zipCode':
+        if (value === zipCode) return;
         setZipCode(value as string);
         break;
       case field.key + '_country':
+        if (value === country) return;
         setCountry(value as string);
         break;
       case field.key + '_region':
+        if (value === region) return;
         setRegion(value as string);
         break;
       default:
