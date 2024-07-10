@@ -40,6 +40,8 @@ const EventDetails: React.FC<EventDetailsProps> = ({}) => {
     if (eventDetails) {
       const eventMetadata = formData as EventMetadata;
       eventMetadata.lastUpdatedAt = eventDetails.metadata.lastUpdatedAt;
+      eventMetadata.startTime = moment(eventMetadata.startTime).toISOString();
+      eventMetadata.endTime = moment(eventMetadata.endTime).toISOString();
       updateEvent(eventDetails.ID, { metadata: eventMetadata })
         .then((r) => {
           eventMetadata.lastUpdatedAt = r.data.lastUpdatedAt;
