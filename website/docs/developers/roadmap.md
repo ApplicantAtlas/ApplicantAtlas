@@ -24,3 +24,9 @@ We want to implement a checkin system for the event which would allow you to pri
 ### Photo Gallery
 
 We want to implement a photo gallery for the event which would allow you to upload photos and videos of the event and have them displayed on the website. In addition let participants upload their own photos to be approved by event organizers.
+
+### Event Discovery
+
+We should do some more product market fit analysis to see if we should be actually spending time working on this feature, but allowing for event discovery and showing them on a map could be a cool feature.
+
+Stale related issues: #71 #28
