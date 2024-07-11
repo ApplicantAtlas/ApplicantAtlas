@@ -153,7 +153,7 @@ const FormCreator: React.FC<FormCreatorProps> = ({
                   <strong>Internal Field: </strong>
                   Yes
                   <span
-                    className="tooltip overflow-x-visible"
+                    className="tooltip absolute z-50"
                     data-tip={
                       'This is an internal field, it will not be shown to users submitting the form.'
                     }

@@ -170,7 +170,7 @@ const TimestampInput: React.FC<TimestampInputProps> = ({
             {field.required && <span className="text-error">*</span>}
             {field.description && (
               <div
-                className="tooltip overflow-x-visible"
+                className="tooltip absolute z-50"
                 data-tip={field.description}
               >
                 <InformationIcon className="h-4 w-4" />
