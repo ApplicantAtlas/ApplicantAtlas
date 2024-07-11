@@ -231,17 +231,21 @@ const Responses = ({}: ResponsesProps) => {
 
   return (
     <div>
-      <div className="text-right mb-3 mt-[-3rem]">
+      <div>
         <button
           onClick={() => setIsEditing(!isEditing)}
-          className="btn btn-primary mr-2"
+          className="btn btn-primary mr-2 mb-2 h-min py-2 w-full sm:w-auto"
         >
           <EditIcon className="w-6 h-6" />
           {isEditing ? 'Stop Editing' : 'Edit Fields'}
         </button>
 
-        <button onClick={handleExportCSV} className="btn btn-primary">
-          <ArrowDownTray className="w-6 h-6" /> Export as CSV
+        <button
+          onClick={handleExportCSV}
+          className="btn btn-primary h-min py-2 w-full sm:w-auto"
+        >
+          <ArrowDownTray className="w-6 h-6" />{' '}
+          <span className="min-w-0">Export as CSV</span>
         </button>
       </div>
       <Checkbox
