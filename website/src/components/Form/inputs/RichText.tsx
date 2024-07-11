@@ -62,7 +62,7 @@ const RichText: React.FC<RichTextProps> = ({
                 {field.required && <span className="text-error">*</span>}
                 {field.description && (
                   <div
-                    className="tooltip absolute z-50"
+                    className="tooltip absolute z-50 tooltip-left md:tooltip-top"
                     data-tip={field.description}
                   >
                     <InformationIcon className="h-4 w-4" />

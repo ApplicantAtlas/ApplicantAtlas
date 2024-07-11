@@ -71,7 +71,7 @@ const SelectForm: React.FC<SelectFormProps> = ({ action, onDelete }) => {
 
   return (
     <>
-      <div className="flex space-x-2 bg-gray-100 p-2 rounded">
+      <div className="flex flex-wrap gap-2 bg-gray-100 p-2 rounded">
         <button
           className={`btn ${isActive('responses')}`}
           onClick={() => setPageSelected('responses')}

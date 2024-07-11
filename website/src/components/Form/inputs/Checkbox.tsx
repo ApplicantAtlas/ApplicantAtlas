@@ -37,7 +37,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
               {field.required && <span className="text-error">*</span>}
               {field.description && (
                 <div
-                  className="tooltip absolute z-50"
+                  className="tooltip absolute z-50 tooltip-left md:tooltip-top"
                   data-tip={field.description}
                 >
                   <InformationIcon className="h-4 w-4" />
@@ -58,21 +58,22 @@ const Checkbox: React.FC<CheckboxProps> = ({
       )}
 
       {inline && (
-        <div className="flex items-center space-x-2">
-          <label
-            htmlFor={field.key}
-            className="label flex items-center space-x-2"
-          >
-            <span>{field.question}</span>
-            {field.required && <span className="text-error">*</span>}
-            {field.description && (
-              <div
-                className="tooltip absolute z-50"
-                data-tip={field.description}
-              >
-                <InformationIcon className="h-4 w-4" />
-              </div>
-            )}
+        <div className="flex items-center">
+          <label htmlFor={field.key} className="label">
+            <span
+              className={field.description ? 'label-text pr-4' : 'label-text'}
+            >
+              {field.question}{' '}
+              {field.required && <span className="text-error">*</span>}
+              {field.description && (
+                <span
+                  className="tooltip absolute z-50 tooltip-left md:tooltip-top"
+                  data-tip={field.description}
+                >
+                  <InformationIcon className="h-4 w-4 mr-4" />
+                </span>
+              )}
+            </span>
           </label>
 
           <input
