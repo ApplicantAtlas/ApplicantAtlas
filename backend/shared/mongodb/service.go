@@ -135,9 +135,6 @@ func (s *Service) CreateEvent(ctx context.Context, event models.Event) (*mongo.I
 	if event.Metadata.Name == "" {
 		return nil, ErrEventNameRequired
 	}
-
-	// Ensure the event is not visible when first created
-	event.Metadata.Visibility = false
 	return s.Database.Collection("events").InsertOne(ctx, event)
 }
 

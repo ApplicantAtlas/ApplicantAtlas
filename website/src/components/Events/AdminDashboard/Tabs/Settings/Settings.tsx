@@ -67,11 +67,9 @@ const Settings: React.FC<SettingsProps> = ({}) => {
 
   return (
     <>
-      <h1>Admin Settings for Event {eventDetails?.metadata.name}</h1>
-
       {!editingSecret && (
         <div>
-          <h2 className="text-2xl font-semibold mb-4">Event Secrets</h2>
+          <h2 className="mt-4">Event Secrets</h2>
           <div className="overflow-x-auto">
             <table className="table w-full">
               {/* Table Head */}

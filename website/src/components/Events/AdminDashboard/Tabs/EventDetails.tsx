@@ -71,19 +71,13 @@ const EventDetails: React.FC<EventDetailsProps> = ({}) => {
           defaultValue: metadata.name,
         },
         {
-          key: 'address',
-          question: 'Address',
-          type: 'address',
-          defaultValue: metadata.address,
-        },
-        {
           key: 'startTime',
           question: 'Start Time',
           type: 'timestamp',
           defaultValue: metadata.startTime,
           additionalOptions: {
+            showTimezone: false,
             defaultTimezone: metadata.timezone,
-            showTimezone: true,
           },
         },
         {
@@ -92,8 +86,8 @@ const EventDetails: React.FC<EventDetailsProps> = ({}) => {
           type: 'timestamp',
           defaultValue: metadata.endTime,
           additionalOptions: {
+            showTimezone: false,
             defaultTimezone: metadata.timezone,
-            showTimezone: true,
           },
         },
         {
@@ -102,12 +96,6 @@ const EventDetails: React.FC<EventDetailsProps> = ({}) => {
           type: 'select',
           options: timezoneOptions,
           defaultOptions: timezoneDefaultOptions,
-        },
-        {
-          key: 'visibility',
-          question: 'Visibility',
-          type: 'checkbox',
-          defaultValue: metadata.visibility,
         },
         {
           key: 'website',
@@ -120,18 +108,6 @@ const EventDetails: React.FC<EventDetailsProps> = ({}) => {
           question: 'Description',
           type: 'textarea',
           defaultValue: metadata.description,
-        },
-        {
-          key: 'tags',
-          question: 'Tags',
-          type: 'custommultiselect',
-          defaultOptions: metadata.tags,
-        },
-        {
-          key: 'socialMediaLinks',
-          question: 'Social Media Links',
-          type: 'custommultiselect',
-          defaultOptions: metadata.socialMediaLinks,
         },
         {
           key: 'contactEmail',
@@ -155,7 +131,6 @@ const EventDetails: React.FC<EventDetailsProps> = ({}) => {
 
   return (
     <div className="form-control w-full max-w-2xl">
-      <h1>Event Details</h1>
       <FormBuilder
         formStructure={{ attrs: formFields }}
         submissionFunction={handleFormSubmission}

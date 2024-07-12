@@ -44,7 +44,7 @@ const EmailTemplateSettings: React.FC<EmailTemplateSettingsProps> = ({
           className="btn btn-outline btn-error mt-2"
           onClick={() => setShowDeleteConfirmation(true)}
         >
-          Delete Pipeline
+          Delete Email Template
         </button>
       </p>
 

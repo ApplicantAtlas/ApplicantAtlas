@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import moment from 'moment';
 
 import FormBuilder from '@/components/Form/FormBuilder';
 import { ToastType, useToast } from '@/components/Toast/ToastContext';
@@ -62,7 +63,8 @@ const FormSettings: React.FC<FormSettingsProps> = ({ onDelete }) => {
       },
       {
         question: 'Max Submissions',
-        description: 'The maximum number of total submissions allowed',
+        description:
+          'The maximum number of total submissions allowed. Set to 0 for unlimited',
         type: 'number',
         key: 'maxSubmissions',
         required: false,
@@ -74,7 +76,7 @@ const FormSettings: React.FC<FormSettingsProps> = ({ onDelete }) => {
         type: 'radio',
         key: 'status',
         required: true,
-        options: ['draft', 'published', 'closed', 'archived'],
+        options: ['draft', 'published', 'closed'],
         defaultOptions: [form.status ? form.status : 'draft'],
       },
       {
@@ -140,14 +142,15 @@ const FormSettings: React.FC<FormSettingsProps> = ({ onDelete }) => {
     const {
       status,
       allowMultipleSubmissions,
-      openSubmissionsAt,
-      closeSubmissionsAt,
       maxSubmissions,
       submissionMessage,
       name,
       description,
       isRestricted,
     } = formData;
+    let { openSubmissionsAt, closeSubmissionsAt } = formData;
+    closeSubmissionsAt = moment(closeSubmissionsAt).toISOString();
+    openSubmissionsAt = moment(openSubmissionsAt).toISOString();
     let { allowedSubmitters } = formData;
 
     if (allowedSubmitters) {
@@ -160,7 +163,9 @@ const FormSettings: React.FC<FormSettingsProps> = ({ onDelete }) => {
             : undefined;
           return {
             email,
-            expiresAt: expiresAt ? new Date(expiresAt) : undefined,
+            expiresAt: expiresAt
+              ? new Date(expiresAt).toISOString()
+              : undefined,
           };
         });
     }

@@ -5,10 +5,11 @@ import (
 	"errors"
 	"fmt"
 	"net/smtp"
-	"shared/kafka"
-	"shared/mongodb"
 	"strings"
 	"time"
+
+	"shared/kafka"
+	"shared/mongodb"
 
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
@@ -29,17 +30,15 @@ func NewSendEmailHandler(mongo *mongodb.Service) *SendEmailHandler {
 	return &SendEmailHandler{mongo: mongo}
 }
 
-func (s SendEmailHandler) HandleAction(action kafka.PipelineActionMessage) error {
+func (s *SendEmailHandler) HandleAction(action kafka.PipelineActionMessage) error {
 	sendEmailAction, ok := action.(*kafka.SendEmailMessage)
 	if !ok {
 		return errors.New("invalid action type for SendEmailHandler")
 	}
 
-	// Read event secret data
 	secretData, err := s.mongo.GetEventSecrets(context.TODO(), bson.M{"eventID": sendEmailAction.EventID}, false)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
-			// No event secrets found
 			return ErrRequiredSecretNotFound
 		}
 		return err
@@ -50,7 +49,6 @@ func (s SendEmailHandler) HandleAction(action kafka.PipelineActionMessage) error
 		return ErrRequiredSecretNotFound
 	}
 
-	// Get email template
 	emailTemplate, err := s.mongo.GetEmailTemplate(context.TODO(), sendEmailAction.EmailTemplateID)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
@@ -59,49 +57,45 @@ func (s SendEmailHandler) HandleAction(action kafka.PipelineActionMessage) error
 		return err
 	}
 
-	// Let's resolve to using the email template's To field against the form data
-	var to string
 	if sendEmailAction.Data == nil {
 		return ErrNoToEmailFound
 	}
 
-	if email, ok := sendEmailAction.Data[sendEmailAction.EmailFieldID]; ok {
-		to = email.(string)
-	} else {
+	to, ok := sendEmailAction.Data[sendEmailAction.EmailFieldID].(string)
+	if !ok {
 		return ErrNoToEmailFound
 	}
 
 	toAddresses := []string{to}
+	ccAddresses := emailTemplate.CC
+	bccAddresses := emailTemplate.BCC
+
+	// Create headers
 	toHeader := "To: " + strings.Join(toAddresses, ", ") + "\r\n"
+	ccHeader := "Cc: " + strings.Join(ccAddresses, ", ") + "\r\n"
 
-	// TODO: BCC & CC
-	//to = append(to, emailTemplate.CC...)
-	//to = append(to, emailTemplate.BCC...)
-
-	// Prepare the email headers and body
 	subject := "Subject: " + emailTemplate.Subject + "\r\n"
 	from := "From: " + emailTemplate.From + "\r\n"
 
-	var replyTo string
-	if emailTemplate.ReplyTo != "" {
-		replyTo = "Reply-To: " + emailTemplate.ReplyTo + "\r\n"
-	} else {
-		replyTo = "Reply-To: " + emailTemplate.From + "\r\n"
+	if emailTemplate.ReplyTo == "" {
+		emailTemplate.ReplyTo = emailTemplate.From
 	}
+	replyTo := "Reply-To: " + emailTemplate.ReplyTo + "\r\n"
 
-	dateHeader := "Date: " + time.Now().Format("Mon, 02 Jan 2006 15:04:05 -0700") + "\r\n"
+	dateHeader := "Date: " + time.Now().Format(time.RFC1123Z) + "\r\n"
 	messageID := fmt.Sprintf("Message-ID: <%s@%s>\r\n", uuid.NewString(), smtpConfig.SMTPServer)
 
-	var body string = emailTemplate.Body
+	// MIME and Body
 	mime := "MIME-Version: 1.0\r\n"
+	contentType := "Content-Type: text/plain; charset=\"UTF-8\"\r\n"
+	body := emailTemplate.Body
 	if emailTemplate.IsHTML {
-		mime += "Content-Type: text/html; charset=\"UTF-8\"\r\n"
-		body = "<html><body>" + emailTemplate.Body + "</body></html>"
-	} else {
-		mime += "Content-Type: text/plain; charset=\"UTF-8\"\r\n"
+		contentType = "Content-Type: text/html; charset=\"UTF-8\"\r\n"
+		body = "<html><body>" + body + "</body></html>"
 	}
 
-	message := []byte(subject + from + toHeader + replyTo + dateHeader + messageID + mime + "\r\n" + body)
+	// Compile email message
+	message := []byte(subject + from + toHeader + ccHeader + replyTo + dateHeader + messageID + mime + contentType + "\r\n" + body)
 
 	// SMTP server configuration
 	smtpHost := smtpConfig.SMTPServer
@@ -111,8 +105,12 @@ func (s SendEmailHandler) HandleAction(action kafka.PipelineActionMessage) error
 	// Authentication
 	auth := smtp.PlainAuth("", smtpConfig.Username, smtpConfig.Password, smtpHost)
 
-	// Sending email
-	err = smtp.SendMail(address, auth, emailTemplate.From, toAddresses, message)
+	// Combine all recipients for sending
+	allRecipients := append(toAddresses, ccAddresses...)
+	allRecipients = append(allRecipients, bccAddresses...)
+
+	// Send email
+	err = smtp.SendMail(address, auth, emailTemplate.From, allRecipients, message)
 	if err != nil {
 		return err
 	}
