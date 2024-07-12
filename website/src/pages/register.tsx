@@ -45,18 +45,6 @@ const RegistrationPage = () => {
         required: true,
       },
       {
-        question: 'School Email (Optional)',
-        type: 'text',
-        key: 'schoolEmail',
-        additionalValidation: {
-          isEmail: {
-            isEmail: true,
-            allowSubdomains: true,
-            allowTLDs: ['edu'],
-          },
-        },
-      },
-      {
         question: 'Birthday',
         type: 'date',
         key: 'birthday',

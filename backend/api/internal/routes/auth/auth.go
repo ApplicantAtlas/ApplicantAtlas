@@ -66,12 +66,11 @@ func loginUser(params *types.RouteParams) gin.HandlerFunc {
 }
 
 type registerRequest struct {
-	Email       string `json:"email" validate:"required,email"`
-	Password    string `json:"password" validate:"required,securepwd"`
-	FirstName   string `json:"firstName" validate:"required"`
-	LastName    string `json:"lastName" validate:"required"`
-	SchoolEmail string `json:"schoolEmail" validate:"omitempty,email"`
-	Birthday    string `json:"birthday" validate:"required,dateformat=01/02/2006,minage=13;01/02/2006"`
+	Email     string `json:"email" validate:"required,email"`
+	Password  string `json:"password" validate:"required,securepwd"`
+	FirstName string `json:"firstName" validate:"required"`
+	LastName  string `json:"lastName" validate:"required"`
+	Birthday  string `json:"birthday" validate:"required,dateformat=01/02/2006,minage=13;01/02/2006"`
 }
 
 func registerUser(params *types.RouteParams) gin.HandlerFunc {
@@ -108,7 +107,6 @@ func registerUser(params *types.RouteParams) gin.HandlerFunc {
 			FirstName:    req.FirstName,
 			LastName:     req.LastName,
 			Email:        req.Email,
-			SchoolEmail:  req.SchoolEmail,
 			Birthday:     parsedBirthday,
 			PasswordHash: string(hash),
 		}
