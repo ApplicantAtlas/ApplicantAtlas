@@ -23,6 +23,10 @@ func ValidateResponse(attrValue interface{}, attr models.FormField) error {
 		return fmt.Errorf("field %s is required, got nil", attr.Question)
 	}
 
+	if attr.IsInternal && attrValue != nil {
+		return fmt.Errorf("field %s is internal, you're not allowed to specify this", attr.Question)
+	}
+
 	// todo: this entire thing might need to have different nil checks
 	switch attr.Type {
 	case "text":
