@@ -95,7 +95,7 @@ export type FormStructure = {
   name?: string;
   description?: string;
   createdAt?: Date;
-  status?: 'draft' | 'published' | 'archived' | 'closed';
+  status?: 'draft' | 'published' | 'closed';
   isDeleted?: boolean;
   eventID?: string;
   maxSubmissions?: number; // could be useful for rsvp forms

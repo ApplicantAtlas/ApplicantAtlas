@@ -11,19 +11,12 @@ export type EventModel = {
 // EventMetadata represents the user-defined metadata for an event
 export type EventMetadata = {
   name: string;
-  address?: Address;
-  lat?: number;
-  lon?: number;
   startTime?: string;
   endTime?: string;
   timezone?: string;
-  visibility?: boolean;
   website?: string;
   description?: string;
-  socialMediaLinks?: string[];
-  tags?: string[];
   contactEmail?: string;
-
   lastUpdatedAt: string;
 };
 

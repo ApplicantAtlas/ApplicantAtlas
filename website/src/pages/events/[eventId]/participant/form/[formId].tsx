@@ -42,8 +42,7 @@ const FormSubmission = () => {
     getForm(formId as string)
       .then((r) => {
         if (r.status !== 'published') {
-          const msg =
-            'This form is not published yet, please contact the event organizers if you believe this is incorrect.';
+          const msg = `This form is currently ${r.status}, please contact the event organizers ${event && event.metadata.contactEmail ? 'at ' + event.metadata.contactEmail : ''} if you believe this is incorrect.`;
           showToast(msg, ToastType.Error);
           setErr(msg);
         } else {
@@ -75,7 +74,16 @@ const FormSubmission = () => {
         <div className="p-4">
           <p>{err}</p>
           <small>
-            Please contact the event organizers if you believe this is an error.
+            Please contact the event organizers{' '}
+            {event && event.metadata.contactEmail && (
+              <>
+                at{' '}
+                <a href={`mailto:${event.metadata.contactEmail}`}>
+                  {event.metadata.contactEmail}
+                </a>
+              </>
+            )}{' '}
+            if you believe this is an error.
           </small>
         </div>
       </>
