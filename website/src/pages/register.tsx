@@ -7,8 +7,6 @@ import { User } from '@/types/models/User';
 import { eventEmitter } from '@/events/EventEmitter';
 import FormBuilder from '@/components/Form/FormBuilder';
 import { FormStructure } from '@/types/models/Form';
-import { IS_BACKEND_DISABLED } from '@/config/constants';
-import DisabledBackend from '@/components/Auth/DisabledBackend';
 import Header from '@/components/Header';
 import Metadata from '@/components/Metadata';
 
@@ -109,22 +107,18 @@ const RegistrationPage = () => {
       <Metadata title="ApplicantAtlas | Register" />
       <Header />
       <div className="flex items-center justify-center h-screen bg-gray-100">
-        {IS_BACKEND_DISABLED ? (
-          <DisabledBackend />
-        ) : (
-          <div className="w-full max-w-md">
-            <FormBuilder
-              formStructure={registrationFormStructure}
-              submissionFunction={handleSubmit}
-              buttonText="Register"
-            />
-            <Link href="/login">
-              <div className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800 cursor-pointer">
-                Already have an account? Sign In
-              </div>
-            </Link>
-          </div>
-        )}
+        <div className="w-full max-w-md">
+          <FormBuilder
+            formStructure={registrationFormStructure}
+            submissionFunction={handleSubmit}
+            buttonText="Register"
+          />
+          <Link href="/login">
+            <div className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800 cursor-pointer">
+              Already have an account? Sign In
+            </div>
+          </Link>
+        </div>
       </div>
     </>
   );
