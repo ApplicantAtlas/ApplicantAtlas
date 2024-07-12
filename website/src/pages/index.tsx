@@ -76,7 +76,6 @@ export default function Component() {
               {/* can add partner section later here from template */}
             </div>
           </section>
-
           <section className="relative py-8 lg:py-20" id="features">
             <div className="absolute start-[10%] z-0">
               <div className="pointer-events-none aspect-square w-60 rounded-full bg-gradient-to-r from-primary/10 via-violet-500/10 to-purple-500/10 blur-3xl [transform:translate3d(0,0,0)] lg:w-[600px]"></div>
@@ -202,7 +201,6 @@ export default function Component() {
               </div>
             </div>
           </section>
-
           <section className="py-8 lg:py-20" id="about">
             <div className="container mx-auto">
               <div className="text-center">
@@ -287,7 +285,6 @@ export default function Component() {
               </div>
             </div>
           </section>
-
           <section className="py-8 lg:py-20" id="faq">
             <div className="container mx-auto">
               <div className="text-center">
