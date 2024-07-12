@@ -299,10 +299,9 @@ func (s *Service) ListForms(ctx context.Context, filter bson.M) ([]models.FormSt
 func (s *Service) UpdateUserDetails(ctx context.Context, userId primitive.ObjectID, updatedUserDetails models.User) error {
 	// Update the user details in the database
 	update := bson.M{"$set": bson.M{
-		"firstName":   updatedUserDetails.FirstName,
-		"lastName":    updatedUserDetails.LastName,
-		"schoolEmail": updatedUserDetails.SchoolEmail,
-		"birthday":    updatedUserDetails.Birthday,
+		"firstName": updatedUserDetails.FirstName,
+		"lastName":  updatedUserDetails.LastName,
+		"birthday":  updatedUserDetails.Birthday,
 	}}
 
 	filter := bson.M{"_id": userId}

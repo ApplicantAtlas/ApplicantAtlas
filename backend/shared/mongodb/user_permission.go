@@ -99,7 +99,7 @@ func IsUserEmailInWhitelist(c *gin.Context, whitelist []models.FormAllowedSubmit
 
 	hasExpired := false
 	for _, allowedSubmitter := range whitelist {
-		if allowedSubmitter.Email == authenticatedUser.Email || authenticatedUser.SchoolEmail == allowedSubmitter.Email {
+		if allowedSubmitter.Email == authenticatedUser.Email {
 			if allowedSubmitter.ExpiresAt.IsZero() || allowedSubmitter.ExpiresAt.After(time.Now()) {
 				return true, ""
 			} else {

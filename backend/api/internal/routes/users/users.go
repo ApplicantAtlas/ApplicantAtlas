@@ -37,11 +37,10 @@ func getUserMyself(params *types.RouteParams) gin.HandlerFunc {
 }
 
 type updateUserRequest struct {
-	Email       string `json:"email" validate:"required,email"`
-	FirstName   string `json:"firstName" validate:"required"`
-	LastName    string `json:"lastName" validate:"required"`
-	SchoolEmail string `json:"schoolEmail" validate:"omitempty,email"`
-	Birthday    string `json:"birthday" validate:"required,dateformat=01/02/2006,minage=13;01/02/2006"`
+	Email     string `json:"email" validate:"required,email"`
+	FirstName string `json:"firstName" validate:"required"`
+	LastName  string `json:"lastName" validate:"required"`
+	Birthday  string `json:"birthday" validate:"required,dateformat=01/02/2006,minage=13;01/02/2006"`
 }
 
 func updateUserMyself(params *types.RouteParams) gin.HandlerFunc {
@@ -65,10 +64,9 @@ func updateUserMyself(params *types.RouteParams) gin.HandlerFunc {
 		}
 
 		var updatedUserDetailsModel models.User = models.User{
-			FirstName:   updatedUserDetails.FirstName,
-			LastName:    updatedUserDetails.LastName,
-			SchoolEmail: updatedUserDetails.SchoolEmail,
-			Birthday:    parsedBirthday,
+			FirstName: updatedUserDetails.FirstName,
+			LastName:  updatedUserDetails.LastName,
+			Birthday:  parsedBirthday,
 		}
 
 		err = params.MongoService.UpdateUserDetails(c, authenticatedUser.ID, updatedUserDetailsModel)

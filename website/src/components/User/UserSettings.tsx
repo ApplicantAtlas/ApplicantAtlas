@@ -73,20 +73,6 @@ const UserSettings: React.FC = () => {
           defaultValue: user?.email,
         },
         {
-          key: 'schoolEmail',
-          question: 'School Email',
-          type: 'text',
-          additionalValidation: {
-            isEmail: {
-              isEmail: true,
-              allowTLDs: ['edu'],
-              allowSubdomains: true,
-            },
-          },
-          required: false,
-          defaultValue: user?.schoolEmail,
-        },
-        {
           key: 'alternativeEmails',
           question: 'Alternative Emails',
           type: 'custommultiselect',
