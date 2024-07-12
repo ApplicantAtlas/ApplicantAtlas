@@ -2,3 +2,5 @@ node_modules
 .next/
 tsconfig.tsbuildinfo
 out
+# Sentry Config File
+.env.sentry-build-plugin
