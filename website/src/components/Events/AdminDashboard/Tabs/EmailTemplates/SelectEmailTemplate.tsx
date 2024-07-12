@@ -54,7 +54,7 @@ const SelectEmailTemplate: React.FC<SelectEmailTemplateProps> = ({
 
   return (
     <>
-      <div className="flex space-x-2 bg-gray-100 p-2 rounded">
+      <div className="flex flex-wrap gap-2 bg-gray-100 p-2 rounded">
         <button
           className={`btn ${isActive('edit')}`}
           onClick={() => setPageSelected('edit')}

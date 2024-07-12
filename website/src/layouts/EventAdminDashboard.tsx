@@ -64,12 +64,12 @@ const ContentWithLoading: React.FC<{
   const isLoading = useSelector((state: RootState) => state.event.loading);
   return (
     <>
-      <div className="flex flex-1 min-h-screen overflow-x-auto">
+      <div className="flex flex-1 min-h-screen w-full overflow-hidden">
         <Sidebar
           activeSection={activeSection}
           setActiveSection={setActiveSection}
         />
-        <main className="w-full flex-grow p-4 overflow-x-auto">
+        <main className="flex-grow w-full p-4 overflow-x-auto">
           {isLoading ? <LoadingSpinner /> : children()}
         </main>
       </div>

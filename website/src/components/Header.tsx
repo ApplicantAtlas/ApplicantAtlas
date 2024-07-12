@@ -256,26 +256,27 @@ export default function Header({
                       </span>
                     </div>
                   </div>
-
                   {/* Dropdown Menu */}
                   {dropdownOpen && (
-                    <ul
-                      tabIndex={0}
-                      className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-40"
-                    >
-                      {userSubmenuItems.map((item, index) => (
-                        <li key={index}>
-                          <Link href={item.href}>
-                            <span
-                              className="block py-2 font-bold text-gray-700 cursor-pointer"
-                              onClick={() => setDropdownOpen(false)}
-                            >
-                              {item.label}
-                            </span>
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
+                    <div className="relative z-50">
+                      <ul
+                        tabIndex={0}
+                        className="dropdown-content menu absolute right-0 mt-2 p-2 shadow bg-base-100 rounded-box w-40"
+                      >
+                        {userSubmenuItems.map((item, index) => (
+                          <li key={index}>
+                            <Link href={item.href}>
+                              <span
+                                className="block py-2 font-bold text-gray-700 cursor-pointer"
+                                onClick={() => setDropdownOpen(false)}
+                              >
+                                {item.label}
+                              </span>
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   )}
                 </div>
               </div>
