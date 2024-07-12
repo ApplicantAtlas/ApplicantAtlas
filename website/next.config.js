@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 const isProd = process.env.NODE_ENV === 'production';
 
+import dotenv from 'dotenv';
+dotenv.config();
+
 // Default API URL for development
 let apiUrl = 'http://localhost:8080';
 
@@ -15,6 +18,11 @@ if (isProd) {
 const nextConfig = {
   env: {
     NEXT_PUBLIC_API_URL: apiUrl,
+    NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY || '',
+    NEXT_PUBLIC_POSTHOG_HOST:
+      process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com',
+    NEXT_PUBLIC_ENABLE_ANALYTICS:
+      process.env.NEXT_PUBLIC_ENABLE_ANALYTICS || 'false',
   },
   images: {
     remotePatterns: [
@@ -25,6 +33,10 @@ const nextConfig = {
         pathname: '/u/**',
       },
     ],
+  },
+  publicRuntimeConfig: {
+    // Analytics can be dynamically enabled/disabled
+    analyticsEnabled: process.env.NEXT_PUBLIC_ENABLE_ANALYTICS === 'true',
   },
 };
 
