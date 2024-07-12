@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import moment from 'moment';
 
 import { ToastType, useToast } from '@/components/Toast/ToastContext';
 import { UpdatePipeline } from '@/services/PipelineService';
@@ -19,6 +20,11 @@ const SelectPipeline: React.FC<SelectPipelineProps> = ({ onDelete }) => {
   const pipelineConfig = useSelector(
     (state: RootState) => state.pipeline.pipelineState,
   );
+
+  const formatDate = (date: Date | undefined) => {
+    if (!date) return '';
+    return date ? moment(date).format('MMMM Do, YYYY') : '';
+  };
 
   const [pageSelected, setPageSelected] = useState<
     'view' | 'edit' | 'settings' | 'runs'
@@ -84,7 +90,29 @@ const SelectPipeline: React.FC<SelectPipelineProps> = ({ onDelete }) => {
 
       {pageSelected === 'edit' && <PipelineBuilder onSubmit={updatePipeline} />}
 
-      {pageSelected === 'view' && <p>{JSON.stringify(pipelineConfig)}</p>}
+      {pageSelected === 'view' && (
+        <>
+          {!pipelineConfig.enabled && (
+            <div
+              className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4"
+              role="alert"
+            >
+              <strong className="font-bold">Pipeline is disabled</strong>
+              <span className="block sm:inline">
+                {' '}
+                - Enable the pipeline in settings to resume pipeline runs.
+              </span>
+            </div>
+          )}
+
+          <div>
+            <strong>Last Updated:</strong>{' '}
+            {pipelineConfig.lastUpdatedAt
+              ? formatDate(new Date(pipelineConfig.lastUpdatedAt))
+              : ''}
+          </div>
+        </>
+      )}
 
       {pageSelected === 'settings' && <PipelineSettings onDelete={onDelete} />}
 
