@@ -1,6 +1,7 @@
 // AuthService.ts
 import { AxiosResponse } from 'axios';
 import { jwtDecode } from 'jwt-decode';
+import posthog from 'posthog-js';
 
 import { User } from '@/types/models/User';
 
@@ -19,6 +20,11 @@ const login = (u: User): Promise<User> => {
 
       const decoded: User = jwtDecode<User>(tok);
       localStorage.setItem('user', JSON.stringify(decoded));
+
+      posthog.identify(decoded.id, {
+        email: decoded.email,
+        name: `${decoded.firstName} ${decoded.lastName}`,
+      });
       resolve(decoded);
     } catch (error) {
       reject(error);
@@ -29,6 +35,7 @@ const login = (u: User): Promise<User> => {
 const logout = (): void => {
   localStorage.removeItem('user');
   localStorage.removeItem('token');
+  posthog.reset();
 };
 
 // Delete self

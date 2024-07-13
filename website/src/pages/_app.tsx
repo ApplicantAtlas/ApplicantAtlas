@@ -9,6 +9,7 @@ import store from '@/store';
 import '../styles/global.css';
 import '../styles/fonts.css';
 import RootLayout from '@/layouts/Root';
+import { User } from '@/types/models/User';
 
 // Check that PostHog is client-side (used to handle Next.js SSR)
 if (
@@ -27,7 +28,21 @@ if (
   });
 }
 
+const useIdentifyUser = () => {
+  useEffect(() => {
+    const userJson = localStorage.getItem('user');
+    if (userJson) {
+      const user: User = JSON.parse(userJson);
+      posthog.identify(user.id, {
+        email: user.email,
+        name: `${user.firstName} ${user.lastName}`,
+      });
+    }
+  }, []);
+};
+
 function MyApp({ Component, pageProps }: AppProps) {
+  useIdentifyUser();
   const router = useRouter();
 
   useEffect(() => {
