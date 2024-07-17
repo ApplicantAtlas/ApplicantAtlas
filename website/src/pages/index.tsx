@@ -308,6 +308,7 @@ export default function Component() {
                       type="radio"
                       id="faq_what_is_applicant_atlas"
                       aria-labelledby="faq_what_is_applicant_atlas_label"
+                      aria-label="What is ApplicantAtlas?"
                     />
                     <label
                       className="collapse-title text-xl font-medium"
@@ -332,6 +333,7 @@ export default function Component() {
                       type="radio"
                       id="faq_getting_started"
                       aria-labelledby="faq_getting_started_label"
+                      aria-label="How can I get started with ApplicantAtlas?"
                     />
                     <label
                       className="collapse-title text-xl font-medium"
@@ -367,6 +369,7 @@ export default function Component() {
                       type="radio"
                       id="faq_open_source"
                       aria-labelledby="faq_open_source_label"
+                      aria-label="Is ApplicantAtlas really open-source?"
                     />
                     <label
                       className="collapse-title text-xl font-medium"
@@ -398,6 +401,7 @@ export default function Component() {
                       type="radio"
                       id="faq_integrations"
                       aria-labelledby="faq_integrations_label"
+                      aria-label="What integrations are available with ApplicantAtlas?"
                     />
                     <label
                       className="collapse-title text-xl font-medium"
@@ -422,6 +426,7 @@ export default function Component() {
                       type="radio"
                       id="faq_contribute"
                       aria-labelledby="faq_contribute_label"
+                      aria-label="How can I contribute to ApplicantAtlas?"
                     />
                     <label
                       className="collapse-title text-xl font-medium"
@@ -452,6 +457,7 @@ export default function Component() {
                       type="radio"
                       id="faq_more_info"
                       aria-labelledby="faq_more_info_label"
+                      aria-label="Where can I access more information about ApplicantAtlas?"
                     />
                     <label
                       className="collapse-title text-xl font-medium"
