@@ -12,6 +12,7 @@ import (
 type Event struct {
 	ID           primitive.ObjectID   `bson:"_id,omitempty" mongoPreventOverride:"true"`
 	OrganizerIDs []primitive.ObjectID `bson:"organizerIDs" json:"organizerIDs"`
+	CreatedByID  primitive.ObjectID   `bson:"createdByID" json:"createdByID"`
 	Metadata     EventMetadata        `bson:"metadata" json:"metadata"`
 }
 

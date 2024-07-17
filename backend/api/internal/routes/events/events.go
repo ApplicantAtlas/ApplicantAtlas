@@ -93,6 +93,7 @@ func createEventHandler(params *types.RouteParams) gin.HandlerFunc {
 				LastUpdatedAt: lastUpdatedAt,
 			},
 			OrganizerIDs: []primitive.ObjectID{authenticatedUser.ID},
+			CreatedByID:  authenticatedUser.ID,
 		}
 
 		// Insert the new event into the database
@@ -399,6 +400,11 @@ func removeOrganizerHandler(params *types.RouteParams) gin.HandlerFunc {
 		event, err := params.MongoService.GetEvent(c, objID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get event"})
+			return
+		}
+
+		if event.CreatedByID == userObjID {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Cannot remove the creator of the event as an admin, you must delete the event instead"})
 			return
 		}
 

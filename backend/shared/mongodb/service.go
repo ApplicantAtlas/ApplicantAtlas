@@ -231,8 +231,8 @@ func (s *Service) DeleteEvent(ctx *gin.Context, eventID primitive.ObjectID) (*mo
 		return nil, err
 	}
 
-	// Ensure the user is an organizer
-	if !CanUserModifyEvent(ctx, s, authenticatedUser, event.ID, &event) {
+	// Ensure the user is the creator of the event
+	if authenticatedUser.ID != event.CreatedByID {
 		return nil, ErrUserNotAuthorized
 	}
 
