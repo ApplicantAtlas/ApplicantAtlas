@@ -76,6 +76,7 @@ export default function Component() {
               {/* can add partner section later here from template */}
             </div>
           </section>
+
           <section className="relative py-8 lg:py-20" id="features">
             <div className="absolute start-[10%] z-0">
               <div className="pointer-events-none aspect-square w-60 rounded-full bg-gradient-to-r from-primary/10 via-violet-500/10 to-purple-500/10 blur-3xl [transform:translate3d(0,0,0)] lg:w-[600px]"></div>
@@ -201,6 +202,7 @@ export default function Component() {
               </div>
             </div>
           </section>
+
           <section className="py-8 lg:py-20" id="about">
             <div className="container mx-auto">
               <div className="text-center">
@@ -285,6 +287,7 @@ export default function Component() {
               </div>
             </div>
           </section>
+
           <section className="py-8 lg:py-20" id="faq">
             <div className="container mx-auto">
               <div className="text-center">
@@ -300,14 +303,23 @@ export default function Component() {
               <div className="mt-12 flex justify-center gap-6">
                 <div className="space-y-4 lg:w-1/2">
                   <div className="collapse collapse-arrow border border-base-content/10">
-                    <input name="faq" type="radio" aria-label="open/close" />
-                    <div className="collapse-title text-xl font-medium">
+                    <input
+                      name="faq_what_is_applicant_atlas"
+                      type="radio"
+                      id="faq_what_is_applicant_atlas"
+                      aria-labelledby="faq_what_is_applicant_atlas_label"
+                    />
+                    <label
+                      className="collapse-title text-xl font-medium"
+                      id="faq_what_is_applicant_atlas_label"
+                      htmlFor="faq_what_is_applicant_atlas"
+                    >
                       What is ApplicantAtlas?
-                    </div>
+                    </label>
                     <div className="collapse-content">
                       <p className="text-base">
-                        ApplicantAtlas is an open-source evenet management,
-                        it&apos;s designed to streamline the process of
+                        ApplicantAtlas is an open-source event management
+                        platform designed to streamline the process of
                         organizing events, especially hackathons. It offers
                         tools for creating custom forms, automating workflows,
                         and integrating with other applications.
@@ -315,10 +327,19 @@ export default function Component() {
                     </div>
                   </div>
                   <div className="collapse collapse-arrow border border-base-content/10">
-                    <input name="faq" type="radio" aria-label="open/close" />
-                    <div className="collapse-title text-xl font-medium">
+                    <input
+                      name="faq_getting_started"
+                      type="radio"
+                      id="faq_getting_started"
+                      aria-labelledby="faq_getting_started_label"
+                    />
+                    <label
+                      className="collapse-title text-xl font-medium"
+                      id="faq_getting_started_label"
+                      htmlFor="faq_getting_started"
+                    >
                       How can I get started with ApplicantAtlas?
-                    </div>
+                    </label>
                     <div className="collapse-content">
                       <p className="text-base">
                         You&apos;ll need to run your own instance of
@@ -331,6 +352,7 @@ export default function Component() {
                         >
                           here
                         </Link>
+                        .
                         <br />
                         We&apos;re currently working behind the scenes to offer
                         a fully managed hosted version of ApplicantAtlas soon!
@@ -340,10 +362,19 @@ export default function Component() {
                     </div>
                   </div>
                   <div className="collapse collapse-arrow border border-base-content/10">
-                    <input name="faq" type="radio" aria-label="open/close" />
-                    <div className="collapse-title text-xl font-medium">
+                    <input
+                      name="faq_open_source"
+                      type="radio"
+                      id="faq_open_source"
+                      aria-labelledby="faq_open_source_label"
+                    />
+                    <label
+                      className="collapse-title text-xl font-medium"
+                      id="faq_open_source_label"
+                      htmlFor="faq_open_source"
+                    >
                       Is ApplicantAtlas really open-source?
-                    </div>
+                    </label>
                     <div className="collapse-content">
                       <p className="text-base">
                         Yes, ApplicantAtlas is fully open-source under the AGPL
@@ -357,52 +388,81 @@ export default function Component() {
                         >
                           GitHub
                         </Link>
+                        .
                       </p>
                     </div>
                   </div>
                   <div className="collapse collapse-arrow border border-base-content/10">
-                    <input name="faq" type="radio" aria-label="open/close" />
-                    <div className="collapse-title text-xl font-medium">
+                    <input
+                      name="faq_integrations"
+                      type="radio"
+                      id="faq_integrations"
+                      aria-labelledby="faq_integrations_label"
+                    />
+                    <label
+                      className="collapse-title text-xl font-medium"
+                      id="faq_integrations_label"
+                      htmlFor="faq_integrations"
+                    >
                       What integrations are available with ApplicantAtlas?
-                    </div>
+                    </label>
                     <div className="collapse-content">
                       <p className="text-base">
                         Currently, we offer integrations via webhooks. You can
                         configure webhooks to trigger events in other
                         applications based on actions in ApplicantAtlas.
-                        We&apos;re working on adding more application specific
+                        We&apos;re working on adding more application-specific
                         integrations in the future.
                       </p>
                     </div>
                   </div>
                   <div className="collapse collapse-arrow border border-base-content/10">
-                    <input name="faq" type="radio" aria-label="open/close" />
-                    <div className="collapse-title text-xl font-medium">
+                    <input
+                      name="faq_contribute"
+                      type="radio"
+                      id="faq_contribute"
+                      aria-labelledby="faq_contribute_label"
+                    />
+                    <label
+                      className="collapse-title text-xl font-medium"
+                      id="faq_contribute_label"
+                      htmlFor="faq_contribute"
+                    >
                       How can I contribute to ApplicantAtlas?
-                    </div>
+                    </label>
                     <div className="collapse-content">
                       <p className="text-base">
-                        We welcome contributions of any type to ApplicantAtlas
+                        We welcome contributions of any type to ApplicantAtlas,
                         whether it&apos;s code, documentation, better designs,
-                        or anything else! The best place to find up to date
+                        or anything else! The best place to find up-to-date
                         information on contributing is{' '}
                         <Link
                           href="https://github.com/davidteather/ApplicantAtlas/blob/main/website/docs/developers/index.md#contributing"
                           className="font-medium hover:font-semibold"
                         >
                           here
-                        </Link>{' '}
+                        </Link>
+                        .
                       </p>
                     </div>
                   </div>
                   <div className="collapse collapse-arrow border border-base-content/10">
-                    <input name="faq" type="radio" aria-label="open/close" />
-                    <div className="collapse-title text-xl font-medium">
+                    <input
+                      name="faq_more_info"
+                      type="radio"
+                      id="faq_more_info"
+                      aria-labelledby="faq_more_info_label"
+                    />
+                    <label
+                      className="collapse-title text-xl font-medium"
+                      id="faq_more_info_label"
+                      htmlFor="faq_more_info"
+                    >
                       Where can I access more information about ApplicantAtlas?
-                    </div>
+                    </label>
                     <div className="collapse-content">
                       <p className="text-base">
-                        The best place to find more information about is on our{' '}
+                        The best place to find more information is on our{' '}
                         <Link
                           href="https://github.com/davidteather/ApplicantAtlas"
                           className="font-medium hover:font-semibold"
