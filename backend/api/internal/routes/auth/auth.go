@@ -3,6 +3,7 @@ package auth
 import (
 	"api/internal/middlewares"
 	"api/internal/types"
+	"fmt"
 	"net/http"
 	"shared/logger"
 	"shared/models"
@@ -121,6 +122,7 @@ func registerUser(params *types.RouteParams) gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to register user"})
 			return
 		}
+		utils.SendSlackMessage(fmt.Sprintf("New User: %s %s (%s)", newUser.FirstName, newUser.LastName, newUser.Email))
 		c.JSON(http.StatusOK, gin.H{"message": "User registered successfully, please login"})
 	}
 }
