@@ -7,3 +7,11 @@ export const SendEvent = (
 ) => {
   posthog.capture(event, properties, options);
 };
+
+export const enablePostHog = () => {
+  posthog.opt_in_capturing();
+};
+
+export const disablePostHog = () => {
+  posthog.opt_out_capturing();
+};

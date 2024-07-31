@@ -12,8 +12,8 @@ but if you want to contribute to this project please do :D and if you have any q
 
 ### How to Support The Project
 * Star the repo 😎
-* Consider [sponsoring](https://github.com/sponsors/davidteather) me on GitHub
-* Send me an email or a [LinkedIn](https://www.linkedin.com/in/davidteather/) message telling me what you're using the project for and if there's any additional features you would like to see
+* Consider [sponsoring](https://github.com/sponsors/applicantatlas) ApplicantAtlas on GitHub
+* Send us an email (hello@applicantatlas.com) or a [LinkedIn](https://www.linkedin.com/company/applicantatlas) message telling us what you're using the project for and if there's any additional features you would like to see
 * Submit PRs for issues :)
 
 ### Documentation
@@ -26,4 +26,4 @@ The documentation is available [as markdown](./website/docs/index.md)
 
 ### Getting Help
 
-If you have any questions or need help, feel free to open an issue or contact me on [LinkedIn](https://www.linkedin.com/in/davidteather/) or join our [Discord](https://discord.gg/yyPhbfma6f)
+If you have any questions or need help, feel free to open an issue or send us an email at hello@applicantatlas.com

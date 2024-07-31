@@ -4,7 +4,7 @@ const Footer: React.FC = () => {
   return (
     <footer className="p-4 bg-white text-center shadow md:flex md:items-center md:justify-center md:p-6 md:flex-col">
       <span className="text-sm text-gray-500">
-        © 2023 David Teather. All Rights Reserved.
+        © 2023 ApplicantAtlas LLC. All Rights Reserved.
       </span>
       <span className="text-sm text-gray-500 mt-2">
         Licensed under
@@ -21,7 +21,7 @@ const Footer: React.FC = () => {
         <span>
           View on
           <a
-            href="https://github.com/davidteather/ApplicantAtlas"
+            href="https://github.com/ApplicantAtlas/ApplicantAtlas"
             target="_blank"
             rel="noopener noreferrer"
             className="text-blue-600 hover:underline"
@@ -31,6 +31,20 @@ const Footer: React.FC = () => {
           </a>
           .
         </span>
+      </span>
+      <span className="text-sm text-gray-500 mt-1">
+        <a
+          href="/docs/privacy-policy"
+          className="text-blue-600 hover:underline"
+        >
+          Terms of Service
+        </a>{' '}
+        <a
+          href="/docs/privacy-policy"
+          className="text-blue-600 hover:underline sm:ml-4"
+        >
+          Privacy Policy
+        </a>
       </span>
     </footer>
   );

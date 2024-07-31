@@ -35,7 +35,7 @@ export default function Component() {
       <div className="relative scroll-smooth">
         <Header menuItems={menuItems} primaryButton={primaryButton} />
 
-        <main className="overflow-x-hidden bg-base-100 font-body text-sm text-base-content antialiased">
+        <main className="overflow-x-hidden bg-base-100 font-body text-sm text-base-content antialiased px-4">
           <section className="py-8 lg:py-20" id="home">
             <div className="container mx-auto">
               <div className="grid gap-12 lg:grid-cols-2">
@@ -349,7 +349,7 @@ export default function Component() {
                         the source code and documentation on running your own
                         instance{' '}
                         <Link
-                          href="https://github.com/davidteather/ApplicantAtlas/blob/main/website/docs/index.md"
+                          href="https://github.com/ApplicantAtlas/ApplicantAtlas/blob/main/website/docs/index.md"
                           className="font-medium hover:font-semibold"
                         >
                           here
@@ -386,7 +386,7 @@ export default function Component() {
                         sharing improvements and feedback. You can access the
                         code on{' '}
                         <Link
-                          href="https://github.com/davidteather/ApplicantAtlas"
+                          href="https://github.com/ApplicantAtlas/ApplicantAtlas"
                           className="font-medium hover:font-semibold"
                         >
                           GitHub
@@ -442,7 +442,7 @@ export default function Component() {
                         or anything else! The best place to find up-to-date
                         information on contributing is{' '}
                         <Link
-                          href="https://github.com/davidteather/ApplicantAtlas/blob/main/website/docs/developers/index.md#contributing"
+                          href="https://github.com/ApplicantAtlas/ApplicantAtlas/blob/main/website/docs/developers/index.md#contributing"
                           className="font-medium hover:font-semibold"
                         >
                           here
@@ -470,7 +470,7 @@ export default function Component() {
                       <p className="text-base">
                         The best place to find more information is on our{' '}
                         <Link
-                          href="https://github.com/davidteather/ApplicantAtlas"
+                          href="https://github.com/ApplicantAtlas/ApplicantAtlas"
                           className="font-medium hover:font-semibold"
                         >
                           GitHub

@@ -14,6 +14,8 @@ import { User } from '@/types/models/User';
 // Check that PostHog is client-side (used to handle Next.js SSR)
 if (
   typeof window !== 'undefined' &&
+  !window.location.host.includes('127.0.0.1') &&
+  !window.location.host.includes('localhost') &&
   process.env.NEXT_PUBLIC_POSTHOG_KEY &&
   process.env.NEXT_PUBLIC_ENABLE_ANALYTICS === 'true'
 ) {
@@ -23,7 +25,16 @@ if (
     person_profiles: 'identified_only', // can switch to all for more data, but higher cost too
     // Enable debug mode in development
     loaded: (posthog) => {
-      if (process.env.NODE_ENV === 'development') posthog.debug();
+      if (process.env.NODE_ENV === 'development') {
+        posthog.debug();
+      } else {
+        const consentGiven = localStorage.getItem('cookieConsent');
+        if (consentGiven === 'accepted') {
+          posthog.opt_in_capturing();
+        } else if (consentGiven === 'declined') {
+          posthog.opt_out_capturing();
+        }
+      }
     },
   });
 }

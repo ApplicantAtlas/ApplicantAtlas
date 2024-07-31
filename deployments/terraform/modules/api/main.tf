@@ -38,7 +38,7 @@ resource "aws_cloudwatch_log_group" "lambda_log_group" {
 # TODO: Need to add semvar to the docker tags, since if we use latest it doesn't update the image immediately
 resource "aws_lambda_function" "applicant_atlas_api" {
   function_name = "applicant_atlas_api"
-  image_uri     = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/${aws_ecr_repository.applicant_atlas_api_lambda.name}:51c985424bad283f178aec7872eaf880fc8d2880"
+  image_uri     = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/${aws_ecr_repository.applicant_atlas_api_lambda.name}:621416f931df3fd01b56216b137a6df64f9e1da3"
   role          = aws_iam_role.iam_for_lambda.arn
   package_type  = "Image"
   memory_size   = 128
@@ -63,7 +63,7 @@ resource "aws_iam_role" "iam_for_lambda" {
           Service = "lambda.amazonaws.com"
         }
         Effect = "Allow"
-        Sid = ""
+        Sid    = ""
       }
     ]
   })
@@ -79,7 +79,7 @@ resource "aws_iam_role" "iam_for_lambda" {
             "logs:CreateLogStream",
             "logs:PutLogEvents"
           ]
-          Effect = "Allow"
+          Effect   = "Allow"
           Resource = "arn:aws:logs:*:*:*"
         }
       ]
@@ -97,7 +97,7 @@ resource "aws_iam_role" "iam_for_lambda" {
             "sqs:GetQueueAttributes",
             "sqs:GetQueueUrl"
           ]
-          Effect = "Allow"
+          Effect   = "Allow"
           Resource = var.sqs_queue_arn
         }
       ]
@@ -147,7 +147,7 @@ resource "aws_api_gateway_deployment" "api_deploy" {
 }
 
 module "cors" {
-  source = "squidfunk/api-gateway-enable-cors/aws"
+  source  = "squidfunk/api-gateway-enable-cors/aws"
   version = "0.3.3"
 
   api_id          = aws_api_gateway_rest_api.api.id

@@ -43,7 +43,7 @@ const DocLayout: React.FC<DocLayoutProps> = ({ children, toc, path }) => {
               className="btn btn-neutral btn-md p-2"
               onClick={() =>
                 window.open(
-                  `https://github.com/davidteather/ApplicantAtlas/blob/main/website/${path}`,
+                  `https://github.com/ApplicantAtlas/ApplicantAtlas/blob/main/website/${path}`,
                   '_blank',
                 )
               }
