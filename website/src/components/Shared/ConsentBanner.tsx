@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 import { disablePostHog, enablePostHog } from '@/services/AnalyticsService';
 
@@ -34,12 +35,12 @@ const ConsentBanner = () => {
       <p className="text-center text-sm sm:text-left">
         We use cookies to enhance your experience. By continuing to visit this
         site you agree to{' '}
-        <a
+        <Link
           href="/docs/privacy-policy"
           className="text-blue-600 hover:underline"
         >
           our use
-        </a>{' '}
+        </Link>{' '}
         of cookies.
       </p>
       <div className="flex space-x-2">
