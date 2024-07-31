@@ -35,9 +35,14 @@ resource "aws_cloudwatch_log_group" "lambda_log_group" {
   retention_in_days = 14
 }
 
+data "aws_ecr_image" "lambda_image" {
+  repository_name = aws_ecr_repository.applicant_atlas_api_lambda
+  image_tag       = var.version
+}
+
 resource "aws_lambda_function" "applicant_atlas_event_listener" {
   function_name = "applicant_atlas_event_listener"
-  image_uri     = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/${aws_ecr_repository.applicant_atlas_event_listener_lambda.name}:621416f931df3fd01b56216b137a6df64f9e1da3"
+  image_uri     = aws_ecr_image.lambda_image.image_uri
   role          = aws_iam_role.iam_for_lambda.arn
   package_type  = "Image"
   memory_size   = 128

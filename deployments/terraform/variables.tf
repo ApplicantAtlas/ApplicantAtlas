@@ -17,3 +17,9 @@ variable "aws_region" {
   description = "AWS region"
   type        = string
 }
+
+variable "version" {
+  description = "The current software version"
+  type        = string
+  default     = "0.0.1"
+}

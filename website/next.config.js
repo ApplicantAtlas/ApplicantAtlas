@@ -17,6 +17,7 @@ if (isProd) {
 const nextConfig = {
   env: {
     NEXT_PUBLIC_API_URL: apiUrl,
+    NEXT_PUBLIC_VERSION: '0.0.1',
 
     // PostHog analytics
     NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY || '',
