@@ -21,5 +21,5 @@ variable "aws_region" {
 variable "version" {
   description = "The current software version"
   type        = string
-  default     = "0.0.5"
+  default     = "0.0.6"
 }
