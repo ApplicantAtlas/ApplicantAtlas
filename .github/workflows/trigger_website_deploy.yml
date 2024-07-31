@@ -14,7 +14,7 @@ jobs:
       run: |
         URL="${{ secrets.AMPLIFY_DEPLOY_WEBHOOK_URL }}"
         curl -X POST -d {} "$URL" -H "Content-Type:application/json"
-        exit 1
+        exit 0
         fi
       env:
         AMPLIFY_DEPLOY_WEBHOOK_URL: ${{ secrets.AMPLIFY_DEPLOY_WEBHOOK_URL }}
