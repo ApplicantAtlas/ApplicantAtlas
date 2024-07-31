@@ -32,7 +32,7 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         REGISTRY: ${{ steps.ecr-login.outputs.registry }}
         REPOSITORY: applicant-atlas-api-lambda
-        IMAGE_TAG: "0.0.3"
+        IMAGE_TAG: "0.0.4"
       run: |
         cd backend
         docker build -f Dockerfile.api.lambda -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
@@ -46,7 +46,7 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         REGISTRY: ${{ steps.ecr-login.outputs.registry }}
         REPOSITORY: applicant-atlas-event-listener-lambda
-        IMAGE_TAG: "0.0.3"
+        IMAGE_TAG: "0.0.4"
       run: |
         cd backend
         docker build -f Dockerfile.event.listener.lambda -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
