@@ -30,11 +30,6 @@ resource "aws_ecr_lifecycle_policy" "applicant_atlas_api_lambda_lifecycle_policy
 POLICY
 }
 
-data "aws_ecr_image" "lambda_image" {
-  repository_name = aws_ecr_repository.applicant_atlas_event_listener_lambda.name
-  image_tag       = "bc8c4043286c6d8578aa2d8fef419a0c7f42e2af"
-}
-
 resource "aws_cloudwatch_log_group" "lambda_log_group" {
   name              = "/aws/lambda/applicant_atlas_event_listener"
   retention_in_days = 14
@@ -67,7 +62,7 @@ resource "aws_iam_role" "iam_for_lambda" {
           Service = "lambda.amazonaws.com"
         }
         Effect = "Allow"
-        Sid = ""
+        Sid    = ""
       }
     ]
   })
@@ -83,7 +78,7 @@ resource "aws_iam_role" "iam_for_lambda" {
             "logs:CreateLogStream",
             "logs:PutLogEvents"
           ]
-          Effect = "Allow"
+          Effect   = "Allow"
           Resource = "arn:aws:logs:*:*:*"
         }
       ]
@@ -101,7 +96,7 @@ resource "aws_iam_role" "iam_for_lambda" {
             "sqs:DeleteMessage",
             "sqs:GetQueueAttributes"
           ]
-          Effect = "Allow"
+          Effect   = "Allow"
           Resource = var.sqs_queue_arn
         }
       ]

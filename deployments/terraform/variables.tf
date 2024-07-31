@@ -17,8 +17,3 @@ variable "aws_region" {
   description = "AWS region"
   type        = string
 }
-
-variable "terraform_state_bucket" {
-  description = "Terraform state bucket"
-  type        = string
-}
