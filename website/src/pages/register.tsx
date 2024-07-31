@@ -9,6 +9,7 @@ import FormBuilder from '@/components/Form/FormBuilder';
 import { FormStructure } from '@/types/models/Form';
 import Header from '@/components/Header';
 import Metadata from '@/components/Metadata';
+import { SendEvent } from '@/services/AnalyticsService';
 
 const RegistrationPage = () => {
   const router = useRouter();
@@ -69,9 +70,15 @@ const RegistrationPage = () => {
       birthday: formData.birthday ? formatDate(formData.birthday) : '',
     };
 
-    AuthService.register(formattedData as User)
+    const u = formattedData as User;
+    AuthService.register(u)
       .then(() => {
         eventEmitter.emit('success', 'Successfully registered, please log in!');
+        SendEvent('newUser', {
+          name: `${u.firstName} ${u.lastName}`,
+          id: u.id,
+          email: u.email,
+        });
         router.push('/login');
       })
       .catch((err) => {
