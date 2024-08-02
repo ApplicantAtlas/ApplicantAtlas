@@ -37,10 +37,6 @@ The easiest way to just get set up with the project and start developing is to u
 
 **Note:** GitHub Codespaces does cost money to use, but you get 50 hours a month for free as of the time of writing this. So if you're just doing some light development you should be able to use it for free.
 
-<!--
-*psst: if you're new to GitHub Codespaces feel free to check out my [LinkedIn Learning course](https://www.linkedin.com/learning-login/share?forceAccount=false&redirect=https%3A%2F%2Fwww.linkedin.com%2Flearning%2Fgithub-codespaces-for-students%3Ftrk%3Dshare_ent_url%26shareId%3DTA%252FPxpwASCePFoBLiSfvWw%253D%253D) on it you should be able to get free access [through my LinkedIn post](https://www.linkedin.com/posts/davidteather_linkedinlearning-education-technology-activity-7069391759281147905-o4yZ?utm_source=share&utm_medium=member_desktop)*
--->
-
 ##### **In Visual Studio Code**
 
 If you're using Visual Studio Code, you can use the dev container to get started with the project. To do this, follow the steps below:
@@ -219,7 +215,7 @@ If you have any questions or need assistance, we have these resources available:
 1. **GitHub Issues** - If you encounter any bugs or issues, please search for existing issues then open a GitHub issue on the repository if you can't find a solution.
 2. **GitHub Discussions** - For general questions or discussions, you can use the GitHub Discussions feature.
 3. **Discord Server** - Join our [Discord server](https://discord.gg/yyPhbfma6f) to chat with other contributors and maintainers.
-4. **Email** - You can reach out to me directly through any of the contact methods on my [GitHub profile](https://github.com/davidteather)
+4. **Email** - You can reach out to us at hello@applicantatlas.com
 
 ## Road Map
 

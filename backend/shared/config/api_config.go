@@ -24,6 +24,9 @@ type APIConfig struct {
 	// SQS options
 	SQS_AWS_REGION string `env:"SQS_AWS_REGION"`
 	SQS_QUEUE_URL  string `env:"SQS_QUEUE_URL"`
+
+	// Optional Slack Integration
+	SLACK_WEBHOOK_URL string `env:"SLACK_WEBHOOK_URL" envDefault:""`
 }
 
 var (

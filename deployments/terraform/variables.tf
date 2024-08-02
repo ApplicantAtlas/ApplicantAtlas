@@ -18,7 +18,8 @@ variable "aws_region" {
   type        = string
 }
 
-variable "terraform_state_bucket" {
-  description = "Terraform state bucket"
+variable "version" {
+  description = "The current software version"
   type        = string
+  default     = "0.0.6"
 }

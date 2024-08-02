@@ -56,7 +56,7 @@ func (m *MockMongoService) InsertUser(ctx context.Context, user models.User) (*m
 	}
 
 	m.data[user.Email] = user
-	return &mongo.InsertOneResult{}, nil // Mock result
+	return &mongo.InsertOneResult{InsertedID: primitive.NewObjectID()}, nil // Mock result
 }
 
 func (m *MockMongoService) GetUserDetails(ctx context.Context, userId primitive.ObjectID) (*models.User, error) {

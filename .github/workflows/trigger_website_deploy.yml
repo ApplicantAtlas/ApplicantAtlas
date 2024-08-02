@@ -1,0 +1,20 @@
+name: Trigger AWS Amplify Build
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Deploy via Webhook
+      run: |
+        URL="${{ secrets.AMPLIFY_DEPLOY_WEBHOOK_URL }}"
+        curl -X POST -d {} "$URL" -H "Content-Type:application/json"
+        exit 0
+        fi
+      env:
+        AMPLIFY_DEPLOY_WEBHOOK_URL: ${{ secrets.AMPLIFY_DEPLOY_WEBHOOK_URL }}

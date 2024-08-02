@@ -17,3 +17,8 @@ variable "sqs_queue_arn" {
   description = "SQS queue ARN"
   type        = string
 }
+
+variable "version" {
+  description = "The version to deploy"
+  type        = string
+}

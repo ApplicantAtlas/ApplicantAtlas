@@ -3,6 +3,7 @@ package auth
 import (
 	"api/internal/middlewares"
 	"api/internal/types"
+	"fmt"
 	"net/http"
 	"shared/logger"
 	"shared/models"
@@ -12,6 +13,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -112,7 +114,7 @@ func registerUser(params *types.RouteParams) gin.HandlerFunc {
 		}
 
 		// Insert the new user into the database
-		_, err = params.MongoService.InsertUser(c, newUser)
+		r, err := params.MongoService.InsertUser(c, newUser)
 		if err != nil {
 			if err == mongodb.ErrUserAlreadyExists {
 				c.JSON(http.StatusBadRequest, gin.H{"error": "An account with that email already exists"})
@@ -121,11 +123,21 @@ func registerUser(params *types.RouteParams) gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to register user"})
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{"message": "User registered successfully, please login"})
+		newUser.ID = r.InsertedID.(primitive.ObjectID)
+
+		// Generate JWT token
+		token, err := utils.GenerateJWT(&newUser)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
+			return
+		}
+
+		utils.SendSlackMessage(fmt.Sprintf("New User: %s %s (%s)", newUser.FirstName, newUser.LastName, newUser.Email))
+		c.JSON(http.StatusOK, gin.H{"token": token})
 	}
 }
 
-// TODO: We should base this on the user's id instead of email
+// TODO: We should base this on the user's id instead of email, and handle deleting all data like responses
 func deleteUser(params *types.RouteParams) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authenticatedUser, ok := utils.GetUserFromContext(c, true)

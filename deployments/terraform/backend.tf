@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    bucket = "davidteather-terraform-states"
+    bucket = "applicant-atlas-terraform-states"
     key    = "applicantatlas/terraform.tfstate"
     region = "us-east-1"
   }

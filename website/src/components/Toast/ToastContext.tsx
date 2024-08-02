@@ -103,7 +103,7 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
       {children}
       {message && (
         <div
-          className={`fixed bottom-5 right-5 ${getToastStyle(toastType)[0]} text-white py-2 px-4 rounded flex items-center justify-between`}
+          className={`fixed bottom-5 right-5 z-50 ${getToastStyle(toastType)[0]} text-white py-2 px-4 rounded flex items-center justify-between`}
         >
           <span>{renderMessage(message)}</span>
           <button onClick={dismissToast} className="text-white ml-4">

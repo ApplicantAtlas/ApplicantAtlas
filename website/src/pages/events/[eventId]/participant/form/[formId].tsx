@@ -59,7 +59,7 @@ const FormSubmission = () => {
         }
         setErr(msg);
       });
-  }, [eventId, formId, showToast]);
+  }, [event, eventId, formId, showToast]);
 
   if (!AuthService.isAuth) {
     showToast('You must be logged in to access this form.', ToastType.Error);

@@ -3,6 +3,7 @@ import Head from 'next/head';
 
 import { ToastProvider } from '@/components/Toast/ToastContext';
 import ToastErrorWrapper from '@/components/Toast/ToastErrorWrapper';
+import ConsentBanner from '@/components/Shared/ConsentBanner';
 
 const inter = Montserrat({ subsets: ['latin'] });
 
@@ -109,6 +110,7 @@ export default function RootLayout({
       <ToastProvider>
         <ToastErrorWrapper />
         <div className={inter.className}>{children}</div>
+        <ConsentBanner />
       </ToastProvider>
     </>
   );

@@ -5,7 +5,7 @@ ApplicantAtlas is an open source event management platform committed to maintain
 
 **Reporting Security Vulnerabilities**
 1. **How to Report**:
-   - Users who find security vulnerabilities within the ApplicantAtlas platform are encouraged to report them via email to contact.davidteather@gmail.com. Please provide a detailed description of the issue, including steps to reproduce it, if possible.
+   - Users who find security vulnerabilities within the ApplicantAtlas platform are encouraged to report them via email to hello@applicantatlas.com. Please provide a detailed description of the issue, including steps to reproduce it, if possible.
    - Reports can also be submitted through our GitHub issue tracker, tagged with the "security" label for easy identification.
 
 2. **What to Report**:
@@ -31,7 +31,7 @@ ApplicantAtlas is an open source event management platform committed to maintain
 - This policy is subject to change as the ApplicantAtlas platform evolves. We encourage users and contributors to regularly review it for any updates.
 
 **Contact Information For Reporting**
-For any security concerns or vulnerability reports, please contact: contact.davidteather@gmail.com
+For any security concerns or vulnerability reports, please contact: hello@applicantatlas.com
 
 Effective Date: 4/6/2024
 

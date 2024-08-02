@@ -69,10 +69,11 @@ const RegistrationPage = () => {
       birthday: formData.birthday ? formatDate(formData.birthday) : '',
     };
 
-    AuthService.register(formattedData as User)
+    const u = formattedData as User;
+    AuthService.register(u)
       .then(() => {
-        eventEmitter.emit('success', 'Successfully registered, please log in!');
-        router.push('/login');
+        eventEmitter.emit('success', 'Successfully registered!');
+        router.push('/user/dashboard');
       })
       .catch((err) => {
         if (err.response) {

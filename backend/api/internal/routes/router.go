@@ -8,6 +8,8 @@ import (
 	"api/internal/routes/pipelines"
 	"api/internal/routes/users"
 	"api/internal/types"
+	"net/http"
+	"shared/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -32,4 +34,10 @@ func SetupRoutes(r *gin.Engine, params *types.RouteParams) {
 
 	emailTemplateGroup := r.Group("/email_templates")
 	emails.RegisterEmailTemplateRoutes(emailTemplateGroup, params)
+
+	r.GET("/version", getVersion)
+}
+
+func getVersion(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"version": utils.VERSION})
 }

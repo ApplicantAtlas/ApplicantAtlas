@@ -48,12 +48,14 @@ export const getStaticPaths: GetStaticPaths = async () => {
           }
 
           // if it's a file strip the .md extension at the last element of slug
-          const cutSlug = entrySlug.slice(0, -1);
+          let cutSlug = entrySlug.slice(0, -1);
           const lastSlug = entrySlug[entrySlug.length - 1];
           const lastUpdatedSlug = lastSlug.slice(0, -3);
+
           if (lastUpdatedSlug !== 'index') {
             cutSlug.push(lastUpdatedSlug);
           }
+          if (cutSlug.length == 0) cutSlug = [lastUpdatedSlug];
           paths.push({
             params: { slug: cutSlug },
           });
