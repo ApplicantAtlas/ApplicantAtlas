@@ -96,6 +96,10 @@ export default function Header({
 
   const userSubmenuItems: MenuItem[] = [
     {
+      label: 'Billing',
+      href: '/user/billing',
+    },
+    {
       label: 'Settings',
       href: '/user/settings',
     },

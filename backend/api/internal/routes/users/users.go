@@ -16,7 +16,9 @@ import (
 func RegisterRoutes(r *gin.RouterGroup, params *types.RouteParams) {
 	r.GET("/me", middlewares.JWTAuthMiddleware(), getUserMyself(params))
 	r.PUT("/me", middlewares.JWTAuthMiddleware(), updateUserMyself(params))
+	r.GET("/me/subscription", middlewares.JWTAuthMiddleware(), getSubscriptionUtilization(params))
 	r.GET("/:id", getUserDetails(params))
+
 }
 
 func getUserMyself(params *types.RouteParams) gin.HandlerFunc {
@@ -96,5 +98,33 @@ func getUserDetails(params *types.RouteParams) gin.HandlerFunc {
 		}
 
 		c.JSON(http.StatusOK, user)
+	}
+}
+
+func getSubscriptionUtilization(params *types.RouteParams) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		authenticatedUser, ok := utils.GetUserFromContext(c, true)
+		if !ok {
+			return
+		}
+
+		u, err := params.MongoService.GetUserDetails(c, authenticatedUser.ID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve user details"})
+			return
+		}
+
+		if u.CurrentSubscriptionID == primitive.NilObjectID {
+			c.JSON(http.StatusOK, gin.H{"subscription": nil})
+			return
+		}
+
+		subscriptionUtilization, err := params.MongoService.GetSubscription(c, u.CurrentSubscriptionID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve subscription utilization"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"subscription": subscriptionUtilization})
 	}
 }

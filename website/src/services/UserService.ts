@@ -1,6 +1,7 @@
 import { AxiosResponse } from 'axios';
 
 import { User } from '@/types/models/User';
+import { Subscription } from '@/types/models/Billing';
 
 import api from './AxiosInterceptor';
 
@@ -24,4 +25,13 @@ export const getJWTUser = async (): Promise<User> => {
 export const updateUser = async (user: User): Promise<AxiosResponse> => {
   const response = await api.put<AxiosResponse>(`/users/me`, user);
   return response.data;
+};
+
+export const getMySubscription = async (): Promise<
+  AxiosResponse<{ subscription: Subscription }>
+> => {
+  const response = await api.get<{ subscription: Subscription }>(
+    `/users/me/subscription`,
+  );
+  return response;
 };

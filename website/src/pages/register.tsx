@@ -107,6 +107,22 @@ const RegistrationPage = () => {
               Already have an account? Sign In
             </div>
           </Link>
+          <div>
+            <small>
+              By registering, you agree to our{' '}
+              <Link href="/docs/terms-of-service">
+                <span className="inline-block align-baseline font-bold text-blue-500 hover:text-blue-800 cursor-pointer">
+                  Terms of Service
+                </span>
+              </Link>{' '}
+              and{' '}
+              <Link href="/docs/privacy-policy">
+                <span className="inline-block align-baseline font-bold text-blue-500 hover:text-blue-800 cursor-pointer">
+                  Privacy Policy
+                </span>
+              </Link>
+            </small>
+          </div>
         </div>
       </div>
     </>

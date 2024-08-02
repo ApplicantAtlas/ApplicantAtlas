@@ -11,6 +11,7 @@ import formImage from '@/images/landing/form.png';
 import pipelinesImage from '@/images/landing/pipelines.png';
 import openSourceImage from '@/images/landing/open-source.png';
 import Metadata from '@/components/Metadata';
+import { SendEvent } from '@/services/AnalyticsService';
 
 export default function Component() {
   const [primaryButton, setPrimaryButton] = useState<MenuItem>({
@@ -198,6 +199,188 @@ export default function Component() {
                     <li>Transparent Development</li>
                     <li>Regular Updates</li>
                   </ul>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="py-8 lg:py-20" id="pricing">
+            <div className="container mx-auto">
+              <div className="text-center">
+                <h2 className="text-4xl font-semibold">Pricing Plans</h2>
+                <p className="mt-2 text-lg">
+                  Explore flexible pricing that scales with your needs. No
+                  hidden fees, just transparent options.
+                </p>
+              </div>
+              <div className="alert mt-4 mx-auto">
+                If you&apos;re a non-profit or student focused event organizer,
+                for a limited time we&apos;re offering an upgraded plan for free
+                please email us for details.
+              </div>
+              <div className="mt-8 grid gap-8 lg:grid-cols-3">
+                <div className="card border border-base-content/10 p-3 shadow-sm">
+                  <div className="card bg-base-200 p-6 text-base-content">
+                    <h3 className="text-xl font-semibold">Free</h3>
+                    <p className="mt-2 flex items-baseline">
+                      <span className="text-5xl font-bold tracking-tight">
+                        $0
+                      </span>
+                      <span className="ml-1 text-xl font-semibold">/month</span>
+                    </p>
+                    <p className="mt-4">
+                      Experiment with all features and functionalities with our
+                      free plan.
+                    </p>
+                  </div>
+                  <div className="p-6">
+                    <ul
+                      className="list-inside list-disc space-y-3 text-base-content"
+                      role="list"
+                    >
+                      <li>
+                        <span className="ms-3">1 Event</span>
+                      </li>
+                      <li>
+                        <span className="ms-3">
+                          50 Responses<small>/mo</small>
+                        </span>
+                      </li>
+                      <li>
+                        <span className="ms-3">
+                          50 Pipeline Runs<small>/mo</small>
+                        </span>
+                      </li>
+                    </ul>
+                  </div>
+                  <Link href="/register" className="mt-auto">
+                    <button
+                      className="btn btn-outline btn-block "
+                      onClick={() => {
+                        SendEvent('pricingInterest', {
+                          action: 'click',
+                          label: 'upgrade_free',
+                        });
+                      }}
+                    >
+                      Start for Free
+                    </button>
+                  </Link>
+                </div>
+                <div className="card border border-base-content/10 bg-base-100 p-3 shadow-sm">
+                  <div className="card bg-base-200 p-6 text-base-content">
+                    <div className="flex justify-between">
+                      <h3 className="text-xl font-semibold text-primary">
+                        Premium
+                      </h3>
+                      <div className="badge badge-outline text-sm font-medium">
+                        Best Offer
+                      </div>
+                    </div>
+
+                    <p className="mt-4 flex items-baseline">
+                      <span
+                        className="text-5xl font-bold tracking-tight text-primary"
+                        x-text="premium[period]"
+                      >
+                        {' '}
+                        $12
+                      </span>
+                      <span className="ml-1 text-xl font-semibold">/month</span>
+                    </p>
+                    <p className="mt-6">
+                      Increase your event management capabilities with our
+                      premium plan that offers more events, responses, and
+                      pipeline runs.
+                    </p>
+                  </div>
+                  <div className="p-6">
+                    <ul
+                      className="list-inside list-disc space-y-3 text-base-content"
+                      role="list"
+                    >
+                      <li>
+                        <span className="ms-3">3 Events</span>
+                      </li>
+                      <li>
+                        <span className="ms-3">
+                          1000 Responses<small>/mo</small>
+                        </span>
+                      </li>
+                      <li>
+                        <span className="ms-3">
+                          1000 Pipeline Runs<small>/mo</small>
+                        </span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <button
+                    className="btn btn-primary btn-block mt-auto"
+                    onClick={() => {
+                      SendEvent('pricingInterest', {
+                        action: 'click',
+                        label: 'upgrade_premium',
+                      });
+                      alert(
+                        'This plan is not yet available. Please email hello@applicantatlas.com for more information.',
+                      );
+                    }}
+                  >
+                    Upgrade to Premium
+                  </button>
+                </div>
+                <div className="card border border-base-content/10 p-3 shadow-sm">
+                  <div className="card bg-base-200 p-6">
+                    <h3 className="text-xl font-semibold">Ultimate</h3>
+                    <p className="mt-4 flex items-baseline">
+                      <span
+                        className="text-5xl font-bold tracking-tight"
+                        x-text="ultimate[period]"
+                      ></span>
+                      <span className="ml-1 text-xl font-semibold"></span>
+                    </p>
+                    <p className="mt-6">
+                      Unleash the ultimate potential of event management with
+                      our custom plan tailored to your needs.
+                    </p>
+                  </div>
+                  <div className="p-6">
+                    <ul
+                      className="list-inside list-disc space-y-3 text-base-content"
+                      role="list"
+                    >
+                      <li>
+                        <span className="ms-3">Unlimited Events</span>
+                      </li>
+                      <li>
+                        <span className="ms-3">
+                          Custom Responses<small>/mo</small>
+                        </span>
+                      </li>
+                      <li>
+                        <span className="ms-3">
+                          Custom Pipeline Runs<small>/mo</small>
+                        </span>
+                      </li>
+                    </ul>
+                  </div>
+                  <a href="mailto:hello@applicantatlas.com" className="mt-auto">
+                    <button
+                      className="btn btn-outline btn-secondary btn-block mt-auto"
+                      onClick={() => {
+                        SendEvent('pricingInterest', {
+                          action: 'click',
+                          label: 'contact_ultimate',
+                        });
+                        alert(
+                          'Please email hello@applicantatlas.com for custom pricing',
+                        );
+                      }}
+                    >
+                      Contact for Custom Pricing
+                    </button>
+                  </a>
                 </div>
               </div>
             </div>
