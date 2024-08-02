@@ -36,13 +36,13 @@ resource "aws_cloudwatch_log_group" "lambda_log_group" {
 }
 
 data "aws_ecr_image" "lambda_image" {
-  repository_name = aws_ecr_repository.applicant_atlas_api_lambda
-  image_tag       = var.version
+  repository_name = aws_ecr_repository.applicant_atlas_api_lambda.name
+  image_tag       = var.software_version
 }
 
 resource "aws_lambda_function" "applicant_atlas_api" {
   function_name = "applicant_atlas_api"
-  image_uri     = aws_ecr_image.lambda_image.image_uri
+  image_uri     = data.aws_ecr_image.lambda_image.image_uri
   role          = aws_iam_role.iam_for_lambda.arn
   package_type  = "Image"
   memory_size   = 128

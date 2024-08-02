@@ -18,7 +18,7 @@ variable "sqs_queue_arn" {
   type        = string
 }
 
-variable "version" {
+variable "software_version" {
   description = "The version to deploy"
   type        = string
 }

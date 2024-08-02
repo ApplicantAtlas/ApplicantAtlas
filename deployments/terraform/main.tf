@@ -1,12 +1,10 @@
 terraform {
   required_providers {
     aws = {
-      source  = "hashicorp/aws"
-      version = "~> 4.0"
+      source = "hashicorp/aws"
     }
     archive = {
-      source  = "hashicorp/archive"
-      version = "~> 2.0"
+      source = "hashicorp/archive"
     }
   }
 }
@@ -17,7 +15,7 @@ module "api" {
   database_env_vars = var.database_env_vars
   aws_region        = var.aws_region
   sqs_queue_arn     = aws_sqs_queue.applicant_atlas_pipeline_queue.arn
-  version           = var.version
+  software_version  = var.software_version
 }
 
 module "event_listener" {
@@ -26,5 +24,5 @@ module "event_listener" {
   database_env_vars       = var.database_env_vars
   aws_region              = var.aws_region
   sqs_queue_arn           = aws_sqs_queue.applicant_atlas_pipeline_queue.arn
-  version                 = var.version
-} 
+  software_version        = var.software_version
+}
