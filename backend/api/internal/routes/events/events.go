@@ -96,6 +96,35 @@ func createEventHandler(params *types.RouteParams) gin.HandlerFunc {
 			CreatedByID:  authenticatedUser.ID,
 		}
 
+		// Check billing
+		u, err := params.MongoService.GetUserDetails(c, authenticatedUser.ID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get user"})
+			return
+		}
+
+		if u.CurrentSubscriptionID == primitive.NilObjectID {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "User does not have a subscription"})
+			return
+		}
+
+		sub, err := params.MongoService.GetSubscription(c, u.CurrentSubscriptionID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get subscription"})
+			return
+		}
+
+		if sub.Status != models.SubscriptionStatusActive {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "User subscription is not active"})
+			return
+		}
+
+		_, err = params.MongoService.IncrementSubscriptionUtilization(c, sub.ID, "eventsCreated", "maxEvents")
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Event creation limit reached, please upgrade your subscription"})
+			return
+		}
+
 		// Insert the new event into the database
 		rec, err := params.MongoService.CreateEvent(c, event)
 		if err != nil {

@@ -27,6 +27,7 @@ type MongoService interface {
 	GetUserDetails(ctx context.Context, userId primitive.ObjectID) (*models.User, error)
 	DeleteUserByEmail(ctx context.Context, email string) (*mongo.DeleteResult, error)
 	UpdateUserDetails(ctx context.Context, userId primitive.ObjectID, updatedUserDetails models.User) error
+	UpdateUser(ctx context.Context, userId primitive.ObjectID, user models.User) (*mongo.UpdateResult, error)
 	CreateEvent(ctx context.Context, event models.Event) (*mongo.InsertOneResult, error)
 	DeleteEvent(ctx *gin.Context, eventID primitive.ObjectID) (*mongo.DeleteResult, error)
 	GetEvent(ctx *gin.Context, eventID primitive.ObjectID) (*models.Event, error)
@@ -65,6 +66,15 @@ type MongoService interface {
 	GetEventSecrets(ctx context.Context, filter bson.M, stripSecrets bool) (*models.EventSecrets, error)
 	CreateOrUpdateEventSecrets(ctx context.Context, secret models.EventSecrets) (*mongo.UpdateResult, error)
 	DeleteEventSecrets(ctx context.Context, secretID primitive.ObjectID) (*mongo.DeleteResult, error)
+
+	// Billing
+	SeedPlans(ctx context.Context) error
+	ListPlans(ctx context.Context, filter bson.M) ([]models.Plan, error)
+	CreateNewSubscription(ctx context.Context, subscription models.Subscription) (*mongo.InsertOneResult, error)
+	ListSubscriptions(ctx context.Context, filter bson.M) ([]models.Subscription, error)
+	GetSubscription(ctx context.Context, subscriptionID primitive.ObjectID) (*models.Subscription, error)
+	IncrementSubscriptionUtilization(ctx context.Context, subscriptionID primitive.ObjectID, utilizationKey string, limitKey string) (*mongo.UpdateResult, error)
+	DecrementSubscriptionEventUtilization(ctx context.Context, subscriptionID primitive.ObjectID, eventID primitive.ObjectID) (*mongo.UpdateResult, error)
 }
 
 // Service implements MongoService with a mongo.Client.
@@ -315,6 +325,12 @@ func (s *Service) UpdateUserDetails(ctx context.Context, userId primitive.Object
 	}
 
 	return nil
+}
+
+func (s *Service) UpdateUser(ctx context.Context, userId primitive.ObjectID, user models.User) (*mongo.UpdateResult, error) {
+	update := bson.M{"$set": user}
+	filter := bson.M{"_id": userId}
+	return s.Database.Collection("users").UpdateOne(ctx, filter, update)
 }
 
 // GetSourceByName retrieves a SelectorSource by its name
@@ -768,4 +784,199 @@ func (s *Service) CreateOrUpdateEventSecrets(ctx context.Context, newSecret mode
 func (s *Service) DeleteEventSecrets(ctx context.Context, eventID primitive.ObjectID) (*mongo.DeleteResult, error) {
 	filter := bson.M{"eventID": eventID}
 	return s.Database.Collection("event_secrets").DeleteOne(ctx, filter)
+}
+
+/*
+* BILLING
+*
+ */
+
+const (
+	PLAN_COLLECTION         = "plans"
+	SUBSCRIPTION_COLLECTION = "subscriptions"
+)
+
+var (
+	ERR_PLAN_NOT_FOUND_OR_LIMIT_EXCEEDED = errors.New("no active subscription found with ID, or limit exceeded")
+)
+
+// SeedPlans seeds the plans collection with the default plans, if they don't already exist
+func (s *Service) SeedPlans(ctx context.Context) error {
+	initialPlans := []models.Plan{
+		{
+			Name: "Free",
+			BillingCycleOptions: models.PlanCycleOptions{
+				Cycle: "monthly",
+				Price: 0.0,
+			},
+			Limits: models.PlanLimits{
+				MaxEvents:              1,
+				MaxMonthlyResponses:    50,
+				MaxMonthlyPipelineRuns: 50,
+			},
+			Default: true,
+		},
+		{
+			Name: "Enterprise",
+			BillingCycleOptions: models.PlanCycleOptions{
+				Cycle: "monthly",
+				Price: 1000.0,
+			},
+			Limits: models.PlanLimits{
+				MaxEvents:              100,
+				MaxMonthlyResponses:    50000,
+				MaxMonthlyPipelineRuns: 50000,
+			},
+		},
+	}
+
+	existingPlans, err := s.ListPlans(ctx, bson.M{})
+	if err != nil {
+		return err
+	}
+
+	for _, plan := range initialPlans {
+		for _, existingPlan := range existingPlans {
+			if reflect.DeepEqual(existingPlan, plan) {
+				continue
+			}
+		}
+
+		_, err := s.Database.Collection(PLAN_COLLECTION).InsertOne(ctx, plan)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (s *Service) ListPlans(ctx context.Context, filter bson.M) ([]models.Plan, error) {
+	var plans []models.Plan
+
+	cursor, err := s.Database.Collection(PLAN_COLLECTION).Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx) {
+		var plan models.Plan
+		if err := cursor.Decode(&plan); err != nil {
+			return nil, err
+		}
+		plans = append(plans, plan)
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	// If plans is null then return an empty slice instead
+	if plans == nil {
+		return []models.Plan{}, nil
+	}
+
+	return plans, nil
+}
+
+func (s *Service) CreateNewSubscription(ctx context.Context, subscription models.Subscription) (*mongo.InsertOneResult, error) {
+	return s.Database.Collection(SUBSCRIPTION_COLLECTION).InsertOne(ctx, subscription)
+}
+func (s *Service) ListSubscriptions(ctx context.Context, filter bson.M) ([]models.Subscription, error) {
+	var subscriptions []models.Subscription
+
+	cursor, err := s.Database.Collection(SUBSCRIPTION_COLLECTION).Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx) {
+		var subscription models.Subscription
+		if err := cursor.Decode(&subscription); err != nil {
+			return nil, err
+		}
+		subscriptions = append(subscriptions, subscription)
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	// If subscriptions is null then return an empty slice instead
+	if subscriptions == nil {
+		return []models.Subscription{}, nil
+	}
+
+	return subscriptions, nil
+}
+
+func (s *Service) GetSubscription(ctx context.Context, subscriptionID primitive.ObjectID) (*models.Subscription, error) {
+	var subscription models.Subscription
+	err := s.Database.Collection(SUBSCRIPTION_COLLECTION).FindOne(ctx, bson.M{"_id": subscriptionID}).Decode(&subscription)
+	if err != nil {
+		return nil, err
+	}
+
+	return &subscription, nil
+}
+
+func (s *Service) IncrementSubscriptionUtilization(ctx context.Context, subscriptionID primitive.ObjectID, utilizationKey string, limitKey string) (*mongo.UpdateResult, error) {
+	collection := s.Database.Collection(SUBSCRIPTION_COLLECTION)
+
+	utilizationField := "utilization." + utilizationKey
+	limitField := "limits." + limitKey
+
+	update := bson.M{
+		"$inc": bson.M{utilizationField: 1},
+	}
+
+	condition := bson.M{
+		"$lte": []interface{}{
+			bson.M{"$add": []interface{}{"$" + utilizationField, 1}},
+			"$" + limitField,
+		},
+	}
+
+	filter := bson.M{
+		"_id":    subscriptionID,
+		"status": models.SubscriptionStatusActive,
+		"$expr":  condition,
+	}
+
+	result, err := collection.UpdateOne(ctx, filter, update)
+	if err != nil {
+		return nil, err
+	}
+
+	if result.MatchedCount == 0 {
+		return nil, ERR_PLAN_NOT_FOUND_OR_LIMIT_EXCEEDED
+	}
+
+	return result, nil
+}
+
+func (s *Service) DecrementSubscriptionEventUtilization(ctx context.Context, subscriptionID primitive.ObjectID, eventID primitive.ObjectID) (*mongo.UpdateResult, error) {
+	collection := s.Database.Collection(SUBSCRIPTION_COLLECTION)
+
+	update := bson.M{
+		"$inc": bson.M{"utilization.eventsCreated": -1},
+	}
+
+	filter := bson.M{
+		"_id":    subscriptionID,
+		"status": models.SubscriptionStatusActive,
+	}
+
+	result, err := collection.UpdateOne(ctx, filter, update)
+	if err != nil {
+		return nil, err
+	}
+
+	if result.MatchedCount == 0 {
+		return nil, ERR_PLAN_NOT_FOUND_OR_LIMIT_EXCEEDED
+	}
+
+	return result, nil
 }

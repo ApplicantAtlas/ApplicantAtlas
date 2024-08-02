@@ -6,42 +6,46 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+const (
+	SubscriptionStatusActive    = "active"
+	SubscriptionStatusCancelled = "cancelled"
+	SubscriptionStatusPaused    = "paused"
+)
+
 type Plan struct {
-	ID           primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty" mongoPreventOverride:"true"`
-	Name         string             `bson:"name" json:"name" validate:"required"`
-	MonthlyPrice float64            `bson:"monthlyPrice" json:"monthlyPrice" validate:"required"`
-	YearlyPrice  float64            `bson:"yearlyPrice" json:"yearlyPrice" validate:"required"`
-	Limits       Limits             `bson:"limits" json:"limits" validate:"required"`
-	IsDeprecated bool               `bson:"isDeprecated" json:"isDeprecated"`
+	ID                  primitive.ObjectID `bson:"_id,omitempty" json:"id"`
+	Name                string             `bson:"name" json:"name"`
+	BillingCycleOptions PlanCycleOptions   `bson:"billingCycleOptions" json:"billingCycleOptions"`
+	Limits              PlanLimits         `bson:"limits" json:"limits"`
+	Default             bool               `bson:"default" json:"default"`
 }
 
-// Limits represents the limits of a plan
-type Limits struct {
-	MaxEvents          int `bson:"maxEvents" json:"maxEvents" validate:"required"`
-	MaxPipelineRuns    int `bson:"maxPipelineRuns" json:"maxPipelineRuns" validate:"required"`
-	MaxFormSubmissions int `bson:"maxFormSubmissions" json:"maxFormSubmissions" validate:"required"`
+type PlanLimits struct {
+	MaxEvents              int `bson:"maxEvents" json:"maxEvents"`
+	MaxMonthlyResponses    int `bson:"maxMonthlyResponses" json:"maxMonthlyResponses"`
+	MaxMonthlyPipelineRuns int `bson:"maxMonthlyPipelineRuns" json:"maxMonthlyPipelineRuns"`
 }
 
-// Usage represents the current month's usage of a subscription
-type Usage struct {
-	Events          int `bson:"events" json:"events"`
-	PipelineRuns    int `bson:"pipelineRuns" json:"pipelineRuns"`
-	FormSubmissions int `bson:"formSubmissions" json:"formSubmissions"`
+type PlanCycleOptions struct {
+	Cycle string  `bson:"cycle" json:"cycle" oneOf:"monthly six-months yearly"`
+	Price float32 `bson:"price" json:"price"`
 }
 
 type Subscription struct {
-	ID                    primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty" mongoPreventOverride:"true"`
-	UserID                primitive.ObjectID `bson:"userID" json:"userID" validate:"required"`
-	PlanID                primitive.ObjectID `bson:"planID" json:"planID" validate:"required"`
-	SubscriptionStartTime time.Time          `bson:"subscriptionStartTime" json:"subscriptionStartTime" validate:"required"`
-	SubscriptionEndTime   time.Time          `bson:"subscriptionEndTime" json:"subscriptionEndTime"`
-	IsActive              bool               `bson:"isActive" json:"isActive"`
-	IsYearly              bool               `bson:"isYearly" json:"isYearly"`
-	Usage                 Usage              `bson:"usage" json:"usage"`
+	ID                       primitive.ObjectID `bson:"_id,omitempty" json:"id"`
+	UserID                   primitive.ObjectID `bson:"userId" json:"userId"`
+	PlanID                   primitive.ObjectID `bson:"planId" json:"planId"`
+	StartDate                time.Time          `bson:"startDate" json:"startDate"`
+	EndDate                  time.Time          `bson:"endDate" json:"endDate"`
+	Status                   string             `bson:"status" json:"status" oneOf:"active cancelled paused"`
+	BillingCycle             string             `bson:"billingCycle" json:"billingCycle" oneOf:"monthly six-months yearly"`
+	NextUtilizationResetDate time.Time          `bson:"nextUtilizationResetDate" json:"nextUtilizationResetDate"`
+	Utilization              Utilization        `bson:"utilization" json:"utilization"` // will need cron job to reset this scheduled to run every 24h
+	Limits                   PlanLimits         `bson:"limits" json:"limits"`
 }
 
-type MonthlyUsage struct {
-	SubscriptionID primitive.ObjectID `bson:"subscriptionID" json:"subscriptionID"`
-	Month          time.Time          `bson:"month" json:"month"`
-	Usage          Usage              `bson:"usage" json:"usage"`
+type Utilization struct {
+	EventsCreated int `bson:"eventsCreated" json:"eventsCreated"`
+	Responses     int `bson:"responses" json:"responses"`
+	PipelineRuns  int `bson:"pipelineRuns" json:"pipelineRuns"`
 }

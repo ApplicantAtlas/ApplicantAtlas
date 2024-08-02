@@ -160,6 +160,36 @@ func submitFormHandler(params *types.RouteParams) gin.HandlerFunc {
 
 		// TODO: We should do this in a transaction
 
+		// Check billing
+		eventDetails, err := params.MongoService.GetEvent(c, form.EventID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+			logger.Error("Failed to get event details", err)
+			return
+		}
+
+		u, err := params.MongoService.GetUserDetails(c, eventDetails.CreatedByID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get user"})
+			return
+		}
+
+		if u.CurrentSubscriptionID == primitive.NilObjectID {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "User does not have a subscription"})
+			return
+		}
+
+		sub, err := params.MongoService.GetSubscription(c, u.CurrentSubscriptionID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get subscription"})
+			return
+		}
+
+		if sub.Status != models.SubscriptionStatusActive {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "User subscription is not active"})
+			return
+		}
+
 		// Check pipeline
 		pipelines, err := params.MongoService.ListPipelines(c, bson.M{"eventID": form.EventID})
 		if err != nil {
@@ -175,6 +205,13 @@ func submitFormHandler(params *types.RouteParams) gin.HandlerFunc {
 					continue
 				}
 
+				_, err = params.MongoService.IncrementSubscriptionUtilization(c, sub.ID, "pipelineRuns", "maxMonthlyPipelineRuns")
+				if err != nil {
+					c.JSON(http.StatusInternalServerError, gin.H{"error": "Pipeline limit reached, please contact the event admin to upgrade their plan."})
+					// TODO: send out email to admin
+					return
+				}
+
 				err := helpers.TriggerPipeline(c, params.MessageProducer, params.MongoService, pipeline, req.Data)
 
 				if err != nil {
@@ -183,6 +220,12 @@ func submitFormHandler(params *types.RouteParams) gin.HandlerFunc {
 					return
 				}
 			}
+		}
+
+		_, err = params.MongoService.IncrementSubscriptionUtilization(c, sub.ID, "responses", "maxMonthlyResponses")
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Event submission limit reached, please contact the event admin to upgrade their plan."})
+			return
 		}
 
 		// Submit form
@@ -448,6 +491,36 @@ func updateFormResponseHandler(params *types.RouteParams) gin.HandlerFunc {
 			return
 		}
 
+		// Check billing
+		eventDetails, err := params.MongoService.GetEvent(c, form.EventID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+			logger.Error("Failed to get event details", err)
+			return
+		}
+
+		u, err := params.MongoService.GetUserDetails(c, eventDetails.CreatedByID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get user"})
+			return
+		}
+
+		if u.CurrentSubscriptionID == primitive.NilObjectID {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "User does not have a subscription"})
+			return
+		}
+
+		sub, err := params.MongoService.GetSubscription(c, u.CurrentSubscriptionID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get subscription"})
+			return
+		}
+
+		if sub.Status != models.SubscriptionStatusActive {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "User subscription is not active"})
+			return
+		}
+
 		for _, pipeline := range pipelines {
 			if pipeline.Event.Type == "FieldChange" {
 				// Sanity check
@@ -457,6 +530,13 @@ func updateFormResponseHandler(params *types.RouteParams) gin.HandlerFunc {
 
 				if !kafka.FieldChangeCheck(pipeline.Event.FieldChange, &response.Data) {
 					continue
+				}
+
+				_, err = params.MongoService.IncrementSubscriptionUtilization(c, sub.ID, "pipelineRuns", "maxMonthlyPipelineRuns")
+				if err != nil {
+					c.JSON(http.StatusInternalServerError, gin.H{"error": "Pipeline limit reached, please contact the event admin to upgrade their plan."})
+					// TODO: send out email to admin
+					return
 				}
 
 				err := helpers.TriggerPipeline(c, params.MessageProducer, params.MongoService, pipeline, response.Data)
