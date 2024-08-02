@@ -59,7 +59,7 @@ const FormSubmission = () => {
         }
         setErr(msg);
       });
-  }, [event, eventId, formId, showToast]);
+  }, [eventId, formId, showToast]); // eslint-disable-line
 
   if (!AuthService.isAuth) {
     showToast('You must be logged in to access this form.', ToastType.Error);

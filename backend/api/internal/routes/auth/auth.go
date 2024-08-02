@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/crypto/bcrypt"
@@ -129,6 +130,44 @@ func registerUser(params *types.RouteParams) gin.HandlerFunc {
 		token, err := utils.GenerateJWT(&newUser)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
+			return
+		}
+
+		listPlans, err := params.MongoService.ListPlans(c, bson.M{"default": true})
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve plans"})
+			return
+		}
+
+		// Create a new free plan for the user
+		newSubscription := models.Subscription{
+			PlanID:    listPlans[0].ID,
+			UserID:    newUser.ID,
+			Status:    models.SubscriptionStatusActive,
+			StartDate: time.Now(),
+			EndDate:   time.Now().AddDate(0, 1, 0),
+			Limits:    listPlans[0].Limits,
+			Utilization: models.Utilization{
+				EventsCreated: 0,
+				Responses:     0,
+				PipelineRuns:  0,
+			},
+			BillingCycle:             "monthly",
+			NextUtilizationResetDate: time.Now().AddDate(0, 1, 0),
+		}
+
+		subscriptionId, err := params.MongoService.CreateNewSubscription(c, newSubscription)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create subscription"})
+			return
+		}
+
+		newUser.CurrentSubscriptionID = subscriptionId.InsertedID.(primitive.ObjectID)
+
+		// Update the user with the new subscription
+		_, err = params.MongoService.UpdateUser(c, newUser.ID, newUser)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user details"})
 			return
 		}
 

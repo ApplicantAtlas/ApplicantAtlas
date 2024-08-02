@@ -73,6 +73,13 @@ func main() {
 	}
 	defer cleanup()
 
+	// TODO: This isn't a great solution because lambda functions are stateless
+	// would be better to do it as a step in the CI/CD pipeline
+	err = mongoService.SeedPlans(context.TODO())
+	if err != nil {
+		log.Fatalf("Failed to seed plans: %v", err)
+	}
+
 	producer, err := producer.NewMessageProducer()
 	if err != nil {
 		log.Fatalf("Failed to create Kafka producer: %v", err)
