@@ -9,6 +9,8 @@ import { unified } from 'unified';
 import { Node } from 'unist';
 import { visit } from 'unist-util-visit';
 import rehypeSlug from 'rehype-slug';
+import rehypePrettyCode from 'rehype-pretty-code'
+import { transformerCopyButton } from '@rehype-pretty/transformers'
 /*
 const addCopyButtonToCodeBlocks = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -84,7 +86,15 @@ export async function processMarkdown(
         });
       };
     })
-    //.use(addCopyButtonToCodeBlocks)
+    .use(rehypePrettyCode, {
+      transformers: [
+        transformerCopyButton({
+          visibility: 'always',
+          feedbackDuration: 3_000,
+        
+        }),
+      ],
+    })
     .use(rehypeStringify);
 
   const processedContent = await processor.process(content);
