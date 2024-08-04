@@ -51,7 +51,7 @@ const CreateNewForm: React.FC<CreateNewFormProps> = ({ onSubmit }) => {
     <FormBuilder
       formStructure={createNewFormStructure}
       submissionFunction={handleSubmit}
-      buttonText="Create New Event"
+      buttonText="Create New Form"
     />
   );
 };
