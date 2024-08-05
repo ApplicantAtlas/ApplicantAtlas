@@ -18,9 +18,11 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/writeconcern"
 )
 
 func RegisterFormResponsesRoutes(r *gin.RouterGroup, params *types.RouteParams) {
@@ -162,13 +164,14 @@ func submitFormHandler(params *types.RouteParams) gin.HandlerFunc {
 
 		// Check billing
 		eventDetails, err := params.MongoService.GetEvent(c, form.EventID)
+		_ = eventDetails
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
 			logger.Error("Failed to get event details", err)
 			return
 		}
 
-		u, err := params.MongoService.GetUserDetails(c, eventDetails.CreatedByID)
+		u, err := params.MongoService.GetUserDetails(c, authenticatedUser.ID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get user"})
 			return
@@ -228,13 +231,36 @@ func submitFormHandler(params *types.RouteParams) gin.HandlerFunc {
 			return
 		}
 
-		// Submit form
-		req.UserID = authenticatedUser.ID
-		if _, err := params.MongoService.CreateResponse(c, req); err != nil {
+
+		wc := writeconcern.Majority()
+		txnOptions := options.Transaction().SetWriteConcern(wc)
+		client := params.MongoService.GetClient()
+		
+		session, err:= client.StartSession()
+		if err != nil {
+			panic(err)
+		}
+
+		defer session.EndSession(c)
+
+		result, err := session.WithTransaction(c, func(ctx mongo.SessionContext) (interface{}, error) {
+			req.UserID = authenticatedUser.ID
+			result , err := params.MongoService.CreateResponse(ctx, req)
+			return result, err
+		}, txnOptions)
+		_ = result 
+		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
 			logger.Error("Failed to create form response", err)
 			return
 		}
+		// Submit form
+		// req.UserID = authenticatedUser.ID
+		// if _, err := params.MongoService.CreateResponse(c, req); err != nil {
+		// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+		// 	logger.Error("Failed to create form response", err)
+		// 	return
+		// }
 
 		c.JSON(http.StatusOK, gin.H{"message": "Success"})
 	}
