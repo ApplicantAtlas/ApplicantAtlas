@@ -90,7 +90,7 @@ export async function processMarkdown(
       transformers: [
         transformerCopyButton({
           visibility: 'always',
-          feedbackDuration: 3_000,
+          feedbackDuration: 500,
         
         }),
       ],
