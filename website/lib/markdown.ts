@@ -11,38 +11,7 @@ import { visit } from 'unist-util-visit';
 import rehypeSlug from 'rehype-slug';
 import rehypePrettyCode from 'rehype-pretty-code'
 import { transformerCopyButton } from '@rehype-pretty/transformers'
-/*
-const addCopyButtonToCodeBlocks = () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return (tree: any) => {
-    visit(tree, 'element', (node) => {
-      if (
-        node.tagName === 'pre' &&
-        node.children &&
-        node.children[0].tagName === 'code'
-      ) {
-        // Create a button element
-        const button = {
-          type: 'element',
-          tagName: 'button',
-          properties: { onclick: 'copyCodeToClipboard(this)' },
-          children: [{ type: 'text', value: 'Copy' }],
-        };
 
-        // Wrap the pre block in a div with the button
-        node.children = [
-          {
-            type: 'element',
-            tagName: 'div',
-            properties: { className: ['code-container'] },
-            children: [button, node.children[0]], // include the button before the code
-          },
-        ];
-      }
-    });
-  };
-};
-*/
 
 export async function processMarkdown(
   filePath: string,
@@ -88,13 +57,25 @@ export async function processMarkdown(
     })
     .use(rehypePrettyCode, {
       transformers: [
-        transformerCopyButton({
-          visibility: 'always',
-          feedbackDuration: 500,
-        
-        }),
+          transformerCopyButton({
+              visibility: 'always',
+              feedbackDuration: 500,
+          }),
       ],
-    })
+      onVisitLine(node) {
+          // Prevent lines from collapsing in `display: grid` mode, and
+          // allow empty lines to be copy/pasted
+          if (node.children.length === 0) {
+              node.children = [{ type: 'text', value: ' ' }];
+          }
+      },
+      onVisitHighlightedLine(node) {
+          if (!node.properties.className) {
+              node.properties.className = [];
+          }
+          node.properties.className.push('highlighted');
+      },
+  })
     .use(rehypeStringify);
 
   const processedContent = await processor.process(content);
