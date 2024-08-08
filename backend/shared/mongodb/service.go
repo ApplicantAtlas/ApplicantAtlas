@@ -75,6 +75,8 @@ type MongoService interface {
 	GetSubscription(ctx context.Context, subscriptionID primitive.ObjectID) (*models.Subscription, error)
 	IncrementSubscriptionUtilization(ctx context.Context, subscriptionID primitive.ObjectID, utilizationKey string, limitKey string) (*mongo.UpdateResult, error)
 	DecrementSubscriptionEventUtilization(ctx context.Context, subscriptionID primitive.ObjectID, eventID primitive.ObjectID) (*mongo.UpdateResult, error)
+	//GetClient
+	GetClient() (*mongo.Client)
 }
 
 // Service implements MongoService with a mongo.Client.
@@ -979,4 +981,8 @@ func (s *Service) DecrementSubscriptionEventUtilization(ctx context.Context, sub
 	}
 
 	return result, nil
+}
+
+func (s *Service) GetClient() (*mongo.Client) {
+	return s.Client
 }

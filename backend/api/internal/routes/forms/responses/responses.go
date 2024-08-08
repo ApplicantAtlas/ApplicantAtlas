@@ -18,9 +18,11 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/writeconcern"
 )
 
 func RegisterFormResponsesRoutes(r *gin.RouterGroup, params *types.RouteParams) {
@@ -161,14 +163,20 @@ func submitFormHandler(params *types.RouteParams) gin.HandlerFunc {
 		// TODO: We should do this in a transaction
 
 		// Check billing
+		
+		wc := writeconcern.Majority()
+		txnOptions := options.Transaction().SetWriteConcern(wc)
+		client := params.MongoService.GetClient()
+
 		eventDetails, err := params.MongoService.GetEvent(c, form.EventID)
+		_ = eventDetails
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
 			logger.Error("Failed to get event details", err)
 			return
 		}
 
-		u, err := params.MongoService.GetUserDetails(c, eventDetails.CreatedByID)
+		u, err := params.MongoService.GetUserDetails(c, authenticatedUser.ID)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get user"})
 			return
@@ -205,14 +213,24 @@ func submitFormHandler(params *types.RouteParams) gin.HandlerFunc {
 					continue
 				}
 
-				_, err = params.MongoService.IncrementSubscriptionUtilization(c, sub.ID, "pipelineRuns", "maxMonthlyPipelineRuns")
+				session, err := client.StartSession()
+				if err != nil {
+					panic(err)
+				}
+				defer session.EndSession(c)
+
+				_, err = session.WithTransaction(c, func(ctx mongo.SessionContext) (interface{}, error) {
+					result, err := params.MongoService.IncrementSubscriptionUtilization(ctx, sub.ID, "pipelineRuns", "maxMonthlyPipelineRuns")
+					return result, err
+				}, txnOptions)
+
 				if err != nil {
 					c.JSON(http.StatusInternalServerError, gin.H{"error": "Pipeline limit reached, please contact the event admin to upgrade their plan."})
 					// TODO: send out email to admin
 					return
 				}
 
-				err := helpers.TriggerPipeline(c, params.MessageProducer, params.MongoService, pipeline, req.Data)
+				err = helpers.TriggerPipeline(c, params.MessageProducer, params.MongoService, pipeline, req.Data)
 
 				if err != nil {
 					c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
@@ -222,15 +240,38 @@ func submitFormHandler(params *types.RouteParams) gin.HandlerFunc {
 			}
 		}
 
-		_, err = params.MongoService.IncrementSubscriptionUtilization(c, sub.ID, "responses", "maxMonthlyResponses")
+		session, err := client.StartSession()
+		if err != nil {
+			panic(err)
+		}
+		defer session.EndSession(c)
+		result, err := session.WithTransaction(c, func(ctx mongo.SessionContext) (interface{}, error) {
+			result, err := params.MongoService.IncrementSubscriptionUtilization(ctx, sub.ID, "pipelineRuns", "maxMonthlyPipelineRuns")
+			return result, err
+		}, txnOptions)
+		_ = result 
+
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Event submission limit reached, please contact the event admin to upgrade their plan."})
 			return
 		}
 
 		// Submit form
-		req.UserID = authenticatedUser.ID
-		if _, err := params.MongoService.CreateResponse(c, req); err != nil {
+		session_response, err_response:= client.StartSession()
+		if err_response != nil {
+			panic(err_response)
+		}
+
+		defer session_response.EndSession(c)
+
+		result_response, err_response := session.WithTransaction(c, func(ctx mongo.SessionContext) (interface{}, error) {
+			req.UserID = authenticatedUser.ID
+			result , err := params.MongoService.CreateResponse(ctx, req)
+			return result, err
+		}, txnOptions)
+		_ = result_response 
+
+		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
 			logger.Error("Failed to create form response", err)
 			return
