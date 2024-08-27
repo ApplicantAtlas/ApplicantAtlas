@@ -9,9 +9,8 @@ import { unified } from 'unified';
 import { Node } from 'unist';
 import { visit } from 'unist-util-visit';
 import rehypeSlug from 'rehype-slug';
-import rehypePrettyCode from 'rehype-pretty-code'
-import { transformerCopyButton } from '@rehype-pretty/transformers'
-
+import rehypePrettyCode from 'rehype-pretty-code';
+import { transformerCopyButton } from '@rehype-pretty/transformers';
 
 export async function processMarkdown(
   filePath: string,
@@ -57,25 +56,25 @@ export async function processMarkdown(
     })
     .use(rehypePrettyCode, {
       transformers: [
-          transformerCopyButton({
-              visibility: 'always',
-              feedbackDuration: 500,
-          }),
+        transformerCopyButton({
+          visibility: 'always',
+          feedbackDuration: 500,
+        }),
       ],
       onVisitLine(node) {
-          // Prevent lines from collapsing in `display: grid` mode, and
-          // allow empty lines to be copy/pasted
-          if (node.children.length === 0) {
-              node.children = [{ type: 'text', value: ' ' }];
-          }
+        // Prevent lines from collapsing in `display: grid` mode, and
+        // allow empty lines to be copy/pasted
+        if (node.children.length === 0) {
+          node.children = [{ type: 'text', value: ' ' }];
+        }
       },
       onVisitHighlightedLine(node) {
-          if (!node.properties.className) {
-              node.properties.className = [];
-          }
-          node.properties.className.push('highlighted');
+        if (!node.properties.className) {
+          node.properties.className = [];
+        }
+        node.properties.className.push('highlighted');
       },
-  })
+    })
     .use(rehypeStringify);
 
   const processedContent = await processor.process(content);
